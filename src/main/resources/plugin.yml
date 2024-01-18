@@ -1,0 +1,7 @@
+name: RykenSlimefunCustomizer
+version: '${project.version}'
+main: org.lins.mmmjjkx.rykenslimefuncustomizer.RykenSlimefunCustomizer
+api-version: '1.18'
+depend: [Slimefun]
+authors: [mmmjjkx, hitech0926]
+description: An advanced slimefun customize plugin
