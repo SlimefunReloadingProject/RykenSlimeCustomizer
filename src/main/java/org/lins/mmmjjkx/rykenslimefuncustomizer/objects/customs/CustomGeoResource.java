@@ -18,14 +18,17 @@ public class CustomGeoResource extends SlimefunItem implements GEOResource {
     private final BiFunction<World.Environment, Biome, Integer> supply;
     private final int maxDeviation;
     private final boolean obtainableFromGEOMiner;
+    private final String name;
 
-    public CustomGeoResource(ItemGroup itemGroup, SlimefunItemStack item, RecipeType recipeType, ItemStack[] recipe,
-                             BiFunction<World.Environment, Biome, Integer> supply, int maxDeviation, boolean obtainableFromGEOMiner) {
-        super(itemGroup, item, recipeType, recipe);
+    public CustomGeoResource(ItemGroup itemGroup, SlimefunItemStack item, ItemStack[] recipe,
+                             BiFunction<World.Environment, Biome, Integer> supply, int maxDeviation,
+                             boolean obtainableFromGEOMiner, String name) {
+        super(itemGroup, item, RecipeType.GEO_MINER, recipe);
 
         this.supply = supply;
         this.maxDeviation = maxDeviation;
         this.obtainableFromGEOMiner = obtainableFromGEOMiner;
+        this.name = name;
 
         register(RykenSlimefunCustomizer.INSTANCE);
         register();
@@ -44,7 +47,7 @@ public class CustomGeoResource extends SlimefunItem implements GEOResource {
     @NotNull
     @Override
     public String getName() {
-        return null;
+        return name;
     }
 
     @Override
