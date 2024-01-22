@@ -3,11 +3,13 @@ package org.lins.mmmjjkx.rykenslimefuncustomizer.objects;
 import io.github.thebusybiscuit.slimefun4.libraries.commons.lang.Validate;
 import org.bukkit.configuration.file.YamlConfiguration;
 import org.jetbrains.annotations.Nullable;
+import org.lins.mmmjjkx.rykenslimefuncustomizer.RykenSlimefunCustomizer;
 import org.lins.mmmjjkx.rykenslimefuncustomizer.objects.customs.CustomMenu;
 import org.lins.mmmjjkx.rykenslimefuncustomizer.objects.yaml.MenusSection;
 import org.lins.mmmjjkx.rykenslimefuncustomizer.utils.ExceptionHandler;
 
 import java.io.File;
+import java.util.ArrayList;
 import java.util.List;
 
 public class ProjectAddonLoader {
@@ -32,13 +34,27 @@ public class ProjectAddonLoader {
             String name = info.getString("name");
             String version = info.getString("version", "1.0");
             String id = info.getString("id");
+            List<String> depends = new ArrayList<>();
 
-            addon = new ProjectAddon(name, version, id);
-
-            if ((name == null || name.isBlank()) && (id == null || id.isBlank())) {
-                ExceptionHandler.handleError("在名称为 " + file.getName() + "的文件夹中有无效的项目信息，导致此附属无法加载！");
+            if (name == null || name.isBlank()) {
+                ExceptionHandler.handleError("在名称为 " + file.getName() + "的文件夹中有无效的项目名称，导致此附属无法加载！");
                 return addon;
             }
+
+            if (id == null || id.isBlank()) {
+                ExceptionHandler.handleError("在名称为 " + file.getName() + "的文件夹中有无效的项目ID，导致此附属无法加载！");
+                return addon;
+            }
+
+            if (info.contains("depend")) {
+                depends = info.getStringList("depend");
+                if (!RykenSlimefunCustomizer.addonManager.isLoaded(depends.toArray(new String[0]))) {
+                    ExceptionHandler.handleError("在名称为 "+ file.getName() + "的文件夹中需要依赖项 "+ depends +"，由于部分依赖项在加载时出错或未安装，导致此附属无法加载！");
+                    return addon;
+                }
+            }
+
+            addon = new ProjectAddon(name, version, id, depends);
         } else {
             ExceptionHandler.handleError("在名称为 " + file.getName() + "的文件夹中有无效的项目信息，导致此附属无法加载！");
             return addon;

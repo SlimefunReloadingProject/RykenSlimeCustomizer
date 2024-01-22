@@ -15,18 +15,18 @@ import java.util.List;
 @Setter(AccessLevel.PACKAGE)
 public class ProjectAddon {
     //info.yml
-    private final String addonId;
-    private final String addonName;
-    private final String addonVersion;
-    private List<String> depend;
-    private List<String> dependAddonIds;
+    private @NotNull final String addonId;
+    private @NotNull final String addonName;
+    private @NotNull final String addonVersion;
+    private @NotNull final List<String> depends;
 
     //menus.yml
     private List<CustomMenu> menus;
+
     //geo.yml
     private List<CustomGeoResource> geoResources;
+
     //items.yml
     private List<CustomPlaceableItem> placeableItems;
     private List<CustomUnplaceableItem> items;
-
 }

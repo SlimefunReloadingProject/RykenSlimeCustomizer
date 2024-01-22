@@ -6,11 +6,13 @@ import org.jetbrains.annotations.NotNull;
 
 public final class RykenSlimefunCustomizer extends JavaPlugin implements SlimefunAddon {
     public static RykenSlimefunCustomizer INSTANCE;
+    public static ProjectAddonManager addonManager;
 
     @Override
     public void onEnable() {
         // Plugin startup logic
         INSTANCE = this;
+        addonManager = new ProjectAddonManager(this);
 
         saveDefaultConfig();
         saveConfig();

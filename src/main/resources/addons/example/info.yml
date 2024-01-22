@@ -1,0 +1,4 @@
+id: example
+name: "示例附属"
+depend: []
+version: "${project.version}"
