@@ -6,11 +6,10 @@ import net.kyori.adventure.text.logger.slf4j.ComponentLogger;
 import net.kyori.adventure.text.serializer.legacy.LegacyComponentSerializer;
 import org.jetbrains.annotations.NotNull;
 import org.lins.mmmjjkx.rykenslimefuncustomizer.RykenSlimefunCustomizer;
-import org.lins.mmmjjkx.rykenslimefuncustomizer.objects.function.FunctionUtils;
+import org.lins.mmmjjkx.rykenslimefuncustomizer.objects.ProjectAddon;
 
 import java.lang.reflect.InvocationTargetException;
 import java.lang.reflect.Method;
-import java.util.List;
 
 public class ExceptionHandler {
     private static final LegacyComponentSerializer serializer = LegacyComponentSerializer.legacyAmpersand();
@@ -25,18 +24,6 @@ public class ExceptionHandler {
         return HandleResult.SUCCESS;
     }
 
-    public static HandleResult handleFunctionArgsError(String name, List<String> requiredInputs, List<Object> args) {
-        List<String> types_required = requiredInputs.stream().map(s -> s.split(" ")[1]).toList();
-        List<String> types_args = args.stream().map(o -> FunctionUtils.getArgType(args)).toList();
-
-        if (types_args.equals(types_required)) {
-            return HandleResult.SUCCESS;
-        }
-
-        logger.error(serializer.deserialize("&4ERROR | 函数参数类型错误：" + name + "需要类型为" + types_required + "的参数，但实际输入了" + types_args + "这些类型的参数"));
-        return HandleResult.FAILED;
-    }
-
     public static void handleWarning(String message){
         logger.warn(serializer.deserialize("&eWARNING | " + message));
     }
@@ -45,7 +32,7 @@ public class ExceptionHandler {
         logger.error(serializer.deserialize("&4ERROR | " + message));
     }
 
-    public static <T extends Enum<T>> Pair<HandleResult, Enum<T>> handleEnumValueOf(String msg, String nullMsg, Class<T> enumClass, String name) {
+    public static <T extends Enum<T>> Pair<HandleResult, T> handleEnumValueOf(String msg, String nullMsg, Class<T> enumClass, String name) {
         try {
             return new Pair<>(HandleResult.SUCCESS, Enum.valueOf(enumClass, name));
         } catch (NullPointerException e) {
@@ -54,6 +41,10 @@ public class ExceptionHandler {
             handleError(msg);
         }
         return new Pair<>(HandleResult.FAILED, null);
+    }
+
+    public static HandleResult handleItemGroupAddItem(ProjectAddon addon, String igid, SlimefunItem item) {
+
     }
 
     public static <T> Pair<HandleResult, T> handleValueOf(String msg, String nullMsg, Class<T> clazz, String name, String methodName) {

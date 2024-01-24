@@ -4,8 +4,6 @@ import io.github.thebusybiscuit.slimefun4.libraries.commons.lang.Validate;
 import org.bukkit.configuration.file.YamlConfiguration;
 import org.jetbrains.annotations.Nullable;
 import org.lins.mmmjjkx.rykenslimefuncustomizer.RykenSlimefunCustomizer;
-import org.lins.mmmjjkx.rykenslimefuncustomizer.objects.customs.CustomMenu;
-import org.lins.mmmjjkx.rykenslimefuncustomizer.objects.yaml.MenusSection;
 import org.lins.mmmjjkx.rykenslimefuncustomizer.utils.ExceptionHandler;
 
 import java.io.File;
@@ -62,7 +60,6 @@ public class ProjectAddonLoader {
 
         YamlConfiguration menus = YamlConfiguration.loadConfiguration(new File(file, MENUS_FILE));
 
-        List<CustomMenu> menuList = new MenusSection(menus).read();//TODO implement
 
         return addon;
     }
