@@ -5,6 +5,8 @@ import org.bukkit.Bukkit;
 import org.bukkit.configuration.file.YamlConfiguration;
 import org.jetbrains.annotations.Nullable;
 import org.lins.mmmjjkx.rykenslimefuncustomizer.RykenSlimefunCustomizer;
+import org.lins.mmmjjkx.rykenslimefuncustomizer.objects.yaml.ItemGroupReader;
+import org.lins.mmmjjkx.rykenslimefuncustomizer.objects.yaml.ItemReader;
 import org.lins.mmmjjkx.rykenslimefuncustomizer.utils.ExceptionHandler;
 
 import java.io.File;
@@ -13,10 +15,10 @@ import java.util.List;
 
 public class ProjectAddonLoader {
     private final File file;
-    private final String INFO_FILE = "info.yml";
-    private final String MENUS_FILE = "menus.yml";
-    private final String ITEMS_FILE = "items.yml";
-
+    public static final String INFO_FILE = "info.yml";
+    public static final String MENUS_FILE = "menus.yml";
+    public static final String ITEMS_FILE = "items.yml";
+    public static final String GROUPS_FILE = "groups.yml";
 
     public ProjectAddonLoader(File files) {
         Validate.notNull(files, "File cannot be null!");
@@ -70,8 +72,15 @@ public class ProjectAddonLoader {
             return addon;
         }
 
+        YamlConfiguration groups = YamlConfiguration.loadConfiguration(new File(file, GROUPS_FILE));
+        ItemGroupReader reader = new ItemGroupReader(groups);
+        addon.setItemGroups(reader.readAll(addon));
+        //
+        YamlConfiguration items = YamlConfiguration.loadConfiguration(new File(file, ITEMS_FILE));
+        ItemReader itemReader = new ItemReader(items);
+        addon.setItems(itemReader.readAll(addon));
+        //
         YamlConfiguration menus = YamlConfiguration.loadConfiguration(new File(file, MENUS_FILE));
-
 
         return addon;
     }

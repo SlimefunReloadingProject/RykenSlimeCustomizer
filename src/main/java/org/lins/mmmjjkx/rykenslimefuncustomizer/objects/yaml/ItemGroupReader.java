@@ -4,6 +4,8 @@ import io.github.thebusybiscuit.slimefun4.api.items.ItemGroup;
 import io.github.thebusybiscuit.slimefun4.api.items.groups.LockedItemGroup;
 import io.github.thebusybiscuit.slimefun4.api.items.groups.NestedItemGroup;
 import io.github.thebusybiscuit.slimefun4.api.items.groups.SeasonalItemGroup;
+import io.github.thebusybiscuit.slimefun4.api.items.groups.SubItemGroup;
+import io.github.thebusybiscuit.slimefun4.implementation.Slimefun;
 import org.bukkit.NamespacedKey;
 import org.bukkit.configuration.ConfigurationSection;
 import org.bukkit.configuration.file.YamlConfiguration;
@@ -46,8 +48,25 @@ public class ItemGroupReader extends YamlReader<ItemGroup> {
         }
         String type = section.getString("type", "");
         NamespacedKey key = new NamespacedKey(RykenSlimefunCustomizer.INSTANCE, s);
-        return switch (type) {
+        ItemGroup group = switch (type) {
             default -> new ItemGroup(key, stack);
+            case "sub" -> {
+                NamespacedKey parent = NamespacedKey.fromString(section.getString("parent", ""));
+                if (parent == null) {
+                    ExceptionHandler.handleError("无法在附属"+addon.getAddonName()+"中加载物品组"+s+": 错误的命名空间键格式！");
+                    yield null;
+                }
+                ItemGroup raw = CommonUtils.getIf(Slimefun.getRegistry().getAllItemGroups(), ig -> ig.getKey().equals(parent));
+                if (raw == null) {
+                    ExceptionHandler.handleError("无法在附属"+addon.getAddonName()+"中加载物品组"+s+": 无法找到父物品组" + parent);
+                    yield null;
+                }
+                if (!(raw instanceof NestedItemGroup nig)) {
+                    ExceptionHandler.handleError("无法在附属"+addon.getAddonName()+"中加载物品组"+s+": 物品组" + parent + "不是一个嵌套物品组");
+                    yield null;
+                }
+                yield new SubItemGroup(key, nig, stack);
+            }
             case "locked" -> {
                 List<NamespacedKey> parents = new ArrayList<>();
                 for (String ig : section.getStringList("parents")) {
@@ -61,6 +80,10 @@ public class ItemGroupReader extends YamlReader<ItemGroup> {
                 yield new SeasonalItemGroup(key, month, 3, stack);
             }
         };
+        if (group != null) {
+            group.register(RykenSlimefunCustomizer.INSTANCE);
+        }
+        return group;
     }
 
     @Override

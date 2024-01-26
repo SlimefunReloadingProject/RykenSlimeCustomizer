@@ -9,6 +9,7 @@ import lombok.Setter;
 import org.jetbrains.annotations.NotNull;
 import org.jetbrains.annotations.Nullable;
 import org.lins.mmmjjkx.rykenslimefuncustomizer.objects.customs.CustomGeoResource;
+import org.lins.mmmjjkx.rykenslimefuncustomizer.objects.customs.CustomItem;
 import org.lins.mmmjjkx.rykenslimefuncustomizer.objects.customs.CustomMenu;
 import org.lins.mmmjjkx.rykenslimefuncustomizer.utils.CommonUtils;
 
@@ -36,7 +37,7 @@ public class ProjectAddon {
     private List<CustomGeoResource> geoResources = new ArrayList<>();
 
     //items.yml
-    private List<SlimefunItem> items = new ArrayList<>();
+    private List<CustomItem> items = new ArrayList<>();
 
     @Nullable
     public ItemGroup getItemGroup(String id) {

@@ -20,10 +20,10 @@ public class CustomGeoResource extends SlimefunItem implements GEOResource {
     private final boolean obtainableFromGEOMiner;
     private final String name;
 
-    public CustomGeoResource(ItemGroup itemGroup, SlimefunItemStack item, ItemStack[] recipe,
+    public CustomGeoResource(ItemGroup itemGroup, SlimefunItemStack item, RecipeType type, ItemStack[] recipe,
                              BiFunction<World.Environment, Biome, Integer> supply, int maxDeviation,
                              boolean obtainableFromGEOMiner, String name) {
-        super(itemGroup, item, RecipeType.GEO_MINER, recipe);
+        super(itemGroup, item, type, recipe);
 
         this.supply = supply;
         this.maxDeviation = maxDeviation;

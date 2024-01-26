@@ -1,7 +1,6 @@
 package org.lins.mmmjjkx.rykenslimefuncustomizer.objects.yaml;
 
 import io.github.thebusybiscuit.slimefun4.api.items.ItemGroup;
-import io.github.thebusybiscuit.slimefun4.api.items.SlimefunItem;
 import io.github.thebusybiscuit.slimefun4.api.items.SlimefunItemStack;
 import io.github.thebusybiscuit.slimefun4.api.recipes.RecipeType;
 import io.github.thebusybiscuit.slimefun4.libraries.dough.collections.Pair;
@@ -10,22 +9,24 @@ import org.bukkit.configuration.file.YamlConfiguration;
 import org.bukkit.inventory.ItemStack;
 import org.bukkit.persistence.PersistentDataType;
 import org.lins.mmmjjkx.rykenslimefuncustomizer.objects.ProjectAddon;
+import org.lins.mmmjjkx.rykenslimefuncustomizer.objects.customs.CustomItem;
 import org.lins.mmmjjkx.rykenslimefuncustomizer.objects.customs.CustomPlaceableItem;
 import org.lins.mmmjjkx.rykenslimefuncustomizer.objects.customs.CustomUnplaceableItem;
+import org.lins.mmmjjkx.rykenslimefuncustomizer.objects.record.CommandOperation;
 import org.lins.mmmjjkx.rykenslimefuncustomizer.utils.CommonUtils;
 import org.lins.mmmjjkx.rykenslimefuncustomizer.utils.ExceptionHandler;
 
 import java.util.ArrayList;
 import java.util.List;
 
-public class ItemReader extends YamlReader<SlimefunItem> {
+public class ItemReader extends YamlReader<CustomItem> {
     public ItemReader(YamlConfiguration config) {
         super(config);
     }
 
     @Override
-    public List<SlimefunItem> readAll(ProjectAddon addon) {
-        List<SlimefunItem> items = new ArrayList<>();
+    public List<CustomItem> readAll(ProjectAddon addon) {
+        List<CustomItem> items = new ArrayList<>();
         for (String key : configuration.getKeys(false)) {
             var item = readEach(key, addon);
             if (item != null) {
@@ -36,7 +37,7 @@ public class ItemReader extends YamlReader<SlimefunItem> {
     }
 
     @Override
-    public SlimefunItem readEach(String s, ProjectAddon addon) {
+    public CustomItem readEach(String s, ProjectAddon addon) {
         ConfigurationSection section = configuration.getConfigurationSection(s);
         if (section == null) return null;
         ExceptionHandler.HandleResult result = ExceptionHandler.handleIdConflict(s);
@@ -59,16 +60,34 @@ public class ItemReader extends YamlReader<SlimefunItem> {
         if (rt.getFirstValue() == ExceptionHandler.HandleResult.FAILED) return null;
         SlimefunItemStack slimefunItemStack = new SlimefunItemStack(s, stack);
 
-        //TODO action read
+        CommandOperationReader cor = new CommandOperationReader(configuration);
+        CommandOperation co = cor.readEach(s, addon);
 
-        return switch (placeable) {
-            case 1 -> new CustomPlaceableItem(group.getSecondValue(), slimefunItemStack, rt.getSecondValue(), itemStacks);
-            default -> new CustomUnplaceableItem(group.getSecondValue(), slimefunItemStack, rt.getSecondValue(), itemStacks);
-        };
+        CustomItem sfi;
+        if (placeable == 1) {
+            sfi = new CustomPlaceableItem(group.getSecondValue(), slimefunItemStack, rt.getSecondValue(), itemStacks);
+        } else {
+            sfi = new CustomUnplaceableItem(group.getSecondValue(), slimefunItemStack, rt.getSecondValue(), itemStacks);
+        }
+        sfi.addOperation(co);
+        ExceptionHandler.handleItemGroupAddItem(addon, igId, sfi);
+        return sfi;
     }
 
     @Override
-    public void save(SlimefunItem slimefunItem) {
-
+    public void save(CustomItem item) {
+        /*
+        不做了c
+        ConfigurationSection section = configuration.createSection(item.getId());
+        if (item instanceof CustomPlaceableItem) {
+            section.set("placeable", true);
+        }
+        section.set("item_group", item.getItemGroup().getKey().getKey());
+        CommandOperation operation = item.getOperation();
+        if (item.isHasOperation() && operation != null) {
+            section.set("actions", operation.commands());
+        }
+        section.set("recipe_type", item.getRecipeType().getKey().getKey().toUpperCase());
+         */
     }
 }

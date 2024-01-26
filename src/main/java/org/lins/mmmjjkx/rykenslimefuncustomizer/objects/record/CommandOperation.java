@@ -7,6 +7,7 @@ import org.bukkit.Location;
 import org.bukkit.entity.Player;
 import org.bukkit.potion.PotionEffect;
 import org.bukkit.potion.PotionEffectType;
+import org.jetbrains.annotations.NotNull;
 import org.lins.mmmjjkx.rykenslimefuncustomizer.objects.customs.CustomItem;
 import org.lins.mmmjjkx.rykenslimefuncustomizer.utils.CommonUtils;
 import org.lins.mmmjjkx.rykenslimefuncustomizer.utils.ExceptionHandler;
@@ -14,7 +15,7 @@ import org.lins.mmmjjkx.rykenslimefuncustomizer.utils.ExceptionHandler;
 import java.util.List;
 import java.util.Map;
 
-public record CommandOperation(String name, List<String> commands) {
+public record CommandOperation(String name, @NotNull List<String> commands) {
     public void run(Player p, CustomItem item) {
         for (String command : commands) {
             String[] split = command.split("::");
