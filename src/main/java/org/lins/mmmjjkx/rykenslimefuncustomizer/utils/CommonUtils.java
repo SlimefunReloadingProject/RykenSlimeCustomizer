@@ -17,6 +17,7 @@ import org.bukkit.inventory.ItemStack;
 import org.bukkit.inventory.meta.ItemMeta;
 import org.bukkit.persistence.PersistentDataContainer;
 import org.bukkit.persistence.PersistentDataType;
+import org.jetbrains.annotations.NotNull;
 import org.jetbrains.annotations.Nullable;
 import org.lins.mmmjjkx.rykenslimefuncustomizer.RykenSlimefunCustomizer;
 
@@ -24,9 +25,11 @@ import java.util.List;
 import java.util.function.Predicate;
 
 public class CommonUtils {
+    public static final NamespacedKey PLACEABLE = new NamespacedKey(RykenSlimefunCustomizer.INSTANCE, "placeable");
     private static final NamespacedKey GLOW = new NamespacedKey(RykenSlimefunCustomizer.INSTANCE, "item_glow");
     private static final MiniMessage MINI_MESSAGE = MiniMessage.builder().build();
     private static final LegacyComponentSerializer LEGACY_SERIALIZER = LegacyComponentSerializer.legacyAmpersand();
+
 
     public static <T extends ItemStack> T doGlow(T item) {
         item.addUnsafeEnchantment(Enchantment.ARROW_INFINITE, 1);
@@ -76,6 +79,16 @@ public class CommonUtils {
         return null;
     }
 
+    @NotNull
+    public static ItemStack[] readRecipe(ConfigurationSection section) {
+        ItemStack[] itemStacks = new ItemStack[9];
+        for (int i = 0; i < 9; i ++) {
+            ConfigurationSection section1 = section.getConfigurationSection(String.valueOf(i + 1));
+            itemStacks[i] = readItem(section1);
+        }
+        return itemStacks;
+    }
+
     @Nullable
     public static ItemStack readItem(ConfigurationSection section) {
         if (section == null) {
@@ -88,6 +101,7 @@ public class CommonUtils {
         List<String> lore = section.getStringList("lore");
         String name = section.getString("name");
         boolean glow = section.getBoolean("glow", false);
+        boolean placeable = section.getBoolean("placeable", false);
 
         CustomItemStack itemStack;
 
@@ -143,6 +157,11 @@ public class CommonUtils {
                 itemStack = cis2;
             }
         }
+
+        ItemMeta meta = itemStack.getItemMeta();
+        meta.getPersistentDataContainer().set(PLACEABLE, PersistentDataType.INTEGER, placeable ? 1 : 0);
+        itemStack.setItemMeta(meta);
+
         return glow ? doGlow(itemStack) : itemStack;
     }
 }

@@ -1,16 +1,20 @@
 package org.lins.mmmjjkx.rykenslimefuncustomizer.objects;
 
 import io.github.thebusybiscuit.slimefun4.api.items.ItemGroup;
-import lombok.*;
+import io.github.thebusybiscuit.slimefun4.api.items.SlimefunItem;
+import lombok.AccessLevel;
+import lombok.Getter;
+import lombok.RequiredArgsConstructor;
+import lombok.Setter;
 import org.jetbrains.annotations.NotNull;
 import org.jetbrains.annotations.Nullable;
-import org.lins.mmmjjkx.rykenslimefuncustomizer.objects.customs.*;
+import org.lins.mmmjjkx.rykenslimefuncustomizer.objects.customs.CustomGeoResource;
+import org.lins.mmmjjkx.rykenslimefuncustomizer.objects.customs.CustomMenu;
 import org.lins.mmmjjkx.rykenslimefuncustomizer.utils.CommonUtils;
 
 import java.util.ArrayList;
 import java.util.List;
 
-@AllArgsConstructor
 @RequiredArgsConstructor
 @Getter
 @Setter(AccessLevel.PACKAGE)
@@ -19,11 +23,11 @@ public class ProjectAddon {
     private @NotNull final String addonId;
     private @NotNull final String addonName;
     private @NotNull final String addonVersion;
+    private @NotNull final List<String> pluginDepends;
     private @NotNull final List<String> depends;
 
     //groups.yml
-    private List<CustomFatherItemGroup> fatherItemGroups = new ArrayList<>();
-    private List<CustomItemGroup> itemGroups = new ArrayList<>();
+    private List<ItemGroup> itemGroups = new ArrayList<>();
 
     //menus.yml
     private List<CustomMenu> menus = new ArrayList<>();
@@ -32,15 +36,10 @@ public class ProjectAddon {
     private List<CustomGeoResource> geoResources = new ArrayList<>();
 
     //items.yml
-    private List<CustomPlaceableItem> placeableItems = new ArrayList<>();
-    private List<CustomUnplaceableItem> items = new ArrayList<>();
+    private List<SlimefunItem> items = new ArrayList<>();
 
     @Nullable
     public ItemGroup getItemGroup(String id) {
-        ItemGroup ig = CommonUtils.getIf(itemGroups, i -> i.getKey().getKey().equalsIgnoreCase(id));
-        if (ig == null) {
-            ig = CommonUtils.getIf(fatherItemGroups, i -> i.getKey().getKey().equalsIgnoreCase(id));
-        }
-        return ig;
+        return CommonUtils.getIf(itemGroups, i -> i.getKey().getKey().equalsIgnoreCase(id));
     }
 }

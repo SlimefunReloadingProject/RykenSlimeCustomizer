@@ -7,17 +7,19 @@ import org.bukkit.Location;
 import org.bukkit.entity.Player;
 import org.bukkit.potion.PotionEffect;
 import org.bukkit.potion.PotionEffectType;
+import org.lins.mmmjjkx.rykenslimefuncustomizer.objects.customs.CustomItem;
 import org.lins.mmmjjkx.rykenslimefuncustomizer.utils.CommonUtils;
 import org.lins.mmmjjkx.rykenslimefuncustomizer.utils.ExceptionHandler;
 
 import java.util.List;
+import java.util.Map;
 
 public record CommandOperation(String name, List<String> commands) {
-    public void run(Player p) {
+    public void run(Player p, CustomItem item) {
         for (String command : commands) {
             String[] split = command.split("::");
             String cmdHead = split[0];
-            String cmd = parse(split.length == 2 ? split[1] : split[0], p);
+            String cmd = parse(split.length == 2 ? split[1] : split[0], p, item);
             switch (cmdHead) {
                 default:
                 case "cmd":
@@ -50,16 +52,32 @@ public record CommandOperation(String name, List<String> commands) {
                 case "msg":
                     p.sendMessage(CommonUtils.parseToComponent(cmd));
                     break;
+                case "storedata":
+                    String[] pair = split[1].split("=");
+                    if (pair.length != 2) {
+                        ExceptionHandler.handleError("在指令执行器"+ name +"中有错误的数据设置格式"+split[1]+"，请检查是否有两个个参数");
+                        break;
+                    }
+                    item.storeData(pair[0], pair[1]);
+                    break;
+                case "removedata":
+                    String key = split[1];
+                    item.removeData(key);
+                    break;
             }
         }
     }
 
-    private String parse(String s, Player p) {
+    private String parse(String s, Player p, CustomItem item) {
         s = s.replaceAll("%player%", p.getName())
                 .replaceAll("%uuid%", p.getUniqueId().toString());
 
         if (Bukkit.getPluginManager().isPluginEnabled("PlaceholderAPI")) {
             s = PlaceholderAPI.setPlaceholders(p, s);
+        }
+
+        for (Map.Entry<String, String> entry : item.getDataMap().entrySet()) {
+            s = s.replaceAll("%data_"+entry.getKey()+"%", entry.getValue());
         }
         return s;
     }
