@@ -8,6 +8,7 @@ import io.github.thebusybiscuit.slimefun4.core.handlers.ItemUseHandler;
 import lombok.Getter;
 import org.bukkit.inventory.ItemStack;
 import org.jetbrains.annotations.Nullable;
+import org.lins.mmmjjkx.rykenslimefuncustomizer.RykenSlimefunCustomizer;
 import org.lins.mmmjjkx.rykenslimefuncustomizer.objects.record.CommandOperation;
 
 import java.util.HashMap;
@@ -21,6 +22,8 @@ public class CustomItem extends SlimefunItem {
 
     public CustomItem(ItemGroup itemGroup, SlimefunItemStack item, RecipeType recipeType, ItemStack[] recipe) {
         super(itemGroup, item, recipeType, recipe);
+
+        register(RykenSlimefunCustomizer.INSTANCE);
     }
 
     public void storeData(String key, String value) {

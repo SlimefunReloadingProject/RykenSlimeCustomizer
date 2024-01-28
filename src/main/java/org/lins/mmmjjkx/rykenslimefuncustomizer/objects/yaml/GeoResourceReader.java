@@ -1,7 +1,6 @@
 package org.lins.mmmjjkx.rykenslimefuncustomizer.objects.yaml;
 
 import io.github.thebusybiscuit.slimefun4.api.items.ItemGroup;
-import io.github.thebusybiscuit.slimefun4.api.items.SlimefunItem;
 import io.github.thebusybiscuit.slimefun4.api.items.SlimefunItemStack;
 import io.github.thebusybiscuit.slimefun4.api.recipes.RecipeType;
 import io.github.thebusybiscuit.slimefun4.libraries.dough.collections.Pair;
@@ -10,7 +9,6 @@ import org.bukkit.block.Biome;
 import org.bukkit.configuration.ConfigurationSection;
 import org.bukkit.configuration.file.YamlConfiguration;
 import org.bukkit.inventory.ItemStack;
-import org.bukkit.persistence.PersistentDataType;
 import org.lins.mmmjjkx.rykenslimefuncustomizer.objects.ProjectAddon;
 import org.lins.mmmjjkx.rykenslimefuncustomizer.objects.customs.CustomGeoResource;
 import org.lins.mmmjjkx.rykenslimefuncustomizer.utils.CommonUtils;
@@ -47,8 +45,6 @@ public class GeoResourceReader extends YamlReader<CustomGeoResource> {
             String igId = section.getString("item_group");
             ConfigurationSection item = section.getConfigurationSection("item");
             ItemStack stack = CommonUtils.readItem(item);
-            SlimefunItem slimefunItem;
-            int placeable = stack.getItemMeta().getPersistentDataContainer().get(CommonUtils.PLACEABLE, PersistentDataType.INTEGER).intValue();
             Pair<ExceptionHandler.HandleResult, ItemGroup> group = ExceptionHandler.handleItemGroupGet(addon, igId);
             if (group.getFirstValue() == ExceptionHandler.HandleResult.FAILED) return null;
             ItemStack[] recipe = CommonUtils.readRecipe(section.getConfigurationSection("recipe"));
@@ -88,10 +84,5 @@ public class GeoResourceReader extends YamlReader<CustomGeoResource> {
             return geoResource;
         }
         return null;
-    }
-
-    @Override
-    public void save(CustomGeoResource customGeoResource) {
-
     }
 }

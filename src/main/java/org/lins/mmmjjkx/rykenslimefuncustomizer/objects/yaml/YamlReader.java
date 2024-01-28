@@ -15,6 +15,4 @@ public abstract class YamlReader<T> {
     public abstract List<T> readAll(ProjectAddon addon);
 
     public abstract T readEach(String section, ProjectAddon addon);
-
-    public abstract void save(T t);
 }

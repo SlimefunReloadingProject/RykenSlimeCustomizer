@@ -85,7 +85,4 @@ public class ItemGroupReader extends YamlReader<ItemGroup> {
         }
         return group;
     }
-
-    @Override
-    public void save(ItemGroup group) {}
 }

@@ -31,10 +31,4 @@ public class CommandOperationReader extends YamlReader<CommandOperation>{
         }
         return new CommandOperation(section, List.of());
     }
-
-    @Override
-    public void save(CommandOperation operation) {
-        ConfigurationSection item = configuration.createSection(operation.name());
-        item.set("actions", operation.commands());
-    }
 }

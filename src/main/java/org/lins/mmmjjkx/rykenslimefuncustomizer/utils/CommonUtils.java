@@ -124,7 +124,7 @@ public class CommonUtils {
                 itemStack = cis;
             }
             case "none" -> {
-                return null;
+                return new ItemStack(Material.AIR, 1);
             }
             case "skull_base64","skull" -> {
                 PlayerSkin playerSkin = PlayerSkin.fromBase64(material);

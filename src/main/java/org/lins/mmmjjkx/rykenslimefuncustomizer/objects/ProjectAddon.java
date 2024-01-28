@@ -8,6 +8,7 @@ import lombok.RequiredArgsConstructor;
 import lombok.Setter;
 import org.jetbrains.annotations.NotNull;
 import org.jetbrains.annotations.Nullable;
+import org.lins.mmmjjkx.rykenslimefuncustomizer.objects.customs.AbstractEmptyMachine;
 import org.lins.mmmjjkx.rykenslimefuncustomizer.objects.customs.CustomGeoResource;
 import org.lins.mmmjjkx.rykenslimefuncustomizer.objects.customs.CustomItem;
 import org.lins.mmmjjkx.rykenslimefuncustomizer.objects.customs.CustomMenu;
@@ -33,11 +34,14 @@ public class ProjectAddon {
     //menus.yml
     private List<CustomMenu> menus = new ArrayList<>();
 
-    //geo.yml
+    //geo_resources.yml
     private List<CustomGeoResource> geoResources = new ArrayList<>();
 
     //items.yml
     private List<CustomItem> items = new ArrayList<>();
+
+    //machines.yml
+    private List<AbstractEmptyMachine> machines = new ArrayList<>();
 
     @Nullable
     public ItemGroup getItemGroup(String id) {

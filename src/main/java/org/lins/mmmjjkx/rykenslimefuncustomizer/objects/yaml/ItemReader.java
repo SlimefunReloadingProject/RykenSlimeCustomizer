@@ -8,6 +8,7 @@ import org.bukkit.configuration.ConfigurationSection;
 import org.bukkit.configuration.file.YamlConfiguration;
 import org.bukkit.inventory.ItemStack;
 import org.bukkit.persistence.PersistentDataType;
+import org.lins.mmmjjkx.rykenslimefuncustomizer.RykenSlimefunCustomizer;
 import org.lins.mmmjjkx.rykenslimefuncustomizer.objects.ProjectAddon;
 import org.lins.mmmjjkx.rykenslimefuncustomizer.objects.customs.CustomItem;
 import org.lins.mmmjjkx.rykenslimefuncustomizer.objects.customs.CustomPlaceableItem;
@@ -70,24 +71,8 @@ public class ItemReader extends YamlReader<CustomItem> {
             sfi = new CustomUnplaceableItem(group.getSecondValue(), slimefunItemStack, rt.getSecondValue(), itemStacks);
         }
         sfi.addOperation(co);
+        sfi.register(RykenSlimefunCustomizer.INSTANCE);
         ExceptionHandler.handleItemGroupAddItem(addon, igId, sfi);
         return sfi;
-    }
-
-    @Override
-    public void save(CustomItem item) {
-        /*
-        不做了c
-        ConfigurationSection section = configuration.createSection(item.getId());
-        if (item instanceof CustomPlaceableItem) {
-            section.set("placeable", true);
-        }
-        section.set("item_group", item.getItemGroup().getKey().getKey());
-        CommandOperation operation = item.getOperation();
-        if (item.isHasOperation() && operation != null) {
-            section.set("actions", operation.commands());
-        }
-        section.set("recipe_type", item.getRecipeType().getKey().getKey().toUpperCase());
-         */
     }
 }

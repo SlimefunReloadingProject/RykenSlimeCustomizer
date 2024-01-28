@@ -14,6 +14,8 @@ import org.lins.mmmjjkx.rykenslimefuncustomizer.utils.ExceptionHandler;
 
 import java.util.List;
 import java.util.Map;
+import java.util.regex.Matcher;
+import java.util.regex.Pattern;
 
 public record CommandOperation(String name, @NotNull List<String> commands) {
     public void run(Player p, CustomItem item) {
@@ -70,16 +72,26 @@ public record CommandOperation(String name, @NotNull List<String> commands) {
     }
 
     private String parse(String s, Player p, CustomItem item) {
-        s = s.replaceAll("%player%", p.getName())
-                .replaceAll("%uuid%", p.getUniqueId().toString());
+        s = s.replaceAll("%player%", p.getName());
+
+        for (Map.Entry<String, String> entry : item.getDataMap().entrySet()) {
+            s = s.replaceAll("%data_"+entry.getKey()+"%", entry.getValue());
+        }
+
+        Pattern has = Pattern.compile("%data_\\S.*%");
+
+        String s_temp = s;
+
+        for (Matcher matcher = has.matcher(s_temp) ; matcher.find() ; matcher = has.matcher(s_temp)) {
+            String sub = s_temp.substring(matcher.start(), matcher.end());
+            String key = sub.substring(6, sub.lastIndexOf('%')-1);
+            s = s.replaceAll(sub, String.valueOf(item.getDataMap().containsKey(key)));
+        }
 
         if (Bukkit.getPluginManager().isPluginEnabled("PlaceholderAPI")) {
             s = PlaceholderAPI.setPlaceholders(p, s);
         }
 
-        for (Map.Entry<String, String> entry : item.getDataMap().entrySet()) {
-            s = s.replaceAll("%data_"+entry.getKey()+"%", entry.getValue());
-        }
         return s;
     }
 }

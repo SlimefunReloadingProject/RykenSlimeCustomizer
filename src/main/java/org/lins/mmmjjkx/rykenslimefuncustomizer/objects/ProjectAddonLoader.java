@@ -5,8 +5,10 @@ import org.bukkit.Bukkit;
 import org.bukkit.configuration.file.YamlConfiguration;
 import org.jetbrains.annotations.Nullable;
 import org.lins.mmmjjkx.rykenslimefuncustomizer.RykenSlimefunCustomizer;
+import org.lins.mmmjjkx.rykenslimefuncustomizer.objects.yaml.GeoResourceReader;
 import org.lins.mmmjjkx.rykenslimefuncustomizer.objects.yaml.ItemGroupReader;
 import org.lins.mmmjjkx.rykenslimefuncustomizer.objects.yaml.ItemReader;
+import org.lins.mmmjjkx.rykenslimefuncustomizer.objects.yaml.MenuReader;
 import org.lins.mmmjjkx.rykenslimefuncustomizer.utils.ExceptionHandler;
 
 import java.io.File;
@@ -14,17 +16,18 @@ import java.util.ArrayList;
 import java.util.List;
 
 public class ProjectAddonLoader {
-    private final File file;
     public static final String INFO_FILE = "info.yml";
     public static final String MENUS_FILE = "menus.yml";
     public static final String ITEMS_FILE = "items.yml";
     public static final String GROUPS_FILE = "groups.yml";
+    public static final String GEO_RES_FILE = "geo_resources.yml";
+    private final File file;
 
-    public ProjectAddonLoader(File files) {
-        Validate.notNull(files, "File cannot be null!");
-        Validate.isTrue(files.isDirectory(), "File must be a directory!");
+    public ProjectAddonLoader(File dir) {
+        Validate.notNull(dir, "File cannot be null!");
+        Validate.isTrue(dir.isDirectory(), "File must be a directory!");
 
-        this.file = files;
+        this.file = dir;
     }
 
     @Nullable
@@ -80,8 +83,13 @@ public class ProjectAddonLoader {
         ItemReader itemReader = new ItemReader(items);
         addon.setItems(itemReader.readAll(addon));
         //
+        YamlConfiguration geo_resources = YamlConfiguration.loadConfiguration(new File(file, GEO_RES_FILE));
+        GeoResourceReader resourceReader = new GeoResourceReader(geo_resources);
+        addon.setGeoResources(resourceReader.readAll(addon));
+        //
         YamlConfiguration menus = YamlConfiguration.loadConfiguration(new File(file, MENUS_FILE));
-
+        MenuReader menuReader = new MenuReader(menus);
+        addon.setMenus(menuReader.readAll(addon));
         return addon;
     }
 }
