@@ -2,16 +2,16 @@ package org.lins.mmmjjkx.rykenslimefuncustomizer.objects.record;
 
 import io.github.thebusybiscuit.slimefun4.core.machines.MachineOperation;
 
-public record MachineRecord(int capacity, int totalTicks, int progressEach) implements MachineOperation {
+public record MachineRecord(int capacity, int totalTicks) implements MachineOperation {
     private static int progress = 0;
 
     @Override
     public void addProgress(int i) {
         if (progress >= 100) {
-            progress = progressEach;
+            progress = i;
             return;
         }
-        progress += progressEach;
+        progress += i;
     }
 
     @Override

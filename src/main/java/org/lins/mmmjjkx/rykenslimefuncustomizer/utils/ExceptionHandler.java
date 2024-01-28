@@ -2,6 +2,7 @@ package org.lins.mmmjjkx.rykenslimefuncustomizer.utils;
 
 import io.github.thebusybiscuit.slimefun4.api.items.ItemGroup;
 import io.github.thebusybiscuit.slimefun4.api.items.SlimefunItem;
+import io.github.thebusybiscuit.slimefun4.implementation.Slimefun;
 import io.github.thebusybiscuit.slimefun4.libraries.dough.collections.Pair;
 import net.kyori.adventure.text.logger.slf4j.ComponentLogger;
 import net.kyori.adventure.text.serializer.legacy.LegacyComponentSerializer;
@@ -21,6 +22,19 @@ public class ExceptionHandler {
         SlimefunItem i = SlimefunItem.getById(id);
         if (i != null) {
             logger.error(serializer.deserialize("&4ERROR | ID冲突：" + id + "与" + i.getAddon().getName() + "中的物品ID冲突"));
+            return HandleResult.FAILED;
+        }
+        return HandleResult.SUCCESS;
+    }
+
+    public static HandleResult handleGroupIdConflict(String id) {
+        ItemGroup ig = CommonUtils.getIf(Slimefun.getRegistry().getAllItemGroups(), i -> i.getKey().getKey().equals(id));
+        if (ig != null) {
+            if (ig.getAddon() != null) {
+                logger.error(serializer.deserialize("&4ERROR | ID冲突：" + id + "与物品组 " + ig.getKey().getKey() + "(来自"+ig.getAddon().getName()+")冲突"));
+                return HandleResult.FAILED;
+            }
+            logger.error(serializer.deserialize("&4ERROR | ID冲突：" + id + "与物品组 " + ig.getKey().getKey() + "冲突"));
             return HandleResult.FAILED;
         }
         return HandleResult.SUCCESS;

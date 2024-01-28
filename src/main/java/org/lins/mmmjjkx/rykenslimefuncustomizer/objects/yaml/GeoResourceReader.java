@@ -45,16 +45,20 @@ public class GeoResourceReader extends YamlReader<CustomGeoResource> {
             String igId = section.getString("item_group");
             ConfigurationSection item = section.getConfigurationSection("item");
             ItemStack stack = CommonUtils.readItem(item);
+            if (stack == null) {
+                ExceptionHandler.handleError("无法在附属"+addon.getAddonName()+"中加载GEO资源"+s+": 物品为空或格式错误导致无法加载");
+                return null;
+            }
             Pair<ExceptionHandler.HandleResult, ItemGroup> group = ExceptionHandler.handleItemGroupGet(addon, igId);
             if (group.getFirstValue() == ExceptionHandler.HandleResult.FAILED) return null;
             ItemStack[] recipe = CommonUtils.readRecipe(section.getConfigurationSection("recipe"));
-            String recipetype = section.getString("recipe_type", "NULL");
+            String recipeType = section.getString("recipe_type", "NULL");
             int maxDeviation = section.getInt("max_deviation", 1);
             boolean obtainableFromGEOMiner = section.getBoolean("obtain_from_geo_miner", true);
             String name = section.getString("geo_name", "");
 
             Pair<ExceptionHandler.HandleResult, RecipeType> rt = ExceptionHandler.handleField(
-                    "错误的配方类型" + recipetype + "!", "", RecipeType.class, recipetype
+                    "错误的配方类型" + recipeType + "!", "", RecipeType.class, recipeType
             );
 
             if (rt.getFirstValue() == ExceptionHandler.HandleResult.FAILED) return null;
@@ -65,6 +69,8 @@ public class GeoResourceReader extends YamlReader<CustomGeoResource> {
                 if (sup == null) {
                     return 0;
                 }
+
+                if (e == World.Environment.CUSTOM) return 0;
 
                 String env = e.toString().toLowerCase();
                 String path = b.toString().toLowerCase();

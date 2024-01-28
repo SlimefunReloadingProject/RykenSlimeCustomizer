@@ -42,13 +42,19 @@ public class ItemReader extends YamlReader<CustomItem> {
         ConfigurationSection section = configuration.getConfigurationSection(s);
         if (section == null) return null;
         ExceptionHandler.HandleResult result = ExceptionHandler.handleIdConflict(s);
+
         if (result == ExceptionHandler.HandleResult.FAILED) return null;
 
         String igId = section.getString("item_group");
         ConfigurationSection item = section.getConfigurationSection("item");
         ItemStack stack = CommonUtils.readItem(item);
 
-        int placeable = stack.getItemMeta().getPersistentDataContainer().get(CommonUtils.PLACEABLE, PersistentDataType.INTEGER).intValue();
+        if (stack == null) {
+            ExceptionHandler.handleError("无法在附属"+addon.getAddonName()+"中加载物品"+s+": 物品为空或格式错误导致无法加载");
+            return null;
+        }
+
+        int placeable = stack.getItemMeta().getPersistentDataContainer().getOrDefault(CommonUtils.PLACEABLE, PersistentDataType.INTEGER, 0);
         Pair<ExceptionHandler.HandleResult, ItemGroup> group = ExceptionHandler.handleItemGroupGet(addon, igId);
         if (group.getFirstValue() == ExceptionHandler.HandleResult.FAILED) return null;
         ItemStack[] itemStacks = CommonUtils.readRecipe(section.getConfigurationSection("recipe"));

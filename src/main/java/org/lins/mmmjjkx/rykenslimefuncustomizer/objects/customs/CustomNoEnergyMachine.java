@@ -6,11 +6,9 @@ import io.github.thebusybiscuit.slimefun4.api.items.ItemGroup;
 import io.github.thebusybiscuit.slimefun4.api.items.SlimefunItem;
 import io.github.thebusybiscuit.slimefun4.api.items.SlimefunItemStack;
 import io.github.thebusybiscuit.slimefun4.api.recipes.RecipeType;
-import io.github.thebusybiscuit.slimefun4.core.attributes.EnergyNetComponent;
 import io.github.thebusybiscuit.slimefun4.core.handlers.BlockUseHandler;
 import io.github.thebusybiscuit.slimefun4.core.machines.MachineOperation;
 import io.github.thebusybiscuit.slimefun4.core.machines.MachineProcessor;
-import io.github.thebusybiscuit.slimefun4.core.networks.energy.EnergyNetComponentType;
 import me.mrCookieSlime.CSCoreLibPlugin.general.Inventory.ChestMenu;
 import me.mrCookieSlime.Slimefun.Objects.handlers.BlockTicker;
 import me.mrCookieSlime.Slimefun.api.inventory.BlockMenu;
@@ -23,59 +21,42 @@ import org.lins.mmmjjkx.rykenslimefuncustomizer.objects.record.MachineRecord;
 
 import java.util.List;
 import java.util.function.BiConsumer;
+import java.util.function.Consumer;
+import java.util.function.Function;
 
-public class CustomMachine extends AbstractEmptyMachine implements EnergyNetComponent {
-    private final MachineRecord theRecord;
+public class CustomNoEnergyMachine extends AbstractEmptyMachine {
     private final List<Integer> input;
     private final List<Integer> output;
-    private final CustomMenu menu;
-    private final EnergyNetComponentType type;
-    private final MachineProcessor<MachineOperation> processor;
+    private final MachineRecord record;
     private final JavaScriptEval eval;
+    private final MachineProcessor<MachineOperation> processor;
+    private final CustomMenu menu;
 
-    public CustomMachine(ItemGroup itemGroup, SlimefunItemStack item, RecipeType recipeType, ItemStack[] recipe, CustomMenu menu,
-                         List<Integer> input, List<Integer> output, MachineRecord record, EnergyNetComponentType type, JavaScriptEval eval) {
+    public CustomNoEnergyMachine(ItemGroup itemGroup, SlimefunItemStack item, RecipeType recipeType, ItemStack[] recipe, CustomMenu menu,
+                                 List<Integer> input, List<Integer> output, MachineRecord record, JavaScriptEval eval) {
         super(itemGroup, item, recipeType, recipe);
 
         this.input = input;
         this.output = output;
-        this.theRecord = record;
-        this.menu = menu;
-        this.type = type;
+        this.record = record;
         this.eval = eval;
+        this.menu = menu;
         this.processor = new MachineProcessor<>(this);
 
-        this.eval.addThing("addClickHandler", (BiConsumer<Integer, ChestMenu.MenuClickHandler>) CustomMachine.this.menu::addMenuClickHandler);
+        this.eval.addThing("addClickHandler", (BiConsumer<Integer, ChestMenu.MenuClickHandler>) CustomNoEnergyMachine.this.menu::addMenuClickHandler);
     }
 
     @Override
     public void preRegister() {
         super.preRegister();
-        this.addItemHandler((BlockUseHandler) e -> {
-            menu.open(e.getPlayer());
-        });
+        this.addItemHandler((BlockUseHandler) e -> menu.open(e.getPlayer()));
         this.addItemHandler(getBlockTicker());
     }
 
     protected void tick(Block b, SlimefunItem item, SlimefunBlockData data) {
         BlockMenu blockMenu = StorageCacheUtils.getMenu(b.getLocation());
-        MachineInfo info = new MachineInfo(blockMenu, data, item, b, theRecord.totalTicks(), theRecord.getProgress(), processor, theRecord);
+        MachineInfo info = new MachineInfo(blockMenu, data, item, b, record.totalTicks(), record.getProgress(), processor, record);
         eval.evalFunction("tick", info);
-    }
-
-    @Override
-    public BlockTicker getBlockTicker() {
-        return new BlockTicker() {
-            @Override
-            public boolean isSynchronized() {
-                return true;
-            }
-
-            @Override
-            public void tick(Block b, SlimefunItem item, SlimefunBlockData data) {
-                CustomMachine.this.tick(b, item, data);
-            }
-        };
     }
 
     @Override
@@ -96,15 +77,19 @@ public class CustomMachine extends AbstractEmptyMachine implements EnergyNetComp
         return output;
     }
 
-    @NotNull
     @Override
-    public EnergyNetComponentType getEnergyComponentType() {
-        return type;
-    }
+    public BlockTicker getBlockTicker() {
+        return new BlockTicker() {
+            @Override
+            public boolean isSynchronized() {
+                return true;
+            }
 
-    @Override
-    public int getCapacity() {
-        return theRecord.capacity();
+            @Override
+            public void tick(Block b, SlimefunItem item, SlimefunBlockData data) {
+                CustomNoEnergyMachine.this.tick(b, item, data);
+            }
+        };
     }
 
     @NotNull

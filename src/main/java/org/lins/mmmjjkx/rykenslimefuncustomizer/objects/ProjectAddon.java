@@ -2,6 +2,7 @@ package org.lins.mmmjjkx.rykenslimefuncustomizer.objects;
 
 import io.github.thebusybiscuit.slimefun4.api.items.ItemGroup;
 import io.github.thebusybiscuit.slimefun4.api.items.SlimefunItem;
+import io.github.thebusybiscuit.slimefun4.api.researches.Research;
 import lombok.AccessLevel;
 import lombok.Getter;
 import lombok.RequiredArgsConstructor;
@@ -42,6 +43,9 @@ public class ProjectAddon {
 
     //machines.yml
     private List<AbstractEmptyMachine> machines = new ArrayList<>();
+
+    //researches.yml
+    private List<Research> researches = new ArrayList<>();
 
     @Nullable
     public ItemGroup getItemGroup(String id) {

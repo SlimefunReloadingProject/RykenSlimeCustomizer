@@ -40,6 +40,10 @@ public class ItemGroupReader extends YamlReader<ItemGroup> {
     public ItemGroup readEach(String s, ProjectAddon addon) {
         ConfigurationSection section = configuration.getConfigurationSection(s);
         if (section == null) return null;
+        ExceptionHandler.HandleResult conflict = ExceptionHandler.handleGroupIdConflict(s);
+
+        if (conflict == ExceptionHandler.HandleResult.FAILED) return null;
+
         ConfigurationSection item = section.getConfigurationSection("item");
         ItemStack stack = CommonUtils.readItem(item);
         if (stack == null) {
