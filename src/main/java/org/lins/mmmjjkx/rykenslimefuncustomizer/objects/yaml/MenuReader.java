@@ -44,6 +44,8 @@ public class MenuReader extends YamlReader<CustomMenu> {
         ConfigurationSection slots = section.getConfigurationSection("slots");
         if (slots == null) return new CustomMenu(title, slotMap, emptySlotsClickable, playerInvClickable);
 
+        int progress = -1;
+
         for (String slot : slots.getKeys(false)) {
             int realSlot = Integer.parseInt(slot);
             if (realSlot > 53 || realSlot < 0) {
@@ -56,9 +58,12 @@ public class MenuReader extends YamlReader<CustomMenu> {
                 ExceptionHandler.handleWarning("在菜单"+s+"中，有位于槽位"+realSlot+"的物品格式错误或输入了错误的数据无法读取，跳过对此物品的读取。");
                 continue;
             }
+            if (section.getBoolean("progressbar", false)) {
+                progress = realSlot;
+            }
             slotMap.put(realSlot, itemStack);
         }
 
-        return new CustomMenu(title, slotMap, emptySlotsClickable, playerInvClickable);
+        return new CustomMenu(title, slotMap, emptySlotsClickable, playerInvClickable, progress);
     }
 }

@@ -6,6 +6,7 @@ import org.bukkit.plugin.java.JavaPlugin;
 import org.bukkit.plugin.java.JavaPluginLoader;
 import org.jetbrains.annotations.NotNull;
 import org.jetbrains.annotations.TestOnly;
+import org.lins.mmmjjkx.rykenslimefuncustomizer.commands.MenuPreview;
 
 import java.io.File;
 
@@ -26,6 +27,8 @@ public final class RykenSlimefunCustomizer extends JavaPlugin implements Slimefu
 
         saveDefaultConfig();
         saveConfig();
+
+        getCommand("menupreview").setExecutor(new MenuPreview());
     }
 
     @Override

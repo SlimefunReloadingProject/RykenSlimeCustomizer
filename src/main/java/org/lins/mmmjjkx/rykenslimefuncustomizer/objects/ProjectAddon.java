@@ -1,20 +1,18 @@
 package org.lins.mmmjjkx.rykenslimefuncustomizer.objects;
 
 import io.github.thebusybiscuit.slimefun4.api.items.ItemGroup;
-import io.github.thebusybiscuit.slimefun4.api.items.SlimefunItem;
 import io.github.thebusybiscuit.slimefun4.api.researches.Research;
 import lombok.AccessLevel;
 import lombok.Getter;
 import lombok.RequiredArgsConstructor;
 import lombok.Setter;
 import org.jetbrains.annotations.NotNull;
-import org.jetbrains.annotations.Nullable;
 import org.lins.mmmjjkx.rykenslimefuncustomizer.objects.customs.AbstractEmptyMachine;
 import org.lins.mmmjjkx.rykenslimefuncustomizer.objects.customs.CustomGeoResource;
 import org.lins.mmmjjkx.rykenslimefuncustomizer.objects.customs.CustomItem;
 import org.lins.mmmjjkx.rykenslimefuncustomizer.objects.customs.CustomMenu;
-import org.lins.mmmjjkx.rykenslimefuncustomizer.utils.CommonUtils;
 
+import java.io.File;
 import java.util.ArrayList;
 import java.util.List;
 
@@ -28,6 +26,8 @@ public class ProjectAddon {
     private @NotNull final String addonVersion;
     private @NotNull final List<String> pluginDepends;
     private @NotNull final List<String> depends;
+
+    private @NotNull final File scriptsFolder;
 
     //groups.yml
     private List<ItemGroup> itemGroups = new ArrayList<>();
@@ -46,9 +46,4 @@ public class ProjectAddon {
 
     //researches.yml
     private List<Research> researches = new ArrayList<>();
-
-    @Nullable
-    public ItemGroup getItemGroup(String id) {
-        return CommonUtils.getIf(itemGroups, i -> i.getKey().getKey().equalsIgnoreCase(id));
-    }
 }

@@ -18,10 +18,11 @@ import java.util.function.BiFunction;
 
 public class JavaScriptEval {
     private final ScriptEngine jsEngine;
+    private final File js;
     private boolean failed = false;
 
-
     public JavaScriptEval(File js) {
+        this.js = js;
         ScriptEngineManager sem = new ScriptEngineManager();
         jsEngine = sem.getEngineByName("javascript");
         String context;
@@ -56,9 +57,10 @@ public class JavaScriptEval {
                 try {
                     in.invokeFunction(funName, args);
                 } catch (ScriptException e) {
+                    ExceptionHandler.handleError("在运行"+js.getName()+"时发生错误");
                     e.printStackTrace();
                 } catch (NoSuchMethodException e) {
-                    ExceptionHandler.handleError("方法" + funName + "不存在！");
+                    ExceptionHandler.handleError("无法在"+js.getName()+"找到方法" + funName);
                     e.printStackTrace();
                 }
             }

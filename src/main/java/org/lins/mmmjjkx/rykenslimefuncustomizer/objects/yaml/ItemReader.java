@@ -13,10 +13,11 @@ import org.lins.mmmjjkx.rykenslimefuncustomizer.objects.ProjectAddon;
 import org.lins.mmmjjkx.rykenslimefuncustomizer.objects.customs.CustomItem;
 import org.lins.mmmjjkx.rykenslimefuncustomizer.objects.customs.CustomPlaceableItem;
 import org.lins.mmmjjkx.rykenslimefuncustomizer.objects.customs.CustomUnplaceableItem;
-import org.lins.mmmjjkx.rykenslimefuncustomizer.objects.record.CommandOperation;
+import org.lins.mmmjjkx.rykenslimefuncustomizer.objects.js.JavaScriptEval;
 import org.lins.mmmjjkx.rykenslimefuncustomizer.utils.CommonUtils;
 import org.lins.mmmjjkx.rykenslimefuncustomizer.utils.ExceptionHandler;
 
+import java.io.File;
 import java.util.ArrayList;
 import java.util.List;
 
@@ -58,25 +59,33 @@ public class ItemReader extends YamlReader<CustomItem> {
         Pair<ExceptionHandler.HandleResult, ItemGroup> group = ExceptionHandler.handleItemGroupGet(addon, igId);
         if (group.getFirstValue() == ExceptionHandler.HandleResult.FAILED) return null;
         ItemStack[] itemStacks = CommonUtils.readRecipe(section.getConfigurationSection("recipe"));
-        String recipetype = section.getString("recipe_type", "NULL");
+        String recipeType = section.getString("recipe_type", "NULL");
 
         Pair<ExceptionHandler.HandleResult, RecipeType> rt = ExceptionHandler.handleField(
-                "错误的配方类型" + recipetype + "!", "", RecipeType.class, recipetype
+                "错误的配方类型" + recipeType + "!", "", RecipeType.class, recipeType
         );
 
         if (rt.getFirstValue() == ExceptionHandler.HandleResult.FAILED) return null;
         SlimefunItemStack slimefunItemStack = new SlimefunItemStack(s, stack);
 
-        CommandOperationReader cor = new CommandOperationReader(configuration);
-        CommandOperation co = cor.readEach(s, addon);
+        JavaScriptEval eval = null;
+        if (section.contains("script")) {
+            String script = section.getString("script");
+            File file = new File(addon.getScriptsFolder(), script + ".yml");
+            if (!file.exists()) {
+                ExceptionHandler.handleWarning("找不到脚本文件 " + file.getName());
+            } else {
+                eval = new JavaScriptEval(file);
+            }
+        }
 
         CustomItem sfi;
         if (placeable == 1) {
-            sfi = new CustomPlaceableItem(group.getSecondValue(), slimefunItemStack, rt.getSecondValue(), itemStacks);
+            sfi = new CustomPlaceableItem(group.getSecondValue(), slimefunItemStack, rt.getSecondValue(), itemStacks, eval);
         } else {
-            sfi = new CustomUnplaceableItem(group.getSecondValue(), slimefunItemStack, rt.getSecondValue(), itemStacks);
+            sfi = new CustomUnplaceableItem(group.getSecondValue(), slimefunItemStack, rt.getSecondValue(), itemStacks, eval);
         }
-        sfi.addOperation(co);
+
         sfi.register(RykenSlimefunCustomizer.INSTANCE);
         ExceptionHandler.handleItemGroupAddItem(addon, igId, sfi);
         return sfi;

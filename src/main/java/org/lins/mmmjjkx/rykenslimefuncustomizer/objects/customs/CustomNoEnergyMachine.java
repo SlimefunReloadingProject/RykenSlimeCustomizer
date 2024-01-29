@@ -21,8 +21,7 @@ import org.lins.mmmjjkx.rykenslimefuncustomizer.objects.record.MachineRecord;
 
 import java.util.List;
 import java.util.function.BiConsumer;
-import java.util.function.Consumer;
-import java.util.function.Function;
+import java.util.function.Supplier;
 
 public class CustomNoEnergyMachine extends AbstractEmptyMachine {
     private final List<Integer> input;
@@ -32,8 +31,10 @@ public class CustomNoEnergyMachine extends AbstractEmptyMachine {
     private final MachineProcessor<MachineOperation> processor;
     private final CustomMenu menu;
 
+    private boolean worked = false;
+
     public CustomNoEnergyMachine(ItemGroup itemGroup, SlimefunItemStack item, RecipeType recipeType, ItemStack[] recipe, CustomMenu menu,
-                                 List<Integer> input, List<Integer> output, MachineRecord record, JavaScriptEval eval) {
+                                 List<Integer> input, List<Integer> output, MachineRecord record, JavaScriptEval eval, int work) {
         super(itemGroup, item, recipeType, recipe);
 
         this.input = input;
@@ -43,7 +44,13 @@ public class CustomNoEnergyMachine extends AbstractEmptyMachine {
         this.menu = menu;
         this.processor = new MachineProcessor<>(this);
 
+        this.menu.addMenuClickHandler(work, (p, slot, is, ca) -> {
+           this.worked = true;
+           return false;
+        });
+
         this.eval.addThing("addClickHandler", (BiConsumer<Integer, ChestMenu.MenuClickHandler>) CustomNoEnergyMachine.this.menu::addMenuClickHandler);
+        this.eval.addThing("isWorking", (Supplier<Boolean>) () -> worked);
     }
 
     @Override
