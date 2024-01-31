@@ -2,6 +2,14 @@ name: RykenSlimefunCustomizer
 version: '${project.version}'
 main: org.lins.mmmjjkx.rykenslimefuncustomizer.RykenSlimefunCustomizer
 api-version: '1.18'
-depend: [Slimefun]
+depend: [Slimefun, Polymer]
+softdepend: [PlaceholderAPI]
 authors: [mmmjjkx, hitech0926]
-description: An advanced slimefun customize plugin
+description: An advanced Slimefun customize plugin
+commands:
+  rykenslimecustomizer:
+    aliases: ["rsc"]
+    permission: rsc.command
+permissions:
+  rsc.command:
+    default: op

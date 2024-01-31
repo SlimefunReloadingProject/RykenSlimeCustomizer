@@ -5,9 +5,11 @@ import org.bukkit.configuration.file.YamlConfiguration;
 import org.bukkit.inventory.ItemStack;
 import org.lins.mmmjjkx.rykenslimefuncustomizer.objects.ProjectAddon;
 import org.lins.mmmjjkx.rykenslimefuncustomizer.objects.customs.CustomMenu;
+import org.lins.mmmjjkx.rykenslimefuncustomizer.objects.js.JavaScriptEval;
 import org.lins.mmmjjkx.rykenslimefuncustomizer.utils.CommonUtils;
 import org.lins.mmmjjkx.rykenslimefuncustomizer.utils.ExceptionHandler;
 
+import java.io.File;
 import java.util.ArrayList;
 import java.util.HashMap;
 import java.util.List;
@@ -35,6 +37,9 @@ public class MenuReader extends YamlReader<CustomMenu> {
         ConfigurationSection section = configuration.getConfigurationSection(s);
         if (section == null) return null;
 
+        ExceptionHandler.HandleResult conflict = ExceptionHandler.handleMenuConflict(s, addon);
+        if (conflict == ExceptionHandler.HandleResult.FAILED) return null;
+
         String title = configuration.getString("title", "");
         boolean emptySlotsClickable, playerInvClickable;
         emptySlotsClickable = configuration.getBoolean("emptySlotsClickable", true);
@@ -42,9 +47,20 @@ public class MenuReader extends YamlReader<CustomMenu> {
 
         Map<Integer, ItemStack> slotMap = new HashMap<>();
         ConfigurationSection slots = section.getConfigurationSection("slots");
-        if (slots == null) return new CustomMenu(title, slotMap, emptySlotsClickable, playerInvClickable);
+        if (slots == null) return new CustomMenu(s, title, slotMap, emptySlotsClickable, playerInvClickable, null);
 
         int progress = -1;
+
+        JavaScriptEval eval = null;
+        if (section.contains("script")) {
+            String script = section.getString("script", "");
+            File file = new File(addon.getScriptsFolder(), script + ".yml");
+            if (!file.exists()) {
+                ExceptionHandler.handleWarning("找不到脚本文件 " + file.getName());
+            } else {
+                eval = new JavaScriptEval(file);
+            }
+        }
 
         for (String slot : slots.getKeys(false)) {
             int realSlot = Integer.parseInt(slot);
@@ -64,6 +80,6 @@ public class MenuReader extends YamlReader<CustomMenu> {
             slotMap.put(realSlot, itemStack);
         }
 
-        return new CustomMenu(title, slotMap, emptySlotsClickable, playerInvClickable, progress);
+        return new CustomMenu(s, title, slotMap, emptySlotsClickable, playerInvClickable, progress, eval);
     }
 }

@@ -18,8 +18,8 @@ import org.bukkit.block.Block;
 import org.bukkit.inventory.ItemStack;
 import org.jetbrains.annotations.NotNull;
 import org.lins.mmmjjkx.rykenslimefuncustomizer.objects.js.JavaScriptEval;
-import org.lins.mmmjjkx.rykenslimefuncustomizer.objects.record.MachineInfo;
-import org.lins.mmmjjkx.rykenslimefuncustomizer.objects.record.MachineRecord;
+import org.lins.mmmjjkx.rykenslimefuncustomizer.objects.machine.MachineInfo;
+import org.lins.mmmjjkx.rykenslimefuncustomizer.objects.machine.MachineRecord;
 
 import java.util.List;
 import java.util.function.BiConsumer;
@@ -46,6 +46,8 @@ public class CustomMachine extends AbstractEmptyMachine implements EnergyNetComp
         this.processor = new MachineProcessor<>(this);
 
         this.eval.addThing("addClickHandler", (BiConsumer<Integer, ChestMenu.MenuClickHandler>) CustomMachine.this.menu::addMenuClickHandler);
+
+        this.createPreset(item.getItem(), menu.getTitle(), menu::setupPreset);
     }
 
     @Override

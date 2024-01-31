@@ -1,4 +1,4 @@
-package org.lins.mmmjjkx.rykenslimefuncustomizer.objects.record;
+package org.lins.mmmjjkx.rykenslimefuncustomizer.objects.machine;
 
 import io.github.thebusybiscuit.slimefun4.core.machines.MachineOperation;
 

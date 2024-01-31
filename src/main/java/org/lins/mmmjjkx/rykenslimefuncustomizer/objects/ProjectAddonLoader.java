@@ -5,10 +5,7 @@ import org.bukkit.Bukkit;
 import org.bukkit.configuration.file.YamlConfiguration;
 import org.jetbrains.annotations.Nullable;
 import org.lins.mmmjjkx.rykenslimefuncustomizer.RykenSlimefunCustomizer;
-import org.lins.mmmjjkx.rykenslimefuncustomizer.objects.yaml.GeoResourceReader;
-import org.lins.mmmjjkx.rykenslimefuncustomizer.objects.yaml.ItemGroupReader;
-import org.lins.mmmjjkx.rykenslimefuncustomizer.objects.yaml.ItemReader;
-import org.lins.mmmjjkx.rykenslimefuncustomizer.objects.yaml.MenuReader;
+import org.lins.mmmjjkx.rykenslimefuncustomizer.objects.yaml.*;
 import org.lins.mmmjjkx.rykenslimefuncustomizer.utils.Constants;
 import org.lins.mmmjjkx.rykenslimefuncustomizer.utils.ExceptionHandler;
 
@@ -29,7 +26,7 @@ public class ProjectAddonLoader {
     @Nullable
     public ProjectAddon load() {
         ProjectAddon addon = null;
-        YamlConfiguration info = YamlConfiguration.loadConfiguration(new File(file, Constants.INFO_FILE));
+        YamlConfiguration info = doFileLoad(file, Constants.INFO_FILE);
         if (info.contains("name") && info.contains("version") && info.contains("id")) {
             String name = info.getString("name");
             String version = info.getString("version", "1.0");
@@ -67,30 +64,48 @@ public class ProjectAddonLoader {
 
             File scriptsFolder = new File(file, "scripts");
             if (!scriptsFolder.exists()) {
+                //noinspection ResultOfMethodCallIgnored
                 scriptsFolder.mkdirs();
             }
 
-            addon = new ProjectAddon(name, version, id, pluginDepends, depends, scriptsFolder);
+            addon = new ProjectAddon(id, name, version, pluginDepends, depends, scriptsFolder);
         } else {
             ExceptionHandler.handleError("在名称为 " + file.getName() + "的文件夹中有无效的项目信息，导致此附属无法加载！");
             return addon;
         }
 
-        YamlConfiguration groups = YamlConfiguration.loadConfiguration(new File(file, Constants.GROUPS_FILE));
+        YamlConfiguration groups = doFileLoad(file, Constants.GROUPS_FILE);
         ItemGroupReader reader = new ItemGroupReader(groups);
         addon.setItemGroups(reader.readAll(addon));
         //
-        YamlConfiguration items = YamlConfiguration.loadConfiguration(new File(file, Constants.ITEMS_FILE));
+        YamlConfiguration items = doFileLoad(file, Constants.ITEMS_FILE);
         ItemReader itemReader = new ItemReader(items);
         addon.setItems(itemReader.readAll(addon));
         //
-        YamlConfiguration geo_resources = YamlConfiguration.loadConfiguration(new File(file, Constants.GEO_RES_FILE));
+        YamlConfiguration geo_resources = doFileLoad(file, Constants.GEO_RES_FILE);
         GeoResourceReader resourceReader = new GeoResourceReader(geo_resources);
         addon.setGeoResources(resourceReader.readAll(addon));
         //
-        YamlConfiguration menus = YamlConfiguration.loadConfiguration(new File(file, Constants.MENUS_FILE));
+        YamlConfiguration researches = doFileLoad(file, Constants.RESEARCHES_FILE);
+        ResearchReader researchReader = new ResearchReader(researches);
+        addon.setResearches(researchReader.readAll(addon));
+        //
+        YamlConfiguration menus = doFileLoad(file, Constants.MENUS_FILE);
         MenuReader menuReader = new MenuReader(menus);
         addon.setMenus(menuReader.readAll(addon));
+        //
+        YamlConfiguration machines = doFileLoad(file, Constants.MACHINES_FILE);
+        MachineReader machineReader = new MachineReader(machines);
+        addon.setMachines(machineReader.readAll(addon));
+
         return addon;
+    }
+    
+    private YamlConfiguration doFileLoad(File dir, String file) {
+        File dest = new File(dir, file);
+        if (!dest.exists()) {
+            return new YamlConfiguration();
+        }
+        return YamlConfiguration.loadConfiguration(dest);
     }
 }

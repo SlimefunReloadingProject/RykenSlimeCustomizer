@@ -95,9 +95,14 @@ public class CommonUtils {
             return null;
         }
 
+        if (!section.contains("material")) {
+            ExceptionHandler.handleError("请先设置一个材料！");
+            return null;
+        }
+
         String type = section.getString("material_type", "mc");
-        String material = section.getString("material", "");
-        int amount = section.getInt("amount");
+        String material = section.getString("material","");
+        int amount = section.getInt("amount", 1);
         List<String> lore = section.getStringList("lore");
         String name = section.getString("name");
         boolean glow = section.getBoolean("glow", false);

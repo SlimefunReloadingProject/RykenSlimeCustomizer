@@ -70,7 +70,7 @@ public class ItemReader extends YamlReader<CustomItem> {
 
         JavaScriptEval eval = null;
         if (section.contains("script")) {
-            String script = section.getString("script");
+            String script = section.getString("script", "");
             File file = new File(addon.getScriptsFolder(), script + ".yml");
             if (!file.exists()) {
                 ExceptionHandler.handleWarning("找不到脚本文件 " + file.getName());

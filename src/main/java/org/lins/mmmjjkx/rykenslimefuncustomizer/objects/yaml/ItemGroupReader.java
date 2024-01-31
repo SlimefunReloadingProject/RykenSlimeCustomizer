@@ -55,18 +55,14 @@ public class ItemGroupReader extends YamlReader<ItemGroup> {
         ItemGroup group = switch (type) {
             default -> new ItemGroup(key, stack);
             case "sub" -> {
-                NamespacedKey parent = NamespacedKey.fromString(section.getString("parent", ""));
-                if (parent == null) {
-                    ExceptionHandler.handleError("无法在附属"+addon.getAddonName()+"中加载物品组"+s+": 错误的命名空间键格式！");
-                    yield null;
-                }
+                NamespacedKey parent = new NamespacedKey(RykenSlimefunCustomizer.INSTANCE, section.getString("parent", "").toLowerCase());
                 ItemGroup raw = CommonUtils.getIf(Slimefun.getRegistry().getAllItemGroups(), ig -> ig.getKey().equals(parent));
                 if (raw == null) {
-                    ExceptionHandler.handleError("无法在附属"+addon.getAddonName()+"中加载物品组"+s+": 无法找到父物品组" + parent);
+                    ExceptionHandler.handleError("无法在附属"+addon.getAddonName()+"中加载物品组"+s+": 无法找到父物品组" + parent.getKey());
                     yield null;
                 }
                 if (!(raw instanceof NestedItemGroup nig)) {
-                    ExceptionHandler.handleError("无法在附属"+addon.getAddonName()+"中加载物品组"+s+": 物品组" + parent + "不是一个嵌套物品组");
+                    ExceptionHandler.handleError("无法在附属"+addon.getAddonName()+"中加载物品组"+s+": 物品组" + parent.getKey() + "不是一个嵌套物品组");
                     yield null;
                 }
                 yield new SubItemGroup(key, nig, stack);

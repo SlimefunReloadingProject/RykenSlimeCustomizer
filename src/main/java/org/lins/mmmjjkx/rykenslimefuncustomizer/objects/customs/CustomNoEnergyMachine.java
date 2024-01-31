@@ -16,8 +16,7 @@ import org.bukkit.block.Block;
 import org.bukkit.inventory.ItemStack;
 import org.jetbrains.annotations.NotNull;
 import org.lins.mmmjjkx.rykenslimefuncustomizer.objects.js.JavaScriptEval;
-import org.lins.mmmjjkx.rykenslimefuncustomizer.objects.record.MachineInfo;
-import org.lins.mmmjjkx.rykenslimefuncustomizer.objects.record.MachineRecord;
+import org.lins.mmmjjkx.rykenslimefuncustomizer.objects.machine.SmallerMachineInfo;
 
 import java.util.List;
 import java.util.function.BiConsumer;
@@ -26,7 +25,6 @@ import java.util.function.Supplier;
 public class CustomNoEnergyMachine extends AbstractEmptyMachine {
     private final List<Integer> input;
     private final List<Integer> output;
-    private final MachineRecord record;
     private final JavaScriptEval eval;
     private final MachineProcessor<MachineOperation> processor;
     private final CustomMenu menu;
@@ -34,12 +32,11 @@ public class CustomNoEnergyMachine extends AbstractEmptyMachine {
     private boolean worked = false;
 
     public CustomNoEnergyMachine(ItemGroup itemGroup, SlimefunItemStack item, RecipeType recipeType, ItemStack[] recipe, CustomMenu menu,
-                                 List<Integer> input, List<Integer> output, MachineRecord record, JavaScriptEval eval, int work) {
+                                 List<Integer> input, List<Integer> output, JavaScriptEval eval, int work) {
         super(itemGroup, item, recipeType, recipe);
 
         this.input = input;
         this.output = output;
-        this.record = record;
         this.eval = eval;
         this.menu = menu;
         this.processor = new MachineProcessor<>(this);
@@ -62,7 +59,7 @@ public class CustomNoEnergyMachine extends AbstractEmptyMachine {
 
     protected void tick(Block b, SlimefunItem item, SlimefunBlockData data) {
         BlockMenu blockMenu = StorageCacheUtils.getMenu(b.getLocation());
-        MachineInfo info = new MachineInfo(blockMenu, data, item, b, record.totalTicks(), record.getProgress(), processor, record);
+        SmallerMachineInfo info = new SmallerMachineInfo(blockMenu, data, item, b, processor);
         eval.evalFunction("tick", info);
     }
 

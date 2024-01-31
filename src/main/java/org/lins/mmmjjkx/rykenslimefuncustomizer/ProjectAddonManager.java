@@ -13,11 +13,10 @@ import java.util.Map;
 public class ProjectAddonManager {
     private final Map<String, ProjectAddon> projectAddons = new HashMap<>();
 
-    public ProjectAddonManager(RykenSlimefunCustomizer instance) {
-        setup(instance);
+    public ProjectAddonManager() {
     }
 
-    private void setup(Plugin inst) {
+    public void setup(Plugin inst) {
         File addons = new File(inst.getDataFolder(), "addons");
         if (!addons.exists()) {
             addons.mkdirs();
@@ -34,6 +33,11 @@ public class ProjectAddonManager {
                 projectAddons.put(addon.getAddonId(), addon);
             }
         }
+    }
+
+    public void reload(Plugin plugin) {
+        projectAddons.clear();
+        setup(plugin);
     }
 
     public boolean isLoaded(String id) {

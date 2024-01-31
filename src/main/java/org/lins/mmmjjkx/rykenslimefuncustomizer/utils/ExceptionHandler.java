@@ -9,6 +9,7 @@ import net.kyori.adventure.text.serializer.legacy.LegacyComponentSerializer;
 import org.jetbrains.annotations.NotNull;
 import org.lins.mmmjjkx.rykenslimefuncustomizer.RykenSlimefunCustomizer;
 import org.lins.mmmjjkx.rykenslimefuncustomizer.objects.ProjectAddon;
+import org.lins.mmmjjkx.rykenslimefuncustomizer.objects.customs.CustomMenu;
 
 import java.lang.reflect.Field;
 import java.lang.reflect.InvocationTargetException;
@@ -27,8 +28,17 @@ public class ExceptionHandler {
         return HandleResult.SUCCESS;
     }
 
+    public static HandleResult handleMenuConflict(String id, ProjectAddon addon) {
+        CustomMenu menu = CommonUtils.getIf(addon.getMenus(), m -> m.getId().equalsIgnoreCase(id));
+        if (menu != null) {
+            logger.error(serializer.deserialize("&4ERROR | 菜单ID冲突：已存在菜单ID为"+id+"的菜单"));
+            return HandleResult.FAILED;
+        }
+        return HandleResult.SUCCESS;
+    }
+
     public static HandleResult handleGroupIdConflict(String id) {
-        ItemGroup ig = CommonUtils.getIf(Slimefun.getRegistry().getAllItemGroups(), i -> i.getKey().getKey().equals(id));
+        ItemGroup ig = CommonUtils.getIf(Slimefun.getRegistry().getAllItemGroups(), i -> i.getKey().getKey().equalsIgnoreCase(id));
         if (ig != null) {
             if (ig.getAddon() != null) {
                 logger.error(serializer.deserialize("&4ERROR | ID冲突：" + id + "与物品组 " + ig.getKey().getKey() + "(来自"+ig.getAddon().getName()+")冲突"));
