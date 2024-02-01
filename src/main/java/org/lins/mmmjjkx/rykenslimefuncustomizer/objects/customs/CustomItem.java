@@ -1,6 +1,7 @@
 package org.lins.mmmjjkx.rykenslimefuncustomizer.objects.customs;
 
 import io.github.thebusybiscuit.slimefun4.api.items.ItemGroup;
+import io.github.thebusybiscuit.slimefun4.api.items.ItemHandler;
 import io.github.thebusybiscuit.slimefun4.api.items.SlimefunItem;
 import io.github.thebusybiscuit.slimefun4.api.items.SlimefunItemStack;
 import io.github.thebusybiscuit.slimefun4.api.recipes.RecipeType;
@@ -18,13 +19,15 @@ import java.util.Map;
 public class CustomItem extends SlimefunItem {
     private static final Map<String, String> tempValue = new HashMap<>();
 
-    public CustomItem(ItemGroup itemGroup, SlimefunItemStack item, RecipeType recipeType, ItemStack[] recipe, @Nullable JavaScriptEval eval) {
+    public CustomItem(ItemGroup itemGroup, SlimefunItemStack item, RecipeType recipeType, ItemStack[] recipe, @Nullable JavaScriptEval eval, ItemHandler... handlers) {
         super(itemGroup, item, recipeType, recipe);
 
-        register(RykenSlimefunCustomizer.INSTANCE);
+        this.addItemHandler(handlers);
 
         if (eval != null) {
             this.addItemHandler((ItemUseHandler) e -> eval.evalFunction("onUse", e));
         }
+
+        register(RykenSlimefunCustomizer.INSTANCE);
     }
 }

@@ -1,7 +1,9 @@
 package org.lins.mmmjjkx.rykenslimefuncustomizer.objects;
 
 import io.github.thebusybiscuit.slimefun4.api.items.ItemGroup;
+import io.github.thebusybiscuit.slimefun4.api.items.SlimefunItem;
 import io.github.thebusybiscuit.slimefun4.api.researches.Research;
+import io.github.thebusybiscuit.slimefun4.implementation.Slimefun;
 import lombok.AccessLevel;
 import lombok.Getter;
 import lombok.RequiredArgsConstructor;
@@ -46,4 +48,18 @@ public class ProjectAddon {
 
     //researches.yml
     private List<Research> researches = new ArrayList<>();
+
+    public void unregister() {
+        itemGroups.forEach(ig -> Slimefun.getRegistry().getAllItemGroups().remove(ig));
+        researches.forEach(Research::disable);
+        menus.forEach(m -> Slimefun.getRegistry().getMenuPresets().remove(m.getID()));
+        geoResources.forEach(this::unregisterItem);
+        items.forEach(this::unregisterItem);
+        machines.forEach(this::unregisterItem);
+    }
+
+    public void unregisterItem(SlimefunItem item) {
+        item.disable();
+        Slimefun.getRegistry().getDisabledSlimefunItems().remove(item);
+    }
 }

@@ -71,7 +71,7 @@ public class ItemReader extends YamlReader<CustomItem> {
         JavaScriptEval eval = null;
         if (section.contains("script")) {
             String script = section.getString("script", "");
-            File file = new File(addon.getScriptsFolder(), script + ".yml");
+            File file = new File(addon.getScriptsFolder(), script + ".js");
             if (!file.exists()) {
                 ExceptionHandler.handleWarning("找不到脚本文件 " + file.getName());
             } else {
@@ -86,7 +86,6 @@ public class ItemReader extends YamlReader<CustomItem> {
             sfi = new CustomUnplaceableItem(group.getSecondValue(), slimefunItemStack, rt.getSecondValue(), itemStacks, eval);
         }
 
-        sfi.register(RykenSlimefunCustomizer.INSTANCE);
         ExceptionHandler.handleItemGroupAddItem(addon, igId, sfi);
         return sfi;
     }

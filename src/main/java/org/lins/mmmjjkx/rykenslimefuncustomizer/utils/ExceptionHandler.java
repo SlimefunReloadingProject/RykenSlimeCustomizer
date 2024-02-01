@@ -29,7 +29,7 @@ public class ExceptionHandler {
     }
 
     public static HandleResult handleMenuConflict(String id, ProjectAddon addon) {
-        CustomMenu menu = CommonUtils.getIf(addon.getMenus(), m -> m.getId().equalsIgnoreCase(id));
+        CustomMenu menu = CommonUtils.getIf(addon.getMenus(), m -> m.getID().equalsIgnoreCase(id));
         if (menu != null) {
             logger.error(serializer.deserialize("&4ERROR | 菜单ID冲突：已存在菜单ID为"+id+"的菜单"));
             return HandleResult.FAILED;

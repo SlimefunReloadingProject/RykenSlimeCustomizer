@@ -1,0 +1,36 @@
+example_normal_group:
+  item:
+    name: "&a示例普通物品组"
+    material: GRASS_BLOCK
+    amount: 1
+
+example_parent_group:
+  type: "nested"
+  item:
+    name: "&a示例父物品组"
+    material: OAK_PLANKS
+    amount: 1
+example_sub_group:
+  type: "sub"
+  parent: "example_parent_group"
+  item:
+    name: "&e示例子物品组"
+    material: REDSTONE
+    amount: 1
+    lore: 
+      - "&aHello?"
+example_seasonal_group:
+  type: "seasonal"
+  month: 1
+  item:
+    name: "&b示例季节性物品组"
+    material: OAK_LEAVES
+    amount: 1
+example_locked_group:
+  type: "locked"
+  parents:
+    - slimefun:basic_machines
+  item:
+    name: "&l示例锁定物品组"
+    material: REPEATER
+    amount: 1       

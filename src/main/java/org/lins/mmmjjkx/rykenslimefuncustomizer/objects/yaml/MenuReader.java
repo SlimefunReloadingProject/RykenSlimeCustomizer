@@ -14,6 +14,7 @@ import java.util.ArrayList;
 import java.util.HashMap;
 import java.util.List;
 import java.util.Map;
+import java.util.stream.IntStream;
 
 public class MenuReader extends YamlReader<CustomMenu> {
     public MenuReader(YamlConfiguration config) {
@@ -41,20 +42,18 @@ public class MenuReader extends YamlReader<CustomMenu> {
         if (conflict == ExceptionHandler.HandleResult.FAILED) return null;
 
         String title = configuration.getString("title", "");
-        boolean emptySlotsClickable, playerInvClickable;
-        emptySlotsClickable = configuration.getBoolean("emptySlotsClickable", true);
-        playerInvClickable = configuration.getBoolean("playerInvClickable", true);
+        boolean playerInvClickable = configuration.getBoolean("playerInvClickable", true);
 
         Map<Integer, ItemStack> slotMap = new HashMap<>();
         ConfigurationSection slots = section.getConfigurationSection("slots");
-        if (slots == null) return new CustomMenu(s, title, slotMap, emptySlotsClickable, playerInvClickable, null);
+        if (slots == null) return new CustomMenu(s, title, slotMap, playerInvClickable, null);
 
         int progress = -1;
 
         JavaScriptEval eval = null;
         if (section.contains("script")) {
             String script = section.getString("script", "");
-            File file = new File(addon.getScriptsFolder(), script + ".yml");
+            File file = new File(addon.getScriptsFolder(), script + ".js");
             if (!file.exists()) {
                 ExceptionHandler.handleWarning("找不到脚本文件 " + file.getName());
             } else {
@@ -63,23 +62,47 @@ public class MenuReader extends YamlReader<CustomMenu> {
         }
 
         for (String slot : slots.getKeys(false)) {
-            int realSlot = Integer.parseInt(slot);
-            if (realSlot > 53 || realSlot < 0) {
-                ExceptionHandler.handleWarning("在菜单"+s+"中，有位于槽位大于53或小于0的物品，跳过对此物品的读取。");
-                continue;
+            try {
+                int realSlot = Integer.parseInt(slot);
+                if (realSlot > 53 || realSlot < 0) {
+                    ExceptionHandler.handleWarning("在菜单"+s+"中有位于槽位大于53或小于0的物品，跳过对此物品的读取。");
+                    continue;
+                }
+                ConfigurationSection item = slots.getConfigurationSection(String.valueOf(realSlot));
+                ItemStack itemStack = CommonUtils.readItem(item);
+                if (itemStack == null) {
+                    ExceptionHandler.handleWarning("在菜单"+s+"中有位于槽位"+realSlot+"的物品格式错误或输入了错误的数据无法读取，跳过对此物品的读取。");
+                    continue;
+                }
+                if (section.getBoolean("progressbar", false)) {
+                    progress = realSlot;
+                }
+                slotMap.put(realSlot, itemStack);
+            } catch (NumberFormatException e) {
+                String[] range = slot.split("-");
+                if (range.length != 2) {
+                    ExceptionHandler.handleError("在菜单"+s+"中有错误的槽位区间表达式" + slot);
+                    continue;
+                }
+                ConfigurationSection item = slots.getConfigurationSection(slot);
+                ItemStack stack = CommonUtils.readItem(item);
+                if (stack == null) {
+                    ExceptionHandler.handleWarning("在菜单"+s+"中有位于区间槽位"+slot+"的物品格式错误或输入了错误的数据无法读取，跳过对此物品的读取。");
+                    continue;
+                }
+                IntStream intStream = IntStream.rangeClosed(Integer.parseInt(range[0]), Integer.parseInt(range[1]));
+                intStream.forEach(i -> {
+                    if (i > 53 || i < 0) {
+                        ExceptionHandler.handleWarning("在菜单"+s+"中有位于区间槽位大于53或小于0，跳过对此槽位放置物品。");
+                        return;
+                    }
+                    slotMap.put(i, stack);
+                });
             }
-            ConfigurationSection item = slots.getConfigurationSection(String.valueOf(realSlot));
-            ItemStack itemStack = CommonUtils.readItem(item);
-            if (itemStack == null) {
-                ExceptionHandler.handleWarning("在菜单"+s+"中，有位于槽位"+realSlot+"的物品格式错误或输入了错误的数据无法读取，跳过对此物品的读取。");
-                continue;
-            }
-            if (section.getBoolean("progressbar", false)) {
-                progress = realSlot;
-            }
-            slotMap.put(realSlot, itemStack);
         }
 
-        return new CustomMenu(s, title, slotMap, emptySlotsClickable, playerInvClickable, progress, eval);
+        CustomMenu menu = new CustomMenu(s, title, slotMap, playerInvClickable, progress, eval);;
+        menu.outSideInit();
+        return menu;
     }
 }

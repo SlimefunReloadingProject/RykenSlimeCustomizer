@@ -13,8 +13,7 @@ import java.util.Map;
 public class ProjectAddonManager {
     private final Map<String, ProjectAddon> projectAddons = new HashMap<>();
 
-    public ProjectAddonManager() {
-    }
+    public ProjectAddonManager() {}
 
     public void setup(Plugin inst) {
         File addons = new File(inst.getDataFolder(), "addons");
@@ -36,6 +35,9 @@ public class ProjectAddonManager {
     }
 
     public void reload(Plugin plugin) {
+        for (ProjectAddon addon : projectAddons.values()) {
+            addon.unregister();
+        }
         projectAddons.clear();
         setup(plugin);
     }

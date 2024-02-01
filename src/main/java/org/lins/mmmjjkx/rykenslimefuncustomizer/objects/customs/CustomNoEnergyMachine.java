@@ -6,6 +6,8 @@ import io.github.thebusybiscuit.slimefun4.api.items.ItemGroup;
 import io.github.thebusybiscuit.slimefun4.api.items.SlimefunItem;
 import io.github.thebusybiscuit.slimefun4.api.items.SlimefunItemStack;
 import io.github.thebusybiscuit.slimefun4.api.recipes.RecipeType;
+import io.github.thebusybiscuit.slimefun4.core.handlers.BlockBreakHandler;
+import io.github.thebusybiscuit.slimefun4.core.handlers.BlockPlaceHandler;
 import io.github.thebusybiscuit.slimefun4.core.handlers.BlockUseHandler;
 import io.github.thebusybiscuit.slimefun4.core.machines.MachineOperation;
 import io.github.thebusybiscuit.slimefun4.core.machines.MachineProcessor;
@@ -13,14 +15,17 @@ import me.mrCookieSlime.CSCoreLibPlugin.general.Inventory.ChestMenu;
 import me.mrCookieSlime.Slimefun.Objects.handlers.BlockTicker;
 import me.mrCookieSlime.Slimefun.api.inventory.BlockMenu;
 import org.bukkit.block.Block;
+import org.bukkit.event.block.BlockBreakEvent;
+import org.bukkit.event.block.BlockPlaceEvent;
 import org.bukkit.inventory.ItemStack;
 import org.jetbrains.annotations.NotNull;
+import org.jetbrains.annotations.Nullable;
 import org.lins.mmmjjkx.rykenslimefuncustomizer.objects.js.JavaScriptEval;
 import org.lins.mmmjjkx.rykenslimefuncustomizer.objects.machine.SmallerMachineInfo;
 
 import java.util.List;
 import java.util.function.BiConsumer;
-import java.util.function.Supplier;
+import java.util.function.Consumer;
 
 public class CustomNoEnergyMachine extends AbstractEmptyMachine {
     private final List<Integer> input;
@@ -32,7 +37,7 @@ public class CustomNoEnergyMachine extends AbstractEmptyMachine {
     private boolean worked = false;
 
     public CustomNoEnergyMachine(ItemGroup itemGroup, SlimefunItemStack item, RecipeType recipeType, ItemStack[] recipe, CustomMenu menu,
-                                 List<Integer> input, List<Integer> output, JavaScriptEval eval, int work) {
+                                 List<Integer> input, List<Integer> output, @Nullable JavaScriptEval eval, int work) {
         super(itemGroup, item, recipeType, recipe);
 
         this.input = input;
@@ -41,26 +46,66 @@ public class CustomNoEnergyMachine extends AbstractEmptyMachine {
         this.menu = menu;
         this.processor = new MachineProcessor<>(this);
 
-        this.menu.addMenuClickHandler(work, (p, slot, is, ca) -> {
-           this.worked = true;
-           return false;
-        });
+        if (menu != null) {
+            this.menu.addMenuClickHandler(work, (p, slot, is, ca) -> {
+                this.worked = true;
+                return false;
+            });
+            if (this.eval != null) {
+                this.eval.addThing("addClickHandler", (BiConsumer<Integer, ChestMenu.MenuClickHandler>) CustomNoEnergyMachine.this.menu::addMenuClickHandler);
+                this.eval.addThing("setWorking", (Consumer<Boolean>) b -> worked = b);
+                this.eval.addThing("working", worked);
 
-        this.eval.addThing("addClickHandler", (BiConsumer<Integer, ChestMenu.MenuClickHandler>) CustomNoEnergyMachine.this.menu::addMenuClickHandler);
-        this.eval.addThing("isWorking", (Supplier<Boolean>) () -> worked);
+                if (this.eval.hasFunction("onUse", 1)) {
+                    addItemHandler((BlockUseHandler) e -> this.eval.evalFunction("onUse", e));
+                }
+
+                if (this.eval.hasFunction("onBreak", 3)) {
+                    addItemHandler(new BlockBreakHandler(false, false) {
+                        @Override
+                        public void onPlayerBreak(@NotNull BlockBreakEvent e, @NotNull ItemStack is, @NotNull List<ItemStack> list) {
+                            CustomNoEnergyMachine.this.eval.evalFunction("onBreak", e, is, list);
+                        }
+                    });
+                }
+
+                if (this.eval.hasFunction("onPlace", 1)) {
+                    addItemHandler(new BlockPlaceHandler(false) {
+                        @Override
+                        public void onPlayerPlace(@NotNull BlockPlaceEvent e) {
+                            CustomNoEnergyMachine.this.eval.evalFunction("onBreak", e);
+                        }
+                    });
+                }
+            }
+        }
+
+        this.addItemHandler(
+                new BlockBreakHandler(false, false) {
+                    @Override
+                    public void onPlayerBreak(@NotNull BlockBreakEvent event, @NotNull ItemStack item, @NotNull List<ItemStack> drops) {
+                        BlockMenu blockMenu = StorageCacheUtils.getMenu(event.getBlock().getLocation());
+                        if (blockMenu != null) {
+                            blockMenu.dropItems(blockMenu.getLocation(), getInputSlots());
+                            blockMenu.dropItems(blockMenu.getLocation(), getOutputSlots());
+                        }
+                    }
+                }
+        );
     }
 
     @Override
     public void preRegister() {
         super.preRegister();
-        this.addItemHandler((BlockUseHandler) e -> menu.open(e.getPlayer()));
         this.addItemHandler(getBlockTicker());
     }
 
     protected void tick(Block b, SlimefunItem item, SlimefunBlockData data) {
-        BlockMenu blockMenu = StorageCacheUtils.getMenu(b.getLocation());
-        SmallerMachineInfo info = new SmallerMachineInfo(blockMenu, data, item, b, processor);
-        eval.evalFunction("tick", info);
+        if (eval != null) {
+            BlockMenu blockMenu = StorageCacheUtils.getMenu(b.getLocation());
+            SmallerMachineInfo info = new SmallerMachineInfo(blockMenu, data, item, b, processor);
+            eval.evalFunction("tick", info);
+        }
     }
 
     @Override

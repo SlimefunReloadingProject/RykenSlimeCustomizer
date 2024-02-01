@@ -5,10 +5,10 @@ import io.github.thebusybiscuit.slimefun4.implementation.Slimefun;
 import org.bukkit.Bukkit;
 import org.bukkit.Location;
 import org.lins.mmmjjkx.rykenslimefuncustomizer.utils.ExceptionHandler;
+import org.openjdk.nashorn.api.scripting.NashornScriptEngineFactory;
 
 import javax.script.Invocable;
 import javax.script.ScriptEngine;
-import javax.script.ScriptEngineManager;
 import javax.script.ScriptException;
 import java.io.File;
 import java.io.IOException;
@@ -23,8 +23,7 @@ public class JavaScriptEval {
 
     public JavaScriptEval(File js) {
         this.js = js;
-        ScriptEngineManager sem = new ScriptEngineManager();
-        jsEngine = sem.getEngineByName("javascript");
+        jsEngine = new NashornScriptEngineFactory().getScriptEngine();
         String context;
         try {
             context = Files.readString(js.toPath(), StandardCharsets.UTF_8);
@@ -51,6 +50,20 @@ public class JavaScriptEval {
         jsEngine.put("getData", (BiFunction<Location, String, String>) StorageCacheUtils::getData);
     }
 
+    public boolean hasFunction(String funName, int argSize) {
+        if (jsEngine instanceof Invocable in) {
+            try {
+                in.invokeFunction(funName, new Object[argSize]);
+                return true;
+            } catch (NoSuchMethodException e) {
+                return false;
+            } catch (ScriptException e) {
+                return true;
+            }
+        }
+        return false;
+    }
+
     public void evalFunction(String funName, Object... args) {
         if (!failed) {
             if (jsEngine instanceof Invocable in) {
@@ -63,6 +76,29 @@ public class JavaScriptEval {
                     ExceptionHandler.handleError("无法在"+js.getName()+"找到方法" + funName);
                     e.printStackTrace();
                 }
+            }
+        } else {
+            if (!js.exists()) {
+                ExceptionHandler.handleError("找不到"+js.getName());
+                failed = true;
+                return;
+            }
+            String context;
+            try {
+                context = Files.readString(js.toPath(), StandardCharsets.UTF_8);
+                failed = false;
+            } catch (IOException e) {
+                return;
+            }
+            try {
+                jsEngine.eval(context);
+                failed = false;
+            } catch (ScriptException e) {
+                failed = true;
+            }
+
+            if (!failed) {
+                evalFunction(funName, args);
             }
         }
     }

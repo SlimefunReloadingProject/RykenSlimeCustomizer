@@ -72,7 +72,7 @@ public class MachineReader extends YamlReader<AbstractEmptyMachine> {
         JavaScriptEval eval = null;
         if (section.contains("script")) {
             String script = section.getString("script", "");
-            File file = new File(addon.getScriptsFolder(), script + ".yml");
+            File file = new File(addon.getScriptsFolder(), script + ".js");
             if (!file.exists()) {
                 ExceptionHandler.handleWarning("找不到脚本文件 " + file.getName());
             } else {
@@ -82,10 +82,9 @@ public class MachineReader extends YamlReader<AbstractEmptyMachine> {
 
         List<Integer> input = section.getIntegerList("input");
         List<Integer> output = section.getIntegerList("output");
-        String menuId = section.getString("menu", "");
-        CustomMenu menu = CommonUtils.getIf(addon.getMenus(), m -> m.getId().equalsIgnoreCase(menuId));
-        if (menu == null) {
-            ExceptionHandler.handleError("无法加载机器"+s+": 菜单"+menuId+"不存在");
+        CustomMenu menu = CommonUtils.getIf(addon.getMenus(), m -> m.getID().equalsIgnoreCase(s));
+        if (menu == null && section.contains("menu")) {
+            ExceptionHandler.handleError("无法加载机器"+s+": 对应菜单不存在");
             return null;
         }
 
@@ -126,6 +125,9 @@ public class MachineReader extends YamlReader<AbstractEmptyMachine> {
             machine = new CustomNoEnergyMachine(group.getSecondValue(), slimefunItemStack, rt.getSecondValue(), recipe, menu, input, output, eval, workSlot);
         }
 
+        if (menu != null) {
+            menu.setInvb(machine);
+        }
         machine.register(RykenSlimefunCustomizer.INSTANCE);
 
         ExceptionHandler.handleItemGroupAddItem(addon, igId, machine);

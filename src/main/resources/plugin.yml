@@ -6,6 +6,8 @@ depend: [Slimefun, Polymer]
 softdepend: [PlaceholderAPI]
 authors: [mmmjjkx, hitech0926]
 description: An advanced Slimefun customize plugin
+libraries:
+  - org.openjdk.nashorn:nashorn-core:15.4
 commands:
   rykenslimecustomizer:
     aliases: ["rsc"]
