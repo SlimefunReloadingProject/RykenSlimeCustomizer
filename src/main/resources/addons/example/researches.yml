@@ -1,0 +1,7 @@
+example_research:
+  id: 1
+  name: "&a示例研究"
+  levelCost: 10
+  items:
+    - EXAMPLE_ITEM
+  currencyCost: 10 #非必填  

@@ -50,7 +50,7 @@ public class MachineReader extends YamlReader<AbstractEmptyMachine> {
 
         String igId = section.getString("item_group");
         ConfigurationSection item = section.getConfigurationSection("item");
-        ItemStack stack = CommonUtils.readItem(item);
+        ItemStack stack = CommonUtils.readItem(item, false);
 
         if (stack == null) {
             ExceptionHandler.handleError("无法在附属"+addon.getAddonName()+"中加载物品"+s+": 物品为空或格式错误导致无法加载");
@@ -91,7 +91,7 @@ public class MachineReader extends YamlReader<AbstractEmptyMachine> {
         AbstractEmptyMachine machine;
 
         if (section.contains("energy")) {
-            ConfigurationSection energySettings = section.getConfigurationSection("section");
+            ConfigurationSection energySettings = section.getConfigurationSection("energy");
             if (energySettings == null) {
                 ExceptionHandler.handleWarning("无法获取机器"+s+"的能源设置，已转为无电机器");
                 machine = new CustomNoEnergyMachine(group.getSecondValue(), slimefunItemStack, rt.getSecondValue(), recipe, menu, input, output, eval, -1);

@@ -48,7 +48,7 @@ public class ItemReader extends YamlReader<CustomItem> {
 
         String igId = section.getString("item_group");
         ConfigurationSection item = section.getConfigurationSection("item");
-        ItemStack stack = CommonUtils.readItem(item);
+        ItemStack stack = CommonUtils.readItem(item, false);
 
         if (stack == null) {
             ExceptionHandler.handleError("无法在附属"+addon.getAddonName()+"中加载物品"+s+": 物品为空或格式错误导致无法加载");

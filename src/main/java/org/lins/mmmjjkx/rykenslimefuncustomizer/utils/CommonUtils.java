@@ -84,13 +84,13 @@ public class CommonUtils {
         ItemStack[] itemStacks = new ItemStack[9];
         for (int i = 0; i < 9; i ++) {
             ConfigurationSection section1 = section.getConfigurationSection(String.valueOf(i + 1));
-            itemStacks[i] = readItem(section1);
+            itemStacks[i] = readItem(section1, true);
         }
         return itemStacks;
     }
 
     @Nullable
-    public static ItemStack readItem(ConfigurationSection section) {
+    public static ItemStack readItem(ConfigurationSection section, boolean recipe) {
         if (section == null) {
             return null;
         }
@@ -102,11 +102,12 @@ public class CommonUtils {
 
         String type = section.getString("material_type", "mc");
         String material = section.getString("material","");
-        int amount = section.getInt("amount", 1);
         List<String> lore = section.getStringList("lore");
         String name = section.getString("name");
         boolean glow = section.getBoolean("glow", false);
         boolean placeable = section.getBoolean("placeable", false);
+        int modelId = section.getInt("modelId");
+        int amount = section.getInt("amount");
 
         CustomItemStack itemStack;
 
@@ -123,10 +124,8 @@ public class CommonUtils {
                         mat = Material.STONE;
                     } else mat = result.getSecondValue();
                 }
-                CustomItemStack cis = new CustomItemStack(mat, name, lore);
-                cis.setAmount(amount);
 
-                itemStack = cis;
+                itemStack = new CustomItemStack(mat, name, lore);
             }
             case "none" -> {
                 return new ItemStack(Material.AIR, 1);
@@ -134,38 +133,37 @@ public class CommonUtils {
             case "skull_base64","skull" -> {
                 PlayerSkin playerSkin = PlayerSkin.fromBase64(material);
                 ItemStack head = PlayerHead.getItemStack(playerSkin);
-                CustomItemStack cis = new CustomItemStack(head, name, lore.toArray(new String[]{}));
-                cis.setAmount(amount);
 
-                itemStack = cis;
+                itemStack = new CustomItemStack(head, name, lore.toArray(new String[]{}));
             }
             case "skull_url" -> {
                 PlayerSkin playerSkin = PlayerSkin.fromURL(material);
                 ItemStack head = PlayerHead.getItemStack(playerSkin);
-                CustomItemStack cis = new CustomItemStack(head, name, lore.toArray(new String[]{}));
-                cis.setAmount(amount);
 
-                itemStack = cis;
+                itemStack = new CustomItemStack(head, name, lore.toArray(new String[]{}));
             }
             case "slimefun" -> {
                 SlimefunItem sis = SlimefunItem.getById(material);
                 if (sis != null) {
                     ItemStack is = sis.getItem();
-                    CustomItemStack cis = new CustomItemStack(is, name, lore.toArray(new String[]{}));
-                    cis.setAmount(amount);
 
-                    itemStack = cis;
+                    itemStack = new CustomItemStack(is, name, lore.toArray(new String[]{}));
                     break;
                 }
-                CustomItemStack cis2 = new CustomItemStack(Material.STONE, name);
-                cis2.setAmount(amount);
-                itemStack = cis2;
+                itemStack = new CustomItemStack(Material.STONE, name);
             }
         }
 
         ItemMeta meta = itemStack.getItemMeta();
         meta.getPersistentDataContainer().set(PLACEABLE, PersistentDataType.INTEGER, placeable ? 1 : 0);
+        if (modelId > 0) {
+            meta.setCustomModelData(modelId);
+        }
         itemStack.setItemMeta(meta);
+
+        if (recipe) {
+            itemStack.setAmount(amount);
+        }
 
         return glow ? doGlow(itemStack) : itemStack;
     }

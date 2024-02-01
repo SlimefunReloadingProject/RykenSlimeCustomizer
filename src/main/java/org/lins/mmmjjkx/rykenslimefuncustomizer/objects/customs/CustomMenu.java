@@ -18,6 +18,7 @@ import org.lins.mmmjjkx.rykenslimefuncustomizer.objects.js.JavaScriptEval;
 
 import java.util.Map;
 
+@SuppressWarnings("deprecation")
 public class CustomMenu extends BlockMenuPreset {
     private final Map<Integer, ItemStack> slotMap;
     private final JavaScriptEval eval;

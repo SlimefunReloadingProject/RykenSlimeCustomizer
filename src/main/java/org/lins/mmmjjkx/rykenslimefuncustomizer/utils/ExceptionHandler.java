@@ -58,6 +58,14 @@ public class ExceptionHandler {
         logger.error(serializer.deserialize("&4ERROR | " + message));
     }
 
+    /**
+     * 检测后门等
+     * @param message
+     */
+    public static void handleDanger(String message) {
+        logger.error(serializer.deserialize("&c&u&l&bD&4&lA&c&lN&b&lG&4&lE&c&lR | " + message));
+    }
+
     public static <T extends Enum<T>> Pair<HandleResult, T> handleEnumValueOf(String msg, String nullMsg, Class<T> enumClass, String name) {
         try {
             return new Pair<>(HandleResult.SUCCESS, Enum.valueOf(enumClass, name.toUpperCase()));

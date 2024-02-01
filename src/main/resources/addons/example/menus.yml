@@ -1,0 +1,24 @@
+EXAMPLE_MACHINE:
+  title: "&a示例菜单"
+  slots:
+    0-8:
+     name: "&a"
+     material: BLACK_STAINED_GLASS_PANE
+    18-26:
+     name: "&a"
+     material: BLACK_STAINED_GLASS_PANE 
+    27-30:
+     name: "&a"
+     material: BLACK_STAINED_GLASS_PANE  
+    32-35:
+     name: "&a"
+     material: BLACK_STAINED_GLASS_PANE  
+    36-39:
+     name: "&a"
+     material: BLACK_STAINED_GLASS_PANE
+    40:
+     name: "&a一个工作按钮"
+     material: GREEN_STAINED_GLASS_PANE   
+    41-44:
+     name: "&a"
+     material: BLACK_STAINED_GLASS_PANE 

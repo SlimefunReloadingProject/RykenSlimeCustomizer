@@ -10,6 +10,7 @@ import me.mrCookieSlime.Slimefun.Objects.SlimefunItem.interfaces.InventoryBlock;
 import me.mrCookieSlime.Slimefun.Objects.handlers.BlockTicker;
 import org.bukkit.inventory.ItemStack;
 
+@SuppressWarnings("deprecation")
 public abstract class AbstractEmptyMachine extends SlimefunItem implements InventoryBlock, MachineProcessHolder<MachineOperation> {
     public AbstractEmptyMachine(ItemGroup itemGroup, SlimefunItemStack item, RecipeType recipeType, ItemStack[] recipe) {
         super(itemGroup, item, recipeType, recipe);

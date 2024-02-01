@@ -1,0 +1,16 @@
+EXAMPLE_GEO_RESOURCE:
+  item_group: example_normal_group
+  item:
+    name: "&a示例GEO资源"
+    material: DIAMOND
+  recipe_type: GEO_MINER
+  max_deviation: 1
+  obtain_from_geo_miner: true
+  geo_name: "RSC示例GEO资源"
+  supply:
+    world:
+      plains: 10
+      ocean: 5
+      others: 4
+    nether: 1
+    the_end: 2

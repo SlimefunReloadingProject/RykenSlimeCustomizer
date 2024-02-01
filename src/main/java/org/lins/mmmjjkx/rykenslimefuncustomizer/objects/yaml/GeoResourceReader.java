@@ -44,7 +44,7 @@ public class GeoResourceReader extends YamlReader<CustomGeoResource> {
 
             String igId = section.getString("item_group");
             ConfigurationSection item = section.getConfigurationSection("item");
-            ItemStack stack = CommonUtils.readItem(item);
+            ItemStack stack = CommonUtils.readItem(item, false);
             if (stack == null) {
                 ExceptionHandler.handleError("无法在附属"+addon.getAddonName()+"中加载GEO资源"+s+": 物品为空或格式错误导致无法加载");
                 return null;
@@ -80,7 +80,15 @@ public class GeoResourceReader extends YamlReader<CustomGeoResource> {
                 }
                 ConfigurationSection biomes = sup.getConfigurationSection(env);
                 if (biomes == null) return 0;
-                return biomes.getInt(path, 0);
+                if (biomes.contains(path)) {
+                    return biomes.getInt(path, 0);
+                } else {
+                    if (biomes.contains("others")) {
+                        return biomes.getInt("others", 0);
+                    } else {
+                        return 0;
+                    }
+                }
             };
 
             CustomGeoResource geoResource = new CustomGeoResource(group.getSecondValue(), slimefunItemStack,
