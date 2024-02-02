@@ -2,8 +2,7 @@ name: RykenSlimefunCustomizer
 version: '${project.version}'
 main: org.lins.mmmjjkx.rykenslimefuncustomizer.RykenSlimefunCustomizer
 api-version: '1.18'
-depend: [Slimefun, Polymer]
-softdepend: [PlaceholderAPI]
+depend: [Slimefun]
 authors: [mmmjjkx, hitech0926]
 description: An advanced Slimefun customize plugin
 libraries:

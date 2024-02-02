@@ -6,6 +6,9 @@ import org.bukkit.configuration.file.YamlConfiguration;
 import org.jetbrains.annotations.Nullable;
 import org.lins.mmmjjkx.rykenslimefuncustomizer.RykenSlimefunCustomizer;
 import org.lins.mmmjjkx.rykenslimefuncustomizer.objects.yaml.*;
+import org.lins.mmmjjkx.rykenslimefuncustomizer.objects.yaml.machine.GeneratorReader;
+import org.lins.mmmjjkx.rykenslimefuncustomizer.objects.yaml.machine.MachineReader;
+import org.lins.mmmjjkx.rykenslimefuncustomizer.objects.yaml.machine.MaterialGeneratorReader;
 import org.lins.mmmjjkx.rykenslimefuncustomizer.utils.Constants;
 import org.lins.mmmjjkx.rykenslimefuncustomizer.utils.ExceptionHandler;
 
@@ -61,14 +64,7 @@ public class ProjectAddonLoader {
                     }
                 }
             }
-
-            File scriptsFolder = new File(file, "scripts");
-            if (!scriptsFolder.exists()) {
-                //noinspection ResultOfMethodCallIgnored
-                scriptsFolder.mkdirs();
-            }
-
-            addon = new ProjectAddon(id, name, version, pluginDepends, depends, scriptsFolder);
+            addon = new ProjectAddon(id, name, version, pluginDepends, depends, file);
         } else {
             ExceptionHandler.handleError("在名称为 " + file.getName() + "的文件夹中有无效的项目信息，导致此附属无法加载！");
             return addon;
@@ -86,6 +82,14 @@ public class ProjectAddonLoader {
         GeoResourceReader resourceReader = new GeoResourceReader(geo_resources);
         addon.setGeoResources(resourceReader.readAll(addon));
         //
+        YamlConfiguration generators = doFileLoad(file, Constants.GENERATORS_FILE);
+        GeneratorReader generatorReader = new GeneratorReader(generators);
+        addon.setGenerators(generatorReader.readAll(addon));
+        //
+        YamlConfiguration materialGenerators = doFileLoad(file, Constants.MATERIAL_GENERATORS_FILE);
+        MaterialGeneratorReader materialGeneratorReader = new MaterialGeneratorReader(materialGenerators);
+        addon.setMaterialGenerators(materialGeneratorReader.readAll(addon));
+        //////////////////////////
         YamlConfiguration researches = doFileLoad(file, Constants.RESEARCHES_FILE);
         ResearchReader researchReader = new ResearchReader(researches);
         addon.setResearches(researchReader.readAll(addon));

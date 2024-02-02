@@ -60,7 +60,7 @@ public class ExceptionHandler {
 
     /**
      * 检测后门等
-     * @param message
+     * @param message the message
      */
     public static void handleDanger(String message) {
         logger.error(serializer.deserialize("&c&u&l&bD&4&lA&c&lN&b&lG&4&lE&c&lR | " + message));
@@ -77,18 +77,16 @@ public class ExceptionHandler {
         return new Pair<>(HandleResult.FAILED, null);
     }
 
-    public static HandleResult handleItemGroupAddItem(ProjectAddon addon, String igid, SlimefunItem item) {
+    public static void handleItemGroupAddItem(ProjectAddon addon, String igid, SlimefunItem item) {
         Pair<HandleResult, ItemGroup> result = handleItemGroupGet(addon, igid);
-        if (result.getFirstValue() == HandleResult.FAILED) return HandleResult.FAILED;
+        if (result.getFirstValue() == HandleResult.FAILED) return;
         ItemGroup ig = result.getSecondValue();
         try {
             if (ig != null) {
                 ig.add(item);
             }
-            return HandleResult.SUCCESS;
         } catch (UnsupportedOperationException e) {
             handleError("父物品组"+igid+"不能添加物品，只能添加子物品组！");
-            return HandleResult.FAILED;
         }
     }
 
@@ -99,20 +97,6 @@ public class ExceptionHandler {
             return new Pair<>(HandleResult.FAILED, null);
         }
         return new Pair<>(HandleResult.SUCCESS, ig);
-    }
-
-    public static <T> Pair<HandleResult, T> handleValueOf(String msg, String nullMsg, Class<T> clazz, String name, String methodName) {
-        try {
-            Method method = clazz.getMethod(methodName, String.class);
-            return new Pair<>(HandleResult.SUCCESS, (T) method.invoke(null, name));
-        } catch (NoSuchMethodException | InvocationTargetException | IllegalAccessException e) {
-            return new Pair<>(HandleResult.FAILED,null);
-        } catch (NullPointerException e) {
-            handleError(nullMsg);
-        } catch (IllegalArgumentException e) {
-            handleError(msg);
-        }
-        return new Pair<>(HandleResult.FAILED, null);
     }
 
     public static <T> Pair<HandleResult, T> handleField(String msg, String nullMsg, Class<T> clazz, String fieldName) {

@@ -6,7 +6,7 @@
 
 	<groupId>org.lins.mmmjjkx</groupId>
 	<artifactId>RykenSlimefunCustomizer</artifactId>
-	<version>1.0</version>
+	<version>1.0-pre3</version>
 	<packaging>jar</packaging>
 
 	<name>RykenSlimefunCustomizer</name>
@@ -73,12 +73,6 @@
 			<groupId>org.openjdk.nashorn</groupId>
 			<artifactId>nashorn-core</artifactId>
 			<version>15.4</version>
-			<scope>provided</scope>
-		</dependency>
-		<dependency>
-			<groupId>me.clip</groupId>
-			<artifactId>placeholderapi</artifactId>
-			<version>2.11.5</version>
 			<scope>provided</scope>
 		</dependency>
 		<dependency>

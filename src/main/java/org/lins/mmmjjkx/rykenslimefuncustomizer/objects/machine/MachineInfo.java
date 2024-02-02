@@ -9,29 +9,5 @@ import org.bukkit.block.Block;
 
 public record MachineInfo(BlockMenu blockMenu, SlimefunBlockData data, SlimefunItem machineItem,
                           Block block, int totalTicks, int progress, MachineProcessor<?> processor,
-                          MachineOperation operation) implements IMachineInfo{
-    @Override
-    public BlockMenu getBlockMenu() {
-        return blockMenu;
-    }
-
-    @Override
-    public SlimefunBlockData getData() {
-        return data;
-    }
-
-    @Override
-    public SlimefunItem getMachineItem() {
-        return machineItem;
-    }
-
-    @Override
-    public Block getBlock() {
-        return block;
-    }
-
-    @Override
-    public MachineProcessor<?> getProcessor() {
-        return processor;
-    }
+                          MachineOperation operation){
 }

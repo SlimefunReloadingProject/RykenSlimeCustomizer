@@ -1,4 +1,4 @@
-package org.lins.mmmjjkx.rykenslimefuncustomizer.objects.yaml;
+package org.lins.mmmjjkx.rykenslimefuncustomizer.objects.yaml.machine;
 
 import io.github.thebusybiscuit.slimefun4.api.items.ItemGroup;
 import io.github.thebusybiscuit.slimefun4.api.items.SlimefunItemStack;
@@ -10,12 +10,13 @@ import org.bukkit.configuration.file.YamlConfiguration;
 import org.bukkit.inventory.ItemStack;
 import org.lins.mmmjjkx.rykenslimefuncustomizer.RykenSlimefunCustomizer;
 import org.lins.mmmjjkx.rykenslimefuncustomizer.objects.ProjectAddon;
-import org.lins.mmmjjkx.rykenslimefuncustomizer.objects.customs.AbstractEmptyMachine;
-import org.lins.mmmjjkx.rykenslimefuncustomizer.objects.customs.CustomMachine;
+import org.lins.mmmjjkx.rykenslimefuncustomizer.objects.customs.parent.AbstractEmptyMachine;
+import org.lins.mmmjjkx.rykenslimefuncustomizer.objects.customs.machine.CustomMachine;
 import org.lins.mmmjjkx.rykenslimefuncustomizer.objects.customs.CustomMenu;
-import org.lins.mmmjjkx.rykenslimefuncustomizer.objects.customs.CustomNoEnergyMachine;
+import org.lins.mmmjjkx.rykenslimefuncustomizer.objects.customs.machine.CustomNoEnergyMachine;
 import org.lins.mmmjjkx.rykenslimefuncustomizer.objects.js.JavaScriptEval;
 import org.lins.mmmjjkx.rykenslimefuncustomizer.objects.machine.MachineRecord;
+import org.lins.mmmjjkx.rykenslimefuncustomizer.objects.yaml.YamlReader;
 import org.lins.mmmjjkx.rykenslimefuncustomizer.utils.CommonUtils;
 import org.lins.mmmjjkx.rykenslimefuncustomizer.utils.ExceptionHandler;
 
@@ -53,7 +54,7 @@ public class MachineReader extends YamlReader<AbstractEmptyMachine> {
         ItemStack stack = CommonUtils.readItem(item, false);
 
         if (stack == null) {
-            ExceptionHandler.handleError("无法在附属"+addon.getAddonName()+"中加载物品"+s+": 物品为空或格式错误导致无法加载");
+            ExceptionHandler.handleError("无法在附属"+addon.getAddonName()+"中加载机器"+s+": 物品为空或格式错误导致无法加载");
             return null;
         }
 
@@ -83,10 +84,6 @@ public class MachineReader extends YamlReader<AbstractEmptyMachine> {
         List<Integer> input = section.getIntegerList("input");
         List<Integer> output = section.getIntegerList("output");
         CustomMenu menu = CommonUtils.getIf(addon.getMenus(), m -> m.getID().equalsIgnoreCase(s));
-        if (menu == null && section.contains("menu")) {
-            ExceptionHandler.handleError("无法加载机器"+s+": 对应菜单不存在");
-            return null;
-        }
 
         AbstractEmptyMachine machine;
 

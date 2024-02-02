@@ -1,4 +1,4 @@
-package org.lins.mmmjjkx.rykenslimefuncustomizer.objects.customs;
+package org.lins.mmmjjkx.rykenslimefuncustomizer.objects.customs.machine;
 
 import com.xzavier0722.mc.plugin.slimefun4.storage.controller.SlimefunBlockData;
 import com.xzavier0722.mc.plugin.slimefun4.storage.util.StorageCacheUtils;
@@ -13,7 +13,7 @@ import io.github.thebusybiscuit.slimefun4.core.handlers.BlockUseHandler;
 import io.github.thebusybiscuit.slimefun4.core.machines.MachineOperation;
 import io.github.thebusybiscuit.slimefun4.core.machines.MachineProcessor;
 import io.github.thebusybiscuit.slimefun4.core.networks.energy.EnergyNetComponentType;
-import me.mrCookieSlime.CSCoreLibPlugin.general.Inventory.ChestMenu;
+import io.github.thebusybiscuit.slimefun4.implementation.handlers.SimpleBlockBreakHandler;
 import me.mrCookieSlime.Slimefun.Objects.handlers.BlockTicker;
 import me.mrCookieSlime.Slimefun.api.inventory.BlockMenu;
 import org.bukkit.block.Block;
@@ -22,18 +22,18 @@ import org.bukkit.event.block.BlockPlaceEvent;
 import org.bukkit.inventory.ItemStack;
 import org.jetbrains.annotations.NotNull;
 import org.jetbrains.annotations.Nullable;
+import org.lins.mmmjjkx.rykenslimefuncustomizer.objects.customs.CustomMenu;
+import org.lins.mmmjjkx.rykenslimefuncustomizer.objects.customs.parent.AbstractEmptyMachine;
 import org.lins.mmmjjkx.rykenslimefuncustomizer.objects.js.JavaScriptEval;
 import org.lins.mmmjjkx.rykenslimefuncustomizer.objects.machine.MachineInfo;
 import org.lins.mmmjjkx.rykenslimefuncustomizer.objects.machine.MachineRecord;
 
 import java.util.List;
-import java.util.function.BiConsumer;
 
 public class CustomMachine extends AbstractEmptyMachine implements EnergyNetComponent {
     private final MachineRecord theRecord;
     private final List<Integer> input;
     private final List<Integer> output;
-    private final CustomMenu menu;
     private final EnergyNetComponentType type;
     private final MachineProcessor<MachineOperation> processor;
     private final JavaScriptEval eval;
@@ -45,14 +45,16 @@ public class CustomMachine extends AbstractEmptyMachine implements EnergyNetComp
         this.input = input;
         this.output = output;
         this.theRecord = record;
-        this.menu = menu;
+
+        if (menu != null) {
+            menu.outSideInit();
+        }
+
         this.type = type;
         this.eval = eval;
         this.processor = new MachineProcessor<>(this);
 
         if (this.eval != null && menu != null) {
-            this.eval.addThing("addClickHandler", (BiConsumer<Integer, ChestMenu.MenuClickHandler>) CustomMachine.this.menu::addMenuClickHandler);
-
             if (this.eval.hasFunction("onUse", 1)) {
                 addItemHandler((BlockUseHandler) e -> this.eval.evalFunction("onUse", e));
             }
@@ -77,10 +79,10 @@ public class CustomMachine extends AbstractEmptyMachine implements EnergyNetComp
         }
 
         this.addItemHandler(
-                new BlockBreakHandler(false, false) {
+                new SimpleBlockBreakHandler() {
                     @Override
-                    public void onPlayerBreak(@NotNull BlockBreakEvent event, @NotNull ItemStack item, @NotNull List<ItemStack> drops) {
-                        BlockMenu blockMenu = StorageCacheUtils.getMenu(event.getBlock().getLocation());
+                    public void onBlockBreak(@NotNull Block b) {
+                        BlockMenu blockMenu = StorageCacheUtils.getMenu(b.getLocation());
                         if (blockMenu != null) {
                             blockMenu.dropItems(blockMenu.getLocation(), getInputSlots());
                             blockMenu.dropItems(blockMenu.getLocation(), getOutputSlots());

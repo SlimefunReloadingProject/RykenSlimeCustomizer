@@ -1,4 +1,4 @@
-package org.lins.mmmjjkx.rykenslimefuncustomizer.objects.customs;
+package org.lins.mmmjjkx.rykenslimefuncustomizer.objects.customs.machine;
 
 import com.google.common.annotations.Beta;
 import io.github.thebusybiscuit.slimefun4.api.items.ItemGroup;

@@ -7,7 +7,7 @@ public record MachineRecord(int capacity, int totalTicks) implements MachineOper
 
     @Override
     public void addProgress(int i) {
-        if (progress >= 100) {
+        if (progress >= totalTicks) {
             progress = i;
             return;
         }

@@ -90,26 +90,27 @@ public class CommonUtils {
     }
 
     @Nullable
-    public static ItemStack readItem(ConfigurationSection section, boolean recipe) {
+    public static ItemStack readItem(ConfigurationSection section, boolean countable) {
         if (section == null) {
             return null;
         }
 
-        if (!section.contains("material")) {
+        String type = section.getString("material_type", "mc");
+
+        if (!type.equalsIgnoreCase("none") && !section.contains("material")) {
             ExceptionHandler.handleError("请先设置一个材料！");
             return null;
         }
 
-        String type = section.getString("material_type", "mc");
         String material = section.getString("material","");
         List<String> lore = section.getStringList("lore");
         String name = section.getString("name");
         boolean glow = section.getBoolean("glow", false);
         boolean placeable = section.getBoolean("placeable", false);
         int modelId = section.getInt("modelId");
-        int amount = section.getInt("amount");
+        int amount = section.getInt("amount", 1);
 
-        CustomItemStack itemStack;
+        ItemStack itemStack;
 
         switch (type.toLowerCase()) {
             default -> {
@@ -152,6 +153,14 @@ public class CommonUtils {
                 }
                 itemStack = new CustomItemStack(Material.STONE, name);
             }
+            case "full_slimefun" -> {
+                SlimefunItem sis = SlimefunItem.getById(material);
+                if (sis != null) {
+                    itemStack = sis.getItem();
+                    break;
+                }
+                itemStack = new CustomItemStack(Material.STONE, name);
+            }
         }
 
         ItemMeta meta = itemStack.getItemMeta();
@@ -161,7 +170,7 @@ public class CommonUtils {
         }
         itemStack.setItemMeta(meta);
 
-        if (recipe) {
+        if (countable) {
             itemStack.setAmount(amount);
         }
 

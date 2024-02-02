@@ -5,6 +5,8 @@ import org.bukkit.plugin.java.JavaPlugin;
 import org.jetbrains.annotations.NotNull;
 import org.lins.mmmjjkx.rykenslimefuncustomizer.commands.MainCommand;
 
+import java.util.Objects;
+
 public final class RykenSlimefunCustomizer extends JavaPlugin implements SlimefunAddon {
     public static RykenSlimefunCustomizer INSTANCE;
     public static ProjectAddonManager addonManager;
@@ -18,9 +20,13 @@ public final class RykenSlimefunCustomizer extends JavaPlugin implements Slimefu
         saveDefaultConfig();
         saveConfig();
 
+        if (getConfig().getBoolean("saveExample")) {
+            saveExample();
+        }
+
         addonManager.setup(this);
 
-        getCommand("rykenslimecustomizer").setExecutor(new MainCommand());
+        Objects.requireNonNull(getCommand("rykenslimecustomizer")).setExecutor(new MainCommand());
     }
 
     @Override
@@ -42,5 +48,15 @@ public final class RykenSlimefunCustomizer extends JavaPlugin implements Slimefu
     @Override
     public String getBugTrackerURL() {
         return "https://github.com/SlimefunReloadingProject/RykenSlimeCustomizer/issues";
+    }
+
+    private void saveExample() {
+        String head = "addons/example/";
+        saveResource(head + "info.yml", true);
+        saveResource(head + "menus.yml", false);
+        saveResource(head + "groups.yml", false);
+        saveResource(head + "machines.yml", false);
+        saveResource(head + "researches.yml", false);
+        saveResource(head + "items.yml", false);
     }
 }

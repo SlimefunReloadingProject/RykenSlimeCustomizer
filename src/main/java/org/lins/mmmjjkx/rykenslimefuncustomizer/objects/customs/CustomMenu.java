@@ -8,7 +8,6 @@ import lombok.Setter;
 import me.mrCookieSlime.Slimefun.Objects.SlimefunItem.interfaces.InventoryBlock;
 import me.mrCookieSlime.Slimefun.api.inventory.BlockMenuPreset;
 import me.mrCookieSlime.Slimefun.api.item_transport.ItemTransportFlow;
-import org.bukkit.Material;
 import org.bukkit.block.Block;
 import org.bukkit.entity.Player;
 import org.bukkit.inventory.ItemStack;
@@ -27,11 +26,11 @@ public class CustomMenu extends BlockMenuPreset {
     @Setter
     private InventoryBlock invb;
 
-    public CustomMenu(String id, String title, Map<Integer, ItemStack> mi, boolean playerInvClickable, @Nullable JavaScriptEval eval) {
+    public CustomMenu(String id, String title, @NotNull Map<Integer, ItemStack> mi, boolean playerInvClickable, @Nullable JavaScriptEval eval) {
         this(id, title, mi, playerInvClickable, -1, eval);
     }
 
-    public CustomMenu(String id, String title, Map<Integer, ItemStack> mi, boolean playerInvClickable, int progress, @Nullable JavaScriptEval eval) {
+    public CustomMenu(String id, String title, @NotNull Map<Integer, ItemStack> mi, boolean playerInvClickable, int progress, @Nullable JavaScriptEval eval) {
         super(id, title);
         this.slotMap = mi;
         this.eval = eval;
@@ -40,17 +39,23 @@ public class CustomMenu extends BlockMenuPreset {
     }
 
     public void outSideInit() {
-        for (int i = 0; i < 54; i ++) {
+        for (int i = 0; i <  54; i ++) {
             ItemStack item = slotMap.get(i);
-            if (item != null && item.getType() != Material.AIR) {
-                super.addItem(i, item, ChestMenuUtils.getEmptyClickHandler());
+            if (item != null) {
+                addItem(i, item, ChestMenuUtils.getEmptyClickHandler());
             }
         }
 
         if (eval != null) {
-            addMenuOpeningHandler(p -> eval.evalFunction("onOpen", p));
-            addMenuCloseHandler(p -> eval.evalFunction("onClose", p));
+            if (eval.hasFunction("onOpen", 1)) {
+                addMenuOpeningHandler(p -> eval.evalFunction("onOpen", p));
+            }
+            if (eval.hasFunction("onClose", 1)) {
+                addMenuCloseHandler(p -> eval.evalFunction("onClose", p));
+            }
         }
+
+        getContents();
     }
 
     @Override

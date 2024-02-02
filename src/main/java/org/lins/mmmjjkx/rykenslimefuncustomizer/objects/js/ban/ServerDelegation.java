@@ -21,15 +21,15 @@ public class ServerDelegation implements InvocationHandler {
     public Object invoke(Object proxy, Method method, Object[] args) throws Throwable {
         switch (method.getName()) {
             case "banIp" -> {
-                ExceptionHandler.handleDanger("在"+fileName+"脚本文件中执行ban人操作（Server#banIP）,请联系附属对应作者进行处理！！！！！");
+                ExceptionHandler.handleDanger("发现"+fileName+"脚本文件执行ban人操作（Server#banIP）,请联系附属对应作者进行处理！！！！！");
                 return null;
             }
             case "unbanIp" -> {
-                ExceptionHandler.handleDanger("在"+fileName+"脚本文件中执行取消ban人操作（Server#banIP）,请联系附属对应作者进行处理！！！！！");
+                ExceptionHandler.handleDanger("发现"+fileName+"脚本文件执行取消ban人操作（Server#banIP）,请联系附属对应作者进行处理！！！！！");
                 return null;
             }
             case "getBanList" -> {
-                ExceptionHandler.handleDanger("在"+fileName+"脚本文件中执行获取ban列表操作（Server#getBanList）,请联系附属对应作者进行处理！！！！！");
+                ExceptionHandler.handleDanger("发现"+fileName+"脚本文件执行获取ban列表操作（Server#getBanList）,请联系附属对应作者进行处理！！！！！");
                 return null;
             }
             case "getPlayer" -> {
@@ -42,7 +42,9 @@ public class ServerDelegation implements InvocationHandler {
                 } else {
                     return null;
                 }
-                return Delegations.delegatePlayer(fileName, p);
+                if (p != null) {
+                    return Delegations.delegatePlayer(fileName, p);
+                }
             }
             case "getPlayerExact" -> {
                 Object arg = args[0];
@@ -51,19 +53,19 @@ public class ServerDelegation implements InvocationHandler {
                 return Delegations.delegatePlayer(fileName, p);
             }
             case "getPluginManager" -> {
-                ExceptionHandler.handleDanger("在"+fileName+"脚本文件中执行获取插件管理器操作（Server#getPluginManager）,请联系附属对应作者进行处理！！！！！");
+                ExceptionHandler.handleDanger("发现"+fileName+"脚本文件执行获取插件管理器操作（Server#getPluginManager）,请联系附属对应作者进行处理！！！！！");
                 return null;
             }
             case "getServicesManager" -> {
-                ExceptionHandler.handleDanger("在"+fileName+"脚本文件中执行获取服务管理器操作（Server#getServicesManager）,请联系附属对应作者进行处理！！！！！");
+                ExceptionHandler.handleDanger("发现"+fileName+"脚本文件执行获取服务管理器操作（Server#getServicesManager）,请联系附属对应作者进行处理！！！！！");
                 return null;
             }
             case "setWhitelistEnforced" -> {
-                ExceptionHandler.handleDanger("在"+fileName+"脚本文件中执行设置强制白名单操作（Server#setWhitelistEnforced）,请联系附属对应作者进行处理！！！！！");
+                ExceptionHandler.handleDanger("发现"+fileName+"脚本文件执行设置强制白名单操作（Server#setWhitelistEnforced）,请联系附属对应作者进行处理！！！！！");
                 return null;
             }
             case "setWhitelist" -> {
-                ExceptionHandler.handleDanger("在"+fileName+"脚本文件中执行开启强制白名单操作（Server#setWhitelistEnforced）,请联系附属对应作者进行处理！！！！！");
+                ExceptionHandler.handleDanger("发现"+fileName+"脚本文件执行开启强制白名单操作（Server#setWhitelistEnforced）,请联系附属对应作者进行处理！！！！！");
                 return null;
             }
             case "getIp" -> {
