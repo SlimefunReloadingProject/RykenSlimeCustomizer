@@ -72,7 +72,7 @@ public class MaterialGeneratorReader extends YamlReader<CustomMaterialGenerator>
         List<Integer> output = section.getIntegerList("output");
 
         int capacity = section.getInt("capacity", 0);
-        ConfigurationSection outputItem = section.getConfigurationSection("output");
+        ConfigurationSection outputItem = section.getConfigurationSection("outputItem");
         ItemStack out = CommonUtils.readItem(outputItem, true);
         if (out == null) {
             ExceptionHandler.handleError("无法在附属"+addon.getAddonName()+"中加载材料生成器"+s+": 输出物品为空或格式错误导致无法加载");
@@ -85,11 +85,17 @@ public class MaterialGeneratorReader extends YamlReader<CustomMaterialGenerator>
             return null;
         }
 
+        int per = section.getInt("per");
+        if (per < 1) {
+            ExceptionHandler.handleError("无法加载材料生成器"+s+": 单次生成能量花费未设置或不能小于1");
+            return null;
+        }
+
         int status = -1;
         if (section.contains("status")) {
             status = section.getInt("status");
         }
 
-        return new CustomMaterialGenerator(group.getSecondValue(), slimefunItemStack, rt.getSecondValue(), recipe, capacity, output, status, tickRate, out);
+        return new CustomMaterialGenerator(group.getSecondValue(), slimefunItemStack, rt.getSecondValue(), recipe, capacity, output, status, tickRate, out, per);
     }
 }

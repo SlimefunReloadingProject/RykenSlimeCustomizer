@@ -32,7 +32,7 @@ public class MainCommand implements TabExecutor {
                     return true;
                 } else if (args[0].equalsIgnoreCase("list")) {
                     List<ProjectAddon> addons = RykenSlimefunCustomizer.addonManager.getAllValues();
-                    List<String> nameWithId = addons.stream().map(a -> a.getAddonName() + "(id: "+a.getAddonId()+")").toList();
+                    List<String> nameWithId = addons.stream().map(a -> a.getAddonName() + "(id: " + a.getAddonId() + ")").toList();
                     Component component = CommonUtils.parseToComponent("&a已加载的附属: ");
                     for (String nwi : nameWithId) {
                         component = component.append(CommonUtils.parseToComponent("&a" + nwi));
@@ -47,6 +47,18 @@ public class MainCommand implements TabExecutor {
                     sender.sendMessage(CommonUtils.parseToComponent("&a重载插件成功！"));
                     return true;
                 }
+            } else if (args.length == 2) {
+                if (args[0].equalsIgnoreCase("disable")) {
+                    String id = args[1];
+                    ProjectAddon addon = RykenSlimefunCustomizer.addonManager.get(id);
+                    if (addon == null) {
+                        sender.sendMessage(CommonUtils.parseToComponent("&4没有这个附属！"));
+                        return false;
+                    }
+                    addon.unregister();
+                    sender.sendMessage(CommonUtils.parseToComponent("&a卸载此附属成功！"));
+                    return true;
+                }
             } else if (args.length == 3) {
                 if (args[0].equalsIgnoreCase("saveitem")) {
                     String prjId = args[1];
@@ -59,7 +71,9 @@ public class MainCommand implements TabExecutor {
                     File save = new File(addon.getSavedItemsFolder(), itemId + ".yml");
                     YamlConfiguration configuration = YamlConfiguration.loadConfiguration(save);
 
+
                     sender.sendMessage(CommonUtils.parseToComponent("&4这个指令还没写完!(abab)"));
+                    return true;
                 }
             } else {
                 sender.sendMessage(CommonUtils.parseToComponent("&4找不到此子指令！"));
@@ -86,9 +100,9 @@ public class MainCommand implements TabExecutor {
                         &e/rsc reload 重载插件及附属
                         &e/rsc reloadPlugin 重载插件
                         &e/rsc list 显示加载成功的附属
+                        &e/rsc disable <附属ID> 卸载某个附属
                         
                         &4&l<未完成的指令>
-                        &e/rsc disable <附属ID> 卸载某个附属
                         &e/rsc saveitem <附属ID> <ID> 保存物品
                         """));
     }

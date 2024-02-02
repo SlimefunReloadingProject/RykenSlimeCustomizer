@@ -1,0 +1,13 @@
+EXAMPLE_MATERIAL_GENERATOR:
+  item_group: example_sub_group
+  item:
+    name: "&c示例材料生成器"
+    material: IRON_BLOCK
+  capacity: 10000
+  output: [12]
+  outputItem:
+    material_type: full_slimefun
+    material: EXAMPLE_ITEM
+  tickRate: 5
+  status: 4
+  per: 10

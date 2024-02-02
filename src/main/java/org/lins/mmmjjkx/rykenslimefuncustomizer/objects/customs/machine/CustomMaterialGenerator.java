@@ -28,10 +28,11 @@ public class CustomMaterialGenerator extends SlimefunItem implements InventoryBl
     private final int tickRate;
     private final int statusSlot;
     private final ItemStack generation;
+    private final int per;
 
     public CustomMaterialGenerator(ItemGroup itemGroup, SlimefunItemStack item, RecipeType recipeType,
                                    ItemStack[] recipe, int capacity, List<Integer> output, int statusSlot,
-                                   int tickRate, ItemStack generation) {
+                                   int tickRate, ItemStack generation, int per) {
         super(itemGroup, item, recipeType, recipe);
 
         this.capacity = capacity;
@@ -39,6 +40,7 @@ public class CustomMaterialGenerator extends SlimefunItem implements InventoryBl
         this.statusSlot = statusSlot;
         this.tickRate = tickRate;
         this.generation = generation;
+        this.per = per;
 
         register(RykenSlimefunCustomizer.INSTANCE);
     }
@@ -48,33 +50,36 @@ public class CustomMaterialGenerator extends SlimefunItem implements InventoryBl
 
         BlockMenu blockMenu = StorageCacheUtils.getMenu(b.getLocation());
 
-        if (blockMenu != null) {
-            if (progress >= tickRate) {
-                if (blockMenu.fits(generation, getOutputSlots())) {
-                    blockMenu.pushItem(generation.clone(), getOutputSlots());
-                    progress = 1;
-                } else {
-                    if (blockMenu.hasViewer()) {
-                        if (statusSlot > -1) {
-                            blockMenu.replaceExistingItem(statusSlot, new CustomItemStack(
-                                    Material.RED_STAINED_GLASS_PANE,
-                                    "&c空间不足"
-                            ));
+        if (getCharge(b.getLocation()) >= per) {
+            if (blockMenu != null) {
+                if (progress >= tickRate) {
+                    if (blockMenu.fits(generation, getOutputSlots())) {
+                        blockMenu.pushItem(generation.clone(), getOutputSlots());
+                        removeCharge(b.getLocation(), per);
+                        progress = 1;
+                    } else {
+                        if (blockMenu.hasViewer()) {
+                            if (statusSlot > -1) {
+                                blockMenu.replaceExistingItem(statusSlot, new CustomItemStack(
+                                        Material.RED_STAINED_GLASS_PANE,
+                                        "&c空间不足"
+                                ));
+                            }
                         }
+                        return;
                     }
-                    return;
+                } else {
+                    progress++;
                 }
-            } else {
-                progress++;
-            }
 
-            setProgress(b, progress);
-            if (blockMenu.hasViewer()) {
-                if (statusSlot > -1) {
-                    blockMenu.replaceExistingItem(statusSlot, new CustomItemStack(
-                            Material.LIME_STAINED_GLASS_PANE,
-                            "&a生产中"
-                    ));
+                setProgress(b, progress);
+                if (blockMenu.hasViewer()) {
+                    if (statusSlot > -1) {
+                        blockMenu.replaceExistingItem(statusSlot, new CustomItemStack(
+                                Material.LIME_STAINED_GLASS_PANE,
+                                "&a生产中"
+                        ));
+                    }
                 }
             }
         }
