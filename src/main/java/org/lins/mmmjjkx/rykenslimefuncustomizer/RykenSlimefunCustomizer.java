@@ -37,6 +37,10 @@ public final class RykenSlimefunCustomizer extends JavaPlugin implements Slimefu
     public static void reload() {
         INSTANCE.reloadConfig();
         addonManager.reload(INSTANCE);
+        
+        if (INSTANCE.getConfig().getBoolean("saveExample")) {
+            saveExample();
+        }
     }
 
     @NotNull
@@ -50,13 +54,15 @@ public final class RykenSlimefunCustomizer extends JavaPlugin implements Slimefu
         return "https://github.com/SlimefunReloadingProject/RykenSlimeCustomizer/issues";
     }
 
-    private void saveExample() {
+    public static void saveExample() {
         String head = "addons/example/";
-        saveResource(head + "info.yml", true);
-        saveResource(head + "menus.yml", false);
-        saveResource(head + "groups.yml", false);
-        saveResource(head + "machines.yml", false);
-        saveResource(head + "researches.yml", false);
-        saveResource(head + "items.yml", false);
+        INSTANCE.saveResource(head + "info.yml", true);
+        INSTANCE.saveResource(head + "menus.yml", false);
+        INSTANCE.saveResource(head + "groups.yml", false);
+        INSTANCE.saveResource(head + "machines.yml", false);
+        INSTANCE.saveResource(head + "researches.yml", false);
+        INSTANCE.saveResource(head + "items.yml", false);
+        INSTANCE.saveResource(head + "generators.yml", false);
+        INSTANCE.saveResource(head + "mat_generators.yml", false);
     }
 }

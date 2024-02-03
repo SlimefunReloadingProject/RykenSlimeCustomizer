@@ -1,5 +1,6 @@
 package org.lins.mmmjjkx.rykenslimefuncustomizer.utils;
 
+import com.destroystokyo.paper.profile.PlayerProfile;
 import io.github.thebusybiscuit.slimefun4.api.items.SlimefunItem;
 import io.github.thebusybiscuit.slimefun4.libraries.dough.collections.Pair;
 import io.github.thebusybiscuit.slimefun4.libraries.dough.items.CustomItemStack;
@@ -11,16 +12,22 @@ import net.kyori.adventure.text.serializer.legacy.LegacyComponentSerializer;
 import org.bukkit.Material;
 import org.bukkit.NamespacedKey;
 import org.bukkit.configuration.ConfigurationSection;
+import org.bukkit.configuration.file.YamlConfiguration;
 import org.bukkit.enchantments.Enchantment;
 import org.bukkit.inventory.ItemFlag;
 import org.bukkit.inventory.ItemStack;
 import org.bukkit.inventory.meta.ItemMeta;
+import org.bukkit.inventory.meta.SkullMeta;
 import org.bukkit.persistence.PersistentDataContainer;
 import org.bukkit.persistence.PersistentDataType;
 import org.jetbrains.annotations.NotNull;
 import org.jetbrains.annotations.Nullable;
 import org.lins.mmmjjkx.rykenslimefuncustomizer.RykenSlimefunCustomizer;
+import org.lins.mmmjjkx.rykenslimefuncustomizer.objects.ProjectAddon;
 
+import java.io.File;
+import java.io.IOException;
+import java.net.URL;
 import java.util.List;
 import java.util.function.Predicate;
 
@@ -52,6 +59,7 @@ public class CommonUtils {
         return meta.getPersistentDataContainer().has(GLOW, PersistentDataType.INTEGER);
     }
 
+    @SuppressWarnings("unused")
     public static <T extends ItemStack> T unGlow(T item) {
         ItemMeta meta = item.getItemMeta();
         PersistentDataContainer container = meta.getPersistentDataContainer();
@@ -80,17 +88,17 @@ public class CommonUtils {
     }
 
     @NotNull
-    public static ItemStack[] readRecipe(ConfigurationSection section) {
+    public static ItemStack[] readRecipe(ConfigurationSection section, ProjectAddon addon) {
         ItemStack[] itemStacks = new ItemStack[9];
         for (int i = 0; i < 9; i ++) {
             ConfigurationSection section1 = section.getConfigurationSection(String.valueOf(i + 1));
-            itemStacks[i] = readItem(section1, true);
+            itemStacks[i] = readItem(section1, true, addon);
         }
         return itemStacks;
     }
 
     @Nullable
-    public static ItemStack readItem(ConfigurationSection section, boolean countable) {
+    public static ItemStack readItem(ConfigurationSection section, boolean countable, ProjectAddon addon) {
         if (section == null) {
             return null;
         }
@@ -151,15 +159,26 @@ public class CommonUtils {
                     itemStack = new CustomItemStack(is, name, lore.toArray(new String[]{}));
                     break;
                 }
+                ExceptionHandler.handleError("无法找到粘液物品"+material+"，已转为石头");
                 itemStack = new CustomItemStack(Material.STONE, name);
             }
             case "full_slimefun" -> {
                 SlimefunItem sis = SlimefunItem.getById(material);
                 if (sis != null) {
-                    itemStack = sis.getItem();
+                    return sis.getItem();
+                }
+                ExceptionHandler.handleError("无法找到粘液物品"+material+"，已转为石头");
+                itemStack = new CustomItemStack(Material.STONE, name);
+            }
+            case "saveditem" -> {
+                File file = new File(addon.getSavedItemsFolder(), material + ".yml");
+                if (!file.exists()) {
+                    ExceptionHandler.handleError("保存物品的文件"+material+"不存在，已转为石头");
+                    itemStack = new CustomItemStack(Material.STONE, name);
                     break;
                 }
-                itemStack = new CustomItemStack(Material.STONE, name);
+                YamlConfiguration configuration = YamlConfiguration.loadConfiguration(file);
+                return readItem(configuration, countable, addon);
             }
         }
 
@@ -175,5 +194,69 @@ public class CommonUtils {
         }
 
         return glow ? doGlow(itemStack) : itemStack;
+    }
+
+    @SuppressWarnings("deprecation")
+    public static void saveItem(ItemStack item, String fileName, ProjectAddon addon) {
+        File file = new File(addon.getSavedItemsFolder(), fileName + ".yml");
+        if (!file.exists()) {
+            try {file.createNewFile();
+            } catch (IOException e) {
+                e.printStackTrace();
+                return;
+            }
+        }
+        YamlConfiguration configuration = YamlConfiguration.loadConfiguration(file);
+        ItemStack stack = item.clone();
+        ItemMeta meta = stack.getItemMeta();
+        Material material = stack.getType();
+        if (meta.getLore() != null) {
+            configuration.set("lore", meta.getLore());
+        }
+        if (meta.hasCustomModelData()) {
+            configuration.set("modelId", meta.getCustomModelData());
+        }
+        if (meta.hasDisplayName()) {
+            String name = meta.getDisplayName().replaceAll("§", "&");
+            configuration.set("name", name);
+        }
+        if (isGlowing(item)) {
+            configuration.set("glow", true);
+        }
+
+        configuration.set("amount", stack.getAmount());
+        configuration.set("placeable", material.isBlock());
+
+        SlimefunItem sfi = SlimefunItem.getByItem(item);
+        boolean full_sfi = false;
+        if (sfi != null) {
+            ItemMeta sfiMeta = sfi.getItem().getItemMeta().clone();
+            if (meta.getLore() != null && sfiMeta.getLore() != null) {
+                full_sfi = meta.getLore().equals(sfiMeta.getLore());
+            }
+
+            if (meta.hasDisplayName() && sfiMeta.hasDisplayName()) {
+                full_sfi = colorTranslateBack(meta.getDisplayName()).equals(colorTranslateBack(sfiMeta.getDisplayName()));
+            }
+
+            configuration.set("material_type", full_sfi ? "full_slimefun" : "slimefun");
+            configuration.set("material", sfi.getId());
+        } else if (material == Material.PLAYER_HEAD) {
+            SkullMeta skull = (SkullMeta) meta;
+            PlayerProfile owner = skull.getPlayerProfile();
+            if (owner != null) {
+                URL skin = owner.getTextures().getSkin();
+                if (skin != null) {
+                    configuration.set("material_type", "skull_url");
+                    configuration.set("material", skin.toString());
+                }
+            }
+        } else {
+            configuration.set("material", material.toString());
+        }
+    }
+
+    private static String colorTranslateBack(String s) {
+        return s.replaceAll("§", "&");
     }
 }

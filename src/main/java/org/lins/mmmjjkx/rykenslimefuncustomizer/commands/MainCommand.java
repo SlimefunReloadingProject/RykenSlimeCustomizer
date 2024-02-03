@@ -1,17 +1,18 @@
 package org.lins.mmmjjkx.rykenslimefuncustomizer.commands;
 
 import net.kyori.adventure.text.Component;
+import org.bukkit.Material;
 import org.bukkit.command.Command;
 import org.bukkit.command.CommandSender;
 import org.bukkit.command.TabExecutor;
-import org.bukkit.configuration.file.YamlConfiguration;
+import org.bukkit.entity.Player;
+import org.bukkit.inventory.ItemStack;
 import org.jetbrains.annotations.NotNull;
 import org.jetbrains.annotations.Nullable;
 import org.lins.mmmjjkx.rykenslimefuncustomizer.RykenSlimefunCustomizer;
 import org.lins.mmmjjkx.rykenslimefuncustomizer.objects.ProjectAddon;
 import org.lins.mmmjjkx.rykenslimefuncustomizer.utils.CommonUtils;
 
-import java.io.File;
 import java.util.ArrayList;
 import java.util.List;
 
@@ -44,6 +45,9 @@ public class MainCommand implements TabExecutor {
                     return true;
                 } else if (args[0].equalsIgnoreCase("reloadPlugin")) {
                     RykenSlimefunCustomizer.INSTANCE.reloadConfig();
+                    if (RykenSlimefunCustomizer.INSTANCE.getConfig().getBoolean("saveExample")) {
+                        RykenSlimefunCustomizer.saveExample();
+                    }
                     sender.sendMessage(CommonUtils.parseToComponent("&a重载插件成功！"));
                     return true;
                 }
@@ -68,12 +72,19 @@ public class MainCommand implements TabExecutor {
                         sender.sendMessage(CommonUtils.parseToComponent("&4没有这个附属！"));
                         return false;
                     }
-                    File save = new File(addon.getSavedItemsFolder(), itemId + ".yml");
-                    YamlConfiguration configuration = YamlConfiguration.loadConfiguration(save);
-
-
-                    sender.sendMessage(CommonUtils.parseToComponent("&4这个指令还没写完!(abab)"));
-                    return true;
+                    if (sender instanceof Player p) {
+                        ItemStack itemStack = p.getInventory().getItemInMainHand();
+                        if (itemStack.getType() == Material.AIR) {
+                            sender.sendMessage(CommonUtils.parseToComponent("&4你不能保存空气！"));
+                            return false;
+                        }
+                        CommonUtils.saveItem(itemStack, itemId, addon);
+                        sender.sendMessage(CommonUtils.parseToComponent("&a保存成功！"));
+                        return true;
+                    } else {
+                        sender.sendMessage(CommonUtils.parseToComponent("&4你不能在控制台使用此指令！"));
+                        return false;
+                    }
                 }
             } else {
                 sender.sendMessage(CommonUtils.parseToComponent("&4找不到此子指令！"));
@@ -101,8 +112,6 @@ public class MainCommand implements TabExecutor {
                         &e/rsc reloadPlugin 重载插件
                         &e/rsc list 显示加载成功的附属
                         &e/rsc disable <附属ID> 卸载某个附属
-                        
-                        &4&l<未完成的指令>
                         &e/rsc saveitem <附属ID> <ID> 保存物品
                         """));
     }

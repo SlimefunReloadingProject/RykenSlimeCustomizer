@@ -3,7 +3,7 @@ version: '${project.version}'
 main: org.lins.mmmjjkx.rykenslimefuncustomizer.RykenSlimefunCustomizer
 api-version: '1.18'
 depend: [Slimefun]
-authors: [mmmjjkx, hitech0926]
+authors: [mmmjjkx]
 description: An advanced Slimefun customize plugin
 libraries:
   - org.openjdk.nashorn:nashorn-core:15.4

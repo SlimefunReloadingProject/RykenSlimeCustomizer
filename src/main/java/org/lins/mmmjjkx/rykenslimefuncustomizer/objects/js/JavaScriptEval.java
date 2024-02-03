@@ -2,6 +2,7 @@ package org.lins.mmmjjkx.rykenslimefuncustomizer.objects.js;
 
 import com.xzavier0722.mc.plugin.slimefun4.storage.util.StorageCacheUtils;
 import io.github.thebusybiscuit.slimefun4.implementation.Slimefun;
+import org.bukkit.Bukkit;
 import org.bukkit.Location;
 import org.bukkit.entity.Player;
 import org.bukkit.event.player.PlayerEvent;
@@ -18,6 +19,7 @@ import java.nio.charset.StandardCharsets;
 import java.nio.file.Files;
 import java.util.Arrays;
 import java.util.function.BiFunction;
+import java.util.function.Function;
 
 public class JavaScriptEval {
     private final ScriptEngine jsEngine;
@@ -51,6 +53,7 @@ public class JavaScriptEval {
         jsEngine.put("sfPlugin", Slimefun.getPlugin(Slimefun.class));
         jsEngine.put("setData", (CiConsumer<Location, String, String>) StorageCacheUtils::setData);
         jsEngine.put("getData", (BiFunction<Location, String, String>) StorageCacheUtils::getData);
+        jsEngine.put("isPluginLoaded", (Function<String, Boolean>) s -> Bukkit.getPluginManager().isPluginEnabled(s));
     }
 
     public boolean hasFunction(String funName, int argSize) {
@@ -86,9 +89,11 @@ public class JavaScriptEval {
                 } catch (ScriptException e) {
                     ExceptionHandler.handleError("在运行"+js.getName()+"时发生错误");
                     e.printStackTrace();
+                    failed = true;
                 } catch (NoSuchMethodException e) {
                     ExceptionHandler.handleError("无法在"+js.getName()+"找到方法" + funName);
                     e.printStackTrace();
+                    failed = true;
                 }
             }
         } else {

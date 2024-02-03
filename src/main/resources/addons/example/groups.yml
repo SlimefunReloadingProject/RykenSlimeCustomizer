@@ -3,7 +3,6 @@ example_normal_group:
     name: "&a示例普通物品组"
     material: GRASS_BLOCK
     amount: 1
-
 example_parent_group:
   type: "nested"
   item:

@@ -69,7 +69,7 @@ public class MenuReader extends YamlReader<CustomMenu> {
                     continue;
                 }
                 ConfigurationSection item = slots.getConfigurationSection(String.valueOf(realSlot));
-                ItemStack itemStack = CommonUtils.readItem(item, true);
+                ItemStack itemStack = CommonUtils.readItem(item, true, addon);
                 if (itemStack == null) {
                     ExceptionHandler.handleWarning("在菜单"+s+"中有位于槽位"+realSlot+"的物品格式错误或输入了错误的数据无法读取，跳过对此物品的读取。");
                     continue;
@@ -85,7 +85,7 @@ public class MenuReader extends YamlReader<CustomMenu> {
                     continue;
                 }
                 ConfigurationSection item = slots.getConfigurationSection(slot);
-                ItemStack stack = CommonUtils.readItem(item, true);
+                ItemStack stack = CommonUtils.readItem(item, true, addon);
                 if (stack == null) {
                     ExceptionHandler.handleWarning("在菜单"+s+"中有位于区间槽位"+slot+"的物品格式错误或输入了错误的数据无法读取，跳过对此物品的读取。");
                     continue;

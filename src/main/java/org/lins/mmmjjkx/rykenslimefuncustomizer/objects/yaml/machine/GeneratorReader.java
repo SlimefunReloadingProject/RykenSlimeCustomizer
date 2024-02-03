@@ -46,7 +46,7 @@ public class GeneratorReader extends YamlReader<CustomGenerator> {
 
         String igId = section.getString("item_group");
         ConfigurationSection item = section.getConfigurationSection("item");
-        ItemStack stack = CommonUtils.readItem(item, false);
+        ItemStack stack = CommonUtils.readItem(item, false, addon);
 
         if (stack == null) {
             ExceptionHandler.handleError("无法在附属"+addon.getAddonName()+"中加载发电机"+s+": 物品为空或格式错误导致无法加载");
@@ -55,7 +55,7 @@ public class GeneratorReader extends YamlReader<CustomGenerator> {
 
         Pair<ExceptionHandler.HandleResult, ItemGroup> group = ExceptionHandler.handleItemGroupGet(addon, igId);
         if (group.getFirstValue() == ExceptionHandler.HandleResult.FAILED) return null;
-        ItemStack[] recipe = CommonUtils.readRecipe(section.getConfigurationSection("recipe"));
+        ItemStack[] recipe = CommonUtils.readRecipe(section.getConfigurationSection("recipe"), addon);
         String recipeType = section.getString("recipe_type", "NULL");
 
         Pair<ExceptionHandler.HandleResult, RecipeType> rt = ExceptionHandler.handleField(
@@ -79,7 +79,7 @@ public class GeneratorReader extends YamlReader<CustomGenerator> {
         List<Integer> output = section.getIntegerList("output");
 
         ConfigurationSection fuelsSection = section.getConfigurationSection("fuels");
-        List<MachineFuel> fuels = readFuels(s, fuelsSection);
+        List<MachineFuel> fuels = readFuels(s, fuelsSection, addon);
         int capacity = section.getInt("capacity", 0);
         int production = section.getInt("production");
 
@@ -94,7 +94,7 @@ public class GeneratorReader extends YamlReader<CustomGenerator> {
         return cg;
     }
 
-    private List<MachineFuel> readFuels(String id, ConfigurationSection section) {
+    private List<MachineFuel> readFuels(String id, ConfigurationSection section, ProjectAddon addon) {
         List<MachineFuel> fuels = new ArrayList<>();
 
         if (section == null) return fuels;
@@ -103,7 +103,7 @@ public class GeneratorReader extends YamlReader<CustomGenerator> {
             ConfigurationSection section1 = section.getConfigurationSection(key);
             if (section1 == null) continue;
             ConfigurationSection item = section1.getConfigurationSection("item");
-            ItemStack stack = CommonUtils.readItem(item, true);
+            ItemStack stack = CommonUtils.readItem(item, true, addon);
             if (stack == null) {
                 ExceptionHandler.handleError("无法在发电机"+id+"中加载燃料"+key+": 物品为空或格式错误，跳过加载");
                 continue;
@@ -118,7 +118,7 @@ public class GeneratorReader extends YamlReader<CustomGenerator> {
             ItemStack output = null;
             if (section1.contains("output")) {
                 ConfigurationSection outputSet = section1.getConfigurationSection("output");
-                output = CommonUtils.readItem(outputSet, true);
+                output = CommonUtils.readItem(outputSet, true, addon);
                 if (output == null) {
                     ExceptionHandler.handleError("无法在发电机"+id+"中读取燃料"+key+"的输出: 物品为空或格式错误，已转为空");
                 }

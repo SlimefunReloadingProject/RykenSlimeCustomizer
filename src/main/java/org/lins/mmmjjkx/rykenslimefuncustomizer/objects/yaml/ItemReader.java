@@ -8,7 +8,6 @@ import org.bukkit.configuration.ConfigurationSection;
 import org.bukkit.configuration.file.YamlConfiguration;
 import org.bukkit.inventory.ItemStack;
 import org.bukkit.persistence.PersistentDataType;
-import org.lins.mmmjjkx.rykenslimefuncustomizer.RykenSlimefunCustomizer;
 import org.lins.mmmjjkx.rykenslimefuncustomizer.objects.ProjectAddon;
 import org.lins.mmmjjkx.rykenslimefuncustomizer.objects.customs.CustomItem;
 import org.lins.mmmjjkx.rykenslimefuncustomizer.objects.customs.CustomPlaceableItem;
@@ -48,7 +47,7 @@ public class ItemReader extends YamlReader<CustomItem> {
 
         String igId = section.getString("item_group");
         ConfigurationSection item = section.getConfigurationSection("item");
-        ItemStack stack = CommonUtils.readItem(item, false);
+        ItemStack stack = CommonUtils.readItem(item, false, addon);
 
         if (stack == null) {
             ExceptionHandler.handleError("无法在附属"+addon.getAddonName()+"中加载物品"+s+": 物品为空或格式错误导致无法加载");
@@ -58,7 +57,7 @@ public class ItemReader extends YamlReader<CustomItem> {
         int placeable = stack.getItemMeta().getPersistentDataContainer().getOrDefault(CommonUtils.PLACEABLE, PersistentDataType.INTEGER, 0);
         Pair<ExceptionHandler.HandleResult, ItemGroup> group = ExceptionHandler.handleItemGroupGet(addon, igId);
         if (group.getFirstValue() == ExceptionHandler.HandleResult.FAILED) return null;
-        ItemStack[] itemStacks = CommonUtils.readRecipe(section.getConfigurationSection("recipe"));
+        ItemStack[] itemStacks = CommonUtils.readRecipe(section.getConfigurationSection("recipe"), addon);
         String recipeType = section.getString("recipe_type", "NULL");
 
         Pair<ExceptionHandler.HandleResult, RecipeType> rt = ExceptionHandler.handleField(

@@ -6,7 +6,7 @@
 
 	<groupId>org.lins.mmmjjkx</groupId>
 	<artifactId>RykenSlimefunCustomizer</artifactId>
-	<version>1.0-pre3</version>
+	<version>1.0</version>
 	<packaging>jar</packaging>
 
 	<name>RykenSlimefunCustomizer</name>
@@ -45,6 +45,9 @@
 			<resource>
 				<directory>src/main/resources</directory>
 				<filtering>true</filtering>
+				<excludes>
+					<exclude>*.zip</exclude>
+				</excludes>
 			</resource>
 		</resources>
 	</build>
@@ -53,10 +56,6 @@
 		<repository>
 			<id>jitpack</id>
 			<url>https://jitpack.io</url>
-		</repository>
-		<repository>
-			<id>placeholderapi</id>
-			<url>https://repo.extendedclip.com/content/repositories/placeholderapi/</url>
 		</repository>
 		<repository>
 			<id>papermc-repo</id>

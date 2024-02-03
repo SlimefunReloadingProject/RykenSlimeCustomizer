@@ -44,14 +44,14 @@ public class GeoResourceReader extends YamlReader<CustomGeoResource> {
 
             String igId = section.getString("item_group");
             ConfigurationSection item = section.getConfigurationSection("item");
-            ItemStack stack = CommonUtils.readItem(item, false);
+            ItemStack stack = CommonUtils.readItem(item, false, addon);
             if (stack == null) {
                 ExceptionHandler.handleError("无法在附属"+addon.getAddonName()+"中加载GEO资源"+s+": 物品为空或格式错误导致无法加载");
                 return null;
             }
             Pair<ExceptionHandler.HandleResult, ItemGroup> group = ExceptionHandler.handleItemGroupGet(addon, igId);
             if (group.getFirstValue() == ExceptionHandler.HandleResult.FAILED) return null;
-            ItemStack[] recipe = CommonUtils.readRecipe(section.getConfigurationSection("recipe"));
+            ItemStack[] recipe = CommonUtils.readRecipe(section.getConfigurationSection("recipe"), addon);
             String recipeType = section.getString("recipe_type", "NULL");
             int maxDeviation = section.getInt("max_deviation", 1);
             boolean obtainableFromGEOMiner = section.getBoolean("obtain_from_geo_miner", true);

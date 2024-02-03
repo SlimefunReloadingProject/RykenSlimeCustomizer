@@ -44,7 +44,7 @@ public class MaterialGeneratorReader extends YamlReader<CustomMaterialGenerator>
 
         String igId = section.getString("item_group");
         ConfigurationSection item = section.getConfigurationSection("item");
-        ItemStack stack = CommonUtils.readItem(item, false);
+        ItemStack stack = CommonUtils.readItem(item, false, addon);
 
         if (stack == null) {
             ExceptionHandler.handleError("无法在附属"+addon.getAddonName()+"中加载材料生成器"+s+": 物品为空或格式错误导致无法加载");
@@ -53,7 +53,7 @@ public class MaterialGeneratorReader extends YamlReader<CustomMaterialGenerator>
 
         Pair<ExceptionHandler.HandleResult, ItemGroup> group = ExceptionHandler.handleItemGroupGet(addon, igId);
         if (group.getFirstValue() == ExceptionHandler.HandleResult.FAILED) return null;
-        ItemStack[] recipe = CommonUtils.readRecipe(section.getConfigurationSection("recipe"));
+        ItemStack[] recipe = CommonUtils.readRecipe(section.getConfigurationSection("recipe"), addon);
         String recipeType = section.getString("recipe_type", "NULL");
 
         Pair<ExceptionHandler.HandleResult, RecipeType> rt = ExceptionHandler.handleField(
@@ -73,7 +73,7 @@ public class MaterialGeneratorReader extends YamlReader<CustomMaterialGenerator>
 
         int capacity = section.getInt("capacity", 0);
         ConfigurationSection outputItem = section.getConfigurationSection("outputItem");
-        ItemStack out = CommonUtils.readItem(outputItem, true);
+        ItemStack out = CommonUtils.readItem(outputItem, true, addon);
         if (out == null) {
             ExceptionHandler.handleError("无法在附属"+addon.getAddonName()+"中加载材料生成器"+s+": 输出物品为空或格式错误导致无法加载");
             return null;
