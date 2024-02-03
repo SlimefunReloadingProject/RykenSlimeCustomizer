@@ -12,8 +12,6 @@ import org.lins.mmmjjkx.rykenslimefuncustomizer.objects.ProjectAddon;
 import org.lins.mmmjjkx.rykenslimefuncustomizer.objects.customs.CustomMenu;
 
 import java.lang.reflect.Field;
-import java.lang.reflect.InvocationTargetException;
-import java.lang.reflect.Method;
 
 public class ExceptionHandler {
     private static final LegacyComponentSerializer serializer = LegacyComponentSerializer.legacyAmpersand();
