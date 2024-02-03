@@ -101,7 +101,7 @@ public class CustomMachine extends AbstractEmptyMachine implements EnergyNetComp
     protected void tick(Block b, SlimefunItem item, SlimefunBlockData data) {
         if (eval != null) {
             BlockMenu blockMenu = StorageCacheUtils.getMenu(b.getLocation());
-            MachineInfo info = new MachineInfo(blockMenu, data, item, b, theRecord.totalTicks(), theRecord.getProgress(), processor, theRecord);
+            MachineInfo info = new MachineInfo(blockMenu, data, item, b, theRecord.totalTicks(), theRecord.getProgress(), processor, theRecord, this);
             eval.evalFunction("tick", info);
         }
     }
