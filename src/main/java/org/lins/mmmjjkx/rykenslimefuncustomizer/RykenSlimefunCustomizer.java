@@ -64,5 +64,8 @@ public final class RykenSlimefunCustomizer extends JavaPlugin implements Slimefu
         INSTANCE.saveResource(head + "items.yml", false);
         INSTANCE.saveResource(head + "generators.yml", false);
         INSTANCE.saveResource(head + "mat_generators.yml", false);
+        INSTANCE.saveResource(head + "scripts/example_item_2.js", false);
+        INSTANCE.saveResource(head + "scripts/example_machine.js", false);
+        INSTANCE.saveResource(head + "scripts/example_machine_energy.js", false);
     }
 }

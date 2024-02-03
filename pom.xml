@@ -46,7 +46,7 @@
 				<directory>src/main/resources</directory>
 				<filtering>true</filtering>
 				<excludes>
-					<exclude>*.zip</exclude>
+					<exclude>/**/*.zip</exclude>
 				</excludes>
 			</resource>
 		</resources>

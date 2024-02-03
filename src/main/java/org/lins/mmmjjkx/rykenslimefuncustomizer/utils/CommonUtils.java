@@ -198,7 +198,11 @@ public class CommonUtils {
 
     @SuppressWarnings("deprecation")
     public static void saveItem(ItemStack item, String fileName, ProjectAddon addon) {
-        File file = new File(addon.getSavedItemsFolder(), fileName + ".yml");
+        File folder = addon.getSavedItemsFolder();
+        if (!folder.exists()) {
+            folder.mkdirs();
+        }
+        File file = new File(folder, fileName + ".yml");
         if (!file.exists()) {
             try {file.createNewFile();
             } catch (IOException e) {
@@ -206,6 +210,7 @@ public class CommonUtils {
                 return;
             }
         }
+
         YamlConfiguration configuration = YamlConfiguration.loadConfiguration(file);
         ItemStack stack = item.clone();
         ItemMeta meta = stack.getItemMeta();
