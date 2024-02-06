@@ -217,7 +217,7 @@ public class CommonUtils {
             }
         }
 
-        YamlConfiguration configuration = YamlConfiguration.loadConfiguration(file);
+        YamlConfiguration configuration = new YamlConfiguration();
         ItemStack stack = item.clone();
         ItemMeta meta = stack.getItemMeta();
         Material material = stack.getType();
@@ -263,6 +263,12 @@ public class CommonUtils {
             }
         } else {
             configuration.set("material", material.toString());
+        }
+
+        try {
+            configuration.save(file);
+        } catch (IOException e) {
+            throw new RuntimeException(e);
         }
     }
 

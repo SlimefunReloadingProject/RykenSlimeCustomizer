@@ -4,6 +4,7 @@ import io.github.thebusybiscuit.slimefun4.api.items.ItemGroup;
 import io.github.thebusybiscuit.slimefun4.api.items.SlimefunItemStack;
 import io.github.thebusybiscuit.slimefun4.core.services.sounds.SoundEffect;
 import io.github.thebusybiscuit.slimefun4.libraries.dough.collections.Pair;
+import org.bukkit.Material;
 import org.bukkit.configuration.ConfigurationSection;
 import org.bukkit.configuration.file.YamlConfiguration;
 import org.bukkit.inventory.ItemStack;
@@ -21,18 +22,6 @@ import java.util.Map;
 public class MultiBlockMachineReader extends YamlReader<CustomMultiBlockMachine> {
     public MultiBlockMachineReader(YamlConfiguration config) {
         super(config);
-    }
-
-    @Override
-    public List<CustomMultiBlockMachine> readAll(ProjectAddon addon) {
-        List<CustomMultiBlockMachine> machines = new ArrayList<>();
-        for (String key : configuration.getKeys(false)) {
-            var machine = readEach(key, addon);
-            if (machine != null) {
-                machines.add(machine);
-            }
-        }
-        return machines;
     }
 
     @Override
@@ -62,6 +51,27 @@ public class MultiBlockMachineReader extends YamlReader<CustomMultiBlockMachine>
         int workSlot = section.getInt("work", -1);
         if (workSlot < 0) {
             ExceptionHandler.handleError("无法在附属"+addon.getAddonName()+"中加载多方块机器"+s+": 没有设置工作槽");
+            return null;
+        }
+
+        if (recipe == null) {
+            ExceptionHandler.handleError("无法在附属"+addon.getAddonName()+"中加载多方块机器"+s+": 放置配方为空");
+            return null;
+        }
+
+        boolean hasDispenser = false;
+
+        for (ItemStack is : recipe) {
+            if (is != null) {
+                if (is.getType() == Material.DISPENSER) {
+                    hasDispenser = true;
+                    break;
+                }
+            }
+        }
+
+        if (!hasDispenser) {
+            ExceptionHandler.handleError("无法在附属"+addon.getAddonName()+"中加载多方块机器"+s+": 放置配方里没有发射器");
             return null;
         }
 

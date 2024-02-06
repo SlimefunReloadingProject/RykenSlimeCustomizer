@@ -13,7 +13,7 @@ EXAMPLE_MULTIBLOCK_MACHINE:
     #不要漏发射器
     8:
       material: DISPENSER
-  work: 4
+  work: 5
   sound: ANCIENT_ALTAR_FINISH_SOUND
   recipes:
     example:

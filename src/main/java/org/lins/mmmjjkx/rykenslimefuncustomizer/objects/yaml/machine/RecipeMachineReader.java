@@ -26,18 +26,6 @@ public class RecipeMachineReader extends YamlReader<CustomRecipeMachine> {
     }
 
     @Override
-    public List<CustomRecipeMachine> readAll(ProjectAddon addon) {
-        List<CustomRecipeMachine> machines = new ArrayList<>();
-        for (String key : configuration.getKeys(false)) {
-            var machine = readEach(key, addon);
-            if (machine != null) {
-                machines.add(machine);
-            }
-        }
-        return machines;
-    }
-
-    @Override
     public CustomRecipeMachine readEach(String s, ProjectAddon addon) {
         ConfigurationSection section = configuration.getConfigurationSection(s);
         if (section == null) return null;
@@ -105,6 +93,11 @@ public class RecipeMachineReader extends YamlReader<CustomRecipeMachine> {
             return null;
         }
 
+        if (energy > capacity) {
+            ExceptionHandler.handleError("无法加载配方机器"+s+": 合成一次的消耗能量不能大于能量容量");
+            return null;
+        }
+
         int speed = section.getInt("speed");
 
         if (speed <= 0) {
@@ -114,7 +107,7 @@ public class RecipeMachineReader extends YamlReader<CustomRecipeMachine> {
 
         List<MachineRecipe> mr = readRecipes(input.size(), output.size(), recipes, addon);
 
-        return new CustomRecipeMachine(group.getSecondValue(), slimefunItemStack, rt.getSecondValue(), recipe, input, output, mr, capacity, energy, menu, speed);
+        return new CustomRecipeMachine(group.getSecondValue(), slimefunItemStack, rt.getSecondValue(), recipe, input, output, mr, energy, capacity, menu, speed);
     }
 
     private List<MachineRecipe> readRecipes(int inputSize, int outputSize, ConfigurationSection section, ProjectAddon addon) {

@@ -23,18 +23,6 @@ public class MaterialGeneratorReader extends YamlReader<CustomMaterialGenerator>
     }
 
     @Override
-    public List<CustomMaterialGenerator> readAll(ProjectAddon addon) {
-        List<CustomMaterialGenerator> generators = new ArrayList<>();
-        for (String key : configuration.getKeys(false)) {
-            var ig = readEach(key, addon);
-            if (ig != null) {
-                generators.add(ig);
-            }
-        }
-        return generators;
-    }
-
-    @Override
     public CustomMaterialGenerator readEach(String s, ProjectAddon addon) {
         ConfigurationSection section = configuration.getConfigurationSection(s);
         if (section == null) return null;

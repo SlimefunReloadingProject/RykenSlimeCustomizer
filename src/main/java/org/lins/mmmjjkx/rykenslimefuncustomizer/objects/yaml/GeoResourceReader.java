@@ -24,18 +24,6 @@ public class GeoResourceReader extends YamlReader<CustomGeoResource> {
     }
 
     @Override
-    public List<CustomGeoResource> readAll(ProjectAddon addon) {
-        List<CustomGeoResource> resources = new ArrayList<>();
-        for (String key : configuration.getKeys(false)) {
-            var geo = readEach(key, addon);
-            if (geo != null) {
-                resources.add(geo);
-            }
-        }
-        return resources;
-    }
-
-    @Override
     public CustomGeoResource readEach(String s, ProjectAddon addon) {
         ConfigurationSection section = configuration.getConfigurationSection(s);
         if (section != null) {

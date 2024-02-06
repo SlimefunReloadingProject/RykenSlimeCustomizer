@@ -21,18 +21,6 @@ public class ResearchReader extends YamlReader<Research> {
     }
 
     @Override
-    public List<Research> readAll(ProjectAddon addon) {
-        List<Research> researches = new ArrayList<>();
-        for (String key : configuration.getKeys(false)) {
-            var research = readEach(key, addon);
-            if (research != null) {
-                researches.add(research);
-            }
-        }
-        return researches;
-    }
-
-    @Override
     public Research readEach(String s, ProjectAddon addon) {
         ConfigurationSection section = configuration.getConfigurationSection(s);
         if (section == null) return null;

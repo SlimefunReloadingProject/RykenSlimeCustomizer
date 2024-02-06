@@ -24,18 +24,6 @@ public class GeneratorReader extends YamlReader<CustomGenerator> {
     }
 
     @Override
-    public List<CustomGenerator> readAll(ProjectAddon addon) {
-        List<CustomGenerator> generators = new ArrayList<>();
-        for (String key : configuration.getKeys(false)) {
-            var ig = readEach(key, addon);
-            if (ig != null) {
-                generators.add(ig);
-            }
-        }
-        return generators;
-    }
-
-    @Override
     public CustomGenerator readEach(String s, ProjectAddon addon) {
         ConfigurationSection section = configuration.getConfigurationSection(s);
         if (section == null) return null;

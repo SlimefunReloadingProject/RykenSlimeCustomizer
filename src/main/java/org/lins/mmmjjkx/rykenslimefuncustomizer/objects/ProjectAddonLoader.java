@@ -108,6 +108,19 @@ public class ProjectAddonLoader {
         YamlConfiguration researches = doFileLoad(file, Constants.RESEARCHES_FILE);
         ResearchReader researchReader = new ResearchReader(researches);
         addon.setResearches(researchReader.readAll(addon));
+
+        //late inits
+        reader.loadLateInits(addon);
+        itemReader.loadLateInits(addon);
+        resourceReader.loadLateInits(addon);
+        menuReader.loadLateInits(addon);
+        machineReader.loadLateInits(addon);
+        generatorReader.loadLateInits(addon);
+        materialGeneratorReader.loadLateInits(addon);
+        recipeMachineReader.loadLateInits(addon);
+        multiBlockMachineReader.loadLateInits(addon);
+        researchReader.loadLateInits(addon);
+
         return addon;
     }
     

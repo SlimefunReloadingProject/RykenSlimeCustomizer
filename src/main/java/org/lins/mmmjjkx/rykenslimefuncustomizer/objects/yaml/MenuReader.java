@@ -22,18 +22,6 @@ public class MenuReader extends YamlReader<CustomMenu> {
     }
 
     @Override
-    public List<CustomMenu> readAll(ProjectAddon addon) {
-        List<CustomMenu> menus = new ArrayList<>();
-        for (String key : configuration.getKeys(false)) {
-            var menu = readEach(key, addon);
-            if (menu != null) {
-                menus.add(menu);
-            }
-        }
-        return menus;
-    }
-
-    @Override
     public CustomMenu readEach(String s, ProjectAddon addon) {
         ConfigurationSection section = configuration.getConfigurationSection(s);
         if (section == null) return null;

@@ -30,18 +30,6 @@ public class MachineReader extends YamlReader<AbstractEmptyMachine<?>> {
     }
 
     @Override
-    public List<AbstractEmptyMachine<?>> readAll(ProjectAddon addon) {
-        List<AbstractEmptyMachine<?>> machines = new ArrayList<>();
-        for (String key : configuration.getKeys(false)) {
-            var machine = readEach(key, addon);
-            if (machine != null) {
-                machines.add(machine);
-            }
-        }
-        return machines;
-    }
-
-    @Override
     public AbstractEmptyMachine<?> readEach(String s, ProjectAddon addon) {
         ConfigurationSection section = configuration.getConfigurationSection(s);
         if (section == null) return null;

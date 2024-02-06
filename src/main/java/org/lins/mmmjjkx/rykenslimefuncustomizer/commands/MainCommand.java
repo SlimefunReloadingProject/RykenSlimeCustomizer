@@ -1,20 +1,29 @@
 package org.lins.mmmjjkx.rykenslimefuncustomizer.commands;
 
+import io.github.thebusybiscuit.slimefun4.implementation.Slimefun;
+import me.mrCookieSlime.Slimefun.api.inventory.BlockMenuPreset;
 import net.kyori.adventure.text.Component;
 import org.bukkit.Material;
 import org.bukkit.command.Command;
 import org.bukkit.command.CommandSender;
 import org.bukkit.command.TabExecutor;
+import org.bukkit.configuration.file.YamlConfiguration;
 import org.bukkit.entity.Player;
 import org.bukkit.inventory.ItemStack;
+import org.bukkit.util.StringUtil;
 import org.jetbrains.annotations.NotNull;
 import org.jetbrains.annotations.Nullable;
+import org.lins.mmmjjkx.rykenslimefuncustomizer.ProjectAddonManager;
 import org.lins.mmmjjkx.rykenslimefuncustomizer.RykenSlimefunCustomizer;
 import org.lins.mmmjjkx.rykenslimefuncustomizer.objects.ProjectAddon;
+import org.lins.mmmjjkx.rykenslimefuncustomizer.objects.ProjectAddonLoader;
 import org.lins.mmmjjkx.rykenslimefuncustomizer.utils.CommonUtils;
 
+import java.io.File;
 import java.util.ArrayList;
+import java.util.Arrays;
 import java.util.List;
+import java.util.Objects;
 
 public class MainCommand implements TabExecutor {
     @Override
@@ -28,10 +37,20 @@ public class MainCommand implements TabExecutor {
                     sendHelp(sender);
                     return true;
                 } else if (args[0].equalsIgnoreCase("reload")) {
+                    if (!sender.hasPermission("rsc.command") || !sender.hasPermission("rsc.command.reload")) {
+                        sender.sendMessage(CommonUtils.parseToComponent("&4你没有权限去做这些！"));
+                        return false;
+                    }
+
                     RykenSlimefunCustomizer.reload();
                     sender.sendMessage(CommonUtils.parseToComponent("&a重载成功！"));
                     return true;
                 } else if (args[0].equalsIgnoreCase("list")) {
+                    if (!sender.hasPermission("rsc.command") || !sender.hasPermission("rsc.command.list")) {
+                        sender.sendMessage(CommonUtils.parseToComponent("&4你没有权限去做这些！"));
+                        return false;
+                    }
+
                     List<ProjectAddon> addons = RykenSlimefunCustomizer.addonManager.getAllValues();
                     List<String> nameWithId = addons.stream().map(a -> a.getAddonName() + "(id: " + a.getAddonId() + ")").toList();
                     Component component = CommonUtils.parseToComponent("&a已加载的附属: ");
@@ -44,6 +63,11 @@ public class MainCommand implements TabExecutor {
                     sender.sendMessage(component);
                     return true;
                 } else if (args[0].equalsIgnoreCase("reloadPlugin")) {
+                    if (!sender.hasPermission("rsc.command") || !sender.hasPermission("rsc.command.reloadPlugin")) {
+                        sender.sendMessage(CommonUtils.parseToComponent("&4你没有权限去做这些！"));
+                        return false;
+                    }
+
                     RykenSlimefunCustomizer.INSTANCE.reloadConfig();
                     if (RykenSlimefunCustomizer.INSTANCE.getConfig().getBoolean("saveExample")) {
                         RykenSlimefunCustomizer.saveExample();
@@ -52,7 +76,43 @@ public class MainCommand implements TabExecutor {
                     return true;
                 }
             } else if (args.length == 2) {
-                if (args[0].equalsIgnoreCase("disable")) {
+                if (args[0].equalsIgnoreCase("enable")) {
+                    if (!sender.hasPermission("rsc.command") || !sender.hasPermission("rsc.command.enable")) {
+                        sender.sendMessage(CommonUtils.parseToComponent("&4你没有权限去做这些！"));
+                        return false;
+                    }
+
+                    File file = new File(ProjectAddonManager.ADDONS_DIRECTORY, args[1]);
+
+                    if (!file.exists() || !file.isDirectory()) {
+                        sender.sendMessage(CommonUtils.parseToComponent("&4没有这个文件夹！"));
+                        return false;
+                    }
+
+                    YamlConfiguration forId = YamlConfiguration.loadConfiguration(new File(file, "info.yml"));
+                    if (forId.getString("id", null) == null) {
+                        sender.sendMessage(CommonUtils.parseToComponent("&4没有在info.yml里找到ID，无法加载！"));
+                        return false;
+                    }
+
+                    String id = forId.getString("id");
+                    if (RykenSlimefunCustomizer.addonManager.isLoaded(id)) {
+                        sender.sendMessage(CommonUtils.parseToComponent("&4此附属已经被加载了！"));
+                        return false;
+                    }
+
+                    ProjectAddonLoader loader = new ProjectAddonLoader(file);
+                    ProjectAddon addon = loader.load();
+                    RykenSlimefunCustomizer.addonManager.pushProjectAddon(addon);
+
+                    sender.sendMessage(CommonUtils.parseToComponent("&a加载此附属成功！"));
+                    return true;
+                } else if (args[0].equalsIgnoreCase("disable")) {
+                    if (!sender.hasPermission("rsc.command") || !sender.hasPermission("rsc.command.disable")) {
+                        sender.sendMessage(CommonUtils.parseToComponent("&4你没有权限去做这些！"));
+                        return false;
+                    }
+
                     String id = args[1];
                     ProjectAddon addon = RykenSlimefunCustomizer.addonManager.get(id);
                     if (addon == null) {
@@ -62,9 +122,33 @@ public class MainCommand implements TabExecutor {
                     addon.unregister();
                     sender.sendMessage(CommonUtils.parseToComponent("&a卸载此附属成功！"));
                     return true;
+                } else if (args[0].equalsIgnoreCase("menupreview")) {
+                    if (!sender.hasPermission("rsc.command") || !sender.hasPermission("rsc.command.menupreview")) {
+                        sender.sendMessage(CommonUtils.parseToComponent("&4你没有权限去做这些！"));
+                        return false;
+                    }
+
+                    String menuPresetId = args[1];
+                    BlockMenuPreset bmp = Slimefun.getRegistry().getMenuPresets().get(menuPresetId);
+                    if (bmp == null) {
+                        sender.sendMessage(CommonUtils.parseToComponent("&4没有这个菜单！"));
+                        return false;
+                    }
+                    if (sender instanceof Player p) {
+                        bmp.open(p);
+                        return true;
+                    } else {
+                        sender.sendMessage(CommonUtils.parseToComponent("&4你不能在控制台使用此指令！"));
+                        return false;
+                    }
                 }
             } else if (args.length == 3) {
                 if (args[0].equalsIgnoreCase("saveitem")) {
+                    if (!sender.hasPermission("rsc.command") || !sender.hasPermission("rsc.command.saveitem")) {
+                        sender.sendMessage(CommonUtils.parseToComponent("&4你没有权限去做这些！"));
+                        return false;
+                    }
+
                     String prjId = args[1];
                     String itemId = args[2];
                     ProjectAddon addon = RykenSlimefunCustomizer.addonManager.get(prjId);
@@ -98,22 +182,39 @@ public class MainCommand implements TabExecutor {
 
     @Override
     public @Nullable List<String> onTabComplete(@NotNull CommandSender sender, @NotNull Command command, @NotNull String label, @NotNull String[] args) {
+        List<String> raw = onTabCompleteRaw(args);
+        return StringUtil.copyPartialMatches(args[args.length-1], raw, new ArrayList<>());
+    }
+
+    public @NotNull List<String> onTabCompleteRaw(@NotNull String[] args) {
         if (args.length == 1) {
-            return List.of("list", "reload");
+            return List.of("list", "reload", "reloadPlugin", "list", "enable", "disable", "saveitem", "menupreview");
+        } else if (args.length == 2) {
+            return switch (args[0]) {
+                case "enable" ->
+                        Arrays.stream(Objects.requireNonNull(ProjectAddonManager.ADDONS_DIRECTORY.listFiles())).map(File::getName).toList();
+                case "disable","saveitem" -> RykenSlimefunCustomizer.addonManager.getAllValues().stream().map(ProjectAddon::getAddonId).toList();
+                case "menupreview" -> Slimefun.getRegistry().getMenuPresets().keySet().stream().toList();
+                default -> new ArrayList<>();
+            };
         }
         return new ArrayList<>();
     }
 
     private void sendHelp(CommandSender sender) {
+        if (!sender.hasPermission("rsc.command") || !sender.hasPermission("rsc.command.help")) {
+            sender.sendMessage(CommonUtils.parseToComponent("&4你没有权限去做这些！"));
+            return;
+        }
         sender.sendMessage(CommonUtils.parseToComponent("""
                         &aRykenSlimeCustomizer帮助
                         &e/rsc (help) 显示帮助
                         &e/rsc reload 重载插件及附属
                         &e/rsc reloadPlugin 重载插件
                         &e/rsc list 显示加载成功的附属
+                        &e/rsc enable <addons里的文件夹名称> 加载某个附属
                         &e/rsc disable <附属ID> 卸载某个附属
                         &e/rsc saveitem <附属ID> <ID> 保存物品
-                        &e/rsc menupreview <ID> 预览机器菜单&4(未完成！)
-                        """));
+                        &e/rsc menupreview <ID> 预览机器菜单"""));
     }
 }

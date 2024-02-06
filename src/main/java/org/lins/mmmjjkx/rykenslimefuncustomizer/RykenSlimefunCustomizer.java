@@ -55,6 +55,7 @@ public final class RykenSlimefunCustomizer extends JavaPlugin implements Slimefu
     @Override
     public void onDisable() {
         // Plugin shutdown logic
+        getLogger().info("RykenSlimeCustomizer已卸载!");
     }
 
     public static void reload() {

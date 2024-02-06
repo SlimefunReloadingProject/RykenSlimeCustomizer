@@ -28,7 +28,4 @@ EXAMPLE_RECIPE_MACHINE:
         1:
           material_type: full_slimefun
           material: EXAMPLE_ITEM_2
-        2:
-          material_type: full_slimefun
-          material: EXAMPLE_GEO_RESOURCE
 

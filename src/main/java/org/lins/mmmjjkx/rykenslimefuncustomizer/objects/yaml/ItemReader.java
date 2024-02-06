@@ -26,18 +26,6 @@ public class ItemReader extends YamlReader<CustomItem> {
     }
 
     @Override
-    public List<CustomItem> readAll(ProjectAddon addon) {
-        List<CustomItem> items = new ArrayList<>();
-        for (String key : configuration.getKeys(false)) {
-            var item = readEach(key, addon);
-            if (item != null) {
-                items.add(item);
-            }
-        }
-        return items;
-    }
-
-    @Override
     public CustomItem readEach(String s, ProjectAddon addon) {
         ConfigurationSection section = configuration.getConfigurationSection(s);
         if (section == null) return null;

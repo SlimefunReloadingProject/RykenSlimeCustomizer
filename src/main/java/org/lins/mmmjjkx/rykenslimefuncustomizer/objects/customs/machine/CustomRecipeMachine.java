@@ -10,20 +10,15 @@ import io.github.thebusybiscuit.slimefun4.core.attributes.MachineProcessHolder;
 import io.github.thebusybiscuit.slimefun4.core.attributes.RecipeDisplayItem;
 import io.github.thebusybiscuit.slimefun4.core.handlers.BlockBreakHandler;
 import io.github.thebusybiscuit.slimefun4.core.machines.MachineProcessor;
-import io.github.thebusybiscuit.slimefun4.core.networks.energy.EnergyNetComponentType;
 import io.github.thebusybiscuit.slimefun4.implementation.handlers.SimpleBlockBreakHandler;
 import io.github.thebusybiscuit.slimefun4.implementation.operations.CraftingOperation;
-import io.github.thebusybiscuit.slimefun4.libraries.dough.items.CustomItemStack;
 import me.mrCookieSlime.Slimefun.Objects.SlimefunItem.abstractItems.AContainer;
 import me.mrCookieSlime.Slimefun.Objects.SlimefunItem.abstractItems.MachineRecipe;
 import me.mrCookieSlime.Slimefun.api.inventory.BlockMenu;
 import me.mrCookieSlime.Slimefun.api.inventory.BlockMenuPreset;
 import org.bukkit.Material;
-import org.bukkit.NamespacedKey;
 import org.bukkit.block.Block;
 import org.bukkit.inventory.ItemStack;
-import org.bukkit.inventory.meta.ItemMeta;
-import org.bukkit.persistence.PersistentDataType;
 import org.jetbrains.annotations.NotNull;
 import org.lins.mmmjjkx.rykenslimefuncustomizer.RykenSlimefunCustomizer;
 import org.lins.mmmjjkx.rykenslimefuncustomizer.objects.customs.CustomMenu;
@@ -33,13 +28,6 @@ import java.util.List;
 
 @Beta
 public class CustomRecipeMachine extends AContainer implements RecipeDisplayItem, EnergyNetComponent, MachineProcessHolder<CraftingOperation> {
-    private static final ItemStack MULTI_INPUT_ITEM = new CustomItemStack(
-            Material.LIME_STAINED_GLASS_PANE, "&a多物品输入", "", "&7> 单击查看");
-    public static final ItemStack MULTI_OUTPUT_ITEM = new CustomItemStack(
-            Material.LIME_STAINED_GLASS_PANE, "&a多物品输出", "", "&7> 单击查看");
-
-    private final NamespacedKey RSC_RECIPE_KEY = new NamespacedKey(RykenSlimefunCustomizer.INSTANCE, "rsc_recipe");
-
     private final MachineProcessor<CraftingOperation> processor;
     private final List<Integer> input;
     private final List<Integer> output;
@@ -66,6 +54,9 @@ public class CustomRecipeMachine extends AContainer implements RecipeDisplayItem
 
         setProcessingSpeed(speed);
         this.processor.setProgressBar(menu.getProgress());
+
+        setCapacity(capacity);
+        setEnergyConsumption(energyPerCraft);
 
         registerDefaultRecipes();
 
@@ -113,23 +104,29 @@ public class CustomRecipeMachine extends AContainer implements RecipeDisplayItem
         return new ItemStack(Material.STONE);
     }
 
-    @NotNull
     @Override
+    @NotNull
     public List<ItemStack> getDisplayRecipes() {
-        List<ItemStack> displayRecipes = new ArrayList<>(recipes.size() * 2);
+        List<ItemStack> displayRecipes = new ArrayList<>(this.recipes.size() * 2);
 
-        for (int i = 0; i < recipes.size(); i++) {
-            MachineRecipe recipe = recipes.get(i);
-            if (recipe.getInput().length == 2) {
-                displayRecipes.add(keyItem(MULTI_INPUT_ITEM.clone(), i));
-            } else {
-                displayRecipes.add(recipe.getInput()[0]);
-            }
+        for (MachineRecipe recipe : recipes) {
+            ItemStack[] input = recipe.getInput();
+            ItemStack[] output = recipe.getOutput();
+            int max = Math.max(input.length, output.length);
+            for (int i = 0; i < max; i++) {
+                try {
+                    ItemStack in = input[i];
+                    displayRecipes.add(in);
+                } catch (ArrayIndexOutOfBoundsException e) {
+                    displayRecipes.add(null);
+                }
 
-            if (recipe.getOutput().length == 2) {
-                displayRecipes.add(keyItem(MULTI_OUTPUT_ITEM.clone(), i));
-            } else {
-                displayRecipes.add(recipe.getOutput()[0]);
+                try {
+                    ItemStack out = output[i];
+                    displayRecipes.add(out);
+                } catch (ArrayIndexOutOfBoundsException e) {
+                    displayRecipes.add(null);
+                }
             }
         }
 
@@ -154,12 +151,6 @@ public class CustomRecipeMachine extends AContainer implements RecipeDisplayItem
         return output;
     }
 
-    @NotNull
-    @Override
-    public EnergyNetComponentType getEnergyComponentType() {
-        return EnergyNetComponentType.NONE;
-    }
-
     @Override
     public int getCapacity() {
         return capacity;
@@ -171,14 +162,6 @@ public class CustomRecipeMachine extends AContainer implements RecipeDisplayItem
         return getId();
     }
 
-    private ItemStack keyItem(ItemStack is, int val) {
-        is.setAmount(val);
-        ItemMeta im = is.getItemMeta();
-        im.getPersistentDataContainer().set(RSC_RECIPE_KEY, PersistentDataType.INTEGER, val);
-        is.setItemMeta(im);
-        return is;
-    }
-
     @Override
     protected void constructMenu(BlockMenuPreset preset) {}
 
@@ -188,16 +171,18 @@ public class CustomRecipeMachine extends AContainer implements RecipeDisplayItem
         CraftingOperation currentOperation = this.processor.getOperation(b);
         if (inv != null) {
             if (currentOperation != null) {
-                if (this.takeCharge(b.getLocation())) {
+                if (takeCharge(b.getLocation())) {
+                    removeCharge(b.getLocation(), getEnergyConsumption());
+
                     if (!currentOperation.isFinished()) {
                         this.processor.updateProgressBar(inv, menu.getProgressSlot(), currentOperation);
                         currentOperation.addProgress(1);
                     } else {
                         inv.replaceExistingItem(menu.getProgressSlot(), menu.getProgress());
-                        ItemStack[] var4 = currentOperation.getResults();
+                        ItemStack[] outputs = currentOperation.getResults();
 
-                        for (ItemStack output : var4) {
-                            inv.pushItem(output.clone(), this.getOutputSlots());
+                        for (ItemStack o : outputs) {
+                            inv.pushItem(o.clone(), this.getOutputSlots());
                         }
 
                         this.processor.endOperation(b);

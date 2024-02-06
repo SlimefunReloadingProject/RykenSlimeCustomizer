@@ -25,18 +25,6 @@ public class ItemGroupReader extends YamlReader<ItemGroup> {
     }
 
     @Override
-    public List<ItemGroup> readAll(ProjectAddon addon) {
-        List<ItemGroup> itemGroups = new ArrayList<>();
-        for (String key : configuration.getKeys(false)) {
-            var ig = readEach(key, addon);
-            if (ig != null) {
-                itemGroups.add(ig);
-            }
-        }
-        return itemGroups;
-    }
-
-    @Override
     public ItemGroup readEach(String s, ProjectAddon addon) {
         ConfigurationSection section = configuration.getConfigurationSection(s);
         if (section == null) return null;

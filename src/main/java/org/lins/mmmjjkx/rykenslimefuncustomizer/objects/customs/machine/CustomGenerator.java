@@ -44,6 +44,7 @@ public class CustomGenerator extends AGenerator implements MachineProcessHolder<
     public CustomGenerator(ItemGroup itemGroup, SlimefunItemStack item, RecipeType recipeType, ItemStack[] recipe, @NotNull CustomMenu menu, int capacity, List<Integer> input, List<Integer> output, int production, List<MachineFuel> machineFuels) {
         super(itemGroup, item, recipeType, recipe);
 
+        menu.setInvb(this);
         menu.reInit();
 
         this.capacity = capacity;
@@ -61,7 +62,7 @@ public class CustomGenerator extends AGenerator implements MachineProcessHolder<
             registerFuel(fuel);
         }
 
-        this.menu.setInvb(this);
+
 
         register(RykenSlimefunCustomizer.INSTANCE);
     }

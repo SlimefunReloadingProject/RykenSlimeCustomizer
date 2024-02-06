@@ -1,5 +1,6 @@
 package org.lins.mmmjjkx.rykenslimefuncustomizer;
 
+import io.github.thebusybiscuit.slimefun4.libraries.commons.lang.Validate;
 import org.bukkit.plugin.Plugin;
 import org.lins.mmmjjkx.rykenslimefuncustomizer.objects.ProjectAddon;
 import org.lins.mmmjjkx.rykenslimefuncustomizer.objects.ProjectAddonLoader;
@@ -11,9 +12,20 @@ import java.util.List;
 import java.util.Map;
 
 public class ProjectAddonManager {
+    public static File ADDONS_DIRECTORY;
+
     private final Map<String, ProjectAddon> projectAddons = new HashMap<>();
 
-    public ProjectAddonManager() {}
+    public ProjectAddonManager() {
+        ADDONS_DIRECTORY = new File(RykenSlimefunCustomizer.INSTANCE.getDataFolder(), "addons");
+    }
+
+    public void pushProjectAddon(ProjectAddon addon) {
+        Validate.notNull(addon, "addon");
+        if (!projectAddons.containsKey(addon.getAddonId())) {
+            projectAddons.put(addon.getAddonId(), addon);
+        }
+    }
 
     public void setup(Plugin inst) {
         File addons = new File(inst.getDataFolder(), "addons");
