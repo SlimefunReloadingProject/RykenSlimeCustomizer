@@ -1,0 +1,26 @@
+EXAMPLE_MULTIBLOCK_MACHINE:
+  item_group: example_normal_group
+  item:
+    name: "&b示例多方块机器"
+    material: CRAFTING_TABLE
+  recipe:
+    #按照这个设置
+    #1 2 3
+    #4 5 6
+    #7 8 9
+    5:
+      material: OAK_FENCE_GATE
+    #不要漏发射器
+    8:
+      material: DISPENSER
+  work: 4
+  sound: ANCIENT_ALTAR_FINISH_SOUND
+  recipes:
+    example:
+      input:
+        1:
+          material_type: full_slimefun
+          material: EXAMPLE_ITEM
+      output:
+        material_type: full_slimefun
+        material: EXAMPLE_ITEM_2

@@ -3,7 +3,7 @@ EXAMPLE_GENERATOR:
   item:
     name: "&c示例发电机"
     material: GOLD_BLOCK
-  capacity: 0 #容量设置0变成不可充电的机器
+  capacity: 100000
   production: 100
   input: [10,11]
   output: [15,16]
@@ -27,5 +27,7 @@ EXAMPLE_GENERATOR:
   fuels:
     example_fuel:
       item:
-        material: OAK_WOOD
+        material: OAK_LOG
       seconds: 10
+      output:
+        material: CHARCOAL

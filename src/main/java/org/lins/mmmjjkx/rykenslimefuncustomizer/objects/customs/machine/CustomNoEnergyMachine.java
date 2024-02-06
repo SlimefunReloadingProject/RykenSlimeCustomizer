@@ -28,7 +28,7 @@ import org.lins.mmmjjkx.rykenslimefuncustomizer.objects.machine.SmallerMachineIn
 import java.util.List;
 import java.util.function.Consumer;
 
-public class CustomNoEnergyMachine extends AbstractEmptyMachine {
+public class CustomNoEnergyMachine extends AbstractEmptyMachine<MachineOperation> {
     private final List<Integer> input;
     private final List<Integer> output;
     private final JavaScriptEval eval;
@@ -45,16 +45,19 @@ public class CustomNoEnergyMachine extends AbstractEmptyMachine {
         this.eval = eval;
         this.processor = new MachineProcessor<>(this);
 
-        if (menu != null) {
-            menu.outSideInit();
-            menu.addMenuClickHandler(work, (p, slot, is, ca) -> {
-                this.worked = true;
-                return false;
-            });
-            if (this.eval != null) {
+        if (this.eval != null) {
+            this.eval.addThing("setWorking", (Consumer<Boolean>) b -> worked = b);
+            this.eval.addThing("working", worked);
+        }
 
-                this.eval.addThing("setWorking", (Consumer<Boolean>) b -> worked = b);
-                this.eval.addThing("working", worked);
+        if (menu != null) {
+            if (work != -1) {
+                menu.addMenuClickHandler(work, (p, slot, is, ca) -> {
+                    this.worked = true;
+                    return false;
+                });
+            }
+            if (this.eval != null) {
 
                 if (this.eval.hasFunction("onUse", 1)) {
                     addItemHandler((BlockUseHandler) e -> this.eval.evalFunction("onUse", e));

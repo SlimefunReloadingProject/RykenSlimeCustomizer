@@ -64,8 +64,8 @@ public class GeoResourceReader extends YamlReader<CustomGeoResource> {
             if (rt.getFirstValue() == ExceptionHandler.HandleResult.FAILED) return null;
             SlimefunItemStack slimefunItemStack = new SlimefunItemStack(s, stack);
 
+            ConfigurationSection sup = section.getConfigurationSection("supply");
             BiFunction<World.Environment, Biome, Integer> supply = (e, b) -> {
-                ConfigurationSection sup = section.getConfigurationSection("supply");
                 if (sup == null) {
                     return 0;
                 }
@@ -90,6 +90,8 @@ public class GeoResourceReader extends YamlReader<CustomGeoResource> {
                     }
                 }
             };
+
+            if (recipe == null) recipe = new ItemStack[9];
 
             CustomGeoResource geoResource = new CustomGeoResource(group.getSecondValue(), slimefunItemStack,
                     rt.getSecondValue(), recipe, supply, maxDeviation, obtainableFromGEOMiner, name);

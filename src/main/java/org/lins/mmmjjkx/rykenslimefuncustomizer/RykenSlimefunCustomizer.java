@@ -5,9 +5,30 @@ import org.bukkit.plugin.java.JavaPlugin;
 import org.jetbrains.annotations.NotNull;
 import org.lins.mmmjjkx.rykenslimefuncustomizer.commands.MainCommand;
 
+import java.io.File;
+import java.nio.file.Files;
+import java.nio.file.Path;
+import java.nio.file.Paths;
 import java.util.Objects;
 
 public final class RykenSlimefunCustomizer extends JavaPlugin implements SlimefunAddon {
+    private static final String[] resourcePaths = {
+            "info.yml",
+            "menus.yml",
+            "groups.yml",
+            "machines.yml",
+            "researches.yml",
+            "items.yml",
+            "generators.yml",
+            "mat_generators.yml",
+            "mb_machines.yml",
+            "recipe_machines.yml",
+            "geo_resources.yml",
+            "scripts/example_item_2.js",
+            "scripts/example_machine.js",
+            "scripts/example_machine_energy.js"
+    };
+
     public static RykenSlimefunCustomizer INSTANCE;
     public static ProjectAddonManager addonManager;
 
@@ -27,6 +48,8 @@ public final class RykenSlimefunCustomizer extends JavaPlugin implements Slimefu
         addonManager.setup(this);
 
         Objects.requireNonNull(getCommand("rykenslimecustomizer")).setExecutor(new MainCommand());
+
+        getLogger().info("RykenSlimeCustomizer已启用!");
     }
 
     @Override
@@ -56,16 +79,14 @@ public final class RykenSlimefunCustomizer extends JavaPlugin implements Slimefu
 
     public static void saveExample() {
         String head = "addons/example/";
-        INSTANCE.saveResource(head + "info.yml", true);
-        INSTANCE.saveResource(head + "menus.yml", false);
-        INSTANCE.saveResource(head + "groups.yml", false);
-        INSTANCE.saveResource(head + "machines.yml", false);
-        INSTANCE.saveResource(head + "researches.yml", false);
-        INSTANCE.saveResource(head + "items.yml", false);
-        INSTANCE.saveResource(head + "generators.yml", false);
-        INSTANCE.saveResource(head + "mat_generators.yml", false);
-        INSTANCE.saveResource(head + "scripts/example_item_2.js", false);
-        INSTANCE.saveResource(head + "scripts/example_machine.js", false);
-        INSTANCE.saveResource(head + "scripts/example_machine_energy.js", false);
+
+        for (String resourcePath : resourcePaths) {
+            String filePath = new File(INSTANCE.getDataFolder(),head + resourcePath).getAbsolutePath();
+            Path path = Paths.get(filePath);
+
+            if (!Files.exists(path)) {
+                INSTANCE.saveResource(head + resourcePath, false);
+            }
+        }
     }
 }

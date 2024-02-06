@@ -1,7 +1,5 @@
 package org.lins.mmmjjkx.rykenslimefuncustomizer.utils;
 
-import io.github.thebusybiscuit.slimefun4.implementation.Slimefun;
-
 public class Constants {
     public static final String INFO_FILE = "info.yml";
     public static final String MENUS_FILE = "menus.yml";
@@ -12,7 +10,6 @@ public class Constants {
     public static final String MACHINES_FILE = "machines.yml";
     public static final String GENERATORS_FILE = "generators.yml";
     public static final String MATERIAL_GENERATORS_FILE = "mat_generators.yml";
+    public static final String RECIPE_MACHINES_FILE = "recipe_machines.yml";
     public static final String MULTI_BLOCK_MACHINES_FILE = "mb_machines.yml";
-    public static final int SERVER_TICK_RATE = 20;
-    public static final int CUSTOM_TICKER_DELAY = Slimefun.getCfg().getInt("URID.custom-ticker-delay");
 }

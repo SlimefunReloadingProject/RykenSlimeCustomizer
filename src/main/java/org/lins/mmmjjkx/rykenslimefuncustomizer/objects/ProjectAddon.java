@@ -14,6 +14,8 @@ import org.lins.mmmjjkx.rykenslimefuncustomizer.objects.customs.CustomItem;
 import org.lins.mmmjjkx.rykenslimefuncustomizer.objects.customs.CustomMenu;
 import org.lins.mmmjjkx.rykenslimefuncustomizer.objects.customs.machine.CustomGenerator;
 import org.lins.mmmjjkx.rykenslimefuncustomizer.objects.customs.machine.CustomMaterialGenerator;
+import org.lins.mmmjjkx.rykenslimefuncustomizer.objects.customs.machine.CustomMultiBlockMachine;
+import org.lins.mmmjjkx.rykenslimefuncustomizer.objects.customs.machine.CustomRecipeMachine;
 import org.lins.mmmjjkx.rykenslimefuncustomizer.objects.customs.parent.AbstractEmptyMachine;
 
 import java.io.File;
@@ -41,13 +43,17 @@ public class ProjectAddon {
     //items.yml
     private List<CustomItem> items = new ArrayList<>();
     //machines.yml
-    private List<AbstractEmptyMachine> machines = new ArrayList<>();
+    private List<AbstractEmptyMachine<?>> machines = new ArrayList<>();
     //researches.yml
     private List<Research> researches = new ArrayList<>();
     //generators.yml
     private List<CustomGenerator> generators = new ArrayList<>();
     //mat_generators.yml
     private List<CustomMaterialGenerator> materialGenerators = new ArrayList<>();
+    //recipe_machines.yml
+    private List<CustomRecipeMachine> recipeMachines = new ArrayList<>();
+    //mb_machines.yml
+    private List<CustomMultiBlockMachine> multiBlockMachines = new ArrayList<>();
 
     public File getScriptsFolder() {
         File scripts = new File(folder, "scripts");
@@ -72,8 +78,10 @@ public class ProjectAddon {
         items.forEach(this::unregisterItem);
         machines.forEach(this::unregisterItem);
         generators.forEach(this::unregisterItem);
-        geoResources.forEach(this::unregisterItem);
+        geoResources.forEach(this::unregisterGeo);
         materialGenerators.forEach(this::unregisterItem);
+        recipeMachines.forEach(this::unregisterItem);
+        multiBlockMachines.forEach(this::unregisterItem);
 
         researches.clear();
         items.clear();
@@ -83,12 +91,20 @@ public class ProjectAddon {
         geoResources.clear();
         generators.clear();
         materialGenerators.clear();
+        recipeMachines.clear();
+        multiBlockMachines.clear();
     }
 
-    public void unregisterItem(SlimefunItem item) {
+    private void unregisterItem(SlimefunItem item) {
         item.disable();
         Slimefun.getRegistry().getDisabledSlimefunItems().remove(item);
         Slimefun.getRegistry().getSlimefunItemIds().remove(item.getId());
         Slimefun.getRegistry().getAllSlimefunItems().remove(item);
+    }
+
+    private void unregisterGeo(CustomGeoResource resource) {
+        unregisterItem(resource);
+
+        Slimefun.getRegistry().getGEOResources().remove(resource.getKey());
     }
 }

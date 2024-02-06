@@ -65,7 +65,7 @@ public class MaterialGeneratorReader extends YamlReader<CustomMaterialGenerator>
 
         CustomMenu menu = CommonUtils.getIf(addon.getMenus(), m -> m.getID().equalsIgnoreCase(s));
         if (menu == null) {
-            ExceptionHandler.handleError("无法加载发电机"+s+": 对应菜单不存在");
+            ExceptionHandler.handleError("无法加载材料生成器"+s+": 对应菜单不存在");
             return null;
         }
 
@@ -96,6 +96,8 @@ public class MaterialGeneratorReader extends YamlReader<CustomMaterialGenerator>
             status = section.getInt("status");
         }
 
-        return new CustomMaterialGenerator(group.getSecondValue(), slimefunItemStack, rt.getSecondValue(), recipe, capacity, output, status, tickRate, out, per);
+        CustomMaterialGenerator cmg = new CustomMaterialGenerator(group.getSecondValue(), slimefunItemStack, rt.getSecondValue(), recipe, capacity, output, status, tickRate, out, per);
+        menu.setInvb(cmg);
+        return cmg;
     }
 }

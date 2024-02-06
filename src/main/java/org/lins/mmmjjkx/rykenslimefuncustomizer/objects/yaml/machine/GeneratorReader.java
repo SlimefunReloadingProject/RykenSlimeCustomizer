@@ -8,7 +8,6 @@ import me.mrCookieSlime.Slimefun.Objects.SlimefunItem.abstractItems.MachineFuel;
 import org.bukkit.configuration.ConfigurationSection;
 import org.bukkit.configuration.file.YamlConfiguration;
 import org.bukkit.inventory.ItemStack;
-import org.lins.mmmjjkx.rykenslimefuncustomizer.RykenSlimefunCustomizer;
 import org.lins.mmmjjkx.rykenslimefuncustomizer.objects.ProjectAddon;
 import org.lins.mmmjjkx.rykenslimefuncustomizer.objects.customs.CustomMenu;
 import org.lins.mmmjjkx.rykenslimefuncustomizer.objects.customs.machine.CustomGenerator;
@@ -88,10 +87,7 @@ public class GeneratorReader extends YamlReader<CustomGenerator> {
             return null;
         }
 
-        CustomGenerator cg = new CustomGenerator(group.getSecondValue(), slimefunItemStack, rt.getSecondValue(), recipe, menu, capacity, input, output, production, fuels);
-        cg.registerDefaultFuelTypes();
-        cg.register(RykenSlimefunCustomizer.INSTANCE);
-        return cg;
+        return new CustomGenerator(group.getSecondValue(), slimefunItemStack, rt.getSecondValue(), recipe, menu, capacity, input, output, production, fuels);
     }
 
     private List<MachineFuel> readFuels(String id, ConfigurationSection section, ProjectAddon addon) {

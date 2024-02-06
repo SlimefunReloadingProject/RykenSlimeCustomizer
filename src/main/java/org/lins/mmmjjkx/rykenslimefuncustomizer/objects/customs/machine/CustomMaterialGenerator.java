@@ -8,6 +8,7 @@ import io.github.thebusybiscuit.slimefun4.api.items.SlimefunItemStack;
 import io.github.thebusybiscuit.slimefun4.api.recipes.RecipeType;
 import io.github.thebusybiscuit.slimefun4.core.attributes.EnergyNetComponent;
 import io.github.thebusybiscuit.slimefun4.core.networks.energy.EnergyNetComponentType;
+import io.github.thebusybiscuit.slimefun4.implementation.handlers.SimpleBlockBreakHandler;
 import io.github.thebusybiscuit.slimefun4.libraries.dough.items.CustomItemStack;
 import me.mrCookieSlime.Slimefun.Objects.SlimefunItem.interfaces.InventoryBlock;
 import me.mrCookieSlime.Slimefun.Objects.handlers.BlockTicker;
@@ -22,7 +23,7 @@ import java.util.List;
 import java.util.Objects;
 
 @SuppressWarnings("deprecation")
-public class CustomMaterialGenerator extends SlimefunItem implements InventoryBlock, EnergyNetComponent  {
+public class CustomMaterialGenerator extends SlimefunItem implements InventoryBlock, EnergyNetComponent {
     private final int capacity;
     private final List<Integer> output;
     private final int tickRate;
@@ -42,6 +43,17 @@ public class CustomMaterialGenerator extends SlimefunItem implements InventoryBl
         this.generation = generation;
         this.per = per;
 
+        this.addItemHandler(getBlockTicker());
+        this.addItemHandler(new SimpleBlockBreakHandler() {
+            @Override
+            public void onBlockBreak(@NotNull Block block) {
+                BlockMenu bm = StorageCacheUtils.getMenu(block.getLocation());
+                if (bm != null) {
+                    bm.dropItems(block.getLocation(), getOutputSlots());
+                }
+            }
+        });
+
         register(RykenSlimefunCustomizer.INSTANCE);
     }
 
@@ -56,7 +68,7 @@ public class CustomMaterialGenerator extends SlimefunItem implements InventoryBl
                     if (blockMenu.fits(generation, getOutputSlots())) {
                         blockMenu.pushItem(generation.clone(), getOutputSlots());
                         removeCharge(b.getLocation(), per);
-                        progress = 1;
+                        setProgress(b, 0);
                     } else {
                         if (blockMenu.hasViewer()) {
                             if (statusSlot > -1) {

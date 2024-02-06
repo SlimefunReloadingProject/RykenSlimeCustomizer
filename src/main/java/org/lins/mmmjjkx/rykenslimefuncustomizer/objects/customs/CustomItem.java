@@ -19,15 +19,11 @@ import java.util.Map;
 public class CustomItem extends SlimefunItem {
     private static final Map<String, String> tempValue = new HashMap<>();
 
-    public CustomItem(ItemGroup itemGroup, SlimefunItemStack item, RecipeType recipeType, ItemStack[] recipe, @Nullable JavaScriptEval eval, ItemHandler... handlers) {
+    public CustomItem(ItemGroup itemGroup, SlimefunItemStack item, RecipeType recipeType, ItemStack[] recipe, @Nullable JavaScriptEval eval) {
         super(itemGroup, item, recipeType, recipe);
-
-        this.addItemHandler(handlers);
 
         if (eval != null) {
             this.addItemHandler((ItemUseHandler) e -> eval.evalFunction("onUse", e));
         }
-
-        register(RykenSlimefunCustomizer.INSTANCE);
     }
 }

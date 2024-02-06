@@ -113,6 +113,7 @@ public class MainCommand implements TabExecutor {
                         &e/rsc list 显示加载成功的附属
                         &e/rsc disable <附属ID> 卸载某个附属
                         &e/rsc saveitem <附属ID> <ID> 保存物品
+                        &e/rsc menupreview <ID> 预览机器菜单&4(未完成！)
                         """));
     }
 }

@@ -1,0 +1,34 @@
+EXAMPLE_RECIPE_MACHINE:
+  item_group: example_normal_group
+  item:
+    name: "&e示例配方机器"
+    material: "GREEN_STAINED_GLASS"
+  recipe_type: ENHANCED_CRAFTING_TABLE
+  recipe:
+    1:
+      material_type: full_slimefun
+      material: EXAMPLE_ITEM
+    2:
+      material_type: full_slimefun
+      material: EXAMPLE_ITEM_2
+  capacity: 1000
+  input: [10,11]
+  output: [15,16]
+  energyPerCraft: 100
+  speed: 2
+  recipes:
+    example:
+      seconds: 10
+      input:
+        1:
+          material_type: full_slimefun
+          material: EXAMPLE_ITEM
+        #添加更多输入物品。。。
+      output:
+        1:
+          material_type: full_slimefun
+          material: EXAMPLE_ITEM_2
+        2:
+          material_type: full_slimefun
+          material: EXAMPLE_GEO_RESOURCE
+

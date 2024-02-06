@@ -48,3 +48,22 @@ EXAMPLE_MATERIAL_GENERATOR:
     13-17:
       name: "&a"
       material: BLACK_STAINED_GLASS_PANE
+EXAMPLE_RECIPE_MACHINE:
+  title: "&c示例配方机器"
+  slots:
+    0-3:
+      name: "&a"
+      material: BLACK_STAINED_GLASS_PANE
+    4:
+      name: "&a信息"
+      material: GREEN_STAINED_GLASS_PANE
+      progressbar: true
+    5-9:
+      name: "&a"
+      material: BLACK_STAINED_GLASS_PANE
+    12-14:
+      name: "&a"
+      material: BLACK_STAINED_GLASS_PANE
+    17-26:
+      name: "&a"
+      material: BLACK_STAINED_GLASS_PANE

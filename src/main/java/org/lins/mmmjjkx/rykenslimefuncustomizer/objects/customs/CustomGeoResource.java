@@ -30,8 +30,8 @@ public class CustomGeoResource extends UnplaceableBlock implements GEOResource {
         this.obtainableFromGEOMiner = obtainableFromGEOMiner;
         this.name = name;
 
-        register(RykenSlimefunCustomizer.INSTANCE);
         register();
+        register(RykenSlimefunCustomizer.INSTANCE);
     }
 
     @Override

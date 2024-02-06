@@ -30,7 +30,7 @@ import org.lins.mmmjjkx.rykenslimefuncustomizer.objects.machine.MachineRecord;
 
 import java.util.List;
 
-public class CustomMachine extends AbstractEmptyMachine implements EnergyNetComponent {
+public class CustomMachine extends AbstractEmptyMachine<MachineOperation> implements EnergyNetComponent {
     private final MachineRecord theRecord;
     private final List<Integer> input;
     private final List<Integer> output;
@@ -45,10 +45,6 @@ public class CustomMachine extends AbstractEmptyMachine implements EnergyNetComp
         this.input = input;
         this.output = output;
         this.theRecord = record;
-
-        if (menu != null) {
-            menu.outSideInit();
-        }
 
         this.type = type;
         this.eval = eval;

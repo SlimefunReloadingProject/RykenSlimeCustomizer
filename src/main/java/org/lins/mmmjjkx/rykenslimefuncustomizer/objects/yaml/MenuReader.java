@@ -46,8 +46,10 @@ public class MenuReader extends YamlReader<CustomMenu> {
 
         Map<Integer, ItemStack> slotMap = new HashMap<>();
         ConfigurationSection slots = section.getConfigurationSection("slots");
-        if (slots == null) return new CustomMenu(s, title, slotMap, playerInvClickable, null);
-
+        if (slots == null) {
+            ExceptionHandler.handleError("无法加载机器菜单"+s+": 没有设置物品。");
+            return null;
+        }
         int progress = -1;
 
         JavaScriptEval eval = null;
@@ -74,7 +76,7 @@ public class MenuReader extends YamlReader<CustomMenu> {
                     ExceptionHandler.handleWarning("在菜单"+s+"中有位于槽位"+realSlot+"的物品格式错误或输入了错误的数据无法读取，跳过对此物品的读取。");
                     continue;
                 }
-                if (section.getBoolean("progressbar", false)) {
+                if (item.getBoolean("progressbar", false)) {
                     progress = realSlot;
                 }
                 slotMap.put(realSlot, itemStack);

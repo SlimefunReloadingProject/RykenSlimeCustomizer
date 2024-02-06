@@ -22,6 +22,8 @@ public class CustomMenu extends BlockMenuPreset {
     private final Map<Integer, ItemStack> slotMap;
     private final JavaScriptEval eval;
     @Getter
+    private final int progressSlot;
+    @Getter
     private final ItemStack progress;
     @Setter
     private InventoryBlock invb;
@@ -34,7 +36,8 @@ public class CustomMenu extends BlockMenuPreset {
         super(id, title);
         this.slotMap = mi;
         this.eval = eval;
-        this.progress = progress > -1 && progress < 54 ? mi.get(progress) : null;
+        this.progress = mi.get(progress);
+        this.progressSlot = progress;
         setPlayerInventoryClickable(playerInvClickable);
     }
 
@@ -54,8 +57,6 @@ public class CustomMenu extends BlockMenuPreset {
                 addMenuCloseHandler(p -> eval.evalFunction("onClose", p));
             }
         }
-
-        getContents();
     }
 
     @Override
@@ -72,5 +73,10 @@ public class CustomMenu extends BlockMenuPreset {
             return flow == ItemTransportFlow.INSERT ? invb.getInputSlots() : invb.getOutputSlots();
         }
         return new int[0];
+    }
+
+    public void reInit() {
+        Slimefun.getRegistry().getMenuPresets().remove(getID());
+        Slimefun.getRegistry().getMenuPresets().put(getID(), this);
     }
 }

@@ -24,14 +24,14 @@ import java.io.File;
 import java.util.ArrayList;
 import java.util.List;
 
-public class MachineReader extends YamlReader<AbstractEmptyMachine> {
+public class MachineReader extends YamlReader<AbstractEmptyMachine<?>> {
     public MachineReader(YamlConfiguration config) {
         super(config);
     }
 
     @Override
-    public List<AbstractEmptyMachine> readAll(ProjectAddon addon) {
-        List<AbstractEmptyMachine> machines = new ArrayList<>();
+    public List<AbstractEmptyMachine<?>> readAll(ProjectAddon addon) {
+        List<AbstractEmptyMachine<?>> machines = new ArrayList<>();
         for (String key : configuration.getKeys(false)) {
             var machine = readEach(key, addon);
             if (machine != null) {
@@ -42,7 +42,7 @@ public class MachineReader extends YamlReader<AbstractEmptyMachine> {
     }
 
     @Override
-    public AbstractEmptyMachine readEach(String s, ProjectAddon addon) {
+    public AbstractEmptyMachine<?> readEach(String s, ProjectAddon addon) {
         ConfigurationSection section = configuration.getConfigurationSection(s);
         if (section == null) return null;
         ExceptionHandler.HandleResult result = ExceptionHandler.handleIdConflict(s);
@@ -85,7 +85,7 @@ public class MachineReader extends YamlReader<AbstractEmptyMachine> {
         List<Integer> output = section.getIntegerList("output");
         CustomMenu menu = CommonUtils.getIf(addon.getMenus(), m -> m.getID().equalsIgnoreCase(s));
 
-        AbstractEmptyMachine machine;
+        AbstractEmptyMachine<?> machine;
 
         if (section.contains("energy")) {
             ConfigurationSection energySettings = section.getConfigurationSection("energy");

@@ -79,6 +79,8 @@ public class CommonUtils {
 
     @Nullable
     public static <T> T getIf(Iterable<T> iterable, Predicate<T> filter) {
+        if (iterable == null) return null;
+
         for (T t : iterable) {
             if (filter.test(t)) {
                 return t;
@@ -89,8 +91,14 @@ public class CommonUtils {
 
     @NotNull
     public static ItemStack[] readRecipe(ConfigurationSection section, ProjectAddon addon) {
-        ItemStack[] itemStacks = new ItemStack[9];
-        for (int i = 0; i < 9; i ++) {
+        return readRecipe(section, addon, 9);
+    }
+
+    @NotNull
+    public static ItemStack[] readRecipe(ConfigurationSection section, ProjectAddon addon, int size) {
+        if (section == null) return null;
+        ItemStack[] itemStacks = new ItemStack[size];
+        for (int i = 0; i < size; i ++) {
             ConfigurationSection section1 = section.getConfigurationSection(String.valueOf(i + 1));
             itemStacks[i] = readItem(section1, true, addon);
         }
@@ -114,7 +122,6 @@ public class CommonUtils {
         List<String> lore = section.getStringList("lore");
         String name = section.getString("name");
         boolean glow = section.getBoolean("glow", false);
-        boolean placeable = section.getBoolean("placeable", false);
         int modelId = section.getInt("modelId");
         int amount = section.getInt("amount", 1);
 
@@ -124,7 +131,7 @@ public class CommonUtils {
             default -> {
                 Material mat;
                 Pair<ExceptionHandler.HandleResult, Material> result =
-                        ExceptionHandler.handleEnumValueOf("物品类型"+material+"错误，已转为石头", "", Material.class, material);
+                        ExceptionHandler.handleEnumValueOf("无法在附属"+addon.getAddonName()+"中读取物品类型"+material+"错误，已转为石头", "", Material.class, material);
                 if (result.getFirstValue() == ExceptionHandler.HandleResult.FAILED) {
                     mat = Material.STONE;
                 } else {
@@ -183,7 +190,6 @@ public class CommonUtils {
         }
 
         ItemMeta meta = itemStack.getItemMeta();
-        meta.getPersistentDataContainer().set(PLACEABLE, PersistentDataType.INTEGER, placeable ? 1 : 0);
         if (modelId > 0) {
             meta.setCustomModelData(modelId);
         }
@@ -230,7 +236,6 @@ public class CommonUtils {
         }
 
         configuration.set("amount", stack.getAmount());
-        configuration.set("placeable", material.isBlock());
 
         SlimefunItem sfi = SlimefunItem.getByItem(item);
         boolean full_sfi = false;

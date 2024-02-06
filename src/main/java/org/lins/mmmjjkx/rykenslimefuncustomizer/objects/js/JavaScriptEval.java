@@ -24,12 +24,12 @@ import java.util.function.Function;
 public class JavaScriptEval {
     private final ScriptEngine jsEngine;
     private final File js;
+    private String context;
     private boolean failed = false;
 
     public JavaScriptEval(File js) {
         this.js = js;
         jsEngine = new NashornScriptEngineFactory().getScriptEngine();
-        String context;
         try {
             context = Files.readString(js.toPath(), StandardCharsets.UTF_8);
         } catch (IOException e) {
@@ -37,11 +37,6 @@ public class JavaScriptEval {
             failed = true;
         }
         setup();
-        try {
-            jsEngine.eval(context);
-        } catch (ScriptException e) {
-            failed = true;
-        }
     }
 
     public void addThing(String name, Object value) {
@@ -82,6 +77,19 @@ public class JavaScriptEval {
             }
         }).toArray();
 
+        try {
+            context = Files.readString(js.toPath(), StandardCharsets.UTF_8);
+        } catch (IOException e) {
+            context = "";
+            failed = true;
+        }
+
+        try {
+            jsEngine.eval(context);
+        } catch (ScriptException e) {
+            failed = true;
+        }
+
         if (!failed) {
             if (jsEngine instanceof Invocable in) {
                 try {
@@ -107,18 +115,16 @@ public class JavaScriptEval {
                 context = Files.readString(js.toPath(), StandardCharsets.UTF_8);
                 failed = false;
             } catch (IOException e) {
-                return;
+                context = "";
             }
             try {
                 jsEngine.eval(context);
                 failed = false;
             } catch (ScriptException e) {
-                failed = true;
+                return;
             }
 
-            if (!failed) {
-                evalFunction(funName, args);
-            }
+            evalFunction(funName, args);
         }
     }
 }
