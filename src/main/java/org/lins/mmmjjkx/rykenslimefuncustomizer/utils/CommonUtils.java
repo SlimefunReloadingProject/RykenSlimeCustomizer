@@ -119,6 +119,13 @@ public class CommonUtils {
         }
 
         String material = section.getString("material","");
+
+        if (material.startsWith("ey")) {
+            type = "skull";
+        } else if (material.startsWith("http") || material.startsWith("https")) {
+            type = "skull_url";
+        }
+
         List<String> lore = section.getStringList("lore");
         String name = section.getString("name");
         boolean glow = section.getBoolean("glow", false);

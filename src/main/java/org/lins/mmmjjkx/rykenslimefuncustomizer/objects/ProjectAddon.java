@@ -4,6 +4,7 @@ import io.github.thebusybiscuit.slimefun4.api.items.ItemGroup;
 import io.github.thebusybiscuit.slimefun4.api.items.SlimefunItem;
 import io.github.thebusybiscuit.slimefun4.api.researches.Research;
 import io.github.thebusybiscuit.slimefun4.implementation.Slimefun;
+import io.github.thebusybiscuit.slimefun4.implementation.items.electric.generators.SolarGenerator;
 import lombok.AccessLevel;
 import lombok.Getter;
 import lombok.RequiredArgsConstructor;
@@ -54,6 +55,8 @@ public class ProjectAddon {
     private List<CustomRecipeMachine> recipeMachines = new ArrayList<>();
     //mb_machines.yml
     private List<CustomMultiBlockMachine> multiBlockMachines = new ArrayList<>();
+    //solar_generators.yml
+    private List<SolarGenerator> solarGenerators = new ArrayList<>();
 
     public File getScriptsFolder() {
         File scripts = new File(folder, "scripts");
