@@ -21,7 +21,6 @@ import org.lins.mmmjjkx.rykenslimefuncustomizer.utils.CommonUtils;
 import org.lins.mmmjjkx.rykenslimefuncustomizer.utils.ExceptionHandler;
 
 import java.io.File;
-import java.util.ArrayList;
 import java.util.List;
 
 public class MachineReader extends YamlReader<AbstractEmptyMachine<?>> {
@@ -51,8 +50,8 @@ public class MachineReader extends YamlReader<AbstractEmptyMachine<?>> {
         ItemStack[] recipe = CommonUtils.readRecipe(section.getConfigurationSection("recipe"), addon);
         String recipeType = section.getString("recipe_type", "NULL");
 
-        Pair<ExceptionHandler.HandleResult, RecipeType> rt = ExceptionHandler.handleField(
-                "错误的配方类型" + recipeType + "!", "", RecipeType.class, recipeType
+        Pair<ExceptionHandler.HandleResult, RecipeType> rt = ExceptionHandler.getRecipeType(
+                "错误的配方类型" + recipeType + "!", recipeType
         );
 
         if (rt.getFirstValue() == ExceptionHandler.HandleResult.FAILED) return null;
@@ -98,7 +97,6 @@ public class MachineReader extends YamlReader<AbstractEmptyMachine<?>> {
             String encType = energySettings.getString("type");
             Pair<ExceptionHandler.HandleResult, EnergyNetComponentType> enc = ExceptionHandler.handleEnumValueOf(
                     "无法读取机器"+s+"的能源设置，已转为无电机器，原因: 错误的能源网络组件类型"+encType,
-                    "无法读取机器"+s+"的能源设置，已转为无电机器，原因: 能源网络组件类型不能为空",
                     EnergyNetComponentType.class, encType);
             if (enc.getFirstValue() == ExceptionHandler.HandleResult.FAILED) {
                 machine = new CustomNoEnergyMachine(group.getSecondValue(), slimefunItemStack, rt.getSecondValue(), recipe, menu, input, output, eval, -1);
@@ -114,8 +112,6 @@ public class MachineReader extends YamlReader<AbstractEmptyMachine<?>> {
             menu.setInvb(machine);
         }
         machine.register(RykenSlimefunCustomizer.INSTANCE);
-
-        ExceptionHandler.handleItemGroupAddItem(addon, igId, machine);
         return machine;
     }
 }

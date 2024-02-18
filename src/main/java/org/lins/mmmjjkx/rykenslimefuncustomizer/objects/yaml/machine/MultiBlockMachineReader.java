@@ -14,9 +14,7 @@ import org.lins.mmmjjkx.rykenslimefuncustomizer.objects.yaml.YamlReader;
 import org.lins.mmmjjkx.rykenslimefuncustomizer.utils.CommonUtils;
 import org.lins.mmmjjkx.rykenslimefuncustomizer.utils.ExceptionHandler;
 
-import java.util.ArrayList;
 import java.util.HashMap;
-import java.util.List;
 import java.util.Map;
 
 public class MultiBlockMachineReader extends YamlReader<CustomMultiBlockMachine> {
@@ -81,7 +79,7 @@ public class MultiBlockMachineReader extends YamlReader<CustomMultiBlockMachine>
             String soundString = section.getString("sound");
             Pair<ExceptionHandler.HandleResult, SoundEffect> soundEffectPair =
                     ExceptionHandler.handleEnumValueOf("无法在多方块机器"+s+"获取声音类型"+soundString,
-                                    "多方块机器的声音"+s+"类型为空", SoundEffect.class, soundString);
+                            SoundEffect.class, soundString);
             ExceptionHandler.HandleResult result1 = soundEffectPair.getFirstValue();
             if (result1 != ExceptionHandler.HandleResult.FAILED && soundEffectPair.getSecondValue() != null) {
                 sound = soundEffectPair.getSecondValue();

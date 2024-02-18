@@ -101,7 +101,7 @@ public class MainCommand implements TabExecutor {
                         return false;
                     }
 
-                    ProjectAddonLoader loader = new ProjectAddonLoader(file);
+                    ProjectAddonLoader loader = new ProjectAddonLoader(file, RykenSlimefunCustomizer.addonManager.getProjectIds());
                     ProjectAddon addon = loader.load();
                     RykenSlimefunCustomizer.addonManager.pushProjectAddon(addon);
 
@@ -119,7 +119,10 @@ public class MainCommand implements TabExecutor {
                         sender.sendMessage(CommonUtils.parseToComponent("&4没有这个附属！"));
                         return false;
                     }
+
                     addon.unregister();
+                    RykenSlimefunCustomizer.addonManager.removeProjectAddon(addon);
+
                     sender.sendMessage(CommonUtils.parseToComponent("&a卸载此附属成功！"));
                     return true;
                 } else if (args[0].equalsIgnoreCase("menupreview")) {

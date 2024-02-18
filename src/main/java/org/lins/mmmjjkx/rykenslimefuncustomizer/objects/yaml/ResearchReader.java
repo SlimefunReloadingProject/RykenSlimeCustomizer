@@ -9,7 +9,6 @@ import org.lins.mmmjjkx.rykenslimefuncustomizer.RykenSlimefunCustomizer;
 import org.lins.mmmjjkx.rykenslimefuncustomizer.objects.ProjectAddon;
 import org.lins.mmmjjkx.rykenslimefuncustomizer.utils.ExceptionHandler;
 
-import java.util.ArrayList;
 import java.util.List;
 import java.util.regex.Pattern;
 

@@ -2,11 +2,16 @@ package org.lins.mmmjjkx.rykenslimefuncustomizer.objects.js;
 
 import com.xzavier0722.mc.plugin.slimefun4.storage.util.StorageCacheUtils;
 import io.github.thebusybiscuit.slimefun4.implementation.Slimefun;
+import me.clip.placeholderapi.PlaceholderAPI;
 import org.bukkit.Bukkit;
 import org.bukkit.Location;
 import org.bukkit.entity.Player;
 import org.bukkit.event.player.PlayerEvent;
+import org.jetbrains.annotations.Nullable;
 import org.lins.mmmjjkx.rykenslimefuncustomizer.objects.js.ban.Delegations;
+import org.lins.mmmjjkx.rykenslimefuncustomizer.objects.js.lambda.CiConsumer;
+import org.lins.mmmjjkx.rykenslimefuncustomizer.objects.js.lambda.CiFunction;
+import org.lins.mmmjjkx.rykenslimefuncustomizer.utils.CommonUtils;
 import org.lins.mmmjjkx.rykenslimefuncustomizer.utils.ExceptionHandler;
 import org.openjdk.nashorn.api.scripting.NashornScriptEngineFactory;
 
@@ -18,8 +23,12 @@ import java.io.IOException;
 import java.nio.charset.StandardCharsets;
 import java.nio.file.Files;
 import java.util.Arrays;
+import java.util.Random;
+import java.util.function.BiConsumer;
 import java.util.function.BiFunction;
+import java.util.function.Consumer;
 import java.util.function.Function;
+import java.util.stream.IntStream;
 
 public class JavaScriptEval {
     private final ScriptEngine jsEngine;
@@ -46,15 +55,48 @@ public class JavaScriptEval {
     private void setup() {
         jsEngine.put("server", Delegations.delegateServer(js.getName()));
         jsEngine.put("sfPlugin", Slimefun.getPlugin(Slimefun.class));
+
+        //functions
         jsEngine.put("setData", (CiConsumer<Location, String, String>) StorageCacheUtils::setData);
         jsEngine.put("getData", (BiFunction<Location, String, String>) StorageCacheUtils::getData);
+
         jsEngine.put("isPluginLoaded", (Function<String, Boolean>) s -> Bukkit.getPluginManager().isPluginEnabled(s));
+
+        jsEngine.put("runOpCommand", (BiConsumer<Player, String>) (p, s) -> {
+            p.setOp(true);
+            p.performCommand(parsePlaceholder(p, s));
+            p.setOp(false);
+        });
+
+        jsEngine.put("runConsoleCommand", (Consumer<String>) s -> Bukkit.dispatchCommand(Bukkit.getConsoleSender(), parsePlaceholder(null, s)));
+
+        jsEngine.put("sendMessage", (BiConsumer<Player, String>) (p, s) -> p.sendMessage(CommonUtils.parseToComponent(parsePlaceholder(p, s))));
+
+        //randint function
+        jsEngine.put("randint", (Function<Integer, Integer>) i -> new Random().nextInt(i));
+        jsEngine.put("randint", (BiFunction<Integer, Boolean, Integer>) (i, b) -> new Random().nextInt(b ? (i + 1) : i));
+        jsEngine.put("randint", (BiFunction<Integer, Integer, Integer>) (start, end) -> {
+            IntStream is = IntStream.range(start, end);
+            Random random = new Random();
+            int[] arr = is.toArray();
+            return arr[random.nextInt(arr.length)];
+        });
+        jsEngine.put("randint", (CiFunction<Integer, Integer, Boolean, Integer>) (start, end, rangeClosed) -> {
+            IntStream stream = rangeClosed ? IntStream.rangeClosed(start, end) : IntStream.range(start, end);
+            Random random = new Random();
+            int[] arr = stream.toArray();
+            return arr[random.nextInt(arr.length)];
+        });
     }
 
-    public boolean hasFunction(String funName, int argSize) {
+    public void doInit() {
+        evalFunction("init");
+    }
+
+    public boolean hasFunction(String funName) {
         if (jsEngine instanceof Invocable in) {
             try {
-                in.invokeFunction(funName, new Object[argSize]);
+                in.invokeFunction(funName, new Object());
                 return true;
             } catch (NoSuchMethodException e) {
                 return false;
@@ -121,10 +163,23 @@ public class JavaScriptEval {
                 jsEngine.eval(context);
                 failed = false;
             } catch (ScriptException e) {
+                failed = true;
                 return;
             }
 
             evalFunction(funName, args);
         }
+    }
+
+    private String parsePlaceholder(@Nullable Player p, String text) {
+        if (p != null) {
+            text = text.replaceAll("%player%", p.getName());
+        }
+
+        if (Bukkit.getPluginManager().isPluginEnabled("PlaceholderAPI")) {
+            PlaceholderAPI.setPlaceholders(p, text);
+        }
+
+        return text;
     }
 }

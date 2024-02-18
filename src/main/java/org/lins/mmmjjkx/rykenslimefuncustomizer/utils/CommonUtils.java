@@ -1,14 +1,15 @@
 package org.lins.mmmjjkx.rykenslimefuncustomizer.utils;
 
-import com.destroystokyo.paper.profile.PlayerProfile;
 import io.github.thebusybiscuit.slimefun4.api.items.SlimefunItem;
 import io.github.thebusybiscuit.slimefun4.libraries.dough.collections.Pair;
 import io.github.thebusybiscuit.slimefun4.libraries.dough.items.CustomItemStack;
 import io.github.thebusybiscuit.slimefun4.libraries.dough.skins.PlayerHead;
 import io.github.thebusybiscuit.slimefun4.libraries.dough.skins.PlayerSkin;
+import lombok.SneakyThrows;
 import net.kyori.adventure.text.Component;
 import net.kyori.adventure.text.minimessage.MiniMessage;
 import net.kyori.adventure.text.serializer.legacy.LegacyComponentSerializer;
+import org.bukkit.Bukkit;
 import org.bukkit.Material;
 import org.bukkit.NamespacedKey;
 import org.bukkit.configuration.ConfigurationSection;
@@ -17,9 +18,9 @@ import org.bukkit.enchantments.Enchantment;
 import org.bukkit.inventory.ItemFlag;
 import org.bukkit.inventory.ItemStack;
 import org.bukkit.inventory.meta.ItemMeta;
-import org.bukkit.inventory.meta.SkullMeta;
 import org.bukkit.persistence.PersistentDataContainer;
 import org.bukkit.persistence.PersistentDataType;
+import org.jetbrains.annotations.Contract;
 import org.jetbrains.annotations.NotNull;
 import org.jetbrains.annotations.Nullable;
 import org.lins.mmmjjkx.rykenslimefuncustomizer.RykenSlimefunCustomizer;
@@ -27,12 +28,10 @@ import org.lins.mmmjjkx.rykenslimefuncustomizer.objects.ProjectAddon;
 
 import java.io.File;
 import java.io.IOException;
-import java.net.URL;
 import java.util.List;
 import java.util.function.Predicate;
 
 public class CommonUtils {
-    public static final NamespacedKey PLACEABLE = new NamespacedKey(RykenSlimefunCustomizer.INSTANCE, "placeable");
     private static final NamespacedKey GLOW = new NamespacedKey(RykenSlimefunCustomizer.INSTANCE, "item_glow");
     private static final MiniMessage MINI_MESSAGE = MiniMessage.builder().build();
     private static final LegacyComponentSerializer LEGACY_SERIALIZER = LegacyComponentSerializer.legacyAmpersand();
@@ -47,26 +46,6 @@ public class CommonUtils {
         container.set(GLOW, PersistentDataType.INTEGER, 1);
 
         item.setItemMeta(meta);
-
-        return item;
-    }
-
-
-    public static boolean isGlowing(ItemStack item) {
-        if (!item.hasItemMeta()) return false;
-
-        ItemMeta meta = item.getItemMeta();
-        return meta.getPersistentDataContainer().has(GLOW, PersistentDataType.INTEGER);
-    }
-
-    @SuppressWarnings("unused")
-    public static <T extends ItemStack> T unGlow(T item) {
-        ItemMeta meta = item.getItemMeta();
-        PersistentDataContainer container = meta.getPersistentDataContainer();
-        container.remove(GLOW);
-
-        item.removeEnchantment(Enchantment.ARROW_INFINITE);
-        item.removeItemFlags(ItemFlag.HIDE_ENCHANTS);
 
         return item;
     }
@@ -95,8 +74,9 @@ public class CommonUtils {
     }
 
     @NotNull
+    @Contract("null,_,_ -> new")
     public static ItemStack[] readRecipe(ConfigurationSection section, ProjectAddon addon, int size) {
-        if (section == null) return null;
+        if (section == null) return new ItemStack[]{};
         ItemStack[] itemStacks = new ItemStack[size];
         for (int i = 0; i < size; i ++) {
             ConfigurationSection section1 = section.getConfigurationSection(String.valueOf(i + 1));
@@ -105,6 +85,7 @@ public class CommonUtils {
         return itemStacks;
     }
 
+    @SneakyThrows
     @Nullable
     public static ItemStack readItem(ConfigurationSection section, boolean countable, ProjectAddon addon) {
         if (section == null) {
@@ -129,6 +110,7 @@ public class CommonUtils {
         List<String> lore = section.getStringList("lore");
         String name = section.getString("name");
         boolean glow = section.getBoolean("glow", false);
+        boolean hasEnchantment = section.contains("enchantments") && section.isConfigurationSection("enchantments");
         int modelId = section.getInt("modelId");
         int amount = section.getInt("amount", 1);
 
@@ -138,7 +120,7 @@ public class CommonUtils {
             default -> {
                 Material mat;
                 Pair<ExceptionHandler.HandleResult, Material> result =
-                        ExceptionHandler.handleEnumValueOf("无法在附属"+addon.getAddonName()+"中读取物品类型"+material+"错误，已转为石头", "", Material.class, material);
+                        ExceptionHandler.handleEnumValueOf("无法在附属"+addon.getAddonName()+"中读取材料"+material+"错误，已转为石头", Material.class, material);
                 if (result.getFirstValue() == ExceptionHandler.HandleResult.FAILED) {
                     mat = Material.STONE;
                 } else {
@@ -179,7 +161,8 @@ public class CommonUtils {
             case "full_slimefun" -> {
                 SlimefunItem sis = SlimefunItem.getById(material);
                 if (sis != null) {
-                    return sis.getItem();
+                    ItemStack sfis = sis.getItem().clone();
+                    return countable ? new CustomItemStack(sfis, amount) : sis.getItem();
                 }
                 ExceptionHandler.handleError("无法找到粘液物品"+material+"，已转为石头");
                 itemStack = new CustomItemStack(Material.STONE, name);
@@ -192,7 +175,11 @@ public class CommonUtils {
                     break;
                 }
                 YamlConfiguration configuration = YamlConfiguration.loadConfiguration(file);
-                return readItem(configuration, countable, addon);
+                configuration.set("item.v", Bukkit.getUnsafe().getDataVersion());
+
+                configuration.save(file);
+
+                return configuration.getSerializable("item", ItemStack.class);
             }
         }
 
@@ -206,10 +193,24 @@ public class CommonUtils {
             itemStack.setAmount(amount);
         }
 
+        if (hasEnchantment) {
+            ConfigurationSection enchants = section.getConfigurationSection("enchantments");
+            if (enchants != null) {
+                for (String enchant : enchants.getKeys(false)) {
+                    Enchantment enchantment = Enchantment.getByKey(NamespacedKey.minecraft(enchant.toLowerCase()));
+                    if (enchantment == null) {
+                        ExceptionHandler.handleError("无法在附属"+addon.getAddonName()+"中读取物品附魔"+enchant+", 跳过添加此附魔");
+                        continue;
+                    }
+                    int lvl = enchants.getInt(enchant, 1);
+                    itemStack.addUnsafeEnchantment(enchantment, lvl);
+                }
+            }
+        }
+
         return glow ? doGlow(itemStack) : itemStack;
     }
 
-    @SuppressWarnings("deprecation")
     public static void saveItem(ItemStack item, String fileName, ProjectAddon addon) {
         File folder = addon.getSavedItemsFolder();
         if (!folder.exists()) {
@@ -226,60 +227,13 @@ public class CommonUtils {
 
         YamlConfiguration configuration = new YamlConfiguration();
         ItemStack stack = item.clone();
-        ItemMeta meta = stack.getItemMeta();
-        Material material = stack.getType();
-        if (meta.getLore() != null) {
-            configuration.set("lore", meta.getLore());
-        }
-        if (meta.hasCustomModelData()) {
-            configuration.set("modelId", meta.getCustomModelData());
-        }
-        if (meta.hasDisplayName()) {
-            String name = meta.getDisplayName().replaceAll("§", "&");
-            configuration.set("name", name);
-        }
-        if (isGlowing(item)) {
-            configuration.set("glow", true);
-        }
 
-        configuration.set("amount", stack.getAmount());
-
-        SlimefunItem sfi = SlimefunItem.getByItem(item);
-        boolean full_sfi = false;
-        if (sfi != null) {
-            ItemMeta sfiMeta = sfi.getItem().getItemMeta().clone();
-            if (meta.getLore() != null && sfiMeta.getLore() != null) {
-                full_sfi = meta.getLore().equals(sfiMeta.getLore());
-            }
-
-            if (meta.hasDisplayName() && sfiMeta.hasDisplayName()) {
-                full_sfi = colorTranslateBack(meta.getDisplayName()).equals(colorTranslateBack(sfiMeta.getDisplayName()));
-            }
-
-            configuration.set("material_type", full_sfi ? "full_slimefun" : "slimefun");
-            configuration.set("material", sfi.getId());
-        } else if (material == Material.PLAYER_HEAD) {
-            SkullMeta skull = (SkullMeta) meta;
-            PlayerProfile owner = skull.getPlayerProfile();
-            if (owner != null) {
-                URL skin = owner.getTextures().getSkin();
-                if (skin != null) {
-                    configuration.set("material_type", "skull_url");
-                    configuration.set("material", skin.toString());
-                }
-            }
-        } else {
-            configuration.set("material", material.toString());
-        }
+        configuration.set("item", stack);
 
         try {
             configuration.save(file);
         } catch (IOException e) {
             throw new RuntimeException(e);
         }
-    }
-
-    private static String colorTranslateBack(String s) {
-        return s.replaceAll("§", "&");
     }
 }

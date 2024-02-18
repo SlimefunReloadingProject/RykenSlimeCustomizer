@@ -39,6 +39,10 @@ public class CustomMenu extends BlockMenuPreset {
         this.progress = mi.get(progress);
         this.progressSlot = progress;
         setPlayerInventoryClickable(playerInvClickable);
+
+        if (eval != null) {
+            eval.doInit();
+        }
     }
 
     public void outSideInit() {
@@ -50,10 +54,10 @@ public class CustomMenu extends BlockMenuPreset {
         }
 
         if (eval != null) {
-            if (eval.hasFunction("onOpen", 1)) {
+            if (eval.hasFunction("onOpen")) {
                 addMenuOpeningHandler(p -> eval.evalFunction("onOpen", p));
             }
-            if (eval.hasFunction("onClose", 1)) {
+            if (eval.hasFunction("onClose")) {
                 addMenuCloseHandler(p -> eval.evalFunction("onClose", p));
             }
         }

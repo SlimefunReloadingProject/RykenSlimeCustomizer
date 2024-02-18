@@ -46,6 +46,8 @@ public class CustomNoEnergyMachine extends AbstractEmptyMachine<MachineOperation
         this.processor = new MachineProcessor<>(this);
 
         if (this.eval != null) {
+            this.eval.doInit();
+
             this.eval.addThing("setWorking", (Consumer<Boolean>) b -> worked = b);
             this.eval.addThing("working", worked);
         }
@@ -58,12 +60,11 @@ public class CustomNoEnergyMachine extends AbstractEmptyMachine<MachineOperation
                 });
             }
             if (this.eval != null) {
-
-                if (this.eval.hasFunction("onUse", 1)) {
+                if (this.eval.hasFunction("onUse")) {
                     addItemHandler((BlockUseHandler) e -> this.eval.evalFunction("onUse", e));
                 }
 
-                if (this.eval.hasFunction("onBreak", 3)) {
+                if (this.eval.hasFunction("onBreak")) {
                     addItemHandler(new BlockBreakHandler(false, false) {
                         @Override
                         public void onPlayerBreak(@NotNull BlockBreakEvent e, @NotNull ItemStack is, @NotNull List<ItemStack> list) {
@@ -72,7 +73,7 @@ public class CustomNoEnergyMachine extends AbstractEmptyMachine<MachineOperation
                     });
                 }
 
-                if (this.eval.hasFunction("onPlace", 1)) {
+                if (this.eval.hasFunction("onPlace")) {
                     addItemHandler(new BlockPlaceHandler(false) {
                         @Override
                         public void onPlayerPlace(@NotNull BlockPlaceEvent e) {

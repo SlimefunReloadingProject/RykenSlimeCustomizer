@@ -47,8 +47,8 @@ public class RecipeMachineReader extends YamlReader<CustomRecipeMachine> {
         ItemStack[] recipe = CommonUtils.readRecipe(section.getConfigurationSection("recipe"), addon);
         String recipeType = section.getString("recipe_type", "NULL");
 
-        Pair<ExceptionHandler.HandleResult, RecipeType> rt = ExceptionHandler.handleField(
-                "错误的配方类型" + recipeType + "!", "", RecipeType.class, recipeType
+        Pair<ExceptionHandler.HandleResult, RecipeType> rt = ExceptionHandler.getRecipeType(
+                "错误的配方类型" + recipeType + "!", recipeType
         );
 
         if (rt.getFirstValue() == ExceptionHandler.HandleResult.FAILED) return null;

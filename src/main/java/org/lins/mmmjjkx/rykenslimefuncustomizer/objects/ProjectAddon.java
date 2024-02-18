@@ -2,8 +2,10 @@ package org.lins.mmmjjkx.rykenslimefuncustomizer.objects;
 
 import io.github.thebusybiscuit.slimefun4.api.items.ItemGroup;
 import io.github.thebusybiscuit.slimefun4.api.items.SlimefunItem;
+import io.github.thebusybiscuit.slimefun4.api.recipes.RecipeType;
 import io.github.thebusybiscuit.slimefun4.api.researches.Research;
 import io.github.thebusybiscuit.slimefun4.implementation.Slimefun;
+import io.github.thebusybiscuit.slimefun4.implementation.items.electric.Capacitor;
 import io.github.thebusybiscuit.slimefun4.implementation.items.electric.generators.SolarGenerator;
 import lombok.AccessLevel;
 import lombok.Getter;
@@ -13,6 +15,7 @@ import org.jetbrains.annotations.NotNull;
 import org.lins.mmmjjkx.rykenslimefuncustomizer.objects.customs.CustomGeoResource;
 import org.lins.mmmjjkx.rykenslimefuncustomizer.objects.customs.CustomItem;
 import org.lins.mmmjjkx.rykenslimefuncustomizer.objects.customs.CustomMenu;
+import org.lins.mmmjjkx.rykenslimefuncustomizer.objects.customs.CustomMobDrop;
 import org.lins.mmmjjkx.rykenslimefuncustomizer.objects.customs.machine.CustomGenerator;
 import org.lins.mmmjjkx.rykenslimefuncustomizer.objects.customs.machine.CustomMaterialGenerator;
 import org.lins.mmmjjkx.rykenslimefuncustomizer.objects.customs.machine.CustomMultiBlockMachine;
@@ -33,6 +36,7 @@ public class ProjectAddon {
     private @NotNull final String addonVersion;
     private @NotNull final List<String> pluginDepends;
     private @NotNull final List<String> depends;
+    private @NotNull final String description;
     private @NotNull final File folder;
 
     //groups.yml
@@ -57,6 +61,12 @@ public class ProjectAddon {
     private List<CustomMultiBlockMachine> multiBlockMachines = new ArrayList<>();
     //solar_generators.yml
     private List<SolarGenerator> solarGenerators = new ArrayList<>();
+    //mob_drops.yml
+    private List<CustomMobDrop> mobDrops = new ArrayList<>();
+    //capacitors.yml
+    private List<Capacitor> capacitors = new ArrayList<>();
+    //recipe_types.yml
+    private List<RecipeType> recipeTypes = new ArrayList<>();
 
     public File getScriptsFolder() {
         File scripts = new File(folder, "scripts");
@@ -79,7 +89,10 @@ public class ProjectAddon {
         researches.forEach(Research::disable);
         menus.forEach(m -> Slimefun.getRegistry().getMenuPresets().remove(m.getID()));
         items.forEach(this::unregisterItem);
+        mobDrops.clear();
+        capacitors.forEach(this::unregisterItem);
         machines.forEach(this::unregisterItem);
+        solarGenerators.forEach(this::unregisterItem);
         generators.forEach(this::unregisterItem);
         geoResources.forEach(this::unregisterGeo);
         materialGenerators.forEach(this::unregisterItem);
@@ -96,6 +109,10 @@ public class ProjectAddon {
         materialGenerators.clear();
         recipeMachines.clear();
         multiBlockMachines.clear();
+        capacitors.clear();
+        solarGenerators.clear();
+        mobDrops.clear();
+        recipeTypes.clear();
     }
 
     private void unregisterItem(SlimefunItem item) {

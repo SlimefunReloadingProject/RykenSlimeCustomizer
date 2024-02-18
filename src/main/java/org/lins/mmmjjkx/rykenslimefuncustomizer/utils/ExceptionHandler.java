@@ -2,6 +2,7 @@ package org.lins.mmmjjkx.rykenslimefuncustomizer.utils;
 
 import io.github.thebusybiscuit.slimefun4.api.items.ItemGroup;
 import io.github.thebusybiscuit.slimefun4.api.items.SlimefunItem;
+import io.github.thebusybiscuit.slimefun4.api.recipes.RecipeType;
 import io.github.thebusybiscuit.slimefun4.implementation.Slimefun;
 import io.github.thebusybiscuit.slimefun4.libraries.dough.collections.Pair;
 import net.kyori.adventure.text.logger.slf4j.ComponentLogger;
@@ -9,6 +10,7 @@ import net.kyori.adventure.text.serializer.legacy.LegacyComponentSerializer;
 import org.jetbrains.annotations.NotNull;
 import org.lins.mmmjjkx.rykenslimefuncustomizer.RykenSlimefunCustomizer;
 import org.lins.mmmjjkx.rykenslimefuncustomizer.objects.ProjectAddon;
+import org.lins.mmmjjkx.rykenslimefuncustomizer.objects.RecipeTypeMap;
 import org.lins.mmmjjkx.rykenslimefuncustomizer.objects.customs.CustomMenu;
 
 import java.lang.reflect.Field;
@@ -49,10 +51,14 @@ public class ExceptionHandler {
     }
 
     public static void handleWarning(String message){
+        if (message == null || message.isBlank()) return;
+
         logger.warn(serializer.deserialize("&eWARNING | " + message));
     }
 
     public static void handleError(String message) {
+        if (message == null || message.isBlank()) return;
+
         logger.error(serializer.deserialize("&4ERROR | " + message));
     }
 
@@ -61,31 +67,19 @@ public class ExceptionHandler {
      * @param message the message
      */
     public static void handleDanger(String message) {
+        if (message == null || message.isBlank()) return;
+
         logger.error(serializer.deserialize("&c&u&l&bD&4&lA&c&lN&b&lG&4&lE&c&lR | " + message));
     }
 
-    public static <T extends Enum<T>> Pair<HandleResult, T> handleEnumValueOf(String msg, String nullMsg, Class<T> enumClass, String name) {
+    public static <T extends Enum<T>> Pair<HandleResult, T> handleEnumValueOf(String msg, Class<T> enumClass, String name) {
         try {
             return new Pair<>(HandleResult.SUCCESS, Enum.valueOf(enumClass, name.toUpperCase()));
         } catch (NullPointerException e) {
-            handleError(nullMsg);
-        } catch (IllegalArgumentException e) {
             handleError(msg);
+        } catch (IllegalArgumentException ignored) {
         }
         return new Pair<>(HandleResult.FAILED, null);
-    }
-
-    public static void handleItemGroupAddItem(ProjectAddon addon, String igid, SlimefunItem item) {
-        Pair<HandleResult, ItemGroup> result = handleItemGroupGet(addon, igid);
-        if (result.getFirstValue() == HandleResult.FAILED) return;
-        ItemGroup ig = result.getSecondValue();
-        try {
-            if (ig != null) {
-                ig.add(item);
-            }
-        } catch (UnsupportedOperationException e) {
-            handleError("父物品组"+igid+"不能添加物品，只能添加子物品组！");
-        }
     }
 
     public static Pair<HandleResult, ItemGroup> handleItemGroupGet(ProjectAddon addon, String id) {
@@ -97,14 +91,19 @@ public class ExceptionHandler {
         return new Pair<>(HandleResult.SUCCESS, ig);
     }
 
-    public static <T> Pair<HandleResult, T> handleField(String msg, String nullMsg, Class<T> clazz, String fieldName) {
+    public static Pair<HandleResult, RecipeType> getRecipeType(String msg, String fieldName) {
         try {
-            Field field = clazz.getDeclaredField(fieldName);
-            return new Pair<>(HandleResult.SUCCESS, (T) field.get(null));
+            Field field = RecipeType.class.getDeclaredField(fieldName);
+            return new Pair<>(HandleResult.SUCCESS, (RecipeType) field.get(null));
         } catch (NoSuchFieldException e) {
-            handleError(nullMsg);
-        } catch (IllegalAccessException e) {
-            handleError(msg);
+            RecipeType recipeType = RecipeTypeMap.getRecipeType(fieldName);
+            if (recipeType == null) {
+                handleError(msg);
+                return new Pair<>(HandleResult.FAILED, null);
+            }
+            return new Pair<>(HandleResult.SUCCESS, recipeType);
+        } catch (IllegalAccessException ignored) {
+            //it doesn't happen
         }
         return new Pair<>(HandleResult.FAILED, null);
     }

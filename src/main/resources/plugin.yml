@@ -5,7 +5,6 @@ api-version: '1.18'
 depend: [Slimefun]
 softdepend:
   - GuizhanLibPlugin
-  - ChestTerminal
   - ColoredEnderChests
   - DyedBackpacks
   - EcoPower
@@ -43,7 +42,7 @@ softdepend:
   - HeadLimiter
   - SlimeXpansion
   - Barrels
-  - ClayTech
+  #- ClayTech
   - FNAmplifications
   - SMG
   - EMC2
@@ -99,6 +98,8 @@ softdepend:
   - AdvancedTech
   - Quaptics
   - FastMachines
+   #Other plugins
+  - PlaceholderAPI
 authors: [mmmjjkx]
 description: An advanced Slimefun customize plugin
 libraries:

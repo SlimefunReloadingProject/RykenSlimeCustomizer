@@ -3,26 +3,26 @@ package org.lins.mmmjjkx.rykenslimefuncustomizer.objects.yaml.machine;
 import io.github.thebusybiscuit.slimefun4.api.items.ItemGroup;
 import io.github.thebusybiscuit.slimefun4.api.items.SlimefunItemStack;
 import io.github.thebusybiscuit.slimefun4.api.recipes.RecipeType;
+import io.github.thebusybiscuit.slimefun4.implementation.items.electric.generators.SolarGenerator;
 import io.github.thebusybiscuit.slimefun4.libraries.dough.collections.Pair;
 import org.bukkit.configuration.ConfigurationSection;
 import org.bukkit.configuration.file.YamlConfiguration;
 import org.bukkit.inventory.ItemStack;
+import org.lins.mmmjjkx.rykenslimefuncustomizer.RykenSlimefunCustomizer;
 import org.lins.mmmjjkx.rykenslimefuncustomizer.objects.ProjectAddon;
-import org.lins.mmmjjkx.rykenslimefuncustomizer.objects.customs.CustomMenu;
-import org.lins.mmmjjkx.rykenslimefuncustomizer.objects.customs.machine.CustomMaterialGenerator;
 import org.lins.mmmjjkx.rykenslimefuncustomizer.objects.yaml.YamlReader;
 import org.lins.mmmjjkx.rykenslimefuncustomizer.utils.CommonUtils;
 import org.lins.mmmjjkx.rykenslimefuncustomizer.utils.ExceptionHandler;
 
-import java.util.List;
+import java.util.Objects;
 
-public class MaterialGeneratorReader extends YamlReader<CustomMaterialGenerator> {
-    public MaterialGeneratorReader(YamlConfiguration config) {
+public class SolarGeneratorReader extends YamlReader<SolarGenerator> {
+    public SolarGeneratorReader(YamlConfiguration config) {
         super(config);
     }
 
     @Override
-    public CustomMaterialGenerator readEach(String s, ProjectAddon addon) {
+    public SolarGenerator readEach(String s, ProjectAddon addon) {
         ConfigurationSection section = configuration.getConfigurationSection(s);
         if (section == null) return null;
         ExceptionHandler.HandleResult result = ExceptionHandler.handleIdConflict(s);
@@ -34,7 +34,7 @@ public class MaterialGeneratorReader extends YamlReader<CustomMaterialGenerator>
         ItemStack stack = CommonUtils.readItem(item, false, addon);
 
         if (stack == null) {
-            ExceptionHandler.handleError("无法在附属"+addon.getAddonName()+"中加载材料生成器"+s+": 物品为空或格式错误导致无法加载");
+            ExceptionHandler.handleError("无法在附属"+addon.getAddonName()+"中加载太阳能发电机"+s+": 物品为空或格式错误导致无法加载");
             return null;
         }
 
@@ -50,41 +50,24 @@ public class MaterialGeneratorReader extends YamlReader<CustomMaterialGenerator>
         if (rt.getFirstValue() == ExceptionHandler.HandleResult.FAILED) return null;
         SlimefunItemStack slimefunItemStack = new SlimefunItemStack(s, stack);
 
-        CustomMenu menu = CommonUtils.getIf(addon.getMenus(), m -> m.getID().equalsIgnoreCase(s));
-        if (menu == null) {
-            ExceptionHandler.handleError("无法加载材料生成器"+s+": 对应菜单不存在");
+        int dayEnergy = section.getInt("dayEnergy");
+        int nightEnergy = section.getInt("nightEnergy");
+
+        if (dayEnergy < 1) {
+            ExceptionHandler.handleError("无法在附属"+addon.getAddonName()+"中加载太阳能发电机"+s+": 白天产量不能小于1");
             return null;
         }
 
-        List<Integer> output = section.getIntegerList("output");
+        if (nightEnergy < 1) {
+            ExceptionHandler.handleError("无法在附属"+addon.getAddonName()+"中加载太阳能发电机"+s+": 白天产量不能小于1");
+            return null;
+        }
 
         int capacity = section.getInt("capacity", 0);
-        ConfigurationSection outputItem = section.getConfigurationSection("outputItem");
-        ItemStack out = CommonUtils.readItem(outputItem, true, addon);
-        if (out == null) {
-            ExceptionHandler.handleError("无法在附属"+addon.getAddonName()+"中加载材料生成器"+s+": 输出物品为空或格式错误导致无法加载");
-            return null;
-        }
 
-        int tickRate = section.getInt("tickRate");
-        if (tickRate < 1) {
-            ExceptionHandler.handleError("无法加载材料生成器"+s+": tickRate未设置或不能小于1");
-            return null;
-        }
-
-        int per = section.getInt("per");
-        if (per < 1) {
-            ExceptionHandler.handleError("无法加载材料生成器"+s+": 单次生成能量花费未设置或不能小于1");
-            return null;
-        }
-
-        int status = -1;
-        if (section.contains("status")) {
-            status = section.getInt("status");
-        }
-
-        CustomMaterialGenerator cmg = new CustomMaterialGenerator(group.getSecondValue(), slimefunItemStack, rt.getSecondValue(), recipe, capacity, output, status, tickRate, out, per);
-        menu.setInvb(cmg);
-        return cmg;
+        SolarGenerator instance = new SolarGenerator(Objects.requireNonNull(group.getSecondValue()), dayEnergy, nightEnergy,
+                slimefunItemStack, Objects.requireNonNull(rt.getSecondValue()), recipe, capacity);
+        instance.register(RykenSlimefunCustomizer.INSTANCE);
+        return instance;
     }
 }

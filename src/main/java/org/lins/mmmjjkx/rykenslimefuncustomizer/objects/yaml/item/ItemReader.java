@@ -1,4 +1,4 @@
-package org.lins.mmmjjkx.rykenslimefuncustomizer.objects.yaml;
+package org.lins.mmmjjkx.rykenslimefuncustomizer.objects.yaml.item;
 
 import io.github.thebusybiscuit.slimefun4.api.items.ItemGroup;
 import io.github.thebusybiscuit.slimefun4.api.items.SlimefunItemStack;
@@ -7,18 +7,15 @@ import io.github.thebusybiscuit.slimefun4.libraries.dough.collections.Pair;
 import org.bukkit.configuration.ConfigurationSection;
 import org.bukkit.configuration.file.YamlConfiguration;
 import org.bukkit.inventory.ItemStack;
-import org.bukkit.persistence.PersistentDataType;
 import org.lins.mmmjjkx.rykenslimefuncustomizer.objects.ProjectAddon;
 import org.lins.mmmjjkx.rykenslimefuncustomizer.objects.customs.CustomItem;
-import org.lins.mmmjjkx.rykenslimefuncustomizer.objects.customs.CustomPlaceableItem;
 import org.lins.mmmjjkx.rykenslimefuncustomizer.objects.customs.CustomUnplaceableItem;
 import org.lins.mmmjjkx.rykenslimefuncustomizer.objects.js.JavaScriptEval;
+import org.lins.mmmjjkx.rykenslimefuncustomizer.objects.yaml.YamlReader;
 import org.lins.mmmjjkx.rykenslimefuncustomizer.utils.CommonUtils;
 import org.lins.mmmjjkx.rykenslimefuncustomizer.utils.ExceptionHandler;
 
 import java.io.File;
-import java.util.ArrayList;
-import java.util.List;
 
 public class ItemReader extends YamlReader<CustomItem> {
     public ItemReader(YamlConfiguration config) {
@@ -42,14 +39,13 @@ public class ItemReader extends YamlReader<CustomItem> {
             return null;
         }
 
-        int placeable = stack.getItemMeta().getPersistentDataContainer().getOrDefault(CommonUtils.PLACEABLE, PersistentDataType.INTEGER, 0);
         Pair<ExceptionHandler.HandleResult, ItemGroup> group = ExceptionHandler.handleItemGroupGet(addon, igId);
         if (group.getFirstValue() == ExceptionHandler.HandleResult.FAILED) return null;
         ItemStack[] itemStacks = CommonUtils.readRecipe(section.getConfigurationSection("recipe"), addon);
         String recipeType = section.getString("recipe_type", "NULL");
 
-        Pair<ExceptionHandler.HandleResult, RecipeType> rt = ExceptionHandler.handleField(
-                "错误的配方类型" + recipeType + "!", "", RecipeType.class, recipeType
+        Pair<ExceptionHandler.HandleResult, RecipeType> rt = ExceptionHandler.getRecipeType(
+                "错误的配方类型" + recipeType + "!", recipeType
         );
 
         if (rt.getFirstValue() == ExceptionHandler.HandleResult.FAILED) return null;
@@ -66,14 +62,6 @@ public class ItemReader extends YamlReader<CustomItem> {
             }
         }
 
-        CustomItem sfi;
-        if (placeable == 1) {
-            sfi = new CustomPlaceableItem(group.getSecondValue(), slimefunItemStack, rt.getSecondValue(), itemStacks, eval);
-        } else {
-            sfi = new CustomUnplaceableItem(group.getSecondValue(), slimefunItemStack, rt.getSecondValue(), itemStacks, eval);
-        }
-
-        ExceptionHandler.handleItemGroupAddItem(addon, igId, sfi);
-        return sfi;
+        return new CustomUnplaceableItem(group.getSecondValue(), slimefunItemStack, rt.getSecondValue(), itemStacks, eval);
     }
 }

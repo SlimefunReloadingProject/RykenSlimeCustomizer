@@ -62,8 +62,6 @@ public class CustomGenerator extends AGenerator implements MachineProcessHolder<
             registerFuel(fuel);
         }
 
-
-
         register(RykenSlimefunCustomizer.INSTANCE);
     }
 

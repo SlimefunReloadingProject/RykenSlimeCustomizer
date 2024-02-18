@@ -1,4 +1,4 @@
-package org.lins.mmmjjkx.rykenslimefuncustomizer.objects.yaml;
+package org.lins.mmmjjkx.rykenslimefuncustomizer.objects.yaml.item;
 
 import io.github.thebusybiscuit.slimefun4.api.items.ItemGroup;
 import io.github.thebusybiscuit.slimefun4.api.items.SlimefunItemStack;
@@ -11,11 +11,10 @@ import org.bukkit.configuration.file.YamlConfiguration;
 import org.bukkit.inventory.ItemStack;
 import org.lins.mmmjjkx.rykenslimefuncustomizer.objects.ProjectAddon;
 import org.lins.mmmjjkx.rykenslimefuncustomizer.objects.customs.CustomGeoResource;
+import org.lins.mmmjjkx.rykenslimefuncustomizer.objects.yaml.YamlReader;
 import org.lins.mmmjjkx.rykenslimefuncustomizer.utils.CommonUtils;
 import org.lins.mmmjjkx.rykenslimefuncustomizer.utils.ExceptionHandler;
 
-import java.util.ArrayList;
-import java.util.List;
 import java.util.function.BiFunction;
 
 public class GeoResourceReader extends YamlReader<CustomGeoResource> {
@@ -45,8 +44,8 @@ public class GeoResourceReader extends YamlReader<CustomGeoResource> {
             boolean obtainableFromGEOMiner = section.getBoolean("obtain_from_geo_miner", true);
             String name = section.getString("geo_name", "");
 
-            Pair<ExceptionHandler.HandleResult, RecipeType> rt = ExceptionHandler.handleField(
-                    "错误的配方类型" + recipeType + "!", "", RecipeType.class, recipeType
+            Pair<ExceptionHandler.HandleResult, RecipeType> rt = ExceptionHandler.getRecipeType(
+                    "错误的配方类型" + recipeType + "!", recipeType
             );
 
             if (rt.getFirstValue() == ExceptionHandler.HandleResult.FAILED) return null;
@@ -81,11 +80,8 @@ public class GeoResourceReader extends YamlReader<CustomGeoResource> {
 
             if (recipe == null) recipe = new ItemStack[9];
 
-            CustomGeoResource geoResource = new CustomGeoResource(group.getSecondValue(), slimefunItemStack,
+            return new CustomGeoResource(group.getSecondValue(), slimefunItemStack,
                     rt.getSecondValue(), recipe, supply, maxDeviation, obtainableFromGEOMiner, name);
-
-            ExceptionHandler.handleItemGroupAddItem(addon, igId, geoResource);
-            return geoResource;
         }
         return null;
     }

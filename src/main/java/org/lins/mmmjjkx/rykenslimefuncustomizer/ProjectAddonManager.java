@@ -1,9 +1,13 @@
 package org.lins.mmmjjkx.rykenslimefuncustomizer;
 
 import io.github.thebusybiscuit.slimefun4.libraries.commons.lang.Validate;
+import lombok.Getter;
+import org.bukkit.configuration.file.YamlConfiguration;
 import org.bukkit.plugin.Plugin;
 import org.lins.mmmjjkx.rykenslimefuncustomizer.objects.ProjectAddon;
 import org.lins.mmmjjkx.rykenslimefuncustomizer.objects.ProjectAddonLoader;
+import org.lins.mmmjjkx.rykenslimefuncustomizer.utils.Constants;
+import org.lins.mmmjjkx.rykenslimefuncustomizer.utils.ExceptionHandler;
 
 import java.io.File;
 import java.util.ArrayList;
@@ -13,8 +17,10 @@ import java.util.Map;
 
 public class ProjectAddonManager {
     public static File ADDONS_DIRECTORY;
-
     private final Map<String, ProjectAddon> projectAddons = new HashMap<>();
+
+    @Getter
+    private final Map<String, File> projectIds = new HashMap<>();
 
     public ProjectAddonManager() {
         ADDONS_DIRECTORY = new File(RykenSlimefunCustomizer.INSTANCE.getDataFolder(), "addons");
@@ -23,8 +29,16 @@ public class ProjectAddonManager {
     public void pushProjectAddon(ProjectAddon addon) {
         Validate.notNull(addon, "addon");
         if (!projectAddons.containsKey(addon.getAddonId())) {
+            projectIds.put(addon.getAddonId(), addon.getFolder());
             projectAddons.put(addon.getAddonId(), addon);
         }
+    }
+
+    public void removeProjectAddon(ProjectAddon addon) {
+        Validate.notNull(addon, "addon");
+
+        projectIds.remove(addon.getAddonId());
+        projectAddons.remove(addon.getAddonId());
     }
 
     public void setup(Plugin inst) {
@@ -37,8 +51,30 @@ public class ProjectAddonManager {
         File[] folders = addons.listFiles();
         if (folders == null) return;
 
+        List<String> notMatchTemplate = new ArrayList<>();
+
         for (File folder : folders) {
-            ProjectAddonLoader loader = new ProjectAddonLoader(folder);
+            File info = new File(folder, Constants.INFO_FILE);
+            if (!info.exists()) {
+                ExceptionHandler.handleError("在名称为 " + folder.getName() + "的文件夹中有无效的项目信息，导致此附属无法加载！");
+                notMatchTemplate.add(folder.getName());
+                continue;
+            }
+            YamlConfiguration infoConfig = YamlConfiguration.loadConfiguration(info);
+            String id = infoConfig.getString("id");
+            if (id == null || id.isBlank()) {
+                ExceptionHandler.handleError("在名称为 " + folder.getName() + "的文件夹中有无效的项目ID，导致此附属无法加载！");
+                notMatchTemplate.add(folder.getName());
+                continue;
+            }
+
+            projectIds.put(id, folder);
+        }
+
+        for (File folder : folders) {
+            if (notMatchTemplate.contains(folder.getName())) continue;
+
+            ProjectAddonLoader loader = new ProjectAddonLoader(folder, projectIds);
             ProjectAddon addon = loader.load();
             if (addon != null) {
                 projectAddons.put(addon.getAddonId(), addon);

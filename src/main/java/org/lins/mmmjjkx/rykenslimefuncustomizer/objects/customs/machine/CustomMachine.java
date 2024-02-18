@@ -50,12 +50,14 @@ public class CustomMachine extends AbstractEmptyMachine<MachineOperation> implem
         this.eval = eval;
         this.processor = new MachineProcessor<>(this);
 
-        if (this.eval != null && menu != null) {
-            if (this.eval.hasFunction("onUse", 1)) {
+        if (this.eval != null) {
+            this.eval.doInit();
+
+            if (this.eval.hasFunction("onUse")) {
                 addItemHandler((BlockUseHandler) e -> this.eval.evalFunction("onUse", e));
             }
 
-            if (this.eval.hasFunction("onBreak", 3)) {
+            if (this.eval.hasFunction("onBreak")) {
                 addItemHandler(new BlockBreakHandler(false, false) {
                     @Override
                     public void onPlayerBreak(@NotNull BlockBreakEvent e, @NotNull ItemStack is, @NotNull List<ItemStack> list) {
@@ -64,7 +66,7 @@ public class CustomMachine extends AbstractEmptyMachine<MachineOperation> implem
                 });
             }
 
-            if (this.eval.hasFunction("onPlace", 1)) {
+            if (this.eval.hasFunction("onPlace")) {
                 addItemHandler(new BlockPlaceHandler(false) {
                     @Override
                     public void onPlayerPlace(@NotNull BlockPlaceEvent e) {
@@ -74,18 +76,20 @@ public class CustomMachine extends AbstractEmptyMachine<MachineOperation> implem
             }
         }
 
-        this.addItemHandler(
-                new SimpleBlockBreakHandler() {
-                    @Override
-                    public void onBlockBreak(@NotNull Block b) {
-                        BlockMenu blockMenu = StorageCacheUtils.getMenu(b.getLocation());
-                        if (blockMenu != null) {
-                            blockMenu.dropItems(blockMenu.getLocation(), getInputSlots());
-                            blockMenu.dropItems(blockMenu.getLocation(), getOutputSlots());
+        if (menu != null) {
+            this.addItemHandler(
+                    new SimpleBlockBreakHandler() {
+                        @Override
+                        public void onBlockBreak(@NotNull Block b) {
+                            BlockMenu blockMenu = StorageCacheUtils.getMenu(b.getLocation());
+                            if (blockMenu != null) {
+                                blockMenu.dropItems(blockMenu.getLocation(), getInputSlots());
+                                blockMenu.dropItems(blockMenu.getLocation(), getOutputSlots());
+                            }
                         }
                     }
-                }
-        );
+            );
+        }
     }
 
     @Override
