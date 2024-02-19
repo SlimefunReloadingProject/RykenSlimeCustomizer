@@ -20,26 +20,31 @@ import me.mrCookieSlime.Slimefun.api.inventory.BlockMenuPreset;
 import org.bukkit.Material;
 import org.bukkit.block.Block;
 import org.bukkit.inventory.ItemStack;
+import org.bukkit.inventory.meta.ItemMeta;
 import org.jetbrains.annotations.NotNull;
 import org.lins.mmmjjkx.rykenslimefuncustomizer.RykenSlimefunCustomizer;
 import org.lins.mmmjjkx.rykenslimefuncustomizer.objects.customs.CustomMenu;
+import org.lins.mmmjjkx.rykenslimefuncustomizer.objects.machine.RecipeMachineRecipe;
+import org.lins.mmmjjkx.rykenslimefuncustomizer.utils.CommonUtils;
 
 import java.util.ArrayList;
+import java.util.Collections;
 import java.util.List;
 
 @Beta
 public class CustomRecipeMachine extends AContainer implements RecipeDisplayItem, EnergyNetComponent, MachineProcessHolder<CraftingOperation> {
-    private final ItemStack RECIPE_SPLITTER = new CustomItemStack(Material.BLACK_STAINED_GLASS_PANE, "&7配方分割符");
+    private final ItemStack RECIPE_SPLITTER = new CustomItemStack(Material.WHITE_STAINED_GLASS_PANE, "&7配方分割符");
     private final MachineProcessor<CraftingOperation> processor;
     private final List<Integer> input;
     private final List<Integer> output;
-    private final List<MachineRecipe> recipes;
+    private final List<RecipeMachineRecipe> recipes;
     private final int energyPerCraft;
     private final int capacity;
     private final CustomMenu menu;
+    private volatile RecipeMachineRecipe currentRecipe;
 
     public CustomRecipeMachine(ItemGroup itemGroup, SlimefunItemStack item, RecipeType recipeType, ItemStack[] recipe,
-                               List<Integer> input, List<Integer> output, List<MachineRecipe> recipes, int energyPerCraft,
+                               List<Integer> input, List<Integer> output, List<RecipeMachineRecipe> recipes, int energyPerCraft,
                                int capacity, @NotNull CustomMenu menu, int speed) {
         super(itemGroup, item, recipeType, recipe);
 
@@ -87,7 +92,12 @@ public class CustomRecipeMachine extends AContainer implements RecipeDisplayItem
             return;
         }
 
-        recipes.forEach(this::registerRecipe);
+        recipes.forEach(r -> {
+            RykenSlimefunCustomizer.INSTANCE.getLogger().warning(String.valueOf(r.getTicks()));
+            RykenSlimefunCustomizer.INSTANCE.getLogger().warning(String.valueOf(r.getTicks() / getSpeed()));
+
+            this.registerRecipe(r);
+        });
     }
 
     @Override
@@ -109,12 +119,13 @@ public class CustomRecipeMachine extends AContainer implements RecipeDisplayItem
     @Override
     @NotNull
     public List<ItemStack> getDisplayRecipes() {
-        List<ItemStack> displayRecipes = new ArrayList<>(this.recipes.size() * 2);
+        List<ItemStack> displayRecipes = new ArrayList<>();
 
-        for (MachineRecipe recipe : recipes) {
+        for (RecipeMachineRecipe recipe : recipes) {
             ItemStack[] input = recipe.getInput();
             ItemStack[] output = recipe.getOutput();
             int max = Math.max(input.length, output.length);
+
             for (int i = 0; i < max; i++) {
                 try {
                     ItemStack in = input[i];
@@ -124,15 +135,27 @@ public class CustomRecipeMachine extends AContainer implements RecipeDisplayItem
                 }
 
                 try {
-                    ItemStack out = output[i];
-                    displayRecipes.add(out);
+                    Integer chance = recipe.getChances().get(i);
+                    if (chance != null) {
+                        ItemStack out = output[i];
+                        ItemMeta meta = out.getItemMeta();
+
+                        meta.lore(Collections.singletonList(CommonUtils.parseToComponent(
+                                "&a有&b " + chance + "% &a的概率产出"
+                        )));
+
+                        out.setItemMeta(meta);
+                        displayRecipes.add(out);
+                    }
                 } catch (ArrayIndexOutOfBoundsException e) {
                     displayRecipes.add(null);
                 }
             }
 
-            displayRecipes.add(RECIPE_SPLITTER);
-            displayRecipes.add(RECIPE_SPLITTER);
+            if (recipes.size() > 1 && recipes.indexOf(recipe) != (recipes.size() - 1)) {
+                displayRecipes.add(RECIPE_SPLITTER);
+                displayRecipes.add(RECIPE_SPLITTER);
+            }
         }
 
         return displayRecipes;
@@ -177,25 +200,28 @@ public class CustomRecipeMachine extends AContainer implements RecipeDisplayItem
         if (inv != null) {
             if (currentOperation != null) {
                 if (takeCharge(b.getLocation())) {
-                    removeCharge(b.getLocation(), getEnergyConsumption());
-
                     if (!currentOperation.isFinished()) {
                         this.processor.updateProgressBar(inv, menu.getProgressSlot(), currentOperation);
                         currentOperation.addProgress(1);
                     } else {
                         inv.replaceExistingItem(menu.getProgressSlot(), menu.getProgress());
-                        ItemStack[] outputs = currentOperation.getResults();
 
-                        for (ItemStack o : outputs) {
-                            inv.pushItem(o.clone(), this.getOutputSlots());
+                        if (currentRecipe != null) {
+                            ItemStack[] outputs = currentRecipe.getMatchChanceResult().toArray(new ItemStack[]{});
+
+                            for (ItemStack o : outputs) {
+                                inv.pushItem(o.clone(), this.getOutputSlots());
+                            }
                         }
 
+                        currentRecipe = null;
                         this.processor.endOperation(b);
                     }
                 }
             } else {
                 MachineRecipe next = this.findNextRecipe(inv);
                 if (next != null) {
+                    currentRecipe = (RecipeMachineRecipe) next;
                     currentOperation = new CraftingOperation(next);
                     this.processor.startOperation(b, currentOperation);
                     this.processor.updateProgressBar(inv, menu.getProgressSlot(), currentOperation);

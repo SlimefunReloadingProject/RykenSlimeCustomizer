@@ -9,6 +9,7 @@ EXAMPLE_SOLAR_GENERATOR:
   capacity: 100000
   dayEnergy: 1000
   nightEnergy: 100
+  lightLevel: 14
   recipe_type: ENHANCED_CRAFTING_TABLE
   recipe:
     1:

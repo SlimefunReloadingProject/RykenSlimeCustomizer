@@ -5,13 +5,13 @@ import io.github.thebusybiscuit.slimefun4.api.items.ItemGroup;
 import io.github.thebusybiscuit.slimefun4.api.items.SlimefunItemStack;
 import io.github.thebusybiscuit.slimefun4.api.recipes.RecipeType;
 import io.github.thebusybiscuit.slimefun4.libraries.dough.collections.Pair;
-import me.mrCookieSlime.Slimefun.Objects.SlimefunItem.abstractItems.MachineRecipe;
 import org.bukkit.configuration.ConfigurationSection;
 import org.bukkit.configuration.file.YamlConfiguration;
 import org.bukkit.inventory.ItemStack;
 import org.lins.mmmjjkx.rykenslimefuncustomizer.objects.ProjectAddon;
 import org.lins.mmmjjkx.rykenslimefuncustomizer.objects.customs.CustomMenu;
 import org.lins.mmmjjkx.rykenslimefuncustomizer.objects.customs.machine.CustomRecipeMachine;
+import org.lins.mmmjjkx.rykenslimefuncustomizer.objects.machine.RecipeMachineRecipe;
 import org.lins.mmmjjkx.rykenslimefuncustomizer.objects.yaml.YamlReader;
 import org.lins.mmmjjkx.rykenslimefuncustomizer.utils.CommonUtils;
 import org.lins.mmmjjkx.rykenslimefuncustomizer.utils.ExceptionHandler;
@@ -105,13 +105,13 @@ public class RecipeMachineReader extends YamlReader<CustomRecipeMachine> {
             return null;
         }
 
-        List<MachineRecipe> mr = readRecipes(input.size(), output.size(), recipes, addon);
+        List<RecipeMachineRecipe> mr = readRecipes(input.size(), output.size(), recipes, addon);
 
         return new CustomRecipeMachine(group.getSecondValue(), slimefunItemStack, rt.getSecondValue(), recipe, input, output, mr, energy, capacity, menu, speed);
     }
 
-    private List<MachineRecipe> readRecipes(int inputSize, int outputSize, ConfigurationSection section, ProjectAddon addon) {
-        List<MachineRecipe> list = new ArrayList<>();
+    private List< RecipeMachineRecipe> readRecipes(int inputSize, int outputSize, ConfigurationSection section, ProjectAddon addon) {
+        List<RecipeMachineRecipe> list = new ArrayList<>();
         if (section == null) {
             return list;
         }
@@ -119,9 +119,9 @@ public class RecipeMachineReader extends YamlReader<CustomRecipeMachine> {
         for (String key: section.getKeys(false)) {
             ConfigurationSection recipes = section.getConfigurationSection(key);
             if (recipes == null) continue;
-            int seconds = recipes.getInt("seconds", 0);
+            int seconds = recipes.getInt("seconds");
             if (seconds < 1) {
-                ExceptionHandler.handleError("读取机器配方"+key+"时发生错误: 秒数不能小于1");
+                ExceptionHandler.handleError("读取机器配方"+key+"时发生错误: 间隔时间未设置或不能小于1");
                 continue;
             }
             ConfigurationSection inputs = recipes.getConfigurationSection("input");
@@ -145,10 +145,26 @@ public class RecipeMachineReader extends YamlReader<CustomRecipeMachine> {
                 continue;
             }
 
+            List<Integer> chances = new ArrayList<>();
+
+            for (String ot : outputs.getKeys(false)) {
+                ConfigurationSection cs = outputs.getConfigurationSection(ot);
+                if (cs != null) {
+                    int chance = cs.getInt("chance", 100);
+
+                    if (chance < 1) {
+                        ExceptionHandler.handleError("读取机器配方"+key+"时发生问题: 概率未设置或不应该小于1，已转为1");
+                        chance = 1;
+                    }
+
+                    chances.add(chance);
+                }
+            }
+
             input = removeNulls(input);
             output = removeNulls(output);
 
-            list.add(new MachineRecipe(seconds, input, output));
+            list.add(new RecipeMachineRecipe(seconds, input, output, chances));
         }
         return list;
     }

@@ -1,4 +1,4 @@
-package org.lins.mmmjjkx.rykenslimefuncustomizer.objects.customs;
+package org.lins.mmmjjkx.rykenslimefuncustomizer.objects.customs.parent;
 
 import io.github.thebusybiscuit.slimefun4.api.items.ItemGroup;
 import io.github.thebusybiscuit.slimefun4.api.items.SlimefunItem;
@@ -13,10 +13,7 @@ import org.lins.mmmjjkx.rykenslimefuncustomizer.objects.js.JavaScriptEval;
 import java.util.HashMap;
 import java.util.Map;
 
-@Getter
-public class CustomItem extends SlimefunItem {
-    private static final Map<String, String> tempValue = new HashMap<>();
-
+public abstract class CustomItem extends SlimefunItem {
     public CustomItem(ItemGroup itemGroup, SlimefunItemStack item, RecipeType recipeType, ItemStack[] recipe, @Nullable JavaScriptEval eval) {
         super(itemGroup, item, recipeType, recipe);
 

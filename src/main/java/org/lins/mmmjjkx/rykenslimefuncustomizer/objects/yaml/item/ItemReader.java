@@ -8,7 +8,7 @@ import org.bukkit.configuration.ConfigurationSection;
 import org.bukkit.configuration.file.YamlConfiguration;
 import org.bukkit.inventory.ItemStack;
 import org.lins.mmmjjkx.rykenslimefuncustomizer.objects.ProjectAddon;
-import org.lins.mmmjjkx.rykenslimefuncustomizer.objects.customs.CustomItem;
+import org.lins.mmmjjkx.rykenslimefuncustomizer.objects.customs.parent.CustomItem;
 import org.lins.mmmjjkx.rykenslimefuncustomizer.objects.customs.CustomUnplaceableItem;
 import org.lins.mmmjjkx.rykenslimefuncustomizer.objects.js.JavaScriptEval;
 import org.lins.mmmjjkx.rykenslimefuncustomizer.objects.yaml.YamlReader;

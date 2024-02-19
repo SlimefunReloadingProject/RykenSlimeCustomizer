@@ -12,7 +12,7 @@ import lombok.RequiredArgsConstructor;
 import lombok.Setter;
 import org.jetbrains.annotations.NotNull;
 import org.lins.mmmjjkx.rykenslimefuncustomizer.objects.customs.CustomGeoResource;
-import org.lins.mmmjjkx.rykenslimefuncustomizer.objects.customs.CustomItem;
+import org.lins.mmmjjkx.rykenslimefuncustomizer.objects.customs.parent.CustomItem;
 import org.lins.mmmjjkx.rykenslimefuncustomizer.objects.customs.CustomMenu;
 import org.lins.mmmjjkx.rykenslimefuncustomizer.objects.customs.CustomMobDrop;
 import org.lins.mmmjjkx.rykenslimefuncustomizer.objects.customs.machine.*;
@@ -85,7 +85,10 @@ public class ProjectAddon {
         researches.forEach(Research::disable);
         menus.forEach(m -> Slimefun.getRegistry().getMenuPresets().remove(m.getID()));
         items.forEach(this::unregisterItem);
-        mobDrops.clear();
+        mobDrops.forEach(md -> {
+          unregisterItem(md);
+          Slimefun.getRegistry().getMobDrops().get(md.getEntityType()).removeAll(md.getDrops());
+        });
         capacitors.forEach(this::unregisterItem);
         machines.forEach(this::unregisterItem);
         solarGenerators.forEach(this::unregisterItem);

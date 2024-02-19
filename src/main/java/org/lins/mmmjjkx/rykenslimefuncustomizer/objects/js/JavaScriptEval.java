@@ -159,8 +159,10 @@ public class JavaScriptEval {
                 context = Files.readString(js.toPath(), StandardCharsets.UTF_8);
                 failed = false;
             } catch (IOException e) {
-                context = "";
+                failed = true;
+                return;
             }
+
             try {
                 jsEngine.eval(context);
                 failed = false;

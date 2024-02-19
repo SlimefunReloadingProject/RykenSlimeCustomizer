@@ -11,6 +11,7 @@ import org.bukkit.entity.Player;
 import org.bukkit.inventory.ItemStack;
 import org.jetbrains.annotations.Nullable;
 import org.lins.mmmjjkx.rykenslimefuncustomizer.RykenSlimefunCustomizer;
+import org.lins.mmmjjkx.rykenslimefuncustomizer.objects.customs.parent.CustomItem;
 import org.lins.mmmjjkx.rykenslimefuncustomizer.objects.js.JavaScriptEval;
 
 import java.util.List;
