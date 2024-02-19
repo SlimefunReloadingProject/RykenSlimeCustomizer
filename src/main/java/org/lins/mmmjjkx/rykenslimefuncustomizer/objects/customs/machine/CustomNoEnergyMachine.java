@@ -60,10 +60,6 @@ public class CustomNoEnergyMachine extends AbstractEmptyMachine<MachineOperation
                 });
             }
             if (this.eval != null) {
-                if (this.eval.hasFunction("onUse")) {
-                    addItemHandler((BlockUseHandler) e -> this.eval.evalFunction("onUse", e));
-                }
-
                 if (this.eval.hasFunction("onBreak")) {
                     addItemHandler(new BlockBreakHandler(false, false) {
                         @Override

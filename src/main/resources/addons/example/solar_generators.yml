@@ -1,0 +1,28 @@
+EXAMPLE_SOLAR_GENERATOR:
+  item_group: example_normal_group
+  item:
+    name: "&c示例太阳能发电机"
+    material: GOLD_BLOCK
+    lore:
+      - "&e白天发电量: 1000J/t"
+      - "&b夜晚发电量: 100J/t"
+  capacity: 100000
+  dayEnergy: 1000
+  nightEnergy: 100
+  recipe_type: ENHANCED_CRAFTING_TABLE
+  recipe:
+    1:
+      material_type: full_slimefun
+      material: EXAMPLE_ITEM
+    3:
+      material_type: full_slimefun
+      material: EXAMPLE_ITEM_2
+    5:
+      material_type: full_slimefun
+      material: EXAMPLE_MACHINE
+    7:
+      material_type: full_slimefun
+      material: EXAMPLE_ITEM_2
+    9:
+      material_type: full_slimefun
+      material: EXAMPLE_ITEM

@@ -6,7 +6,7 @@ import me.clip.placeholderapi.PlaceholderAPI;
 import org.bukkit.Bukkit;
 import org.bukkit.Location;
 import org.bukkit.entity.Player;
-import org.bukkit.event.player.PlayerEvent;
+import org.bukkit.event.Event;
 import org.jetbrains.annotations.Nullable;
 import org.lins.mmmjjkx.rykenslimefuncustomizer.objects.js.ban.Delegations;
 import org.lins.mmmjjkx.rykenslimefuncustomizer.objects.js.lambda.CiConsumer;
@@ -90,7 +90,9 @@ public class JavaScriptEval {
     }
 
     public void doInit() {
-        evalFunction("init");
+        if (hasFunction("init")) {
+            evalFunction("init");
+        }
     }
 
     public boolean hasFunction(String funName) {
@@ -112,8 +114,8 @@ public class JavaScriptEval {
             String fileName = js.getName();
             if (o instanceof Player p) {
                 return Delegations.delegatePlayer(fileName, p);
-            } else if (o instanceof PlayerEvent pe) {
-                return Delegations.replacePlayerInEvent(fileName, pe);
+            } else if (o instanceof Event e) {
+                return Delegations.replacePlayerInEvent(fileName, e);
             } else {
                 return o;
             }

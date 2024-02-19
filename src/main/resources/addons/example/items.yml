@@ -3,7 +3,6 @@ EXAMPLE_ITEM:
   item:
     name: "&a示例物品"
     material: DIAMOND
-    amount: 1
   recipe_type: ENHANCED_CRAFTING_TABLE  
   recipe:
     1:
@@ -14,11 +13,9 @@ EXAMPLE_ITEM_2:
   item:
     name: "&a示例物品2"
     material: NETHERITE_INGOT
-    amount: 1
   recipe_type: ENHANCED_CRAFTING_TABLE  
   script: "example_item_2"
   recipe:
     1:
       material_type: slimefun
       material: EXAMPLE_ITEM
-      amount: 1

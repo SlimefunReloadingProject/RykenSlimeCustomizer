@@ -6,6 +6,7 @@ import org.bukkit.configuration.file.YamlConfiguration;
 import org.jetbrains.annotations.Nullable;
 import org.lins.mmmjjkx.rykenslimefuncustomizer.RykenSlimefunCustomizer;
 import org.lins.mmmjjkx.rykenslimefuncustomizer.objects.yaml.*;
+import org.lins.mmmjjkx.rykenslimefuncustomizer.objects.yaml.item.CapacitorsReader;
 import org.lins.mmmjjkx.rykenslimefuncustomizer.objects.yaml.item.GeoResourceReader;
 import org.lins.mmmjjkx.rykenslimefuncustomizer.objects.yaml.item.ItemReader;
 import org.lins.mmmjjkx.rykenslimefuncustomizer.objects.yaml.item.MobDropsReader;
@@ -32,7 +33,7 @@ public class ProjectAddonLoader {
 
     @Nullable
     public ProjectAddon load() {
-        ProjectAddon addon = null;
+        ProjectAddon addon;
         YamlConfiguration info = doFileLoad(file, Constants.INFO_FILE);
         if (info.contains("name") && info.contains("version") && info.contains("id")) {
             String name = info.getString("name");
@@ -44,7 +45,7 @@ public class ProjectAddonLoader {
 
             if (name == null || name.isBlank()) {
                 ExceptionHandler.handleError("在名称为 " + file.getName() + "的文件夹中有无效的项目名称，导致此附属无法加载！");
-                return addon;
+                return null;
             }
 
             if (info.contains("depends")) {
@@ -53,7 +54,7 @@ public class ProjectAddonLoader {
                     boolean loadResult = loadDependencies(depends);
                     if (!loadResult) {
                         ExceptionHandler.handleError("在名称为 " + name + " 的附属(附属id：" + id + ")中需要依赖项 " + depends + "，由于部分依赖项在加载时出错或未安装，导致此附属无法加载！");
-                        return addon;
+                        return null;
                     }
                 }
             }
@@ -62,15 +63,15 @@ public class ProjectAddonLoader {
                 pluginDepends = info.getStringList("pluginDepends");
                 for (String pluginDepend : pluginDepends) {
                     if (!Bukkit.getPluginManager().isPluginEnabled(pluginDepend)) {
-                        ExceptionHandler.handleError("在名称为 "+ name + " 的附属(附属id："+id+")中需要依赖项 "+ depends +"，由于部分依赖项在加载时出错或未安装，导致此附属无法加载！");
-                        return addon;
+                        ExceptionHandler.handleError("在名称为 "+ name + " 的附属(附属id："+id+")中需要插件依赖项 "+ pluginDepends +"，由于部分依赖项在加载时出错或未安装，导致此附属无法加载！");
+                        return null;
                     }
                 }
             }
             addon = new ProjectAddon(id, name, version, pluginDepends, depends, description, file);
         } else {
             ExceptionHandler.handleError("在名称为 " + file.getName() + "的文件夹中有无效的项目信息，导致此附属无法加载！");
-            return addon;
+            return null;
         }
 
         YamlConfiguration groups = doFileLoad(file, Constants.GROUPS_FILE);
@@ -95,6 +96,9 @@ public class ProjectAddonLoader {
         MobDropsReader mobDropsReader = new MobDropsReader(mob_drops);
         addon.setMobDrops(mobDropsReader.readAll(addon));
         //
+        YamlConfiguration capacitors = doFileLoad(file, Constants.CAPACITORS_FILE);
+        CapacitorsReader capacitorsReader = new CapacitorsReader(capacitors);
+        addon.setCapacitors(capacitorsReader.readAll(addon));
         /////////////////
         YamlConfiguration menus = doFileLoad(file, Constants.MENUS_FILE);
         MenuReader menuReader = new MenuReader(menus);
@@ -129,18 +133,18 @@ public class ProjectAddonLoader {
         addon.setResearches(researchReader.readAll(addon));
 
         //late inits
-        reader.loadLateInits(addon);
-        itemReader.loadLateInits(addon);
-        resourceReader.loadLateInits(addon);
-        mobDropsReader.loadLateInits(addon);
-        menuReader.loadLateInits(addon);
-        machineReader.loadLateInits(addon);
-        generatorReader.loadLateInits(addon);
-        solarGeneratorReader.loadLateInits(addon);
-        materialGeneratorReader.loadLateInits(addon);
-        recipeMachineReader.loadLateInits(addon);
-        multiBlockMachineReader.loadLateInits(addon);
-        researchReader.loadLateInits(addon);
+        addon.getItems().addAll(itemReader.loadLateInits(addon));
+        addon.getGeoResources().addAll(resourceReader.loadLateInits(addon));
+        addon.getMobDrops().addAll(mobDropsReader.loadLateInits(addon));
+        addon.getCapacitors().addAll(capacitorsReader.loadLateInits(addon));
+        addon.getMenus().addAll(menuReader.loadLateInits(addon));
+        addon.getMachines().addAll(machineReader.loadLateInits(addon));
+        addon.getGenerators().addAll(generatorReader.loadLateInits(addon));
+        addon.getSolarGenerators().addAll(solarGeneratorReader.loadLateInits(addon));
+        addon.getMaterialGenerators().addAll(materialGeneratorReader.loadLateInits(addon));
+        addon.getRecipeMachines().addAll(recipeMachineReader.loadLateInits(addon));
+        addon.getMultiBlockMachines().addAll(multiBlockMachineReader.loadLateInits(addon));
+        addon.getResearches().addAll(researchReader.loadLateInits(addon));
 
         return addon;
     }

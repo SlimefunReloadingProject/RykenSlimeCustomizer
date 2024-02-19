@@ -5,6 +5,7 @@ import io.github.thebusybiscuit.slimefun4.api.items.SlimefunItemStack;
 import io.github.thebusybiscuit.slimefun4.libraries.dough.collections.Pair;
 import io.github.thebusybiscuit.slimefun4.libraries.dough.items.CustomItemStack;
 import net.kyori.adventure.text.Component;
+import net.kyori.adventure.text.format.TextDecoration;
 import org.bukkit.Material;
 import org.bukkit.configuration.ConfigurationSection;
 import org.bukkit.configuration.file.YamlConfiguration;
@@ -15,6 +16,8 @@ import org.lins.mmmjjkx.rykenslimefuncustomizer.objects.customs.CustomMobDrop;
 import org.lins.mmmjjkx.rykenslimefuncustomizer.objects.yaml.YamlReader;
 import org.lins.mmmjjkx.rykenslimefuncustomizer.utils.CommonUtils;
 import org.lins.mmmjjkx.rykenslimefuncustomizer.utils.ExceptionHandler;
+
+import java.util.Collections;
 
 public class MobDropsReader extends YamlReader<CustomMobDrop> {
     public MobDropsReader(YamlConfiguration config) {
@@ -65,17 +68,21 @@ public class MobDropsReader extends YamlReader<CustomMobDrop> {
             int chance = section.getInt("chance");
 
             if (chance < 1 || chance > 100) {
-                ExceptionHandler.handleError("在附属" + addon.getAddonName() + "中加载生物掉落" + s + "时发现问题: 掉落概率不应该小于1或大于100，已转换为1或100");
+                ExceptionHandler.handleError("在附属" + addon.getAddonName() + "中加载生物掉落" + s + "时发现问题: 掉落概率未设置或不应该小于1或大于100，已转换为1或100");
                 chance = chance >= 100 ? 100 : 1;
             }
 
             Component translate = Component.translatable(entityType.translationKey());
-            Component name = CommonUtils.parseToComponent("&a击杀 ")
+            Component lore = CommonUtils.parseToComponent("&a击杀 ")
                     .append(translate).append(Component.space())
                     .append(CommonUtils.parseToComponent("&a时会有"))
                     .append(CommonUtils.parseToComponent("&b"+chance+"%"))
-                    .append(CommonUtils.parseToComponent("的概率获得"));
-            ItemStack itemStack = new CustomItemStack(eggMaterial, meta -> meta.displayName(name));
+                    .append(CommonUtils.parseToComponent("的概率掉落"))
+                    .decoration(TextDecoration.ITALIC, false);
+            ItemStack itemStack = new CustomItemStack(eggMaterial, meta -> {
+                meta.displayName(Component.text(entityType.toString()).decoration(TextDecoration.ITALIC, false));
+                meta.lore(Collections.singletonList(lore));
+            });
             ItemStack[] recipe = new ItemStack[]{null, null, null, null, itemStack};
 
             return new CustomMobDrop(group.getSecondValue(), sfis, recipe, chance);

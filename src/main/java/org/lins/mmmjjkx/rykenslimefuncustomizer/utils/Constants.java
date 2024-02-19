@@ -15,4 +15,5 @@ public class Constants {
     public static final String SOLAR_GENERATORS_FILE = "solar_generators.yml";
     public static final String MOB_DROPS_FILE = "mob_drops.yml";
     public static final String RECIPE_TYPES_FILE = "recipe_types.yml";
+    public static final String CAPACITORS_FILE = "capacitors.yml";
 }

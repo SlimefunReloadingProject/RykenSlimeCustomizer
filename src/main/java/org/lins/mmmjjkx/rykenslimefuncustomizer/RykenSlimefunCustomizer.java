@@ -24,9 +24,14 @@ public final class RykenSlimefunCustomizer extends JavaPlugin implements Slimefu
             "mb_machines.yml",
             "recipe_machines.yml",
             "geo_resources.yml",
+            "capacitors.yml",
+            "mob_drops.yml",
+            "solar_generators.yml",
+            "recipe_types.yml",
             "scripts/example_item_2.js",
             "scripts/example_machine.js",
-            "scripts/example_machine_energy.js"
+            "scripts/example_machine_energy.js",
+            "scripts/example_menu.js"
     };
 
     public static RykenSlimefunCustomizer INSTANCE;

@@ -75,9 +75,8 @@ public class ExceptionHandler {
     public static <T extends Enum<T>> Pair<HandleResult, T> handleEnumValueOf(String msg, Class<T> enumClass, String name) {
         try {
             return new Pair<>(HandleResult.SUCCESS, Enum.valueOf(enumClass, name.toUpperCase()));
-        } catch (NullPointerException e) {
+        } catch (NullPointerException | IllegalArgumentException e) {
             handleError(msg);
-        } catch (IllegalArgumentException ignored) {
         }
         return new Pair<>(HandleResult.FAILED, null);
     }

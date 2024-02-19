@@ -1,0 +1,7 @@
+EXAMPLE_MOB_DROP:
+  item_group: example_sub_group
+  entity: IRON_GOLEM
+  chance: 60
+  item:
+    name: "&a示例生物掉落物品"
+    material: IRON_INGOT

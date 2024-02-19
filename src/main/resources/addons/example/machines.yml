@@ -21,7 +21,7 @@ EXAMPLE_MACHINE_ENERGY:
   energy:
     capacity: 100000
     totalTicks: 10
-    type: NONE
+    type: CONSUMER
   recipe:
     1:
      material_type: slimefun

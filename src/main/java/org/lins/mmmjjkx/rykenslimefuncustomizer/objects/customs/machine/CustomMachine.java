@@ -9,7 +9,6 @@ import io.github.thebusybiscuit.slimefun4.api.recipes.RecipeType;
 import io.github.thebusybiscuit.slimefun4.core.attributes.EnergyNetComponent;
 import io.github.thebusybiscuit.slimefun4.core.handlers.BlockBreakHandler;
 import io.github.thebusybiscuit.slimefun4.core.handlers.BlockPlaceHandler;
-import io.github.thebusybiscuit.slimefun4.core.handlers.BlockUseHandler;
 import io.github.thebusybiscuit.slimefun4.core.machines.MachineOperation;
 import io.github.thebusybiscuit.slimefun4.core.machines.MachineProcessor;
 import io.github.thebusybiscuit.slimefun4.core.networks.energy.EnergyNetComponentType;
@@ -52,10 +51,6 @@ public class CustomMachine extends AbstractEmptyMachine<MachineOperation> implem
 
         if (this.eval != null) {
             this.eval.doInit();
-
-            if (this.eval.hasFunction("onUse")) {
-                addItemHandler((BlockUseHandler) e -> this.eval.evalFunction("onUse", e));
-            }
 
             if (this.eval.hasFunction("onBreak")) {
                 addItemHandler(new BlockBreakHandler(false, false) {

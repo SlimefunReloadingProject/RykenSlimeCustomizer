@@ -12,6 +12,7 @@ import io.github.thebusybiscuit.slimefun4.core.handlers.BlockBreakHandler;
 import io.github.thebusybiscuit.slimefun4.core.machines.MachineProcessor;
 import io.github.thebusybiscuit.slimefun4.implementation.handlers.SimpleBlockBreakHandler;
 import io.github.thebusybiscuit.slimefun4.implementation.operations.CraftingOperation;
+import io.github.thebusybiscuit.slimefun4.libraries.dough.items.CustomItemStack;
 import me.mrCookieSlime.Slimefun.Objects.SlimefunItem.abstractItems.AContainer;
 import me.mrCookieSlime.Slimefun.Objects.SlimefunItem.abstractItems.MachineRecipe;
 import me.mrCookieSlime.Slimefun.api.inventory.BlockMenu;
@@ -28,6 +29,7 @@ import java.util.List;
 
 @Beta
 public class CustomRecipeMachine extends AContainer implements RecipeDisplayItem, EnergyNetComponent, MachineProcessHolder<CraftingOperation> {
+    private final ItemStack RECIPE_SPLITTER = new CustomItemStack(Material.BLACK_STAINED_GLASS_PANE, "&7配方分割符");
     private final MachineProcessor<CraftingOperation> processor;
     private final List<Integer> input;
     private final List<Integer> output;
@@ -128,6 +130,9 @@ public class CustomRecipeMachine extends AContainer implements RecipeDisplayItem
                     displayRecipes.add(null);
                 }
             }
+
+            displayRecipes.add(RECIPE_SPLITTER);
+            displayRecipes.add(RECIPE_SPLITTER);
         }
 
         return displayRecipes;

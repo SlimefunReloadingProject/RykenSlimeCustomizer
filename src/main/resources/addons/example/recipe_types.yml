@@ -1,0 +1,3 @@
+EXAMPLE_RECIPE_TYPE:
+  material: "DIAMOND_BLOCK"
+  name: "&e示例配方类型"
