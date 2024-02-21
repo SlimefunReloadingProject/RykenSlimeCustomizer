@@ -1,5 +1,6 @@
 package org.lins.mmmjjkx.rykenslimefuncustomizer.objects.js;
 
+import com.google.errorprone.annotations.CanIgnoreReturnValue;
 import com.xzavier0722.mc.plugin.slimefun4.storage.util.StorageCacheUtils;
 import io.github.thebusybiscuit.slimefun4.implementation.Slimefun;
 import me.clip.placeholderapi.PlaceholderAPI;
@@ -109,7 +110,9 @@ public class JavaScriptEval {
         return false;
     }
 
-    public void evalFunction(String funName, Object... args) {
+    @Nullable
+    @CanIgnoreReturnValue
+    public Object evalFunction(String funName, Object... args) {
         args = Arrays.stream(args).map(o -> {
             String fileName = js.getName();
             if (o instanceof Player p) {
@@ -137,7 +140,7 @@ public class JavaScriptEval {
         if (!failed) {
             if (jsEngine instanceof Invocable in) {
                 try {
-                    in.invokeFunction(funName, args);
+                    return in.invokeFunction(funName, args);
                 } catch (ScriptException e) {
                     ExceptionHandler.handleError("在运行"+js.getName()+"时发生错误");
                     e.printStackTrace();
@@ -152,7 +155,7 @@ public class JavaScriptEval {
             if (!js.exists()) {
                 ExceptionHandler.handleError("找不到"+js.getName());
                 failed = true;
-                return;
+                return null;
             }
             String context;
             try {
@@ -160,7 +163,7 @@ public class JavaScriptEval {
                 failed = false;
             } catch (IOException e) {
                 failed = true;
-                return;
+                return null;
             }
 
             try {
@@ -168,11 +171,13 @@ public class JavaScriptEval {
                 failed = false;
             } catch (ScriptException e) {
                 failed = true;
-                return;
+                return null;
             }
 
             evalFunction(funName, args);
         }
+
+        return null;
     }
 
     private String parsePlaceholder(@Nullable Player p, String text) {

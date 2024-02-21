@@ -8,15 +8,19 @@ import java.util.ArrayList;
 import java.util.List;
 import java.util.Random;
 
-@Getter
 public class RecipeMachineRecipe extends MachineRecipe {
+    @Getter
     private final List<Integer> chances;
+    @Getter
+    private final boolean chooseOneIfHas;
+
     private final Random RNG = new Random();
 
-    public RecipeMachineRecipe(int seconds, ItemStack[] input, ItemStack[] output, List<Integer> chances) {
+    public RecipeMachineRecipe(int seconds, ItemStack[] input, ItemStack[] output, List<Integer> chances, boolean chooseOneIfHas) {
         super(seconds, input, output);
 
         this.chances = chances;
+        this.chooseOneIfHas = chooseOneIfHas;
     }
 
     public List<ItemStack> getMatchChanceResult() {

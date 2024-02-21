@@ -63,6 +63,8 @@ public class ProjectAddon {
     private List<Capacitor> capacitors = new ArrayList<>();
     //recipe_types.yml
     private List<RecipeType> recipeTypes = new ArrayList<>();
+    //simple_machines.yml
+    private List<? extends SlimefunItem> simpleMachines = new ArrayList<>();
 
     public File getScriptsFolder() {
         File scripts = new File(folder, "scripts");
@@ -97,6 +99,7 @@ public class ProjectAddon {
         materialGenerators.forEach(this::unregisterItem);
         recipeMachines.forEach(this::unregisterItem);
         multiBlockMachines.forEach(this::unregisterItem);
+        simpleMachines.forEach(this::unregisterItem);
 
         researches.clear();
         items.clear();
@@ -112,6 +115,7 @@ public class ProjectAddon {
         solarGenerators.clear();
         mobDrops.clear();
         recipeTypes.clear();
+        simpleMachines.clear();
     }
 
     private void unregisterItem(SlimefunItem item) {

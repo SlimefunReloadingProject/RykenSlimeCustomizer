@@ -82,8 +82,8 @@ public class MachineReader extends YamlReader<AbstractEmptyMachine<?>> {
                 return machine;
             }
             int capacity = energySettings.getInt("capacity");
-            if (capacity < 1) {
-                ExceptionHandler.handleError("无法读取机器"+s+"的能源设置，已转为无电机器，原因: 容量不能小于1");
+            if (capacity < 0) {
+                ExceptionHandler.handleError("无法读取机器"+s+"的能源设置，已转为无电机器，原因: 容量不能小于0");
                 machine = new CustomNoEnergyMachine(group.getSecondValue(), slimefunItemStack, rt.getSecondValue(), recipe, menu, input, output, eval, -1);
                 return machine;
             }

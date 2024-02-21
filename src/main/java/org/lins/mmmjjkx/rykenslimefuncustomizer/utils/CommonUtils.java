@@ -10,6 +10,7 @@ import net.kyori.adventure.text.Component;
 import net.kyori.adventure.text.minimessage.MiniMessage;
 import net.kyori.adventure.text.serializer.legacy.LegacyComponentSerializer;
 import org.bukkit.Bukkit;
+import org.bukkit.ChatColor;
 import org.bukkit.Material;
 import org.bukkit.NamespacedKey;
 import org.bukkit.configuration.ConfigurationSection;
@@ -28,6 +29,7 @@ import org.lins.mmmjjkx.rykenslimefuncustomizer.objects.ProjectAddon;
 
 import java.io.File;
 import java.io.IOException;
+import java.util.ArrayList;
 import java.util.List;
 import java.util.function.Predicate;
 
@@ -171,15 +173,21 @@ public class CommonUtils {
                 File file = new File(addon.getSavedItemsFolder(), material + ".yml");
                 if (!file.exists()) {
                     ExceptionHandler.handleError("保存物品的文件"+material+"不存在，已转为石头");
-                    itemStack = new CustomItemStack(Material.STONE, name);
+                    itemStack = new CustomItemStack(Material.STONE, name, lore);
                     break;
                 }
                 YamlConfiguration configuration = YamlConfiguration.loadConfiguration(file);
                 configuration.set("item.v", Bukkit.getUnsafe().getDataVersion());
 
-                configuration.save(file);
+                itemStack = new CustomItemStack(configuration.getItemStack("item", new CustomItemStack(Material.STONE, name, lore)), meta -> {
+                    List<String> lines = new ArrayList<>();
 
-                return configuration.getSerializable("item", ItemStack.class);
+                    for (String s : lore) {
+                        lines.add(ChatColor.translateAlternateColorCodes('&', s));
+                    }
+
+                    meta.setLore(lines);
+                });
             }
         }
 

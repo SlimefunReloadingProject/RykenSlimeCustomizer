@@ -1,5 +1,6 @@
 function tick(info) {
     var component = info.component();
+    let location = info.block().getLocation();
     component.removeCharge(location, 100);
 }
 

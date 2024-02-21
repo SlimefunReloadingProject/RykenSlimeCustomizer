@@ -17,19 +17,24 @@ import me.mrCookieSlime.Slimefun.Objects.SlimefunItem.abstractItems.AContainer;
 import me.mrCookieSlime.Slimefun.Objects.SlimefunItem.abstractItems.MachineRecipe;
 import me.mrCookieSlime.Slimefun.api.inventory.BlockMenu;
 import me.mrCookieSlime.Slimefun.api.inventory.BlockMenuPreset;
+import net.kyori.adventure.text.Component;
 import org.bukkit.Material;
 import org.bukkit.block.Block;
 import org.bukkit.inventory.ItemStack;
 import org.bukkit.inventory.meta.ItemMeta;
 import org.jetbrains.annotations.NotNull;
+import org.jetbrains.annotations.Nullable;
 import org.lins.mmmjjkx.rykenslimefuncustomizer.RykenSlimefunCustomizer;
 import org.lins.mmmjjkx.rykenslimefuncustomizer.objects.customs.CustomMenu;
+import org.lins.mmmjjkx.rykenslimefuncustomizer.objects.js.JavaScriptEval;
+import org.lins.mmmjjkx.rykenslimefuncustomizer.objects.js.lambda.EiFunction;
 import org.lins.mmmjjkx.rykenslimefuncustomizer.objects.machine.RecipeMachineRecipe;
 import org.lins.mmmjjkx.rykenslimefuncustomizer.utils.CommonUtils;
 
 import java.util.ArrayList;
 import java.util.Collections;
 import java.util.List;
+import java.util.Random;
 
 @Beta
 public class CustomRecipeMachine extends AContainer implements RecipeDisplayItem, EnergyNetComponent, MachineProcessHolder<CraftingOperation> {
@@ -37,7 +42,7 @@ public class CustomRecipeMachine extends AContainer implements RecipeDisplayItem
     private final MachineProcessor<CraftingOperation> processor;
     private final List<Integer> input;
     private final List<Integer> output;
-    private final List<RecipeMachineRecipe> recipes;
+    private List<RecipeMachineRecipe> recipes;
     private final int energyPerCraft;
     private final int capacity;
     private final CustomMenu menu;
@@ -45,7 +50,7 @@ public class CustomRecipeMachine extends AContainer implements RecipeDisplayItem
 
     public CustomRecipeMachine(ItemGroup itemGroup, SlimefunItemStack item, RecipeType recipeType, ItemStack[] recipe,
                                List<Integer> input, List<Integer> output, List<RecipeMachineRecipe> recipes, int energyPerCraft,
-                               int capacity, @NotNull CustomMenu menu, int speed) {
+                               int capacity, @NotNull CustomMenu menu, int speed, @Nullable JavaScriptEval eval) {
         super(itemGroup, item, recipeType, recipe);
 
         this.processor = new MachineProcessor<>(this);
@@ -64,6 +69,17 @@ public class CustomRecipeMachine extends AContainer implements RecipeDisplayItem
 
         setCapacity(capacity);
         setEnergyConsumption(energyPerCraft);
+
+        if (eval != null) {
+            eval.addThing("newRecipe", (EiFunction<Integer, ItemStack[], ItemStack[], List<Integer>, Boolean, RecipeMachineRecipe>) RecipeMachineRecipe::new);
+
+            if (eval.hasFunction("getRecipes")) {
+                Object result = eval.evalFunction("getRecipes", this.recipes);
+                if (result instanceof List<?> list) {
+                    this.recipes = (List<RecipeMachineRecipe>) list;
+                }
+            }
+        }
 
         registerDefaultRecipes();
 
@@ -92,12 +108,7 @@ public class CustomRecipeMachine extends AContainer implements RecipeDisplayItem
             return;
         }
 
-        recipes.forEach(r -> {
-            RykenSlimefunCustomizer.INSTANCE.getLogger().warning(String.valueOf(r.getTicks()));
-            RykenSlimefunCustomizer.INSTANCE.getLogger().warning(String.valueOf(r.getTicks() / getSpeed()));
-
-            this.registerRecipe(r);
-        });
+        recipes.forEach(this::registerRecipe);
     }
 
     @Override
@@ -140,9 +151,13 @@ public class CustomRecipeMachine extends AContainer implements RecipeDisplayItem
                         ItemStack out = output[i];
                         ItemMeta meta = out.getItemMeta();
 
-                        meta.lore(Collections.singletonList(CommonUtils.parseToComponent(
-                                "&a有&b " + chance + "% &a的概率产出"
-                        )));
+                        List<Component> lore = meta.lore();
+                        if (lore == null) {
+                            meta.lore(Collections.singletonList(CommonUtils.parseToComponent("&a有&b " + chance + "% &a的概率产出")));
+                        } else {
+                            lore.add(Component.newline());
+                            lore.add(CommonUtils.parseToComponent("&a有&b " + chance + "% &a的概率产出"));
+                        }
 
                         out.setItemMeta(meta);
                         displayRecipes.add(out);
@@ -209,8 +224,18 @@ public class CustomRecipeMachine extends AContainer implements RecipeDisplayItem
                         if (currentRecipe != null) {
                             ItemStack[] outputs = currentRecipe.getMatchChanceResult().toArray(new ItemStack[]{});
 
-                            for (ItemStack o : outputs) {
-                                inv.pushItem(o.clone(), this.getOutputSlots());
+                            if (!currentRecipe.isChooseOneIfHas()) {
+                                for (ItemStack o : outputs) {
+                                    if (o != null) {
+                                        inv.pushItem(o.clone(), this.getOutputSlots());
+                                    }
+                                }
+                            } else {
+                                int index = new Random().nextInt(outputs.length);
+                                ItemStack is = outputs[index];
+                                if (is != null) {
+                                    inv.pushItem(is.clone(), this.getOutputSlots());
+                                }
                             }
                         }
 
