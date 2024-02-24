@@ -125,6 +125,31 @@ public class MainCommand implements TabExecutor {
 
                     sender.sendMessage(CommonUtils.parseToComponent("&a卸载此附属成功！"));
                     return true;
+                } else if (args[0].equalsIgnoreCase("info")) {
+                    if (!sender.hasPermission("rsc.command") || !sender.hasPermission("rsc.command.disable")) {
+                        sender.sendMessage(CommonUtils.parseToComponent("&4你没有权限去做这些！"));
+                        return false;
+                    }
+
+                    String id = args[1];
+                    ProjectAddon addon = RykenSlimefunCustomizer.addonManager.get(id);
+                    if (addon == null) {
+                        sender.sendMessage(CommonUtils.parseToComponent("&4没有这个附属！"));
+                        return false;
+                    }
+
+                    sender.sendMessage(
+                            CommonUtils.parseToComponent(
+                                    "名称: &a" + addon.getAddonName() + "<newline>&f" +
+                                          "ID: &a" + addon.getAddonId() + "<newline>&f" +
+                                          "版本: &a" + addon.getAddonVersion() + "<newline>&f" +
+                                          "依赖: &a" + addon.getDepends() + "<newline>&f" +
+                                          "插件依赖: &a" + addon.getPluginDepends() + "<newline>&f" +
+                                          "描述: &a" + addon.getDescription()
+                            )
+                    );
+
+                    return true;
                 } else if (args[0].equalsIgnoreCase("menupreview")) {
                     if (!sender.hasPermission("rsc.command") || !sender.hasPermission("rsc.command.menupreview")) {
                         sender.sendMessage(CommonUtils.parseToComponent("&4你没有权限去做这些！"));
@@ -194,8 +219,7 @@ public class MainCommand implements TabExecutor {
             return List.of("list", "reload", "reloadPlugin", "list", "enable", "disable", "saveitem", "menupreview");
         } else if (args.length == 2) {
             return switch (args[0]) {
-                case "enable" ->
-                        Arrays.stream(Objects.requireNonNull(ProjectAddonManager.ADDONS_DIRECTORY.listFiles())).map(File::getName).toList();
+                case "enable" -> Arrays.stream(Objects.requireNonNull(ProjectAddonManager.ADDONS_DIRECTORY.listFiles())).map(File::getName).toList();
                 case "disable","saveitem" -> RykenSlimefunCustomizer.addonManager.getAllValues().stream().map(ProjectAddon::getAddonId).toList();
                 case "menupreview" -> Slimefun.getRegistry().getMenuPresets().keySet().stream().toList();
                 default -> new ArrayList<>();

@@ -33,6 +33,7 @@ public class ProjectAddon {
     private @NotNull final List<String> pluginDepends;
     private @NotNull final List<String> depends;
     private @NotNull final String description;
+
     private @NotNull final File folder;
 
     //groups.yml
@@ -64,7 +65,7 @@ public class ProjectAddon {
     //recipe_types.yml
     private List<RecipeType> recipeTypes = new ArrayList<>();
     //simple_machines.yml
-    private List<? extends SlimefunItem> simpleMachines = new ArrayList<>();
+    private List<SlimefunItem> simpleMachines = new ArrayList<>();
 
     public File getScriptsFolder() {
         File scripts = new File(folder, "scripts");

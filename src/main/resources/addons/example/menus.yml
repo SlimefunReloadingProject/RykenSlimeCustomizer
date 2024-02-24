@@ -1,5 +1,6 @@
 EXAMPLE_MACHINE:
   title: "&a示例菜单"
+  script: "example_menu"
   slots:
     0-8:
      name: "&a"

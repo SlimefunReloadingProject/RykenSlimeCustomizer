@@ -21,6 +21,8 @@ import org.lins.mmmjjkx.rykenslimefuncustomizer.utils.CommonUtils;
 import org.lins.mmmjjkx.rykenslimefuncustomizer.utils.ExceptionHandler;
 
 import java.io.File;
+import java.util.ArrayList;
+import java.util.Collections;
 import java.util.List;
 
 public class MachineReader extends YamlReader<AbstractEmptyMachine<?>> {
@@ -104,8 +106,14 @@ public class MachineReader extends YamlReader<AbstractEmptyMachine<?>> {
             }
             machine = new CustomMachine(group.getSecondValue(), slimefunItemStack, rt.getSecondValue(), recipe, menu, input, output, record, enc.getSecondValue(), eval);
         } else {
-            int workSlot = section.getInt("work", -1);
-            machine = new CustomNoEnergyMachine(group.getSecondValue(), slimefunItemStack, rt.getSecondValue(), recipe, menu, input, output, eval, workSlot);
+            List<Integer> workSlots = new ArrayList<>();
+            if (section.isInt("work")) {
+                workSlots = Collections.singletonList(section.getInt("work", -1));
+            } else if (section.isList("work")){
+                workSlots = section.getIntegerList("work");
+            }
+
+            machine = new CustomNoEnergyMachine(group.getSecondValue(), slimefunItemStack, rt.getSecondValue(), recipe, menu, input, output, eval, workSlots);
         }
 
         if (menu != null) {

@@ -52,23 +52,20 @@ public class CustomMachine extends AbstractEmptyMachine<MachineOperation> implem
         if (this.eval != null) {
             this.eval.doInit();
 
-            if (this.eval.hasFunction("onBreak")) {
-                addItemHandler(new BlockBreakHandler(false, false) {
-                    @Override
-                    public void onPlayerBreak(@NotNull BlockBreakEvent e, @NotNull ItemStack is, @NotNull List<ItemStack> list) {
-                        CustomMachine.this.eval.evalFunction("onBreak", e, is, list);
+            addItemHandler(
+                    new BlockBreakHandler(false, false) {
+                        @Override
+                        public void onPlayerBreak(@NotNull BlockBreakEvent e, @NotNull ItemStack is, @NotNull List<ItemStack> list) {
+                            CustomMachine.this.eval.evalFunction("onBreak", e, is, list);
+                        }
+                    },
+                    new BlockPlaceHandler(false) {
+                        @Override
+                        public void onPlayerPlace(@NotNull BlockPlaceEvent e) {
+                            CustomMachine.this.eval.evalFunction("onPlace", e);
+                        }
                     }
-                });
-            }
-
-            if (this.eval.hasFunction("onPlace")) {
-                addItemHandler(new BlockPlaceHandler(false) {
-                    @Override
-                    public void onPlayerPlace(@NotNull BlockPlaceEvent e) {
-                        CustomMachine.this.eval.evalFunction("onBreak", e);
-                    }
-                });
-            }
+            );
         }
 
         if (menu != null) {

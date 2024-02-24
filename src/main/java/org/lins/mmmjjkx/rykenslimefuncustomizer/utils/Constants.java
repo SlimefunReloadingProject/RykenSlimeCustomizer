@@ -16,4 +16,5 @@ public class Constants {
     public static final String MOB_DROPS_FILE = "mob_drops.yml";
     public static final String RECIPE_TYPES_FILE = "recipe_types.yml";
     public static final String CAPACITORS_FILE = "capacitors.yml";
+    public static final String SIMPLE_MACHINES_FILE = "simple_machines.yml";
 }

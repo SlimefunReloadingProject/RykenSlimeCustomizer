@@ -124,6 +124,10 @@ public class ProjectAddonLoader {
         RecipeMachineReader recipeMachineReader = new RecipeMachineReader(recipeMachines);
         addon.setRecipeMachines(recipeMachineReader.readAll(addon));
         //
+        YamlConfiguration simpleMachines = doFileLoad(file, Constants.SIMPLE_MACHINES_FILE);
+        SimpleMachineReader simpleMachineReader = new SimpleMachineReader(simpleMachines);
+        addon.setSimpleMachines(simpleMachineReader.readAll(addon));
+        //
         YamlConfiguration multiBlockMachines = doFileLoad(file, Constants.MULTI_BLOCK_MACHINES_FILE);
         MultiBlockMachineReader multiBlockMachineReader = new MultiBlockMachineReader(multiBlockMachines);
         addon.setMultiBlockMachines(multiBlockMachineReader.readAll(addon));
@@ -143,6 +147,7 @@ public class ProjectAddonLoader {
         addon.getSolarGenerators().addAll(solarGeneratorReader.loadLateInits(addon));
         addon.getMaterialGenerators().addAll(materialGeneratorReader.loadLateInits(addon));
         addon.getRecipeMachines().addAll(recipeMachineReader.loadLateInits(addon));
+        addon.getSimpleMachines().addAll(simpleMachineReader.loadLateInits(addon));
         addon.getMultiBlockMachines().addAll(multiBlockMachineReader.loadLateInits(addon));
         addon.getResearches().addAll(researchReader.loadLateInits(addon));
 

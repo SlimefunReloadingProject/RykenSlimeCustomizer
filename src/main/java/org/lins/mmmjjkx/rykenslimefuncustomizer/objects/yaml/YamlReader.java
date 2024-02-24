@@ -8,7 +8,6 @@ import org.lins.mmmjjkx.rykenslimefuncustomizer.utils.ExceptionHandler;
 
 import java.util.ArrayList;
 import java.util.List;
-import java.util.function.Consumer;
 
 public abstract class YamlReader<T> {
     private final List<String> lateInits;
@@ -70,7 +69,7 @@ public abstract class YamlReader<T> {
             String head = splits[0];
             if (head.equalsIgnoreCase("hasplugin")) {
                 if (splits.length != 2) {
-                    ExceptionHandler.handleError("读取"+section.getName()+"的注册条件时发现问题: hasplugin只需要一个参数");
+                    ExceptionHandler.handleError("读取"+section.getName()+"的注册条件时发现问题: hasplugin仅需要一个参数");
                     continue;
                 }
                 boolean b = Bukkit.getPluginManager().isPluginEnabled(splits[1]);
@@ -82,13 +81,13 @@ public abstract class YamlReader<T> {
                 }
             } else if (head.equalsIgnoreCase("!hasplugin")) {
                 if (splits.length != 2) {
-                    ExceptionHandler.handleError("读取"+section.getName()+"的注册条件时发现问题: !hasplugin只需要一个参数");
+                    ExceptionHandler.handleError("读取"+section.getName()+"的注册条件时发现问题: !hasplugin仅需要一个参数");
                     continue;
                 }
                 boolean b = Bukkit.getPluginManager().isPluginEnabled(splits[1]);
                 if (!b) {
                     if (warn) {
-                        ExceptionHandler.handleError(section.getName()+"需要卸载服务端插件"+splits[1]+"才能被注册");
+                        ExceptionHandler.handleError(section.getName()+"需要卸载服务端插件"+splits[1]+"才能被注册(可能与其冲突？)");
                     }
                     return false;
                 }

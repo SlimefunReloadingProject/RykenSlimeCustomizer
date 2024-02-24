@@ -1,4 +1,4 @@
 function onUse(e) {
-    const player = e.getPlayer();
-    player.sendMessage("Hello");
+    var player = e.getPlayer();
+    sendMessage(player, "Hello");
 }

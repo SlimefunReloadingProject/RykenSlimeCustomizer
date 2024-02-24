@@ -7,10 +7,10 @@ import io.github.thebusybiscuit.slimefun4.libraries.dough.skins.PlayerHead;
 import io.github.thebusybiscuit.slimefun4.libraries.dough.skins.PlayerSkin;
 import lombok.SneakyThrows;
 import net.kyori.adventure.text.Component;
+import net.kyori.adventure.text.format.TextDecoration;
 import net.kyori.adventure.text.minimessage.MiniMessage;
 import net.kyori.adventure.text.serializer.legacy.LegacyComponentSerializer;
 import org.bukkit.Bukkit;
-import org.bukkit.ChatColor;
 import org.bukkit.Material;
 import org.bukkit.NamespacedKey;
 import org.bukkit.configuration.ConfigurationSection;
@@ -29,7 +29,6 @@ import org.lins.mmmjjkx.rykenslimefuncustomizer.objects.ProjectAddon;
 
 import java.io.File;
 import java.io.IOException;
-import java.util.ArrayList;
 import java.util.List;
 import java.util.function.Predicate;
 
@@ -55,7 +54,7 @@ public class CommonUtils {
     public static Component parseToComponent(String text) {
         Component component = LEGACY_SERIALIZER.deserialize(text);
         String middle = MINI_MESSAGE.serialize(component);
-        return MINI_MESSAGE.deserialize(middle);
+        return MINI_MESSAGE.deserialize(middle).decoration(TextDecoration.ITALIC, false);
     }
 
     @Nullable
@@ -176,18 +175,16 @@ public class CommonUtils {
                     itemStack = new CustomItemStack(Material.STONE, name, lore);
                     break;
                 }
-                YamlConfiguration configuration = YamlConfiguration.loadConfiguration(file);
-                configuration.set("item.v", Bukkit.getUnsafe().getDataVersion());
 
-                itemStack = new CustomItemStack(configuration.getItemStack("item", new CustomItemStack(Material.STONE, name, lore)), meta -> {
-                    List<String> lines = new ArrayList<>();
+                YamlConfiguration item = YamlConfiguration.loadConfiguration(file);
 
-                    for (String s : lore) {
-                        lines.add(ChatColor.translateAlternateColorCodes('&', s));
-                    }
+                if (item.getInt("item.v") > Bukkit.getUnsafe().getDataVersion()) {
+                    item.set("item.v", Bukkit.getUnsafe().getDataVersion());
+                }
 
-                    meta.setLore(lines);
-                });
+                itemStack = new CustomItemStack(item.getItemStack("item", new CustomItemStack(Material.STONE, name, lore)),
+                        meta -> meta.lore(lore.stream().map(CommonUtils::parseToComponent).toList())
+                );
             }
         }
 
@@ -234,9 +231,8 @@ public class CommonUtils {
         }
 
         YamlConfiguration configuration = new YamlConfiguration();
-        ItemStack stack = item.clone();
 
-        configuration.set("item", stack);
+        configuration.set("item", item);
 
         try {
             configuration.save(file);

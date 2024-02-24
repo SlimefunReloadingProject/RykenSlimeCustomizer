@@ -48,7 +48,7 @@ public class ServerDelegation implements InvocationHandler {
             }
             case "getPlayerExact" -> {
                 Object arg = args[0];
-                Player p = original.getPlayer(arg.toString());
+                Player p = original.getPlayerExact(arg.toString());
                 if (p == null) return null;
                 return Delegations.delegatePlayer(fileName, p);
             }
@@ -65,7 +65,7 @@ public class ServerDelegation implements InvocationHandler {
                 return null;
             }
             case "setWhitelist" -> {
-                ExceptionHandler.handleDanger("发现"+fileName+"脚本文件执行开启强制白名单操作（Server#setWhitelistEnforced）,请联系附属对应作者进行处理！！！！！");
+                ExceptionHandler.handleDanger("发现"+fileName+"脚本文件执行开启白名单操作（Server#setWhitelist）,请联系附属对应作者进行处理！！！！！");
                 return null;
             }
             case "getIp" -> {
@@ -74,7 +74,7 @@ public class ServerDelegation implements InvocationHandler {
             case "getPort" -> {
                 return -1;
             }
-            case "getCommandMap", "setIdleTimeout", "getConsoleSender", "getIPBans" -> {
+            case "getCommandMap", "setIdleTimeout", "getIPBans" -> {
                 return null;
             }
         }

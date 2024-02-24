@@ -2,12 +2,15 @@ package org.lins.mmmjjkx.rykenslimefuncustomizer.objects.js;
 
 import com.google.errorprone.annotations.CanIgnoreReturnValue;
 import com.xzavier0722.mc.plugin.slimefun4.storage.util.StorageCacheUtils;
+import io.github.thebusybiscuit.slimefun4.api.items.SlimefunItem;
 import io.github.thebusybiscuit.slimefun4.implementation.Slimefun;
 import me.clip.placeholderapi.PlaceholderAPI;
 import org.bukkit.Bukkit;
 import org.bukkit.Location;
 import org.bukkit.entity.Player;
 import org.bukkit.event.Event;
+import org.bukkit.inventory.ItemStack;
+import org.jetbrains.annotations.NotNull;
 import org.jetbrains.annotations.Nullable;
 import org.lins.mmmjjkx.rykenslimefuncustomizer.objects.js.ban.Delegations;
 import org.lins.mmmjjkx.rykenslimefuncustomizer.objects.js.lambda.CiConsumer;
@@ -20,6 +23,7 @@ import javax.script.Invocable;
 import javax.script.ScriptEngine;
 import javax.script.ScriptException;
 import java.io.File;
+import java.io.FileNotFoundException;
 import java.io.IOException;
 import java.nio.charset.StandardCharsets;
 import java.nio.file.Files;
@@ -37,20 +41,41 @@ public class JavaScriptEval {
     private String context;
     private boolean failed = false;
 
-    public JavaScriptEval(File js) {
+    public JavaScriptEval(@NotNull File js) {
         this.js = js;
         jsEngine = new NashornScriptEngineFactory().getScriptEngine();
-        try {
-            context = Files.readString(js.toPath(), StandardCharsets.UTF_8);
-        } catch (IOException e) {
-            context = "";
-            failed = true;
-        }
         setup();
+        contextInit();
     }
 
     public void addThing(String name, Object value) {
         jsEngine.put(name, value);
+    }
+
+    private void contextInit() {
+        try {
+            context = Files.readString(js.toPath(), StandardCharsets.UTF_8);
+        } catch (FileNotFoundException e) {
+            try {
+                js.createNewFile();
+            } catch (IOException ex) {
+                throw new RuntimeException(ex);
+            }
+            context = "";
+            failed = true;
+            e.printStackTrace();
+        } catch (IOException e) {
+            context = "";
+            failed = true;
+            e.printStackTrace();
+        }
+
+        try {
+            setup();
+            jsEngine.eval(context);
+        } catch (ScriptException e) {
+            e.printStackTrace();
+        }
     }
 
     private void setup() {
@@ -73,16 +98,20 @@ public class JavaScriptEval {
 
         jsEngine.put("sendMessage", (BiConsumer<Player, String>) (p, s) -> p.sendMessage(CommonUtils.parseToComponent(parsePlaceholder(p, s))));
 
+        //get slimefun item
+        jsEngine.put("getSfItemById", (Function<String, SlimefunItem>) SlimefunItem::getById);
+        jsEngine.put("getSfItemByItem", (Function<ItemStack, SlimefunItem>) SlimefunItem::getByItem);
+
         //randint function
         jsEngine.put("randint", (Function<Integer, Integer>) i -> new Random().nextInt(i));
-        jsEngine.put("randint", (BiFunction<Integer, Boolean, Integer>) (i, b) -> new Random().nextInt(b ? (i + 1) : i));
-        jsEngine.put("randint", (BiFunction<Integer, Integer, Integer>) (start, end) -> {
+        jsEngine.put("randintC", (BiFunction<Integer, Boolean, Integer>) (i, b) -> new Random().nextInt(b ? (i + 1) : i));
+        jsEngine.put("randintSE", (BiFunction<Integer, Integer, Integer>) (start, end) -> {
             IntStream is = IntStream.range(start, end);
             Random random = new Random();
             int[] arr = is.toArray();
             return arr[random.nextInt(arr.length)];
         });
-        jsEngine.put("randint", (CiFunction<Integer, Integer, Boolean, Integer>) (start, end, rangeClosed) -> {
+        jsEngine.put("randintF", (CiFunction<Integer, Integer, Boolean, Integer>) (start, end, rangeClosed) -> {
             IntStream stream = rangeClosed ? IntStream.rangeClosed(start, end) : IntStream.range(start, end);
             Random random = new Random();
             int[] arr = stream.toArray();
@@ -91,12 +120,20 @@ public class JavaScriptEval {
     }
 
     public void doInit() {
+        if (context == null) {
+            contextInit();
+        }
+
         if (hasFunction("init")) {
             evalFunction("init");
         }
     }
 
     public boolean hasFunction(String funName) {
+        if (context == null) {
+            contextInit();
+        }
+
         if (jsEngine instanceof Invocable in) {
             try {
                 in.invokeFunction(funName, new Object());
@@ -106,13 +143,23 @@ public class JavaScriptEval {
             } catch (ScriptException e) {
                 return true;
             }
+        } else {
+            contextInit();
+            return hasFunction(funName);
         }
-        return false;
     }
 
     @Nullable
     @CanIgnoreReturnValue
     public Object evalFunction(String funName, Object... args) {
+        if (context == null) {
+            contextInit();
+        }
+
+        if (!hasFunction(funName)) {
+            return null;
+        }
+
         args = Arrays.stream(args).map(o -> {
             String fileName = js.getName();
             if (o instanceof Player p) {
@@ -123,19 +170,6 @@ public class JavaScriptEval {
                 return o;
             }
         }).toArray();
-
-        try {
-            context = Files.readString(js.toPath(), StandardCharsets.UTF_8);
-        } catch (IOException e) {
-            context = "";
-            failed = true;
-        }
-
-        try {
-            jsEngine.eval(context);
-        } catch (ScriptException e) {
-            failed = true;
-        }
 
         if (!failed) {
             if (jsEngine instanceof Invocable in) {
@@ -167,6 +201,7 @@ public class JavaScriptEval {
             }
 
             try {
+                setup();
                 jsEngine.eval(context);
                 failed = false;
             } catch (ScriptException e) {
@@ -186,7 +221,7 @@ public class JavaScriptEval {
         }
 
         if (Bukkit.getPluginManager().isPluginEnabled("PlaceholderAPI")) {
-            PlaceholderAPI.setPlaceholders(p, text);
+            text = PlaceholderAPI.setPlaceholders(p, text);
         }
 
         return text;
