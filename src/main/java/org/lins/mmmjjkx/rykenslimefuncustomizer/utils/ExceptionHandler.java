@@ -84,8 +84,12 @@ public class ExceptionHandler {
     public static Pair<HandleResult, ItemGroup> handleItemGroupGet(ProjectAddon addon, String id) {
         ItemGroup ig = CommonUtils.getIf(addon.getItemGroups(), i -> i.getKey().getKey().equalsIgnoreCase(id));
         if (ig == null) {
-            handleError("无法在附属"+addon.getAddonName()+"中找不到该物品组 " + id);
-            return new Pair<>(HandleResult.FAILED, null);
+            ItemGroup ig2 = CommonUtils.getIf(Slimefun.getRegistry().getAllItemGroups(), i -> i.getKey().getKey().equalsIgnoreCase(id));
+            if (ig2 == null) {
+                handleError("无法在附属" + addon.getAddonName() + "中找不到该物品组 " + id);
+                return new Pair<>(HandleResult.FAILED, null);
+            }
+            return new Pair<>(HandleResult.SUCCESS, ig2);
         }
         return new Pair<>(HandleResult.SUCCESS, ig);
     }

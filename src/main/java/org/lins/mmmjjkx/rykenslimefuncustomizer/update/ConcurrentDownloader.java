@@ -8,25 +8,24 @@ import java.io.InputStream;
 import java.net.HttpURLConnection;
 import java.net.URL;
 import java.net.URLConnection;
-import java.util.ArrayList;
-import java.util.List;
+import java.util.logging.Level;
 
-@SuppressWarnings("unused")
 public class ConcurrentDownloader {
     private static final int BUFFER_SIZE = 1024;
-    private static final int TIMEOUT_MILLIS = 30 * 60 * 1000; // 超时30分钟
+    private static final int TIMEOUT_MILLIS = 10 * 60 * 1000; // 超时10分钟
 
-    private static final File downloadFolder;
+    public static final File downloadFolder = new File(RykenSlimefunCustomizer.INSTANCE.getDataFolder(), "temp-downloads");
 
-    static {
-        downloadFolder = new File(RykenSlimefunCustomizer.INSTANCE.getDataFolder(), "temp-downloads");
-    }
-
-    public static void downloadFile(String id, String fileUrl, int numThreads) {
+    public static boolean downloadFile(String id, String fileUrl) {
+        int numThreads = 2;
         try {
             URL url = new URL(fileUrl);
             HttpURLConnection connection = (HttpURLConnection) url.openConnection();
-            File file = new File(downloadFolder, id);
+            File file = new File(downloadFolder, id + ".zip");
+
+            if (!downloadFolder.exists()) {
+                downloadFolder.mkdirs();
+            }
 
             if (file.exists()) {
                 file.delete();
@@ -39,7 +38,7 @@ public class ConcurrentDownloader {
 
             if (statusCode != HttpURLConnection.HTTP_OK) {
                 RykenSlimefunCustomizer.INSTANCE.getLogger().severe("无法更新附属 " + id);
-                return;
+                return false;
             }
 
             int fileLength = connection.getContentLength();
@@ -55,26 +54,35 @@ public class ConcurrentDownloader {
             }
 
             //?
-            List<File> incompleteFiles = new ArrayList<>();
+            boolean hasException = false;
+            Exception e = new Exception();
 
             for (Thread thread : threads) {
                 thread.join();
-                if (((DownloadThread) thread).hasException()) {
-                    incompleteFiles.add(file);
+
+                DownloadThread t = (DownloadThread) thread;
+                if (!hasException) {
+                    hasException = t.hasException;
+                    e = t.exception;
                 }
             }
 
-            if (!incompleteFiles.isEmpty()) {
-                RykenSlimefunCustomizer.INSTANCE.getLogger().severe("无法更新附属 " + id);
+            if (hasException) {
+                file.delete();
+                RykenSlimefunCustomizer.INSTANCE.getLogger().log(Level.SEVERE, "无法下载附属 " + id + " 的更新", e);
+                return false;
             }
+
+            return true;
         } catch (Exception e) {
-            RykenSlimefunCustomizer.INSTANCE.getLogger().severe("无法更新附属 " + id);
+            RykenSlimefunCustomizer.INSTANCE.getLogger().log(Level.WARNING, "无法下载附属 " + id + "的更新", e);
+            return false;
         }
     }
 
     private static class DownloadThread extends Thread {
         private static final int MAX_RETRIES = 3;
-        private static final int RETRY_DELAY_MILLIS = 3000; // 3秒
+        private static final int RETRY_DELAY_MILLIS = 1000; // 1秒
 
         private final URL url;
         private final File file;
@@ -82,10 +90,7 @@ public class ConcurrentDownloader {
         private final int endByte;
 
         private boolean hasException = false;
-
-        public boolean hasException() {
-            return hasException;
-        }
+        private Exception exception;
 
         public DownloadThread(URL url, File file, int startByte, int endByte) {
             this.url = url;
@@ -121,6 +126,7 @@ public class ConcurrentDownloader {
                 } catch (Exception e) {
                     retries++;
                     hasException = true;
+                    exception = e;
                     try {
                         Thread.sleep(RETRY_DELAY_MILLIS);
                     } catch (InterruptedException ex) {

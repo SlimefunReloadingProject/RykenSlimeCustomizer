@@ -4,7 +4,6 @@ import io.github.thebusybiscuit.slimefun4.api.items.ItemGroup;
 import io.github.thebusybiscuit.slimefun4.api.items.SlimefunItem;
 import io.github.thebusybiscuit.slimefun4.api.items.SlimefunItemStack;
 import io.github.thebusybiscuit.slimefun4.api.recipes.RecipeType;
-import io.github.thebusybiscuit.slimefun4.implementation.items.autocrafters.EnhancedAutoCrafter;
 import io.github.thebusybiscuit.slimefun4.implementation.items.electric.machines.*;
 import io.github.thebusybiscuit.slimefun4.libraries.dough.collections.Pair;
 import org.bukkit.configuration.ConfigurationSection;
@@ -84,12 +83,10 @@ public class SimpleMachineReader extends YamlReader<SlimefunItem> {
                 return null;
             }
 
-            if (machineType != SimpleMachineType.AUTO_ENHANCED_CRAFTER) {
-                speed = settings.getInt("speed", 1);
-                if (speed < 1) {
-                    ExceptionHandler.handleError("无法加载简单机器" + s + ": 处理速度未设置或小于1");
-                    return null;
-                }
+            speed = settings.getInt("speed", 1);
+            if (speed < 1) {
+                ExceptionHandler.handleError("无法加载简单机器" + s + ": 处理速度未设置或小于1");
+                return null;
             }
         }
 
@@ -108,8 +105,6 @@ public class SimpleMachineReader extends YamlReader<SlimefunItem> {
                     .setCapacity(capacity).setEnergyConsumption(consumption).setProcessingSpeed(speed);
             case ELECTRIC_INGOT_PULVERIZER -> new ElectricIngotPulverizer(group.getSecondValue(), slimefunItemStack, rt.getSecondValue(), recipe)
                     .setCapacity(capacity).setEnergyConsumption(consumption).setProcessingSpeed(speed);
-            case AUTO_ENHANCED_CRAFTER -> new EnhancedAutoCrafter(group.getSecondValue(), slimefunItemStack, rt.getSecondValue(), recipe)
-                    .setCapacity(capacity).setEnergyConsumption(consumption);
         };
 
         instance.register(RykenSlimefunCustomizer.INSTANCE);

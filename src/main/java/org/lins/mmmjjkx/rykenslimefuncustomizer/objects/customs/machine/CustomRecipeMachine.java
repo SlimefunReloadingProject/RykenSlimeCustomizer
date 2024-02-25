@@ -50,7 +50,7 @@ public class CustomRecipeMachine extends AContainer implements RecipeDisplayItem
 
     public CustomRecipeMachine(ItemGroup itemGroup, SlimefunItemStack item, RecipeType recipeType, ItemStack[] recipe,
                                List<Integer> input, List<Integer> output, List<RecipeMachineRecipe> recipes, int energyPerCraft,
-                               int capacity, @NotNull CustomMenu menu, int speed, @Nullable JavaScriptEval eval) {
+                               int capacity, @Nullable CustomMenu menu, int speed, @Nullable JavaScriptEval eval) {
         super(itemGroup, item, recipeType, recipe);
 
         this.processor = new MachineProcessor<>(this);
@@ -61,11 +61,16 @@ public class CustomRecipeMachine extends AContainer implements RecipeDisplayItem
         this.capacity = capacity;
         this.menu = menu;
 
-        menu.setInvb(this);
-        menu.reInit();
+        if (menu != null) {
+            menu.setInvb(this);
+            menu.reInit();
+        }
 
         setProcessingSpeed(speed);
-        this.processor.setProgressBar(menu.getProgress());
+
+        if (menu != null) {
+            this.processor.setProgressBar(menu.getProgress());
+        }
 
         setCapacity(capacity);
         setEnergyConsumption(energyPerCraft);
@@ -124,7 +129,7 @@ public class CustomRecipeMachine extends AContainer implements RecipeDisplayItem
     @Override
     //Outside init
     public ItemStack getProgressBar() {
-        return new ItemStack(Material.STONE);
+        return new ItemStack(Material.GREEN_STAINED_GLASS_PANE);
     }
 
     @Override

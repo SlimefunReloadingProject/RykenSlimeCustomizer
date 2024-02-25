@@ -138,17 +138,22 @@ public class MainCommand implements TabExecutor {
                         return false;
                     }
 
-                    sender.sendMessage(
-                            CommonUtils.parseToComponent(
-                                    "名称: &a" + addon.getAddonName() + "<newline>&f" +
-                                          "ID: &a" + addon.getAddonId() + "<newline>&f" +
-                                          "版本: &a" + addon.getAddonVersion() + "<newline>&f" +
-                                          "依赖: &a" + addon.getDepends() + "<newline>&f" +
-                                          "插件依赖: &a" + addon.getPluginDepends() + "<newline>&f" +
-                                          "描述: &a" + addon.getDescription()
-                            )
-                    );
+                    String authors = addon.getAuthors().toString();
+                    String authorsRemoveBrackets = authors.substring(1, authors.length() - 1);
 
+                    StringBuilder builder = new StringBuilder().append("名称: &a").append(addon.getAddonName()).append("<newline>&f")
+                                       .append("ID: &a").append(addon.getAddonId()).append("<newline>&f")
+                                       .append("作者(们): &a").append(authorsRemoveBrackets).append("<newline>&f")
+                                       .append("版本: &a").append(addon.getAddonVersion()).append("<newline>&f")
+                                       .append("依赖: &a").append(addon.getDepends()).append("<newline>&f")
+                                       .append("插件依赖: &a").append(addon.getPluginDepends()).append("<newline>&f")
+                                       .append("描述: &a").append(addon.getDescription());
+
+                    if (addon.getGithubRepo() != null && !addon.getGithubRepo().isBlank()) {
+                        builder.append("<newline>&f").append("Github仓库: &e").append(addon.getGithubRepo());
+                    }
+
+                    sender.sendMessage(CommonUtils.parseToComponent(builder.toString()));
                     return true;
                 } else if (args[0].equalsIgnoreCase("menupreview")) {
                     if (!sender.hasPermission("rsc.command") || !sender.hasPermission("rsc.command.menupreview")) {

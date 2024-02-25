@@ -30,7 +30,6 @@ public class CustomSolarGenerator extends SolarGenerator {
         } else {
             boolean isDaytime = isDaytime(world);
 
-            // Performance optimization for daytime-only solar generators
             if (!isDaytime && getNightEnergy() < 1) {
                 return 0;
             } else if (!world.isChunkLoaded(l.getBlockX() >> 4, l.getBlockZ() >> 4)

@@ -28,6 +28,7 @@ public final class RykenSlimefunCustomizer extends JavaPlugin implements Slimefu
             "mob_drops.yml",
             "solar_generators.yml",
             "recipe_types.yml",
+            "simple_machines.yml",
             "scripts/example_item_2.js",
             "scripts/example_machine.js",
             "scripts/example_machine_energy.js",
@@ -81,6 +82,11 @@ public final class RykenSlimefunCustomizer extends JavaPlugin implements Slimefu
     @Override
     public String getBugTrackerURL() {
         return "https://github.com/SlimefunReloadingProject/RykenSlimeCustomizer/issues";
+    }
+
+    public static boolean allowUpdate(String prjId) {
+        return INSTANCE.getConfig().getBoolean("update.auto") &&
+                !INSTANCE.getConfig().getStringList("update.blocks").contains(prjId);
     }
 
     public static void saveExample() {

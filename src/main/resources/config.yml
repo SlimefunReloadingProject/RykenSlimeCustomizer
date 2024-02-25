@@ -1,2 +1,9 @@
 #获取示例
 saveExample: true
+update:
+  #自动更新附属
+  auto: true
+  #禁止更新的附属
+  #请填写附属ID
+  blocks:
+    - ""

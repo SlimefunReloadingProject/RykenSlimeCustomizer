@@ -5,12 +5,16 @@ import org.bukkit.Bukkit;
 import org.bukkit.configuration.file.YamlConfiguration;
 import org.jetbrains.annotations.Nullable;
 import org.lins.mmmjjkx.rykenslimefuncustomizer.RykenSlimefunCustomizer;
-import org.lins.mmmjjkx.rykenslimefuncustomizer.objects.yaml.*;
+import org.lins.mmmjjkx.rykenslimefuncustomizer.objects.yaml.ItemGroupReader;
+import org.lins.mmmjjkx.rykenslimefuncustomizer.objects.yaml.MenuReader;
+import org.lins.mmmjjkx.rykenslimefuncustomizer.objects.yaml.RecipeTypesReader;
+import org.lins.mmmjjkx.rykenslimefuncustomizer.objects.yaml.ResearchReader;
 import org.lins.mmmjjkx.rykenslimefuncustomizer.objects.yaml.item.CapacitorsReader;
 import org.lins.mmmjjkx.rykenslimefuncustomizer.objects.yaml.item.GeoResourceReader;
 import org.lins.mmmjjkx.rykenslimefuncustomizer.objects.yaml.item.ItemReader;
 import org.lins.mmmjjkx.rykenslimefuncustomizer.objects.yaml.item.MobDropsReader;
 import org.lins.mmmjjkx.rykenslimefuncustomizer.objects.yaml.machine.*;
+import org.lins.mmmjjkx.rykenslimefuncustomizer.update.GithubUpdater;
 import org.lins.mmmjjkx.rykenslimefuncustomizer.utils.Constants;
 import org.lins.mmmjjkx.rykenslimefuncustomizer.utils.ExceptionHandler;
 
@@ -18,6 +22,7 @@ import java.io.File;
 import java.util.ArrayList;
 import java.util.List;
 import java.util.Map;
+import java.util.Objects;
 
 public class ProjectAddonLoader {
     private final Map<String, File> ids;
@@ -42,6 +47,23 @@ public class ProjectAddonLoader {
             String description = info.getString("description", "");
             List<String> depends = new ArrayList<>();
             List<String> pluginDepends = new ArrayList<>();
+            List<String> authors = info.getStringList("authors");
+            String repo = info.getString("repo", "");
+
+            if (!repo.isBlank()) {
+                String[] split = repo.split("/");
+                if (split.length == 2) {
+                    if (RykenSlimefunCustomizer.allowUpdate(id)) {
+                        boolean b = GithubUpdater.checkAndUpdate(version, split[0], split[1], id, file.getName());
+                        if (b) {
+                            YamlConfiguration info2 = doFileLoad(file, Constants.INFO_FILE);
+                            if (!Objects.equals(info2.getString("version"), version)) {
+                                return load(); //reload
+                            }
+                        }
+                    }
+                }
+            }
 
             if (name == null || name.isBlank()) {
                 ExceptionHandler.handleError("在名称为 " + file.getName() + "的文件夹中有无效的项目名称，导致此附属无法加载！");
@@ -68,7 +90,12 @@ public class ProjectAddonLoader {
                     }
                 }
             }
-            addon = new ProjectAddon(id, name, version, pluginDepends, depends, description, file);
+
+            addon = new ProjectAddon(id, name, version, pluginDepends, depends, description, authors, file);
+
+            if (!repo.isBlank()) {
+                addon.setGithubRepo("https://github.com/"+repo);
+            }
         } else {
             ExceptionHandler.handleError("在名称为 " + file.getName() + "的文件夹中有无效的项目信息，导致此附属无法加载！");
             return null;

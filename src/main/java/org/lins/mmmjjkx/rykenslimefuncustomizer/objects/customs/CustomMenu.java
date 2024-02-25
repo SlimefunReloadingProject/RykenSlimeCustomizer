@@ -1,10 +1,12 @@
 package org.lins.mmmjjkx.rykenslimefuncustomizer.objects.customs;
 
+import io.github.thebusybiscuit.slimefun4.api.items.SlimefunItem;
 import io.github.thebusybiscuit.slimefun4.implementation.Slimefun;
 import io.github.thebusybiscuit.slimefun4.libraries.dough.protection.Interaction;
 import io.github.thebusybiscuit.slimefun4.utils.ChestMenuUtils;
 import lombok.Getter;
 import lombok.Setter;
+import me.mrCookieSlime.Slimefun.Objects.SlimefunItem.abstractItems.AContainer;
 import me.mrCookieSlime.Slimefun.Objects.SlimefunItem.interfaces.InventoryBlock;
 import me.mrCookieSlime.Slimefun.api.inventory.BlockMenuPreset;
 import me.mrCookieSlime.Slimefun.api.item_transport.ItemTransportFlow;
@@ -15,6 +17,7 @@ import org.jetbrains.annotations.NotNull;
 import org.jetbrains.annotations.Nullable;
 import org.lins.mmmjjkx.rykenslimefuncustomizer.objects.js.JavaScriptEval;
 
+import java.util.HashMap;
 import java.util.Map;
 
 @SuppressWarnings("deprecation")
@@ -22,11 +25,23 @@ public class CustomMenu extends BlockMenuPreset {
     private final Map<Integer, ItemStack> slotMap;
     private final JavaScriptEval eval;
     @Getter
-    private final int progressSlot;
+    private int progressSlot;
     @Getter
-    private final ItemStack progress;
+    private ItemStack progress;
     @Setter
     private InventoryBlock invb;
+
+    public CustomMenu(BlockMenuPreset preset, @Nullable JavaScriptEval eval) {
+        this(preset.getID(), preset.getTitle(), new HashMap<>(), true, eval);
+
+        setInventory(preset.toInventory());
+
+        SlimefunItem item = Slimefun.getRegistry().getSlimefunItemIds().get(preset.getID());
+        if (item instanceof AContainer container) {
+            this.progressSlot = 22;
+            this.progress = container.getProgressBar();
+        }
+    }
 
     public CustomMenu(String id, String title, @NotNull Map<Integer, ItemStack> mi, boolean playerInvClickable, @Nullable JavaScriptEval eval) {
         this(id, title, mi, playerInvClickable, -1, eval);

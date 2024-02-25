@@ -106,7 +106,8 @@ public class CustomMaterialGenerator extends SlimefunItem implements InventoryBl
         try {
             progress = Integer.parseInt(Objects.requireNonNull(StorageCacheUtils.getData(b.getLocation(), "progress")));
         } catch (NumberFormatException | NullPointerException ex) {
-            progress = 1;
+            StorageCacheUtils.setData(b.getLocation(), "progress", "0");
+            progress = 0;
         }
         return progress;
     }

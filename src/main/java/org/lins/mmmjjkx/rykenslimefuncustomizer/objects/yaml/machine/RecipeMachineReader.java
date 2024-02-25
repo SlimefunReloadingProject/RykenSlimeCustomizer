@@ -57,14 +57,6 @@ public class RecipeMachineReader extends YamlReader<CustomRecipeMachine> {
         SlimefunItemStack slimefunItemStack = new SlimefunItemStack(s, stack);
 
         CustomMenu menu = CommonUtils.getIf(addon.getMenus(), m -> m.getID().equalsIgnoreCase(s));
-        if (menu == null) {
-            ExceptionHandler.handleError("无法加载配方机器"+s+": 对应菜单不存在");
-            return null;
-        }
-        if (menu.getProgress() == null) {
-            ExceptionHandler.handleError("无法加载配方机器"+s+": 对应菜单缺少进度条物品");
-            return null;
-        }
 
         List<Integer> input = section.getIntegerList("input");
         List<Integer> output = section.getIntegerList("output");

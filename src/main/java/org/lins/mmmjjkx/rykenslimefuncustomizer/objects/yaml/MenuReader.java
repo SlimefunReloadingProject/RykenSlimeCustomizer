@@ -1,5 +1,7 @@
 package org.lins.mmmjjkx.rykenslimefuncustomizer.objects.yaml;
 
+import io.github.thebusybiscuit.slimefun4.implementation.Slimefun;
+import me.mrCookieSlime.Slimefun.api.inventory.BlockMenuPreset;
 import org.bukkit.configuration.ConfigurationSection;
 import org.bukkit.configuration.file.YamlConfiguration;
 import org.bukkit.inventory.ItemStack;
@@ -30,12 +32,6 @@ public class MenuReader extends YamlReader<CustomMenu> {
         String title = configuration.getString("title", "");
         boolean playerInvClickable = configuration.getBoolean("playerInvClickable", true);
 
-        Map<Integer, ItemStack> slotMap = new HashMap<>();
-        ConfigurationSection slots = section.getConfigurationSection("slots");
-        if (slots == null) {
-            ExceptionHandler.handleError("无法加载机器菜单"+s+": 没有设置物品。");
-            return null;
-        }
         int progress = -1;
 
         JavaScriptEval eval = null;
@@ -47,6 +43,23 @@ public class MenuReader extends YamlReader<CustomMenu> {
             } else {
                 eval = new JavaScriptEval(file);
             }
+        }
+
+        if (section.contains("import")) {
+            String menuId = section.getString("import","");
+            BlockMenuPreset menuPreset = Slimefun.getRegistry().getMenuPresets().get(menuId);
+            if (menuPreset == null) {
+                ExceptionHandler.handleError("无法加载机器菜单"+s+": 无法找到要导入的菜单");
+                return null;
+            }
+            return new CustomMenu(menuPreset, eval);
+        }
+
+        Map<Integer, ItemStack> slotMap = new HashMap<>();
+        ConfigurationSection slots = section.getConfigurationSection("slots");
+        if (slots == null) {
+            ExceptionHandler.handleError("无法加载机器菜单"+s+": 没有设置物品。");
+            return null;
         }
 
         for (String slot : slots.getKeys(false)) {

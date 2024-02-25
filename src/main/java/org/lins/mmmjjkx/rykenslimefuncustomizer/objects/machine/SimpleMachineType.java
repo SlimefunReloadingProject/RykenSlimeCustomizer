@@ -10,8 +10,7 @@ public enum SimpleMachineType {
     ELECTRIC_DUST_WASHER(true),
     ELECTRIC_ORE_GRINDER(true),
     ELECTRIC_INGOT_FACTORY(true),
-    ELECTRIC_INGOT_PULVERIZER(true),
-    AUTO_ENHANCED_CRAFTER(true);
+    ELECTRIC_INGOT_PULVERIZER(true);
 
     private final boolean energy;
 

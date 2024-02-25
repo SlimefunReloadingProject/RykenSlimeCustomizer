@@ -37,7 +37,6 @@ public class CommonUtils {
     private static final MiniMessage MINI_MESSAGE = MiniMessage.builder().build();
     private static final LegacyComponentSerializer LEGACY_SERIALIZER = LegacyComponentSerializer.legacyAmpersand();
 
-
     public static <T extends ItemStack> T doGlow(T item) {
         item.addUnsafeEnchantment(Enchantment.ARROW_INFINITE, 1);
         item.addItemFlags(ItemFlag.HIDE_ENCHANTS);
@@ -106,6 +105,8 @@ public class CommonUtils {
             type = "skull";
         } else if (material.startsWith("http") || material.startsWith("https")) {
             type = "skull_url";
+        } else if (material.matches("^[A-Za-z0-9]{64}+$")) {
+            type = "skull_hash";
         }
 
         List<String> lore = section.getStringList("lore");
@@ -135,6 +136,12 @@ public class CommonUtils {
             }
             case "none" -> {
                 return new ItemStack(Material.AIR, 1);
+            }
+            case "skull_hash" -> {
+                PlayerSkin playerSkin = PlayerSkin.fromHashCode(material);
+                ItemStack head = PlayerHead.getItemStack(playerSkin);
+
+                itemStack = new CustomItemStack(head, name, lore.toArray(new String[]{}));
             }
             case "skull_base64","skull" -> {
                 PlayerSkin playerSkin = PlayerSkin.fromBase64(material);

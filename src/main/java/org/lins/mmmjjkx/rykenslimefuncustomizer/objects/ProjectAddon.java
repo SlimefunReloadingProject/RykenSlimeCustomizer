@@ -11,6 +11,7 @@ import lombok.Getter;
 import lombok.RequiredArgsConstructor;
 import lombok.Setter;
 import org.jetbrains.annotations.NotNull;
+import org.jetbrains.annotations.Nullable;
 import org.lins.mmmjjkx.rykenslimefuncustomizer.objects.customs.CustomGeoResource;
 import org.lins.mmmjjkx.rykenslimefuncustomizer.objects.customs.parent.CustomItem;
 import org.lins.mmmjjkx.rykenslimefuncustomizer.objects.customs.CustomMenu;
@@ -33,8 +34,12 @@ public class ProjectAddon {
     private @NotNull final List<String> pluginDepends;
     private @NotNull final List<String> depends;
     private @NotNull final String description;
+    private @NotNull final List<String> authors;
 
+    //
     private @NotNull final File folder;
+
+    private @Nullable String githubRepo;
 
     //groups.yml
     private List<ItemGroup> itemGroups = new ArrayList<>();
