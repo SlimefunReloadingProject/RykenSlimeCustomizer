@@ -72,6 +72,9 @@ public class ResearchReader extends YamlReader<Research> {
             }
             research.addItems(sfItem);
         }
+
+        research.register();
+
         return research;
     }
 }

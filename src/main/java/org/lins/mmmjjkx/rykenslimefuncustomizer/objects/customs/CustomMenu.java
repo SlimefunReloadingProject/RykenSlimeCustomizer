@@ -22,6 +22,7 @@ import java.util.Map;
 
 @SuppressWarnings("deprecation")
 public class CustomMenu extends BlockMenuPreset {
+    @Getter
     private final Map<Integer, ItemStack> slotMap;
     private final JavaScriptEval eval;
     @Getter
@@ -31,8 +32,12 @@ public class CustomMenu extends BlockMenuPreset {
     @Setter
     private InventoryBlock invb;
 
-    public CustomMenu(BlockMenuPreset preset, @Nullable JavaScriptEval eval) {
-        this(preset.getID(), preset.getTitle(), new HashMap<>(), true, eval);
+    public CustomMenu(String id, String title, CustomMenu menu) {
+        this(id, title, menu.getSlotMap(), menu.isPlayerInventoryClickable(), menu.getProgressSlot(), menu.eval);
+    }
+
+    public CustomMenu(String id, String title, BlockMenuPreset preset, @Nullable JavaScriptEval eval) {
+        this(id, title, new HashMap<>(), preset.isPlayerInventoryClickable(), eval);
 
         setInventory(preset.toInventory());
 

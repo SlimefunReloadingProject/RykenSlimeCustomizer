@@ -141,16 +141,16 @@ public class MainCommand implements TabExecutor {
                     String authors = addon.getAuthors().toString();
                     String authorsRemoveBrackets = authors.substring(1, authors.length() - 1);
 
-                    StringBuilder builder = new StringBuilder().append("名称: &a").append(addon.getAddonName()).append("<newline>&f")
-                                       .append("ID: &a").append(addon.getAddonId()).append("<newline>&f")
-                                       .append("作者(们): &a").append(authorsRemoveBrackets).append("<newline>&f")
-                                       .append("版本: &a").append(addon.getAddonVersion()).append("<newline>&f")
-                                       .append("依赖: &a").append(addon.getDepends()).append("<newline>&f")
-                                       .append("插件依赖: &a").append(addon.getPluginDepends()).append("<newline>&f")
+                    StringBuilder builder = new StringBuilder().append("名称: &a").append(addon.getAddonName()).append("\n&f")
+                                       .append("ID: &a").append(addon.getAddonId()).append("\n&f")
+                                       .append("作者(们): &a").append(authorsRemoveBrackets).append("\n&f")
+                                       .append("版本: &a").append(addon.getAddonVersion()).append("\n&f")
+                                       .append("依赖: &a").append(addon.getDepends()).append("\n&f")
+                                       .append("插件依赖: &a").append(addon.getPluginDepends()).append("\n&f")
                                        .append("描述: &a").append(addon.getDescription());
 
                     if (addon.getGithubRepo() != null && !addon.getGithubRepo().isBlank()) {
-                        builder.append("<newline>&f").append("Github仓库: &e").append(addon.getGithubRepo());
+                        builder.append("\n&f").append("Github仓库: &e").append(addon.getGithubRepo());
                     }
 
                     sender.sendMessage(CommonUtils.parseToComponent(builder.toString()));

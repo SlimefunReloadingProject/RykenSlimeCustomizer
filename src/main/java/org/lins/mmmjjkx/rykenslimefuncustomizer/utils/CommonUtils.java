@@ -2,7 +2,6 @@ package org.lins.mmmjjkx.rykenslimefuncustomizer.utils;
 
 import io.github.thebusybiscuit.slimefun4.api.items.SlimefunItem;
 import io.github.thebusybiscuit.slimefun4.libraries.dough.collections.Pair;
-import io.github.thebusybiscuit.slimefun4.libraries.dough.items.CustomItemStack;
 import io.github.thebusybiscuit.slimefun4.libraries.dough.skins.PlayerHead;
 import io.github.thebusybiscuit.slimefun4.libraries.dough.skins.PlayerSkin;
 import lombok.SneakyThrows;
@@ -26,9 +25,11 @@ import org.jetbrains.annotations.NotNull;
 import org.jetbrains.annotations.Nullable;
 import org.lins.mmmjjkx.rykenslimefuncustomizer.RykenSlimefunCustomizer;
 import org.lins.mmmjjkx.rykenslimefuncustomizer.objects.ProjectAddon;
+import org.lins.mmmjjkx.rykenslimefuncustomizer.objects.customs.item.RSCItemStack;
 
 import java.io.File;
 import java.io.IOException;
+import java.util.ArrayList;
 import java.util.List;
 import java.util.function.Predicate;
 
@@ -49,11 +50,17 @@ public class CommonUtils {
 
         return item;
     }
-
+    
     public static Component parseToComponent(String text) {
-        Component component = LEGACY_SERIALIZER.deserialize(text);
-        String middle = MINI_MESSAGE.serialize(component);
-        return MINI_MESSAGE.deserialize(middle).decoration(TextDecoration.ITALIC, false);
+        return MINI_MESSAGE.deserialize(MINI_MESSAGE.serialize(LEGACY_SERIALIZER.deserialize(text))).decoration(TextDecoration.ITALIC, false);
+    }
+
+    public static List<Component> toComponents(String... texts) {
+        List<Component> components = new ArrayList<>();
+        for (String s : texts) {
+            components.add(parseToComponent(s));
+        }
+        return components;
     }
 
     @Nullable
@@ -132,7 +139,7 @@ public class CommonUtils {
                     } else mat = result.getSecondValue();
                 }
 
-                itemStack = new CustomItemStack(mat, name, lore);
+                itemStack = new RSCItemStack(mat, name, lore);
             }
             case "none" -> {
                 return new ItemStack(Material.AIR, 1);
@@ -141,45 +148,45 @@ public class CommonUtils {
                 PlayerSkin playerSkin = PlayerSkin.fromHashCode(material);
                 ItemStack head = PlayerHead.getItemStack(playerSkin);
 
-                itemStack = new CustomItemStack(head, name, lore.toArray(new String[]{}));
+                itemStack = new RSCItemStack(head, name, lore.toArray(new String[]{}));
             }
             case "skull_base64","skull" -> {
                 PlayerSkin playerSkin = PlayerSkin.fromBase64(material);
                 ItemStack head = PlayerHead.getItemStack(playerSkin);
 
-                itemStack = new CustomItemStack(head, name, lore.toArray(new String[]{}));
+                itemStack = new RSCItemStack(head, name, lore.toArray(new String[]{}));
             }
             case "skull_url" -> {
                 PlayerSkin playerSkin = PlayerSkin.fromURL(material);
                 ItemStack head = PlayerHead.getItemStack(playerSkin);
 
-                itemStack = new CustomItemStack(head, name, lore.toArray(new String[]{}));
+                itemStack = new RSCItemStack(head, name, lore.toArray(new String[]{}));
             }
             case "slimefun" -> {
                 SlimefunItem sis = SlimefunItem.getById(material);
                 if (sis != null) {
                     ItemStack is = sis.getItem();
 
-                    itemStack = new CustomItemStack(is, name, lore.toArray(new String[]{}));
+                    itemStack = new RSCItemStack(is, name, lore.toArray(new String[]{}));
                     break;
                 }
                 ExceptionHandler.handleError("无法找到粘液物品"+material+"，已转为石头");
-                itemStack = new CustomItemStack(Material.STONE, name);
+                itemStack = new RSCItemStack(Material.STONE, name);
             }
             case "full_slimefun" -> {
                 SlimefunItem sis = SlimefunItem.getById(material);
                 if (sis != null) {
                     ItemStack sfis = sis.getItem().clone();
-                    return countable ? new CustomItemStack(sfis, amount) : sis.getItem();
+                    return countable ? new RSCItemStack(sfis, amount) : sis.getItem();
                 }
                 ExceptionHandler.handleError("无法找到粘液物品"+material+"，已转为石头");
-                itemStack = new CustomItemStack(Material.STONE, name);
+                itemStack = new RSCItemStack(Material.STONE, name);
             }
             case "saveditem" -> {
                 File file = new File(addon.getSavedItemsFolder(), material + ".yml");
                 if (!file.exists()) {
                     ExceptionHandler.handleError("保存物品的文件"+material+"不存在，已转为石头");
-                    itemStack = new CustomItemStack(Material.STONE, name, lore);
+                    itemStack = new RSCItemStack(Material.STONE, name, lore);
                     break;
                 }
 
@@ -189,7 +196,7 @@ public class CommonUtils {
                     item.set("item.v", Bukkit.getUnsafe().getDataVersion());
                 }
 
-                itemStack = new CustomItemStack(item.getItemStack("item", new CustomItemStack(Material.STONE, name, lore)),
+                itemStack = new RSCItemStack(item.getItemStack("item", new RSCItemStack(Material.STONE, name, lore)),
                         meta -> meta.lore(lore.stream().map(CommonUtils::parseToComponent).toList())
                 );
             }

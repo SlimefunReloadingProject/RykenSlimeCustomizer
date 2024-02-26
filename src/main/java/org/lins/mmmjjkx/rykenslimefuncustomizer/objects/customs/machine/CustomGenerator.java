@@ -24,6 +24,7 @@ import org.bukkit.Material;
 import org.bukkit.block.Block;
 import org.bukkit.inventory.ItemStack;
 import org.jetbrains.annotations.NotNull;
+import org.jetbrains.annotations.Nullable;
 import org.lins.mmmjjkx.rykenslimefuncustomizer.RykenSlimefunCustomizer;
 import org.lins.mmmjjkx.rykenslimefuncustomizer.objects.customs.CustomMenu;
 
@@ -41,11 +42,14 @@ public class CustomGenerator extends AGenerator implements MachineProcessHolder<
     private final CustomMenu menu;
     private final int production;
 
-    public CustomGenerator(ItemGroup itemGroup, SlimefunItemStack item, RecipeType recipeType, ItemStack[] recipe, @NotNull CustomMenu menu, int capacity, List<Integer> input, List<Integer> output, int production, List<MachineFuel> machineFuels) {
+    public CustomGenerator(ItemGroup itemGroup, SlimefunItemStack item, RecipeType recipeType, ItemStack[] recipe, @Nullable CustomMenu menu, int capacity, List<Integer> input, List<Integer> output, int production, List<MachineFuel> machineFuels) {
         super(itemGroup, item, recipeType, recipe);
 
-        menu.setInvb(this);
-        menu.reInit();
+        if (menu != null) {
+            menu.setInvb(this);
+            menu.reInit();
+            this.processor.setProgressBar(menu.getProgress());
+        }
 
         this.capacity = capacity;
         this.input = input;
@@ -55,8 +59,6 @@ public class CustomGenerator extends AGenerator implements MachineProcessHolder<
 
         setCapacity(capacity);
         setEnergyProduction(production);
-
-        this.processor.setProgressBar(menu.getProgress());
 
         for (MachineFuel fuel : machineFuels) {
             registerFuel(fuel);

@@ -32,7 +32,7 @@ public class GithubUpdater {
             String releaseName = release.getName();
 
             if (releaseName == null) {
-                RykenSlimefunCustomizer.INSTANCE.getLogger().log(Level.WARNING,"无法更新附属 " + prjId + ": 已到达速率限制(60请求/h)");
+                RykenSlimefunCustomizer.INSTANCE.getLogger().log(Level.WARNING,"无法更新附属 " + prjId + ": 已到达GitHub API速率限制(60请求/h)");
                 return false;
             }
 
@@ -41,14 +41,18 @@ public class GithubUpdater {
             }
 
             if (!Objects.equals(currentVer, releaseName)) {
+                File zip = new File(ConcurrentDownloader.downloadFolder, prjId + ".zip");
+
+                if (zip.exists()) {
+                    zip.delete();
+                }
+
                 String zipUrl = release.getZipball_url();
                 boolean result = ConcurrentDownloader.downloadFile(prjId, zipUrl);
 
                 if (!result) {
                     return false;
                 }
-
-                File zip = new File(ConcurrentDownloader.downloadFolder, prjId + ".zip");
 
                 if (zip.exists()) {
                     File projectFolder = new File(ProjectAddonManager.ADDONS_DIRECTORY, folderName);

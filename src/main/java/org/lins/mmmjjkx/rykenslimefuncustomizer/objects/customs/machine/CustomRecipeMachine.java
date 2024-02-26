@@ -5,8 +5,6 @@ import com.xzavier0722.mc.plugin.slimefun4.storage.util.StorageCacheUtils;
 import io.github.thebusybiscuit.slimefun4.api.items.ItemGroup;
 import io.github.thebusybiscuit.slimefun4.api.items.SlimefunItemStack;
 import io.github.thebusybiscuit.slimefun4.api.recipes.RecipeType;
-import io.github.thebusybiscuit.slimefun4.core.attributes.EnergyNetComponent;
-import io.github.thebusybiscuit.slimefun4.core.attributes.MachineProcessHolder;
 import io.github.thebusybiscuit.slimefun4.core.attributes.RecipeDisplayItem;
 import io.github.thebusybiscuit.slimefun4.core.handlers.BlockBreakHandler;
 import io.github.thebusybiscuit.slimefun4.core.machines.MachineProcessor;
@@ -37,8 +35,9 @@ import java.util.List;
 import java.util.Random;
 
 @Beta
-public class CustomRecipeMachine extends AContainer implements RecipeDisplayItem, EnergyNetComponent, MachineProcessHolder<CraftingOperation> {
+public class CustomRecipeMachine extends AContainer implements RecipeDisplayItem {
     private final ItemStack RECIPE_SPLITTER = new CustomItemStack(Material.WHITE_STAINED_GLASS_PANE, "&7配方分割符");
+    private final ItemStack AIR = new ItemStack(Material.AIR);
     private final MachineProcessor<CraftingOperation> processor;
     private final List<Integer> input;
     private final List<Integer> output;
@@ -61,16 +60,17 @@ public class CustomRecipeMachine extends AContainer implements RecipeDisplayItem
         this.capacity = capacity;
         this.menu = menu;
 
+        if (menu == null) {
+            this.createPreset(this, this.getInventoryTitle(), super::constructMenu);
+        }
+
         if (menu != null) {
             menu.setInvb(this);
             menu.reInit();
+            this.processor.setProgressBar(menu.getProgress());
         }
 
         setProcessingSpeed(speed);
-
-        if (menu != null) {
-            this.processor.setProgressBar(menu.getProgress());
-        }
 
         setCapacity(capacity);
         setEnergyConsumption(energyPerCraft);
@@ -144,16 +144,16 @@ public class CustomRecipeMachine extends AContainer implements RecipeDisplayItem
 
             for (int i = 0; i < max; i++) {
                 try {
-                    ItemStack in = input[i];
+                    ItemStack in = input[i].clone();
                     displayRecipes.add(in);
-                } catch (ArrayIndexOutOfBoundsException e) {
-                    displayRecipes.add(null);
+                } catch (IndexOutOfBoundsException | NullPointerException e) {
+                    displayRecipes.add(AIR);
                 }
 
                 try {
                     Integer chance = recipe.getChances().get(i);
                     if (chance != null) {
-                        ItemStack out = output[i];
+                        ItemStack out = output[i].clone();
                         ItemMeta meta = out.getItemMeta();
 
                         List<Component> lore = meta.lore();
@@ -167,8 +167,8 @@ public class CustomRecipeMachine extends AContainer implements RecipeDisplayItem
                         out.setItemMeta(meta);
                         displayRecipes.add(out);
                     }
-                } catch (ArrayIndexOutOfBoundsException e) {
-                    displayRecipes.add(null);
+                } catch (IndexOutOfBoundsException | NullPointerException e) {
+                    displayRecipes.add(AIR);
                 }
             }
 
