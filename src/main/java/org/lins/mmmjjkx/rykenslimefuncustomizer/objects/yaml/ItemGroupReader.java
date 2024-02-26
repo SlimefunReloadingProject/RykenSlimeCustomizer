@@ -38,10 +38,21 @@ public class ItemGroupReader extends YamlReader<ItemGroup> {
             ExceptionHandler.handleError("无法在附属"+addon.getAddonName()+"中加载物品组"+s+": 物品为空或格式错误导致无法加载");
             return null;
         }
+
         String type = section.getString("type", "");
         NamespacedKey key = new NamespacedKey(RykenSlimefunCustomizer.INSTANCE, s);
+
+        int tier = section.getInt("tier", 3);
+
         ItemGroup group = switch (type) {
-            default -> new ItemGroup(key, stack);
+            default -> {
+                if (tier < 1) {
+                    ExceptionHandler.handleError("无法在附属"+addon.getAddonName()+"中加载物品组"+s+": 显示优先级不能小于1！");
+                    yield null;
+                }
+
+                yield new ItemGroup(key, stack, tier);
+            }
             case "sub" -> {
                 NamespacedKey parent = new NamespacedKey(RykenSlimefunCustomizer.INSTANCE, section.getString("parent", "").toLowerCase());
                 ItemGroup raw = CommonUtils.getIf(Slimefun.getRegistry().getAllItemGroups(), ig -> ig.getKey().equals(parent));
@@ -53,24 +64,51 @@ public class ItemGroupReader extends YamlReader<ItemGroup> {
                     ExceptionHandler.handleError("无法在附属"+addon.getAddonName()+"中加载物品组"+s+": 物品组" + parent.getKey() + "不是一个嵌套物品组");
                     yield null;
                 }
-                yield new SubItemGroup(key, nig, stack);
+
+                if (tier < 1) {
+                    ExceptionHandler.handleError("无法在附属"+addon.getAddonName()+"中加载物品组"+s+": 显示优先级不能小于1！");
+                    yield null;
+                }
+
+                yield new SubItemGroup(key, nig, stack, tier);
             }
             case "locked" -> {
                 List<NamespacedKey> parents = new ArrayList<>();
                 for (String ig : section.getStringList("parents")) {
                     parents.add(NamespacedKey.fromString(ig));
                 }
-                yield new LockedItemGroup(key, stack, parents.toArray(new NamespacedKey[]{}));
+
+                if (tier < 1) {
+                    ExceptionHandler.handleError("无法在附属"+addon.getAddonName()+"中加载物品组"+s+": 显示优先级不能小于1！");
+                    yield null;
+                }
+
+                yield new LockedItemGroup(key, stack, tier, parents.toArray(new NamespacedKey[]{}));
             }
-            case "nested", "parent" -> new NestedItemGroup(key, stack);
+            case "nested", "parent" -> {
+                if (tier < 1) {
+                    ExceptionHandler.handleError("无法在附属"+addon.getAddonName()+"中加载物品组"+s+": 显示优先级不能小于1！");
+                    yield null;
+                }
+
+                yield new NestedItemGroup(key, stack, tier);
+            }
             case "seasonal" -> {
                 Month month = Month.of(section.getInt("month", 1));
+
+                if (tier < 1) {
+                    ExceptionHandler.handleError("无法在附属"+addon.getAddonName()+"中加载物品组"+s+": 显示优先级不能小于1！");
+                    yield null;
+                }
+
                 yield new SeasonalItemGroup(key, month, 3, stack);
             }
         };
+
         if (group != null) {
             group.register(RykenSlimefunCustomizer.INSTANCE);
         }
+
         return group;
     }
 }

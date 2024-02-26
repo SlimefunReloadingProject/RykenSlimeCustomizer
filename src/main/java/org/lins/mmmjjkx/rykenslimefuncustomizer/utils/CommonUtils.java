@@ -55,6 +55,7 @@ public class CommonUtils {
         return MINI_MESSAGE.deserialize(MINI_MESSAGE.serialize(LEGACY_SERIALIZER.deserialize(text))).decoration(TextDecoration.ITALIC, false);
     }
 
+    @SuppressWarnings("unused")
     public static List<Component> toComponents(String... texts) {
         List<Component> components = new ArrayList<>();
         for (String s : texts) {
