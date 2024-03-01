@@ -52,15 +52,43 @@ public class CommonUtils {
     }
     
     public static Component parseToComponent(String text) {
-        return MINI_MESSAGE.deserialize(MINI_MESSAGE.serialize(LEGACY_SERIALIZER.deserialize(text))).decoration(TextDecoration.ITALIC, false);
+        if (text == null) return Component.empty();
+
+        Component legacy1 = LegacyComponentSerializer.legacySection().deserialize(text);
+        Component legacy2 = LEGACY_SERIALIZER.deserialize(LEGACY_SERIALIZER.serialize(legacy1));
+
+        return MINI_MESSAGE.deserialize(MINI_MESSAGE.serialize(legacy2)).decoration(TextDecoration.ITALIC, false);
     }
 
-    @SuppressWarnings("unused")
     public static List<Component> toComponents(String... texts) {
         List<Component> components = new ArrayList<>();
+
+        if (texts == null) return components;
+
         for (String s : texts) {
-            components.add(parseToComponent(s));
+            if (s != null) {
+                components.add(parseToComponent(s));
+            } else {
+                components.add(Component.newline());
+            }
         }
+
+        return components;
+    }
+
+    public static List<Component> toComponents(List<String> texts) {
+        List<Component> components = new ArrayList<>();
+
+        if (texts == null) return components;
+
+        for (String s : texts) {
+            if (s != null) {
+                components.add(parseToComponent(s));
+            } else {
+                components.add(Component.newline());
+            }
+        }
+
         return components;
     }
 
@@ -86,7 +114,7 @@ public class CommonUtils {
     public static ItemStack[] readRecipe(ConfigurationSection section, ProjectAddon addon, int size) {
         if (section == null) return new ItemStack[]{};
         ItemStack[] itemStacks = new ItemStack[size];
-        for (int i = 0; i < size; i ++) {
+        for (int i = 0; i < size; i++) {
             ConfigurationSection section1 = section.getConfigurationSection(String.valueOf(i + 1));
             itemStacks[i] = readItem(section1, true, addon);
         }
@@ -197,9 +225,7 @@ public class CommonUtils {
                     item.set("item.v", Bukkit.getUnsafe().getDataVersion());
                 }
 
-                itemStack = new RSCItemStack(item.getItemStack("item", new RSCItemStack(Material.STONE, name, lore)),
-                        meta -> meta.lore(lore.stream().map(CommonUtils::parseToComponent).toList())
-                );
+                itemStack = new RSCItemStack(item.getItemStack("item", new RSCItemStack(Material.STONE, name, lore)), name, lore);
             }
         }
 
@@ -207,9 +233,14 @@ public class CommonUtils {
         if (modelId > 0) {
             meta.setCustomModelData(modelId);
         }
+
         itemStack.setItemMeta(meta);
 
         if (countable) {
+            if (amount > 64 || amount < 1) {
+                ExceptionHandler.handleError("无法在附属"+addon.getAddonName()+"中读取"+section.getCurrentPath()+"的物品: 物品数量不能大于64或小于1");
+                return null;
+            }
             itemStack.setAmount(amount);
         }
 

@@ -8,6 +8,7 @@ import io.github.thebusybiscuit.slimefun4.implementation.items.electric.generato
 import org.bukkit.Location;
 import org.bukkit.World;
 import org.bukkit.inventory.ItemStack;
+import org.lins.mmmjjkx.rykenslimefuncustomizer.RykenSlimefunCustomizer;
 
 public class CustomSolarGenerator extends SolarGenerator {
     private final int lightLevel;
@@ -20,6 +21,8 @@ public class CustomSolarGenerator extends SolarGenerator {
         }
 
         this.lightLevel = lightLevel;
+
+        register(RykenSlimefunCustomizer.INSTANCE);
     }
 
     public int getGeneratedOutput(Location l, SlimefunBlockData data) {

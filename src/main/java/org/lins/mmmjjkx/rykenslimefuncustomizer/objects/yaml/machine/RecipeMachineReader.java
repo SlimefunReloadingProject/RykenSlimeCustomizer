@@ -11,13 +11,11 @@ import org.bukkit.inventory.ItemStack;
 import org.lins.mmmjjkx.rykenslimefuncustomizer.objects.ProjectAddon;
 import org.lins.mmmjjkx.rykenslimefuncustomizer.objects.customs.CustomMenu;
 import org.lins.mmmjjkx.rykenslimefuncustomizer.objects.customs.machine.CustomRecipeMachine;
-import org.lins.mmmjjkx.rykenslimefuncustomizer.objects.js.JavaScriptEval;
 import org.lins.mmmjjkx.rykenslimefuncustomizer.objects.machine.RecipeMachineRecipe;
 import org.lins.mmmjjkx.rykenslimefuncustomizer.objects.yaml.YamlReader;
 import org.lins.mmmjjkx.rykenslimefuncustomizer.utils.CommonUtils;
 import org.lins.mmmjjkx.rykenslimefuncustomizer.utils.ExceptionHandler;
 
-import java.io.File;
 import java.util.ArrayList;
 import java.util.List;
 
@@ -101,18 +99,7 @@ public class RecipeMachineReader extends YamlReader<CustomRecipeMachine> {
 
         List<RecipeMachineRecipe> mr = readRecipes(input.size(), output.size(), recipes, addon);
 
-        JavaScriptEval eval = null;
-        if (section.contains("script")) {
-            String script = section.getString("script", "");
-            File file = new File(addon.getScriptsFolder(), script + ".js");
-            if (!file.exists()) {
-                ExceptionHandler.handleWarning("找不到脚本文件 " + file.getName());
-            } else {
-                eval = new JavaScriptEval(file);
-            }
-        }
-
-        return new CustomRecipeMachine(group.getSecondValue(), slimefunItemStack, rt.getSecondValue(), recipe, input, output, mr, energy, capacity, menu, speed, eval);
+        return new CustomRecipeMachine(group.getSecondValue(), slimefunItemStack, rt.getSecondValue(), recipe, input, output, mr, energy, capacity, menu, speed);
     }
 
     private List< RecipeMachineRecipe> readRecipes(int inputSize, int outputSize, ConfigurationSection section, ProjectAddon addon) {
@@ -144,21 +131,18 @@ public class RecipeMachineReader extends YamlReader<CustomRecipeMachine> {
                 ExceptionHandler.handleError("读取机器配方"+key+"时发生错误: 没有输出物品");
                 continue;
             }
-            ItemStack[] output = CommonUtils.readRecipe(outputs, addon, outputSize);
-            if (output == null) {
-                ExceptionHandler.handleError("读取机器配方"+key+"时发生错误: 输出物品为空或格式错误");
-                continue;
-            }
 
             List<Integer> chances = new ArrayList<>();
 
-            for (String ot : outputs.getKeys(false)) {
-                ConfigurationSection cs = outputs.getConfigurationSection(ot);
-                if (cs != null) {
-                    int chance = cs.getInt("chance", 100);
+            ItemStack[] output = new ItemStack[outputSize];
+            for (int i = 0; i < outputSize; i++) {
+                ConfigurationSection section1 = outputs.getConfigurationSection(String.valueOf(i + 1));
+                var item = CommonUtils.readItem(section1, true, addon);
+                if (item != null) {
+                    int chance = section1.getInt("chance", 100);
 
                     if (chance < 1) {
-                        ExceptionHandler.handleError("读取机器配方"+key+"时发生问题: 概率未设置或不应该小于1，已转为1");
+                        ExceptionHandler.handleError("读取机器配方"+key+"时发生问题: 概率不应该小于1，已转为1");
                         chance = 1;
                     }
 

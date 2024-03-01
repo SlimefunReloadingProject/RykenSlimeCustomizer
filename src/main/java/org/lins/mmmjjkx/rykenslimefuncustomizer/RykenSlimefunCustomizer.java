@@ -4,6 +4,7 @@ import io.github.thebusybiscuit.slimefun4.api.SlimefunAddon;
 import org.bukkit.plugin.java.JavaPlugin;
 import org.jetbrains.annotations.NotNull;
 import org.lins.mmmjjkx.rykenslimefuncustomizer.commands.MainCommand;
+import org.lins.mmmjjkx.rykenslimefuncustomizer.utils.ExceptionHandler;
 
 import java.io.File;
 import java.nio.file.Files;
@@ -13,27 +14,10 @@ import java.util.Objects;
 
 public final class RykenSlimefunCustomizer extends JavaPlugin implements SlimefunAddon {
     private static final String[] resourcePaths = {
-            "info.yml",
-            "menus.yml",
-            "groups.yml",
-            "machines.yml",
-            "researches.yml",
-            "items.yml",
-            "generators.yml",
-            "mat_generators.yml",
-            "mb_machines.yml",
-            "recipe_machines.yml",
-            "geo_resources.yml",
-            "capacitors.yml",
-            "mob_drops.yml",
-            "solar_generators.yml",
-            "recipe_types.yml",
-            "simple_machines.yml",
-            "scripts/example_item_2.js",
-            "scripts/example_machine.js",
-            "scripts/example_machine_energy.js",
-            "scripts/example_menu.js"
+            "info.yml"
     };
+
+    private static boolean runtime = false;
 
     public static RykenSlimefunCustomizer INSTANCE;
     public static ProjectAddonManager addonManager;
@@ -55,7 +39,9 @@ public final class RykenSlimefunCustomizer extends JavaPlugin implements Slimefu
 
         Objects.requireNonNull(getCommand("rykenslimecustomizer")).setExecutor(new MainCommand());
 
-        getLogger().info("RykenSlimeCustomizer已启用!");
+        ExceptionHandler.info("RykenSlimeCustomizer加载成功！");
+
+        getServer().getScheduler().runTaskLater(this, () -> runtime = true, 1);
     }
 
     @Override
@@ -85,6 +71,8 @@ public final class RykenSlimefunCustomizer extends JavaPlugin implements Slimefu
     }
 
     public static boolean allowUpdate(String prjId) {
+        if (runtime) return false;
+
         return INSTANCE.getConfig().getBoolean("update.auto") &&
                 !INSTANCE.getConfig().getStringList("update.blocks").contains(prjId);
     }

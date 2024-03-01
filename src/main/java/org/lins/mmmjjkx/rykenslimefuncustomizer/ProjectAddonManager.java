@@ -56,18 +56,24 @@ public class ProjectAddonManager {
         for (File folder : folders) {
             File info = new File(folder, Constants.INFO_FILE);
             if (!info.exists()) {
-                ExceptionHandler.handleError("在名称为 " + folder.getName() + "的文件夹中有无效的项目信息，导致此附属无法加载！");
+                ExceptionHandler.handleError("在名称为 " + folder.getName() + "的文件夹中有无效的附属信息，导致此附属无法加载！");
                 notMatchTemplate.add(folder.getName());
                 continue;
             }
             YamlConfiguration infoConfig = YamlConfiguration.loadConfiguration(info);
             String id = infoConfig.getString("id");
             if (id == null || id.isBlank()) {
-                ExceptionHandler.handleError("在名称为 " + folder.getName() + "的文件夹中有无效的项目ID，导致此附属无法加载！");
+                ExceptionHandler.handleError("在名称为 " + folder.getName() + "的文件夹中有无效的附属ID，导致此附属无法加载！");
                 notMatchTemplate.add(folder.getName());
                 continue;
             }
 
+            if (projectIds.containsKey(id)) {
+                ExceptionHandler.handleError("在名称为 " + folder.getName() + "的文件夹中有重复的附属ID，导致此附属无法加载！");
+                notMatchTemplate.add(folder.getName());
+                continue;
+            }
+            
             projectIds.put(id, folder);
         }
 
@@ -87,6 +93,7 @@ public class ProjectAddonManager {
             addon.unregister();
         }
         projectAddons.clear();
+        projectIds.clear();
         setup(plugin);
     }
 

@@ -105,6 +105,7 @@ public class SimpleMachineReader extends YamlReader<SlimefunItem> {
                     .setCapacity(capacity).setEnergyConsumption(consumption).setProcessingSpeed(speed);
             case ELECTRIC_INGOT_PULVERIZER -> new ElectricIngotPulverizer(group.getSecondValue(), slimefunItemStack, rt.getSecondValue(), recipe)
                     .setCapacity(capacity).setEnergyConsumption(consumption).setProcessingSpeed(speed);
+
         };
 
         instance.register(RykenSlimefunCustomizer.INSTANCE);

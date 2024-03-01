@@ -17,7 +17,7 @@ public class RecipeMachineRecipe extends MachineRecipe {
     private final Random RNG = new Random();
 
     public RecipeMachineRecipe(int seconds, ItemStack[] input, ItemStack[] output, List<Integer> chances, boolean chooseOneIfHas) {
-        super(seconds, input, output);
+        super(seconds, input.clone(), output.clone());
 
         this.chances = chances;
         this.chooseOneIfHas = chooseOneIfHas;
@@ -29,8 +29,8 @@ public class RecipeMachineRecipe extends MachineRecipe {
         for (int i = 0; i < getOutput().length; i ++) {
             ItemStack output = getOutput()[i];
             int chance = chances.get(i);
-            if (output != null && matchChance(chance)) {
-                itemStacks.add(output);
+            if (matchChance(chance)) {
+                itemStacks.add(output.clone());
             }
         }
 

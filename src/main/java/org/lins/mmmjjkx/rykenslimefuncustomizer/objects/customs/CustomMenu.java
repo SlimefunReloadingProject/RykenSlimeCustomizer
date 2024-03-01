@@ -74,12 +74,8 @@ public class CustomMenu extends BlockMenuPreset {
         }
 
         if (eval != null) {
-            if (eval.hasFunction("onOpen")) {
-                addMenuOpeningHandler(p -> eval.evalFunction("onOpen", p));
-            }
-            if (eval.hasFunction("onClose")) {
-                addMenuCloseHandler(p -> eval.evalFunction("onClose", p));
-            }
+            addMenuOpeningHandler(p -> eval.evalFunction("onOpen", p));
+            addMenuCloseHandler(p -> eval.evalFunction("onClose", p));
         }
     }
 

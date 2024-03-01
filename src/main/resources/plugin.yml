@@ -104,7 +104,9 @@ softdepend:
 authors: [mmmjjkx]
 description: An advanced Slimefun customize plugin
 libraries:
-  - org.openjdk.nashorn:nashorn-core:15.4
+  - org.graalvm.js:js-scriptengine:23.0.2
+  - org.graalvm.js:js:23.0.2
+  - org.graalvm.truffle:truffle-api:23.0.2
 commands:
   rykenslimecustomizer:
     aliases: ["rsc"]
@@ -121,6 +123,7 @@ permissions:
       rsc.command.enable: true
       rsc.command.disable: true
       rsc.command.menupreview: true
+      rsc.command.info: true
   rsc.command.help:
     default: op
   rsc.command.reload:
@@ -136,4 +139,6 @@ permissions:
   rsc.command.disable:
     default: op
   rsc.command.menupreview:
+    default: op
+  rsc.command.info:
     default: op

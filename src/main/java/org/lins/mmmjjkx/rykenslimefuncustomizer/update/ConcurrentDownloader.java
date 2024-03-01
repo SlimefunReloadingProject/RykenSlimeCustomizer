@@ -12,16 +12,16 @@ import java.util.logging.Level;
 
 public class ConcurrentDownloader {
     private static final int BUFFER_SIZE = 1024;
-    private static final int TIMEOUT_MILLIS = 10 * 60 * 1000; // 超时10分钟
+    private static final int TIMEOUT_MILLIS = 5 * 60 * 1000;
 
     public static final File downloadFolder = new File(RykenSlimefunCustomizer.INSTANCE.getDataFolder(), "temp-downloads");
 
-    public static boolean downloadFile(String id, String fileUrl) {
+    public static boolean downloadFile(String id, String fileUrl, String githubRel) {
         int numThreads = 2;
         try {
             URL url = new URL(fileUrl);
             HttpURLConnection connection = (HttpURLConnection) url.openConnection();
-            File file = new File(downloadFolder, id + ".zip");
+            File file = new File(downloadFolder, id + "-" + githubRel + ".zip");
 
             if (!downloadFolder.exists()) {
                 downloadFolder.mkdirs();
@@ -37,7 +37,7 @@ public class ConcurrentDownloader {
             int statusCode = connection.getResponseCode();
 
             if (statusCode != HttpURLConnection.HTTP_OK) {
-                RykenSlimefunCustomizer.INSTANCE.getLogger().severe("无法更新附属 " + id);
+                RykenSlimefunCustomizer.INSTANCE.getLogger().severe("无法检查附属 " + id + " 的更新");
                 return false;
             }
 

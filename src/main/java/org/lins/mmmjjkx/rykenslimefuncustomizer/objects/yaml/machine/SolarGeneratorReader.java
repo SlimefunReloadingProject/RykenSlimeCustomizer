@@ -7,7 +7,6 @@ import io.github.thebusybiscuit.slimefun4.libraries.dough.collections.Pair;
 import org.bukkit.configuration.ConfigurationSection;
 import org.bukkit.configuration.file.YamlConfiguration;
 import org.bukkit.inventory.ItemStack;
-import org.lins.mmmjjkx.rykenslimefuncustomizer.RykenSlimefunCustomizer;
 import org.lins.mmmjjkx.rykenslimefuncustomizer.objects.ProjectAddon;
 import org.lins.mmmjjkx.rykenslimefuncustomizer.objects.customs.machine.CustomSolarGenerator;
 import org.lins.mmmjjkx.rykenslimefuncustomizer.objects.yaml.YamlReader;
@@ -72,9 +71,7 @@ public class SolarGeneratorReader extends YamlReader<CustomSolarGenerator> {
             lightLevel = 15;
         }
 
-        CustomSolarGenerator instance = new CustomSolarGenerator(Objects.requireNonNull(group.getSecondValue()), dayEnergy, nightEnergy,
+        return new CustomSolarGenerator(Objects.requireNonNull(group.getSecondValue()), dayEnergy, nightEnergy,
                 slimefunItemStack, Objects.requireNonNull(rt.getSecondValue()), recipe, capacity, lightLevel);
-        instance.register(RykenSlimefunCustomizer.INSTANCE);
-        return instance;
     }
 }

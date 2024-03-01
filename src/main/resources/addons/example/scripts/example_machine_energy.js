@@ -1,7 +1,7 @@
 function tick(info) {
-    var component = info.component();
+    var machine = info.machine();
     var location = info.block().getLocation();
-    component.removeCharge(location, 100);
+    machine.removeCharge(location, 100);
 }
 
 function onPlace(e) {

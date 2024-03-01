@@ -18,6 +18,7 @@ import org.lins.mmmjjkx.rykenslimefuncustomizer.objects.customs.CustomMenu;
 import org.lins.mmmjjkx.rykenslimefuncustomizer.objects.customs.CustomMobDrop;
 import org.lins.mmmjjkx.rykenslimefuncustomizer.objects.customs.machine.*;
 import org.lins.mmmjjkx.rykenslimefuncustomizer.objects.customs.parent.AbstractEmptyMachine;
+import org.lins.mmmjjkx.rykenslimefuncustomizer.objects.js.JavaScriptEval;
 
 import java.io.File;
 import java.util.ArrayList;
@@ -40,6 +41,8 @@ public class ProjectAddon {
     private @NotNull final File folder;
 
     private @Nullable String githubRepo;
+
+    private List<JavaScriptEval> scriptEvals = new ArrayList<>();
 
     //groups.yml
     private List<ItemGroup> itemGroups = new ArrayList<>();
@@ -89,6 +92,7 @@ public class ProjectAddon {
     }
 
     public void unregister() {
+        scriptEvals.forEach(JavaScriptEval::close);
         itemGroups.forEach(ig -> Slimefun.getRegistry().getAllItemGroups().remove(ig));
         researches.forEach(Research::disable);
         menus.forEach(m -> Slimefun.getRegistry().getMenuPresets().remove(m.getID()));
@@ -107,6 +111,7 @@ public class ProjectAddon {
         multiBlockMachines.forEach(this::unregisterItem);
         simpleMachines.forEach(this::unregisterItem);
 
+        scriptEvals.clear();
         researches.clear();
         items.clear();
         machines.clear();

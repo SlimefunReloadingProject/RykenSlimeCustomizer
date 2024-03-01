@@ -1,7 +1,6 @@
 package org.lins.mmmjjkx.rykenslimefuncustomizer.update;
 
 import com.google.gson.Gson;
-import net.kyori.adventure.text.format.TextDecoration;
 import org.apache.http.HttpResponse;
 import org.apache.http.client.methods.HttpGet;
 import org.apache.http.impl.client.CloseableHttpClient;
@@ -41,14 +40,14 @@ public class GithubUpdater {
             }
 
             if (!Objects.equals(currentVer, releaseName)) {
-                File zip = new File(ConcurrentDownloader.downloadFolder, prjId + ".zip");
+                File zip = new File(ConcurrentDownloader.downloadFolder, prjId + "-" + releaseName + ".zip");
 
                 if (zip.exists()) {
                     zip.delete();
                 }
 
                 String zipUrl = release.getZipball_url();
-                boolean result = ConcurrentDownloader.downloadFile(prjId, zipUrl);
+                boolean result = ConcurrentDownloader.downloadFile(prjId, zipUrl, releaseName);
 
                 if (!result) {
                     return false;
@@ -69,14 +68,12 @@ public class GithubUpdater {
 
                     if (!id.equals(prjId)) {
                         RykenSlimefunCustomizer.INSTANCE.getComponentLogger().info(
-                                CommonUtils.parseToComponent("&a成功更新附属 " + prjId + "!" + "<newline>" +
+                                CommonUtils.parseToComponent("&a成功更新附属 " + prjId + "!" + "\n" +
                                                                    "&b注意：原先的附属ID为 &e" + prjId + " &b现在已变更为 &d" + id)
-                                        .decoration(TextDecoration.ITALIC, false)
                         );
                     } else {
                         RykenSlimefunCustomizer.INSTANCE.getComponentLogger().info(
                                 CommonUtils.parseToComponent("&a成功更新附属 " + prjId + "!")
-                                        .decoration(TextDecoration.ITALIC, false)
                         );
                     }
 

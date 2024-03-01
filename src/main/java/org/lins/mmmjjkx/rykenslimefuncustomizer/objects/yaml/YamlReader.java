@@ -59,7 +59,7 @@ public abstract class YamlReader<T> {
         if (section == null) return true;
 
         List<String> conditions = section.getStringList("conditions");
-        boolean warn = section.getBoolean("warnIfFailed");
+        boolean warn = section.getBoolean("warn");
         boolean unfinished = section.getBoolean("unfinished", false);
 
         if (unfinished) return false;
@@ -91,8 +91,70 @@ public abstract class YamlReader<T> {
                     }
                     return false;
                 }
+            } else if (head.equalsIgnoreCase("version")) {
+                if (splits.length != 3) {
+                    ExceptionHandler.handleError("读取"+section.getName()+"的注册条件时发现问题: version需要两个参数");
+                    continue;
+                }
+
+                int current = versionToCode(Bukkit.getMinecraftVersion());
+                int destination = versionToCode(splits[2]);
+
+                String operation;
+                boolean match;
+                switch (splits[1]) {
+                    case ">" -> {
+                        operation = "大于";
+                        match = current > destination;
+                    }
+                    case "<" -> {
+                        operation = "小于";
+                        match = current < destination;
+                    }
+                    case "=" -> {
+                        operation = "等于";
+                        match = current == destination;
+                    }
+                    case ">=" -> {
+                        operation = "大于或等于";
+                        match = current >= destination;
+                    }
+                    case "<=" -> {
+                        operation = "小于或等于";
+                        match = current <= destination;
+                    }
+                    case "!=" -> {
+                        operation = "不等于";
+                        match = current != destination;
+                    }
+                    default -> {
+                        ExceptionHandler.handleError("读取"+section.getName()+"的注册条件时发现问题: version需要合法的比较符！");
+                        continue;
+                    }
+                }
+
+                if (!match) {
+                    if (warn) {
+                        ExceptionHandler.handleError(section.getName()+"需要版本"+operation+splits[1]+"才能被注册");
+                    }
+                    return false;
+                }
             }
         }
         return true;
+    }
+
+    private int versionToCode(String s) {
+        String[] ver = s.split("\\.");
+        String ver2 = "";
+        for (String v : ver) {
+            ver2 = ver2.concat(v);
+        }
+
+        if (ver.length == 2) {
+            ver2 = ver2.concat("0");
+        }
+
+        return Integer.parseInt(ver2);
     }
 }

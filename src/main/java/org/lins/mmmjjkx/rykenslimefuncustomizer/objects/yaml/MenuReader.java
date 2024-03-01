@@ -41,7 +41,7 @@ public class MenuReader extends YamlReader<CustomMenu> {
             if (!file.exists()) {
                 ExceptionHandler.handleWarning("找不到脚本文件 " + file.getName());
             } else {
-                eval = new JavaScriptEval(file);
+                eval = new JavaScriptEval(file, addon);
             }
         }
 

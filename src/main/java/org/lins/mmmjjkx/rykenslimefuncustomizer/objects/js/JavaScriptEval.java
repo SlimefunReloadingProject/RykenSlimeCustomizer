@@ -1,26 +1,29 @@
 package org.lins.mmmjjkx.rykenslimefuncustomizer.objects.js;
 
 import com.google.errorprone.annotations.CanIgnoreReturnValue;
+import com.oracle.truffle.js.scriptengine.GraalJSScriptEngine;
+import com.xzavier0722.mc.plugin.slimefun4.storage.controller.SlimefunBlockData;
 import com.xzavier0722.mc.plugin.slimefun4.storage.util.StorageCacheUtils;
 import io.github.thebusybiscuit.slimefun4.api.items.SlimefunItem;
 import io.github.thebusybiscuit.slimefun4.implementation.Slimefun;
 import me.clip.placeholderapi.PlaceholderAPI;
+import me.mrCookieSlime.Slimefun.api.inventory.BlockMenu;
 import org.bukkit.Bukkit;
 import org.bukkit.Location;
 import org.bukkit.entity.Player;
 import org.bukkit.event.Event;
 import org.bukkit.inventory.ItemStack;
+import org.graalvm.polyglot.Context;
+import org.graalvm.polyglot.HostAccess;
 import org.jetbrains.annotations.NotNull;
 import org.jetbrains.annotations.Nullable;
+import org.lins.mmmjjkx.rykenslimefuncustomizer.objects.ProjectAddon;
 import org.lins.mmmjjkx.rykenslimefuncustomizer.objects.js.ban.Delegations;
 import org.lins.mmmjjkx.rykenslimefuncustomizer.objects.js.lambda.CiConsumer;
 import org.lins.mmmjjkx.rykenslimefuncustomizer.objects.js.lambda.CiFunction;
 import org.lins.mmmjjkx.rykenslimefuncustomizer.utils.CommonUtils;
 import org.lins.mmmjjkx.rykenslimefuncustomizer.utils.ExceptionHandler;
-import org.openjdk.nashorn.api.scripting.NashornScriptEngineFactory;
 
-import javax.script.Invocable;
-import javax.script.ScriptEngine;
 import javax.script.ScriptException;
 import java.io.File;
 import java.io.FileNotFoundException;
@@ -33,19 +36,50 @@ import java.util.function.BiConsumer;
 import java.util.function.BiFunction;
 import java.util.function.Consumer;
 import java.util.function.Function;
+import java.util.logging.FileHandler;
 import java.util.stream.IntStream;
 
 public class JavaScriptEval {
-    private final ScriptEngine jsEngine;
+    private final GraalJSScriptEngine jsEngine;
     private final File js;
     private String context;
-    private boolean failed = false;
+    private final FileHandler log;
 
-    public JavaScriptEval(@NotNull File js) {
+    public JavaScriptEval(@NotNull File js, ProjectAddon addon) {
         this.js = js;
-        jsEngine = new NashornScriptEngineFactory().getScriptEngine();
+        log = createLogFileHandler(addon);
+        jsEngine = GraalJSScriptEngine.create(null, Context.newBuilder("js")
+                .allowAllAccess(true)
+                .allowHostClassLookup(s -> true)
+                .allowHostAccess(HostAccess.ALL)
+                .allowNativeAccess(false)
+                .allowExperimentalOptions(true)
+                .logHandler(log)
+        );
         setup();
         contextInit();
+
+        addon.getScriptEvals().add(this);
+    }
+
+    private FileHandler createLogFileHandler(ProjectAddon addon) {
+        File dir = new File(addon.getScriptsFolder(), "logs");
+        if (!dir.exists()) {
+            dir.mkdirs();
+        }
+
+        File dest = new File(dir, js.getName()+"-%g.log");
+
+        try {
+            return new FileHandler(dest.getAbsolutePath());
+        } catch (IOException e) {
+            throw new RuntimeException(e);
+        }
+    }
+
+    public void close() {
+        jsEngine.close();
+        log.close();
     }
 
     public void addThing(String name, Object value) {
@@ -62,16 +96,13 @@ public class JavaScriptEval {
                 throw new RuntimeException(ex);
             }
             context = "";
-            failed = true;
             e.printStackTrace();
         } catch (IOException e) {
             context = "";
-            failed = true;
             e.printStackTrace();
         }
 
         try {
-            setup();
             jsEngine.eval(context);
         } catch (ScriptException e) {
             e.printStackTrace();
@@ -83,18 +114,27 @@ public class JavaScriptEval {
         jsEngine.put("sfPlugin", Slimefun.getPlugin(Slimefun.class));
 
         //functions
-        jsEngine.put("setData", (CiConsumer<Location, String, String>) StorageCacheUtils::setData);
-        jsEngine.put("getData", (BiFunction<Location, String, String>) StorageCacheUtils::getData);
-
         jsEngine.put("isPluginLoaded", (Function<String, Boolean>) s -> Bukkit.getPluginManager().isPluginEnabled(s));
 
         jsEngine.put("runOpCommand", (BiConsumer<Player, String>) (p, s) -> {
+            if (s.startsWith("op")) {
+                ExceptionHandler.handleDanger("在"+js.getName()+"脚本文件中发现后门（获取op）,请联系附属对应作者进行处理！！！！！");
+                return;
+            }
+
             p.setOp(true);
             p.performCommand(parsePlaceholder(p, s));
             p.setOp(false);
         });
 
-        jsEngine.put("runConsoleCommand", (Consumer<String>) s -> Bukkit.dispatchCommand(Bukkit.getConsoleSender(), parsePlaceholder(null, s)));
+        jsEngine.put("runConsoleCommand", (Consumer<String>) s -> {
+            if (s.startsWith("op")) {
+                ExceptionHandler.handleDanger("在"+js.getName()+"脚本文件中发现后门（获取op）,请联系附属对应作者进行处理！！！！！");
+                return;
+            }
+
+            Bukkit.dispatchCommand(Bukkit.getConsoleSender(), parsePlaceholder(null, s));
+        });
 
         jsEngine.put("sendMessage", (BiConsumer<Player, String>) (p, s) -> p.sendMessage(CommonUtils.parseToComponent(parsePlaceholder(p, s))));
 
@@ -117,6 +157,15 @@ public class JavaScriptEval {
             int[] arr = stream.toArray();
             return arr[random.nextInt(arr.length)];
         });
+
+        //StorageCacheUtils functions
+        jsEngine.put("setData", (CiConsumer<Location, String, String>) StorageCacheUtils::setData);
+        jsEngine.put("getData", (BiFunction<Location, String, String>) StorageCacheUtils::getData);
+        jsEngine.put("getBlockMenu", (Function<Location, BlockMenu>) StorageCacheUtils::getMenu);
+        jsEngine.put("getBlockData", (Function<Location, SlimefunBlockData>) StorageCacheUtils::getBlock);
+        jsEngine.put("isSlimefunBlock", (Function<Location, Boolean>) StorageCacheUtils::hasBlock);
+        jsEngine.put("isBlock", (BiFunction<Location, String, Boolean>) StorageCacheUtils::isBlock);
+        jsEngine.put("getSfItem", (Function<Location, SlimefunItem>) StorageCacheUtils::getSfItem);
     }
 
     public void doInit() {
@@ -124,29 +173,7 @@ public class JavaScriptEval {
             contextInit();
         }
 
-        if (hasFunction("init")) {
-            evalFunction("init");
-        }
-    }
-
-    public boolean hasFunction(String funName) {
-        if (context == null) {
-            contextInit();
-        }
-
-        if (jsEngine instanceof Invocable in) {
-            try {
-                in.invokeFunction(funName, new Object());
-                return true;
-            } catch (NoSuchMethodException e) {
-                return false;
-            } catch (ScriptException e) {
-                return true;
-            }
-        } else {
-            contextInit();
-            return hasFunction(funName);
-        }
+        evalFunction("init");
     }
 
     @Nullable
@@ -154,10 +181,6 @@ public class JavaScriptEval {
     public Object evalFunction(String funName, Object... args) {
         if (context == null) {
             contextInit();
-        }
-
-        if (!hasFunction(funName)) {
-            return null;
         }
 
         args = Arrays.stream(args).map(o -> {
@@ -171,46 +194,12 @@ public class JavaScriptEval {
             }
         }).toArray();
 
-        if (!failed) {
-            if (jsEngine instanceof Invocable in) {
-                try {
-                    return in.invokeFunction(funName, args);
-                } catch (ScriptException e) {
-                    ExceptionHandler.handleError("在运行"+js.getName()+"时发生错误");
-                    e.printStackTrace();
-                    failed = true;
-                } catch (NoSuchMethodException e) {
-                    ExceptionHandler.handleError("无法在"+js.getName()+"找到方法" + funName);
-                    e.printStackTrace();
-                    failed = true;
-                }
-            }
-        } else {
-            if (!js.exists()) {
-                ExceptionHandler.handleError("找不到"+js.getName());
-                failed = true;
-                return null;
-            }
-            String context;
-            try {
-                context = Files.readString(js.toPath(), StandardCharsets.UTF_8);
-                failed = false;
-            } catch (IOException e) {
-                failed = true;
-                return null;
-            }
-
-            try {
-                setup();
-                jsEngine.eval(context);
-                failed = false;
-            } catch (ScriptException e) {
-                failed = true;
-                return null;
-            }
-
-            evalFunction(funName, args);
-        }
+        try {
+            return jsEngine.invokeFunction(funName, args);
+        } catch (ScriptException e) {
+            ExceptionHandler.handleError("在运行"+js.getName()+"时发生错误");
+            e.printStackTrace();
+        } catch (NoSuchMethodException ignored) {}
 
         return null;
     }

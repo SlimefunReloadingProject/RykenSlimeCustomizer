@@ -10,7 +10,7 @@ import net.kyori.adventure.text.serializer.legacy.LegacyComponentSerializer;
 import org.jetbrains.annotations.NotNull;
 import org.lins.mmmjjkx.rykenslimefuncustomizer.RykenSlimefunCustomizer;
 import org.lins.mmmjjkx.rykenslimefuncustomizer.objects.ProjectAddon;
-import org.lins.mmmjjkx.rykenslimefuncustomizer.objects.RecipeTypeMap;
+import org.lins.mmmjjkx.rykenslimefuncustomizer.objects.global.RecipeTypeMap;
 import org.lins.mmmjjkx.rykenslimefuncustomizer.objects.customs.CustomMenu;
 
 import java.lang.reflect.Field;
@@ -70,6 +70,12 @@ public class ExceptionHandler {
         if (message == null || message.isBlank()) return;
 
         logger.error(serializer.deserialize("&c&u&l&bD&4&lA&c&lN&b&lG&4&lE&c&lR | " + message));
+    }
+
+    public static void info(String message) {
+        if (message == null || message.isBlank()) return;
+
+        logger.info(serializer.deserialize("&aINFO | " + message));
     }
 
     public static <T extends Enum<T>> Pair<HandleResult, T> handleEnumValueOf(String msg, Class<T> enumClass, String name) {

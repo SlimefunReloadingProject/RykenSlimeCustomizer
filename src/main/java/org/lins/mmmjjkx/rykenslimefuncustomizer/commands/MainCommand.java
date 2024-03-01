@@ -126,7 +126,7 @@ public class MainCommand implements TabExecutor {
                     sender.sendMessage(CommonUtils.parseToComponent("&a卸载此附属成功！"));
                     return true;
                 } else if (args[0].equalsIgnoreCase("info")) {
-                    if (!sender.hasPermission("rsc.command") || !sender.hasPermission("rsc.command.disable")) {
+                    if (!sender.hasPermission("rsc.command") || !sender.hasPermission("rsc.command.info")) {
                         sender.sendMessage(CommonUtils.parseToComponent("&4你没有权限去做这些！"));
                         return false;
                     }

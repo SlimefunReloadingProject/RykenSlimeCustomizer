@@ -41,7 +41,7 @@ public class CustomRecipeMachine extends AContainer implements RecipeDisplayItem
     private final MachineProcessor<CraftingOperation> processor;
     private final List<Integer> input;
     private final List<Integer> output;
-    private List<RecipeMachineRecipe> recipes;
+    private final List<RecipeMachineRecipe> recipes;
     private final int energyPerCraft;
     private final int capacity;
     private final CustomMenu menu;
@@ -49,7 +49,7 @@ public class CustomRecipeMachine extends AContainer implements RecipeDisplayItem
 
     public CustomRecipeMachine(ItemGroup itemGroup, SlimefunItemStack item, RecipeType recipeType, ItemStack[] recipe,
                                List<Integer> input, List<Integer> output, List<RecipeMachineRecipe> recipes, int energyPerCraft,
-                               int capacity, @Nullable CustomMenu menu, int speed, @Nullable JavaScriptEval eval) {
+                               int capacity, @Nullable CustomMenu menu, int speed) {
         super(itemGroup, item, recipeType, recipe);
 
         this.processor = new MachineProcessor<>(this);
@@ -74,17 +74,6 @@ public class CustomRecipeMachine extends AContainer implements RecipeDisplayItem
 
         setCapacity(capacity);
         setEnergyConsumption(energyPerCraft);
-
-        if (eval != null) {
-            eval.addThing("newRecipe", (EiFunction<Integer, ItemStack[], ItemStack[], List<Integer>, Boolean, RecipeMachineRecipe>) RecipeMachineRecipe::new);
-
-            if (eval.hasFunction("getRecipes")) {
-                Object result = eval.evalFunction("getRecipes", this.recipes);
-                if (result instanceof List<?> list) {
-                    this.recipes = (List<RecipeMachineRecipe>) list;
-                }
-            }
-        }
 
         registerDefaultRecipes();
 
@@ -156,12 +145,14 @@ public class CustomRecipeMachine extends AContainer implements RecipeDisplayItem
                         ItemStack out = output[i].clone();
                         ItemMeta meta = out.getItemMeta();
 
-                        List<Component> lore = meta.lore();
-                        if (lore == null) {
-                            meta.lore(Collections.singletonList(CommonUtils.parseToComponent("&a有&b " + chance + "% &a的概率产出")));
-                        } else {
-                            lore.add(Component.newline());
-                            lore.add(CommonUtils.parseToComponent("&a有&b " + chance + "% &a的概率产出"));
+                        if (chance < 100) {
+                            List<Component> lore = meta.lore();
+                            if (lore == null) {
+                                meta.lore(Collections.singletonList(CommonUtils.parseToComponent("&a有&b " + chance + "% &a的概率产出")));
+                            } else {
+                                lore.add(Component.newline());
+                                lore.add(CommonUtils.parseToComponent("&a有&b " + chance + "% &a的概率产出"));
+                            }
                         }
 
                         out.setItemMeta(meta);
