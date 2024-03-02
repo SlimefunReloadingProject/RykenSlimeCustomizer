@@ -156,24 +156,12 @@ public class RecipeMachineReader extends YamlReader<CustomRecipeMachine> {
 
             boolean chooseOne = recipes.getBoolean("chooseOne", false);
 
-            testPrint(input);
-
             input = removeNulls(input);
             output = removeNulls(output);
-
-            testPrint(input);
 
             list.add(new RecipeMachineRecipe(seconds, input, output, chances, chooseOne));
         }
         return list;
-    }
-
-    private void testPrint(ItemStack[] is) {
-        for (ItemStack item : is) {
-            if (item != null) {
-                RykenSlimefunCustomizer.INSTANCE.getLogger().warning("TYPE: " + item.getType() + ", AMOUNT: " + item.getAmount());
-            }
-        }
     }
 
     private ItemStack[] removeNulls(ItemStack[] origin) {

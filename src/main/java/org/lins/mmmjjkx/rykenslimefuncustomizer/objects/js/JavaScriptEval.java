@@ -205,9 +205,7 @@ public class JavaScriptEval {
         } catch (ScriptException e) {
             ExceptionHandler.handleError("在运行"+js.getName()+"时发生错误");
             e.printStackTrace();
-        } catch (NoSuchMethodException ex) {
-            ex.printStackTrace();
-        }
+        } catch (NoSuchMethodException ignored) {}
 
         return null;
     }
