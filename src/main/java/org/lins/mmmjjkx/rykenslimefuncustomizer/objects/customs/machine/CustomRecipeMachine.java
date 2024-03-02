@@ -253,7 +253,6 @@ public class CustomRecipeMachine extends AContainer implements RecipeDisplayItem
         Map<Integer, ItemStack> inventory = new HashMap<>();
         int[] inputSlots = this.getInputSlots();
 
-        // 将输入插槽中的物品放入inventory映射中
         for (int slot : inputSlots) {
             ItemStack item = inv.getItemInSlot(slot);
             if (item != null && !item.getType().equals(Material.AIR)) {
@@ -261,22 +260,18 @@ public class CustomRecipeMachine extends AContainer implements RecipeDisplayItem
             }
         }
 
-        // 遍历所有配方，查找符合条件的配方
         for (MachineRecipe recipe : this.recipes) {
-            // 创建一个映射，用于存储每个插槽已匹配的物品数量
             Map<Integer, Integer> found = new HashMap<>();
             boolean recipeFound = true;
 
-            // 检查每个配方所需的每种物品是否在输入中
             for (ItemStack input : recipe.getInput()) {
                 boolean itemFound = false;
 
-                // 检查每个插槽是否包含当前配方需要的物品
                 for (int slot : inputSlots) {
                     ItemStack slotItem = inventory.get(slot);
                     if (slotItem != null && SlimefunUtils.isItemSimilar(slotItem, input, true)) {
                         int amount = found.getOrDefault(slot, 0);
-                        if (amount + slotItem.getAmount() <= input.getAmount()) {
+                        if (amount + slotItem.getAmount() >= input.getAmount()) {
                             found.put(slot, amount + slotItem.getAmount());
                             itemFound = true;
                             break;
@@ -284,21 +279,17 @@ public class CustomRecipeMachine extends AContainer implements RecipeDisplayItem
                     }
                 }
 
-                // 如果当前配方所需的物品不存在于输入中或数量不足，则该配方不匹配
                 if (!itemFound) {
                     recipeFound = false;
                     break;
                 }
             }
 
-            // 如果找到了完整的配方
             if (recipeFound) {
-                // 检查输出是否可以放入输出插槽中
                 if (!InvUtils.fitAll(inv.toInventory(), recipe.getOutput(), this.getOutputSlots())) {
                     return null;
                 }
 
-                // 消耗输入中所使用的物品
                 for (Map.Entry<Integer, Integer> entry : found.entrySet()) {
                     int slot = entry.getKey();
                     int amount = entry.getValue();
