@@ -8,13 +8,14 @@ import io.github.thebusybiscuit.slimefun4.core.attributes.Rechargeable;
 import io.github.thebusybiscuit.slimefun4.core.handlers.ItemUseHandler;
 import org.bukkit.inventory.ItemStack;
 import org.jetbrains.annotations.Nullable;
+import org.lins.mmmjjkx.rykenslimefuncustomizer.objects.customs.parent.CustomItem;
 import org.lins.mmmjjkx.rykenslimefuncustomizer.objects.js.JavaScriptEval;
 
-public class CustomEnergyItem extends CustomUnplaceableItem implements Rechargeable {
+public class CustomEnergyItem extends CustomItem implements Rechargeable {
     private final float capacity;
 
     public CustomEnergyItem(ItemGroup itemGroup, SlimefunItemStack item, RecipeType recipeType, ItemStack[] recipe, float capacity, @Nullable JavaScriptEval eval) {
-        super(itemGroup, item, recipeType, recipe, eval);
+        super(itemGroup, item, recipeType, recipe);
 
         this.capacity = capacity;
 

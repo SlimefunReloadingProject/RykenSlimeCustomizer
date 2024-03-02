@@ -64,7 +64,7 @@ public class ItemReader extends YamlReader<CustomItem> {
             }
         }
 
-        CustomUnplaceableItem instance;
+        CustomItem instance;
 
         boolean energy = section.contains("energy_capacity");
         if (energy) {
