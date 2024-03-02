@@ -1,4 +1,4 @@
-package org.lins.mmmjjkx.rykenslimefuncustomizer.objects.customs;
+package org.lins.mmmjjkx.rykenslimefuncustomizer.objects.customs.item;
 
 import io.github.thebusybiscuit.slimefun4.api.events.PlayerRightClickEvent;
 import io.github.thebusybiscuit.slimefun4.api.items.ItemGroup;
@@ -14,10 +14,17 @@ import org.lins.mmmjjkx.rykenslimefuncustomizer.objects.js.JavaScriptEval;
 
 public class CustomUnplaceableItem extends CustomItem implements NotPlaceable {
     public CustomUnplaceableItem(ItemGroup itemGroup, SlimefunItemStack item, RecipeType recipeType, ItemStack[] recipe, @Nullable JavaScriptEval eval) {
-        super(itemGroup, item, recipeType, recipe, eval);
+        super(itemGroup, item, recipeType, recipe);
 
-        addItemHandler((ItemUseHandler) PlayerRightClickEvent::cancel);
+        if (eval != null) {
+            eval.doInit();
 
-        register(RykenSlimefunCustomizer.INSTANCE);
+            this.addItemHandler((ItemUseHandler) e -> {
+                eval.evalFunction("onUse", e);
+                e.cancel();
+            });
+        } else {
+            this.addItemHandler((ItemUseHandler) PlayerRightClickEvent::cancel);
+        }
     }
 }

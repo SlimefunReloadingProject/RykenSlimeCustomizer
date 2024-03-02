@@ -7,9 +7,11 @@ import io.github.thebusybiscuit.slimefun4.libraries.dough.collections.Pair;
 import org.bukkit.configuration.ConfigurationSection;
 import org.bukkit.configuration.file.YamlConfiguration;
 import org.bukkit.inventory.ItemStack;
+import org.lins.mmmjjkx.rykenslimefuncustomizer.RykenSlimefunCustomizer;
 import org.lins.mmmjjkx.rykenslimefuncustomizer.objects.ProjectAddon;
+import org.lins.mmmjjkx.rykenslimefuncustomizer.objects.customs.item.CustomEnergyItem;
 import org.lins.mmmjjkx.rykenslimefuncustomizer.objects.customs.parent.CustomItem;
-import org.lins.mmmjjkx.rykenslimefuncustomizer.objects.customs.CustomUnplaceableItem;
+import org.lins.mmmjjkx.rykenslimefuncustomizer.objects.customs.item.CustomUnplaceableItem;
 import org.lins.mmmjjkx.rykenslimefuncustomizer.objects.js.JavaScriptEval;
 import org.lins.mmmjjkx.rykenslimefuncustomizer.objects.yaml.YamlReader;
 import org.lins.mmmjjkx.rykenslimefuncustomizer.utils.CommonUtils;
@@ -62,6 +64,22 @@ public class ItemReader extends YamlReader<CustomItem> {
             }
         }
 
-        return new CustomUnplaceableItem(group.getSecondValue(), slimefunItemStack, rt.getSecondValue(), itemStacks, eval);
+        CustomUnplaceableItem instance;
+
+        boolean energy = section.contains("energy_capacity");
+        if (energy) {
+            double energyCapacity = section.getDouble("energy_capacity");
+            if (energyCapacity < 1) {
+                ExceptionHandler.handleError("无法在附属"+addon.getAddonName()+"中加载物品"+s+ "能源容量不能小于1");
+                return null;
+            }
+            instance = new CustomEnergyItem(group.getSecondValue(), slimefunItemStack, rt.getSecondValue(), itemStacks, (float) energyCapacity, eval);
+        } else {
+            instance = new CustomUnplaceableItem(group.getSecondValue(), slimefunItemStack, rt.getSecondValue(), itemStacks, eval);
+        }
+
+        instance.register(RykenSlimefunCustomizer.INSTANCE);
+
+        return instance;
     }
 }

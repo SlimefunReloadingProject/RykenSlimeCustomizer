@@ -28,187 +28,183 @@ import java.util.Objects;
 public class MainCommand implements TabExecutor {
     @Override
     public boolean onCommand(@NotNull CommandSender sender, @NotNull Command command, @NotNull String label, @NotNull String[] args) {
-        if (sender.hasPermission("rsc.command")) {
-            if (args.length == 0) {
+        if (args.length == 0) {
+            sendHelp(sender);
+            return true;
+        } else if (args.length == 1) {
+            if (args[0].equalsIgnoreCase("help")) {
                 sendHelp(sender);
                 return true;
-            } else if (args.length == 1) {
-                if (args[0].equalsIgnoreCase("help")) {
-                    sendHelp(sender);
-                    return true;
-                } else if (args[0].equalsIgnoreCase("reload")) {
-                    if (!sender.hasPermission("rsc.command") || !sender.hasPermission("rsc.command.reload")) {
-                        sender.sendMessage(CommonUtils.parseToComponent("&4你没有权限去做这些！"));
-                        return false;
-                    }
-
-                    RykenSlimefunCustomizer.reload();
-                    sender.sendMessage(CommonUtils.parseToComponent("&a重载成功！"));
-                    return true;
-                } else if (args[0].equalsIgnoreCase("list")) {
-                    if (!sender.hasPermission("rsc.command") || !sender.hasPermission("rsc.command.list")) {
-                        sender.sendMessage(CommonUtils.parseToComponent("&4你没有权限去做这些！"));
-                        return false;
-                    }
-
-                    List<ProjectAddon> addons = RykenSlimefunCustomizer.addonManager.getAllValues();
-                    List<String> nameWithId = addons.stream().map(a -> a.getAddonName() + "(id: " + a.getAddonId() + ")").toList();
-                    Component component = CommonUtils.parseToComponent("&a已加载的附属: ");
-                    for (String nwi : nameWithId) {
-                        component = component.append(CommonUtils.parseToComponent("&a" + nwi));
-                        if (nameWithId.indexOf(nwi) != (nameWithId.size() - 1)) {
-                            component = component.append(CommonUtils.parseToComponent("&6, "));
-                        }
-                    }
-                    sender.sendMessage(component);
-                    return true;
-                } else if (args[0].equalsIgnoreCase("reloadPlugin")) {
-                    if (!sender.hasPermission("rsc.command") || !sender.hasPermission("rsc.command.reloadPlugin")) {
-                        sender.sendMessage(CommonUtils.parseToComponent("&4你没有权限去做这些！"));
-                        return false;
-                    }
-
-                    RykenSlimefunCustomizer.INSTANCE.reloadConfig();
-                    if (RykenSlimefunCustomizer.INSTANCE.getConfig().getBoolean("saveExample")) {
-                        RykenSlimefunCustomizer.saveExample();
-                    }
-                    sender.sendMessage(CommonUtils.parseToComponent("&a重载插件成功！"));
-                    return true;
+            } else if (args[0].equalsIgnoreCase("reload")) {
+                if (!sender.hasPermission("rsc.command") || !sender.hasPermission("rsc.command.reload")) {
+                    sender.sendMessage(CommonUtils.parseToComponent("&4你没有权限去做这些！"));
+                    return false;
                 }
-            } else if (args.length == 2) {
-                if (args[0].equalsIgnoreCase("enable")) {
-                    if (!sender.hasPermission("rsc.command") || !sender.hasPermission("rsc.command.enable")) {
-                        sender.sendMessage(CommonUtils.parseToComponent("&4你没有权限去做这些！"));
-                        return false;
-                    }
 
-                    File file = new File(ProjectAddonManager.ADDONS_DIRECTORY, args[1]);
+                RykenSlimefunCustomizer.reload();
+                sender.sendMessage(CommonUtils.parseToComponent("&a重载成功！"));
+                return true;
+            } else if (args[0].equalsIgnoreCase("list")) {
+                if (!sender.hasPermission("rsc.command") || !sender.hasPermission("rsc.command.list")) {
+                    sender.sendMessage(CommonUtils.parseToComponent("&4你没有权限去做这些！"));
+                    return false;
+                }
 
-                    if (!file.exists() || !file.isDirectory()) {
-                        sender.sendMessage(CommonUtils.parseToComponent("&4没有这个文件夹！"));
-                        return false;
-                    }
-
-                    YamlConfiguration forId = YamlConfiguration.loadConfiguration(new File(file, "info.yml"));
-                    if (forId.getString("id", null) == null) {
-                        sender.sendMessage(CommonUtils.parseToComponent("&4没有在info.yml里找到ID，无法加载！"));
-                        return false;
-                    }
-
-                    String id = forId.getString("id");
-                    if (RykenSlimefunCustomizer.addonManager.isLoaded(id)) {
-                        sender.sendMessage(CommonUtils.parseToComponent("&4此附属已经被加载了！"));
-                        return false;
-                    }
-
-                    ProjectAddonLoader loader = new ProjectAddonLoader(file, RykenSlimefunCustomizer.addonManager.getProjectIds());
-                    ProjectAddon addon = loader.load();
-                    RykenSlimefunCustomizer.addonManager.pushProjectAddon(addon);
-
-                    sender.sendMessage(CommonUtils.parseToComponent("&a加载此附属成功！"));
-                    return true;
-                } else if (args[0].equalsIgnoreCase("disable")) {
-                    if (!sender.hasPermission("rsc.command") || !sender.hasPermission("rsc.command.disable")) {
-                        sender.sendMessage(CommonUtils.parseToComponent("&4你没有权限去做这些！"));
-                        return false;
-                    }
-
-                    String id = args[1];
-                    ProjectAddon addon = RykenSlimefunCustomizer.addonManager.get(id);
-                    if (addon == null) {
-                        sender.sendMessage(CommonUtils.parseToComponent("&4没有这个附属！"));
-                        return false;
-                    }
-
-                    addon.unregister();
-                    RykenSlimefunCustomizer.addonManager.removeProjectAddon(addon);
-
-                    sender.sendMessage(CommonUtils.parseToComponent("&a卸载此附属成功！"));
-                    return true;
-                } else if (args[0].equalsIgnoreCase("info")) {
-                    if (!sender.hasPermission("rsc.command") || !sender.hasPermission("rsc.command.info")) {
-                        sender.sendMessage(CommonUtils.parseToComponent("&4你没有权限去做这些！"));
-                        return false;
-                    }
-
-                    String id = args[1];
-                    ProjectAddon addon = RykenSlimefunCustomizer.addonManager.get(id);
-                    if (addon == null) {
-                        sender.sendMessage(CommonUtils.parseToComponent("&4没有这个附属！"));
-                        return false;
-                    }
-
-                    String authors = addon.getAuthors().toString();
-                    String authorsRemoveBrackets = authors.substring(1, authors.length() - 1);
-
-                    StringBuilder builder = new StringBuilder().append("名称: &a").append(addon.getAddonName()).append("\n&f")
-                                       .append("ID: &a").append(addon.getAddonId()).append("\n&f")
-                                       .append("作者(们): &a").append(authorsRemoveBrackets).append("\n&f")
-                                       .append("版本: &a").append(addon.getAddonVersion()).append("\n&f")
-                                       .append("依赖: &a").append(addon.getDepends()).append("\n&f")
-                                       .append("插件依赖: &a").append(addon.getPluginDepends()).append("\n&f")
-                                       .append("描述: &a").append(addon.getDescription());
-
-                    if (addon.getGithubRepo() != null && !addon.getGithubRepo().isBlank()) {
-                        builder.append("\n&f").append("Github仓库: &e").append(addon.getGithubRepo());
-                    }
-
-                    sender.sendMessage(CommonUtils.parseToComponent(builder.toString()));
-                    return true;
-                } else if (args[0].equalsIgnoreCase("menupreview")) {
-                    if (!sender.hasPermission("rsc.command") || !sender.hasPermission("rsc.command.menupreview")) {
-                        sender.sendMessage(CommonUtils.parseToComponent("&4你没有权限去做这些！"));
-                        return false;
-                    }
-
-                    String menuPresetId = args[1];
-                    BlockMenuPreset bmp = Slimefun.getRegistry().getMenuPresets().get(menuPresetId);
-                    if (bmp == null) {
-                        sender.sendMessage(CommonUtils.parseToComponent("&4没有这个菜单！"));
-                        return false;
-                    }
-                    if (sender instanceof Player p) {
-                        bmp.open(p);
-                        return true;
-                    } else {
-                        sender.sendMessage(CommonUtils.parseToComponent("&4你不能在控制台使用此指令！"));
-                        return false;
+                List<ProjectAddon> addons = RykenSlimefunCustomizer.addonManager.getAllValues();
+                List<String> nameWithId = addons.stream().map(a -> a.getAddonName() + "(id: " + a.getAddonId() + ")").toList();
+                Component component = CommonUtils.parseToComponent("&a已加载的附属: ");
+                for (String nwi : nameWithId) {
+                    component = component.append(CommonUtils.parseToComponent("&a" + nwi));
+                    if (nameWithId.indexOf(nwi) != (nameWithId.size() - 1)) {
+                        component = component.append(CommonUtils.parseToComponent("&6, "));
                     }
                 }
-            } else if (args.length == 3) {
-                if (args[0].equalsIgnoreCase("saveitem")) {
-                    if (!sender.hasPermission("rsc.command") || !sender.hasPermission("rsc.command.saveitem")) {
-                        sender.sendMessage(CommonUtils.parseToComponent("&4你没有权限去做这些！"));
-                        return false;
-                    }
-
-                    String prjId = args[1];
-                    String itemId = args[2];
-                    ProjectAddon addon = RykenSlimefunCustomizer.addonManager.get(prjId);
-                    if (addon == null) {
-                        sender.sendMessage(CommonUtils.parseToComponent("&4没有这个附属！"));
-                        return false;
-                    }
-                    if (sender instanceof Player p) {
-                        ItemStack itemStack = p.getInventory().getItemInMainHand();
-                        if (itemStack.getType() == Material.AIR) {
-                            sender.sendMessage(CommonUtils.parseToComponent("&4你不能保存空气！"));
-                            return false;
-                        }
-                        CommonUtils.saveItem(itemStack, itemId, addon);
-                        sender.sendMessage(CommonUtils.parseToComponent("&a保存成功！"));
-                        return true;
-                    } else {
-                        sender.sendMessage(CommonUtils.parseToComponent("&4你不能在控制台使用此指令！"));
-                        return false;
-                    }
+                sender.sendMessage(component);
+                return true;
+            } else if (args[0].equalsIgnoreCase("reloadPlugin")) {
+                if (!sender.hasPermission("rsc.command") || !sender.hasPermission("rsc.command.reloadPlugin")) {
+                    sender.sendMessage(CommonUtils.parseToComponent("&4你没有权限去做这些！"));
+                    return false;
                 }
-            } else {
-                sender.sendMessage(CommonUtils.parseToComponent("&4找不到此子指令！"));
-                return false;
+
+                RykenSlimefunCustomizer.INSTANCE.reloadConfig();
+                if (RykenSlimefunCustomizer.INSTANCE.getConfig().getBoolean("saveExample")) {
+                    RykenSlimefunCustomizer.saveExample();
+                }
+                sender.sendMessage(CommonUtils.parseToComponent("&a重载插件成功！"));
+                return true;
+            }
+        } else if (args.length == 2) {
+            if (args[0].equalsIgnoreCase("enable")) {
+                if (!sender.hasPermission("rsc.command") || !sender.hasPermission("rsc.command.enable")) {
+                    sender.sendMessage(CommonUtils.parseToComponent("&4你没有权限去做这些！"));
+                    return false;
+                }
+
+                File file = new File(ProjectAddonManager.ADDONS_DIRECTORY, args[1]);
+
+                if (!file.exists() || !file.isDirectory()) {
+                    sender.sendMessage(CommonUtils.parseToComponent("&4没有这个文件夹！"));
+                    return false;
+                }
+
+                YamlConfiguration forId = YamlConfiguration.loadConfiguration(new File(file, "info.yml"));
+                if (forId.getString("id", null) == null) {
+                    sender.sendMessage(CommonUtils.parseToComponent("&4没有在info.yml里找到ID，无法加载！"));
+                    return false;
+                }
+
+                String id = forId.getString("id");
+                if (RykenSlimefunCustomizer.addonManager.isLoaded(id)) {
+                    sender.sendMessage(CommonUtils.parseToComponent("&4此附属已经被加载了！"));
+                    return false;
+                }
+
+                ProjectAddonLoader loader = new ProjectAddonLoader(file, RykenSlimefunCustomizer.addonManager.getProjectIds());
+                ProjectAddon addon = loader.load();
+                RykenSlimefunCustomizer.addonManager.pushProjectAddon(addon);
+
+                sender.sendMessage(CommonUtils.parseToComponent("&a加载此附属成功！"));
+                return true;
+            } else if (args[0].equalsIgnoreCase("disable")) {
+                if (!sender.hasPermission("rsc.command") || !sender.hasPermission("rsc.command.disable")) {
+                    sender.sendMessage(CommonUtils.parseToComponent("&4你没有权限去做这些！"));
+                    return false;
+                }
+
+                String id = args[1];
+                ProjectAddon addon = RykenSlimefunCustomizer.addonManager.get(id);
+                if (addon == null) {
+                    sender.sendMessage(CommonUtils.parseToComponent("&4没有这个附属！"));
+                    return false;
+                }
+
+                addon.unregister();
+                RykenSlimefunCustomizer.addonManager.removeProjectAddon(addon);
+
+                sender.sendMessage(CommonUtils.parseToComponent("&a卸载此附属成功！"));
+                return true;
+            } else if (args[0].equalsIgnoreCase("info")) {
+                if (!sender.hasPermission("rsc.command") || !sender.hasPermission("rsc.command.info")) {
+                    sender.sendMessage(CommonUtils.parseToComponent("&4你没有权限去做这些！"));
+                    return false;
+                }
+
+                String id = args[1];
+                ProjectAddon addon = RykenSlimefunCustomizer.addonManager.get(id);
+                if (addon == null) {
+                    sender.sendMessage(CommonUtils.parseToComponent("&4没有这个附属！"));
+                    return false;
+                }
+
+                String authors = addon.getAuthors().toString();
+                String authorsRemoveBrackets = authors.substring(1, authors.length() - 1);
+
+                StringBuilder builder = new StringBuilder().append("名称: &a").append(addon.getAddonName()).append("\n&f")
+                        .append("ID: &a").append(addon.getAddonId()).append("\n&f")
+                        .append("作者(们): &a").append(authorsRemoveBrackets).append("\n&f")
+                        .append("版本: &a").append(addon.getAddonVersion()).append("\n&f")
+                        .append("依赖: &a").append(addon.getDepends()).append("\n&f")
+                        .append("插件依赖: &a").append(addon.getPluginDepends()).append("\n&f")
+                        .append("描述: &a").append(addon.getDescription());
+
+                if (addon.getGithubRepo() != null && !addon.getGithubRepo().isBlank()) {
+                    builder.append("\n&f").append("Github仓库: &e").append(addon.getGithubRepo());
+                }
+
+                sender.sendMessage(CommonUtils.parseToComponent(builder.toString()));
+                return true;
+            } else if (args[0].equalsIgnoreCase("menupreview")) {
+                if (!sender.hasPermission("rsc.command") || !sender.hasPermission("rsc.command.menupreview")) {
+                    sender.sendMessage(CommonUtils.parseToComponent("&4你没有权限去做这些！"));
+                    return false;
+                }
+
+                String menuPresetId = args[1];
+                BlockMenuPreset bmp = Slimefun.getRegistry().getMenuPresets().get(menuPresetId);
+                if (bmp == null) {
+                    sender.sendMessage(CommonUtils.parseToComponent("&4没有这个菜单！"));
+                    return false;
+                }
+                if (sender instanceof Player p) {
+                    bmp.open(p);
+                    return true;
+                } else {
+                    sender.sendMessage(CommonUtils.parseToComponent("&4你不能在控制台使用此指令！"));
+                    return false;
+                }
+            }
+        } else if (args.length == 3) {
+            if (args[0].equalsIgnoreCase("saveitem")) {
+                if (!sender.hasPermission("rsc.command") || !sender.hasPermission("rsc.command.saveitem")) {
+                    sender.sendMessage(CommonUtils.parseToComponent("&4你没有权限去做这些！"));
+                    return false;
+                }
+
+                String prjId = args[1];
+                String itemId = args[2];
+                ProjectAddon addon = RykenSlimefunCustomizer.addonManager.get(prjId);
+                if (addon == null) {
+                    sender.sendMessage(CommonUtils.parseToComponent("&4没有这个附属！"));
+                    return false;
+                }
+                if (sender instanceof Player p) {
+                    ItemStack itemStack = p.getInventory().getItemInMainHand();
+                    if (itemStack.getType() == Material.AIR) {
+                        sender.sendMessage(CommonUtils.parseToComponent("&4你不能保存空气！"));
+                        return false;
+                    }
+                    CommonUtils.saveItem(itemStack, itemId, addon);
+                    sender.sendMessage(CommonUtils.parseToComponent("&a保存成功！"));
+                    return true;
+                } else {
+                    sender.sendMessage(CommonUtils.parseToComponent("&4你不能在控制台使用此指令！"));
+                    return false;
+                }
             }
         } else {
-            sender.sendMessage(CommonUtils.parseToComponent("&4你没有权限去做这些！"));
+            sender.sendMessage(CommonUtils.parseToComponent("&4找不到此子指令！"));
+            return false;
         }
         return false;
     }

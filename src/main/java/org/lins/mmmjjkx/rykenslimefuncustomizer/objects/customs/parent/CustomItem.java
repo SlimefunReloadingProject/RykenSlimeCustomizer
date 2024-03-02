@@ -14,13 +14,7 @@ import java.util.HashMap;
 import java.util.Map;
 
 public abstract class CustomItem extends SlimefunItem {
-    public CustomItem(ItemGroup itemGroup, SlimefunItemStack item, RecipeType recipeType, ItemStack[] recipe, @Nullable JavaScriptEval eval) {
+    public CustomItem(ItemGroup itemGroup, SlimefunItemStack item, RecipeType recipeType, ItemStack[] recipe) {
         super(itemGroup, item, recipeType, recipe);
-
-        if (eval != null) {
-            eval.doInit();
-
-            this.addItemHandler((ItemUseHandler) e -> eval.evalFunction("onUse", e));
-        }
     }
 }

@@ -8,6 +8,7 @@ import io.github.thebusybiscuit.slimefun4.libraries.dough.collections.Pair;
 import org.bukkit.configuration.ConfigurationSection;
 import org.bukkit.configuration.file.YamlConfiguration;
 import org.bukkit.inventory.ItemStack;
+import org.lins.mmmjjkx.rykenslimefuncustomizer.RykenSlimefunCustomizer;
 import org.lins.mmmjjkx.rykenslimefuncustomizer.objects.ProjectAddon;
 import org.lins.mmmjjkx.rykenslimefuncustomizer.objects.customs.CustomMenu;
 import org.lins.mmmjjkx.rykenslimefuncustomizer.objects.customs.machine.CustomRecipeMachine;
@@ -146,18 +147,33 @@ public class RecipeMachineReader extends YamlReader<CustomRecipeMachine> {
                         chance = 1;
                     }
 
+                    output[i] = item;
                     chances.add(chance);
+                } else {
+                    output[i] = null;
                 }
             }
 
             boolean chooseOne = recipes.getBoolean("chooseOne", false);
 
+            testPrint(input);
+
             input = removeNulls(input);
             output = removeNulls(output);
+
+            testPrint(input);
 
             list.add(new RecipeMachineRecipe(seconds, input, output, chances, chooseOne));
         }
         return list;
+    }
+
+    private void testPrint(ItemStack[] is) {
+        for (ItemStack item : is) {
+            if (item != null) {
+                RykenSlimefunCustomizer.INSTANCE.getLogger().warning("TYPE: " + item.getType() + ", AMOUNT: " + item.getAmount());
+            }
+        }
     }
 
     private ItemStack[] removeNulls(ItemStack[] origin) {
@@ -172,9 +188,11 @@ public class RecipeMachineReader extends YamlReader<CustomRecipeMachine> {
         int index = 0;
         for (ItemStack element : origin) {
             if (element != null) {
-                newArray[index++] = element;
+                newArray[index] = element;
+                index++;
             }
         }
+
         return newArray;
     }
 }

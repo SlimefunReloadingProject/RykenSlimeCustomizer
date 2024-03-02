@@ -72,17 +72,6 @@ public class CustomNoEnergyMachine extends AbstractEmptyMachine<MachineOperation
             );
         }
 
-        if (menu != null) {
-            for (int workSlot : work) {
-                if (workSlot > -1 && workSlot < 55) {
-                    menu.addMenuClickHandler(workSlot, (p, slot, is, ca) -> {
-                        this.worked = true;
-                        return false;
-                    });
-                }
-            }
-        }
-
         this.addItemHandler(
                 new SimpleBlockBreakHandler() {
                     @Override
@@ -95,6 +84,17 @@ public class CustomNoEnergyMachine extends AbstractEmptyMachine<MachineOperation
                     }
                 }
         );
+
+        if (menu != null) {
+            for (int workSlot : work) {
+                if (workSlot > -1 && workSlot < 55) {
+                    menu.addMenuClickHandler(workSlot, (p, slot, is, ca) -> {
+                        worked = true;
+                        return false;
+                    });
+                }
+            }
+        }
     }
 
     @Override

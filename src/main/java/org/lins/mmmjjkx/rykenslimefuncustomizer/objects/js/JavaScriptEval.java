@@ -48,6 +48,10 @@ public class JavaScriptEval {
     public JavaScriptEval(@NotNull File js, ProjectAddon addon) {
         this.js = js;
         log = createLogFileHandler(addon);
+
+        System.setProperty("polyglot.engine.WarnInterpreterOnly", "false");
+        System.setProperty("polyglot.js.nashorn-compat", "true");
+
         jsEngine = GraalJSScriptEngine.create(null, Context.newBuilder("js")
                 .allowAllAccess(true)
                 .allowHostClassLookup(s -> true)
@@ -78,8 +82,10 @@ public class JavaScriptEval {
     }
 
     public void close() {
-        jsEngine.close();
-        log.close();
+        try {
+            jsEngine.close();
+            log.close();
+        } catch (IllegalStateException ignored) {}
     }
 
     public void addThing(String name, Object value) {
@@ -199,7 +205,9 @@ public class JavaScriptEval {
         } catch (ScriptException e) {
             ExceptionHandler.handleError("在运行"+js.getName()+"时发生错误");
             e.printStackTrace();
-        } catch (NoSuchMethodException ignored) {}
+        } catch (NoSuchMethodException ex) {
+            ex.printStackTrace();
+        }
 
         return null;
     }

@@ -30,7 +30,7 @@ public class RecipeMachineRecipe extends MachineRecipe {
             ItemStack output = getOutput()[i];
             int chance = chances.get(i);
             if (matchChance(chance)) {
-                itemStacks.add(output.clone());
+                itemStacks.add(output);
             }
         }
 

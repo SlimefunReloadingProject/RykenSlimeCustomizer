@@ -10,7 +10,10 @@ import io.github.thebusybiscuit.slimefun4.core.handlers.BlockBreakHandler;
 import io.github.thebusybiscuit.slimefun4.core.machines.MachineProcessor;
 import io.github.thebusybiscuit.slimefun4.implementation.handlers.SimpleBlockBreakHandler;
 import io.github.thebusybiscuit.slimefun4.implementation.operations.CraftingOperation;
+import io.github.thebusybiscuit.slimefun4.libraries.dough.inventory.InvUtils;
 import io.github.thebusybiscuit.slimefun4.libraries.dough.items.CustomItemStack;
+import io.github.thebusybiscuit.slimefun4.utils.SlimefunUtils;
+import io.github.thebusybiscuit.slimefun4.utils.itemstack.ItemStackWrapper;
 import me.mrCookieSlime.Slimefun.Objects.SlimefunItem.abstractItems.AContainer;
 import me.mrCookieSlime.Slimefun.Objects.SlimefunItem.abstractItems.MachineRecipe;
 import me.mrCookieSlime.Slimefun.api.inventory.BlockMenu;
@@ -24,15 +27,10 @@ import org.jetbrains.annotations.NotNull;
 import org.jetbrains.annotations.Nullable;
 import org.lins.mmmjjkx.rykenslimefuncustomizer.RykenSlimefunCustomizer;
 import org.lins.mmmjjkx.rykenslimefuncustomizer.objects.customs.CustomMenu;
-import org.lins.mmmjjkx.rykenslimefuncustomizer.objects.js.JavaScriptEval;
-import org.lins.mmmjjkx.rykenslimefuncustomizer.objects.js.lambda.EiFunction;
 import org.lins.mmmjjkx.rykenslimefuncustomizer.objects.machine.RecipeMachineRecipe;
 import org.lins.mmmjjkx.rykenslimefuncustomizer.utils.CommonUtils;
 
-import java.util.ArrayList;
-import java.util.Collections;
-import java.util.List;
-import java.util.Random;
+import java.util.*;
 
 @Beta
 public class CustomRecipeMachine extends AContainer implements RecipeDisplayItem {
@@ -243,11 +241,74 @@ public class CustomRecipeMachine extends AContainer implements RecipeDisplayItem
                 MachineRecipe next = this.findNextRecipe(inv);
                 if (next != null) {
                     currentRecipe = (RecipeMachineRecipe) next;
-                    currentOperation = new CraftingOperation(next);
+                    currentOperation = new CraftingOperation(currentRecipe);
                     this.processor.startOperation(b, currentOperation);
                     this.processor.updateProgressBar(inv, menu.getProgressSlot(), currentOperation);
                 }
             }
         }
+    }
+
+    protected MachineRecipe findNextRecipe(BlockMenu inv) {
+        Map<Integer, ItemStack> inventory = new HashMap<>();
+        int[] inputSlots = this.getInputSlots();
+
+        // 将输入插槽中的物品放入inventory映射中
+        for (int slot : inputSlots) {
+            ItemStack item = inv.getItemInSlot(slot);
+            if (item != null && !item.getType().equals(Material.AIR)) {
+                inventory.put(slot, ItemStackWrapper.wrap(item));
+            }
+        }
+
+        // 遍历所有配方，查找符合条件的配方
+        for (MachineRecipe recipe : this.recipes) {
+            // 创建一个映射，用于存储每个插槽已匹配的物品数量
+            Map<Integer, Integer> found = new HashMap<>();
+            boolean recipeFound = true;
+
+            // 检查每个配方所需的每种物品是否在输入中
+            for (ItemStack input : recipe.getInput()) {
+                boolean itemFound = false;
+
+                // 检查每个插槽是否包含当前配方需要的物品
+                for (int slot : inputSlots) {
+                    ItemStack slotItem = inventory.get(slot);
+                    if (slotItem != null && SlimefunUtils.isItemSimilar(slotItem, input, true)) {
+                        int amount = found.getOrDefault(slot, 0);
+                        if (amount + slotItem.getAmount() <= input.getAmount()) {
+                            found.put(slot, amount + slotItem.getAmount());
+                            itemFound = true;
+                            break;
+                        }
+                    }
+                }
+
+                // 如果当前配方所需的物品不存在于输入中或数量不足，则该配方不匹配
+                if (!itemFound) {
+                    recipeFound = false;
+                    break;
+                }
+            }
+
+            // 如果找到了完整的配方
+            if (recipeFound) {
+                // 检查输出是否可以放入输出插槽中
+                if (!InvUtils.fitAll(inv.toInventory(), recipe.getOutput(), this.getOutputSlots())) {
+                    return null;
+                }
+
+                // 消耗输入中所使用的物品
+                for (Map.Entry<Integer, Integer> entry : found.entrySet()) {
+                    int slot = entry.getKey();
+                    int amount = entry.getValue();
+                    inv.consumeItem(slot, amount);
+                }
+
+                return recipe;
+            }
+        }
+
+        return null;
     }
 }
