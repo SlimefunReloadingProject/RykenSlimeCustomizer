@@ -1,5 +1,8 @@
 package org.lins.mmmjjkx.rykenslimefuncustomizer.objects;
 
+import com.google.common.collect.HashMultimap;
+import com.google.common.collect.Multimap;
+import com.google.common.collect.Multimaps;
 import io.github.thebusybiscuit.slimefun4.api.items.ItemGroup;
 import io.github.thebusybiscuit.slimefun4.api.items.SlimefunItem;
 import io.github.thebusybiscuit.slimefun4.api.recipes.RecipeType;
@@ -18,16 +21,16 @@ import org.lins.mmmjjkx.rykenslimefuncustomizer.objects.customs.CustomMenu;
 import org.lins.mmmjjkx.rykenslimefuncustomizer.objects.customs.item.CustomMobDrop;
 import org.lins.mmmjjkx.rykenslimefuncustomizer.objects.customs.machine.*;
 import org.lins.mmmjjkx.rykenslimefuncustomizer.objects.customs.parent.AbstractEmptyMachine;
-import org.lins.mmmjjkx.rykenslimefuncustomizer.objects.js.JavaScriptEval;
+import org.lins.mmmjjkx.rykenslimefuncustomizer.objects.script.JavaScriptEval;
+import org.lins.mmmjjkx.rykenslimefuncustomizer.objects.script.ScriptEval;
 
 import java.io.File;
-import java.util.ArrayList;
-import java.util.List;
+import java.util.*;
 
 @RequiredArgsConstructor
 @Getter
 @Setter(AccessLevel.PACKAGE)
-public class ProjectAddon {
+public final class ProjectAddon {
     //info.yml
     private @NotNull final String addonId;
     private @NotNull final String addonName;
@@ -42,6 +45,7 @@ public class ProjectAddon {
 
     private @Nullable String githubRepo;
 
+    private Multimap<String, ScriptEval> scripts = HashMultimap.create(12, 10000);
     private List<JavaScriptEval> scriptEvals = new ArrayList<>();
 
     //groups.yml

@@ -1,4 +1,4 @@
-package org.lins.mmmjjkx.rykenslimefuncustomizer.objects.js.ban;
+package org.lins.mmmjjkx.rykenslimefuncustomizer.objects.script.ban;
 
 import lombok.AccessLevel;
 import lombok.AllArgsConstructor;

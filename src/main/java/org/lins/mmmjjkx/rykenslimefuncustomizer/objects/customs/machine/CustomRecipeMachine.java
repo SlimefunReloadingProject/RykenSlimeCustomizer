@@ -10,10 +10,9 @@ import io.github.thebusybiscuit.slimefun4.core.handlers.BlockBreakHandler;
 import io.github.thebusybiscuit.slimefun4.core.machines.MachineProcessor;
 import io.github.thebusybiscuit.slimefun4.implementation.handlers.SimpleBlockBreakHandler;
 import io.github.thebusybiscuit.slimefun4.implementation.operations.CraftingOperation;
-import io.github.thebusybiscuit.slimefun4.libraries.dough.inventory.InvUtils;
+import io.github.thebusybiscuit.slimefun4.libraries.dough.collections.Pair;
 import io.github.thebusybiscuit.slimefun4.libraries.dough.items.CustomItemStack;
 import io.github.thebusybiscuit.slimefun4.utils.SlimefunUtils;
-import io.github.thebusybiscuit.slimefun4.utils.itemstack.ItemStackWrapper;
 import me.mrCookieSlime.Slimefun.Objects.SlimefunItem.abstractItems.AContainer;
 import me.mrCookieSlime.Slimefun.Objects.SlimefunItem.abstractItems.MachineRecipe;
 import me.mrCookieSlime.Slimefun.api.inventory.BlockMenu;
@@ -30,7 +29,10 @@ import org.lins.mmmjjkx.rykenslimefuncustomizer.objects.customs.CustomMenu;
 import org.lins.mmmjjkx.rykenslimefuncustomizer.objects.machine.RecipeMachineRecipe;
 import org.lins.mmmjjkx.rykenslimefuncustomizer.utils.CommonUtils;
 
-import java.util.*;
+import java.util.ArrayList;
+import java.util.Collections;
+import java.util.List;
+import java.util.Random;
 
 @Beta
 public class CustomRecipeMachine extends AContainer implements RecipeDisplayItem {
@@ -249,57 +251,17 @@ public class CustomRecipeMachine extends AContainer implements RecipeDisplayItem
         }
     }
 
-    protected MachineRecipe findNextRecipe(BlockMenu inv) {
-        Map<Integer, ItemStack> inventory = new HashMap<>();
-        int[] inputSlots = this.getInputSlots();
-
-        for (int slot : inputSlots) {
-            ItemStack item = inv.getItemInSlot(slot);
-            if (item != null && !item.getType().equals(Material.AIR)) {
-                inventory.put(slot, ItemStackWrapper.wrap(item));
+    private Pair<ItemStack, Integer> getKeyIgnoreAmount(List<Pair<ItemStack, Integer>> is, ItemStack dest) {
+        for (Pair<ItemStack, Integer> pair : is) {
+            ItemStack item = pair.getFirstValue();
+            if (SlimefunUtils.isItemSimilar(item, dest, true)) {
+                int totalAmount = pair.getSecondValue() + dest.getAmount();
+                if (totalAmount > item.getMaxStackSize()) {
+                    continue;
+                }
+                return pair;
             }
         }
-
-        for (MachineRecipe recipe : this.recipes) {
-            Map<Integer, Integer> found = new HashMap<>();
-            boolean recipeFound = true;
-
-            for (ItemStack input : recipe.getInput()) {
-                boolean itemFound = false;
-
-                for (int slot : inputSlots) {
-                    ItemStack slotItem = inventory.get(slot);
-                    if (slotItem != null && SlimefunUtils.isItemSimilar(slotItem, input, true)) {
-                        int amount = found.getOrDefault(slot, 0);
-                        if (amount + slotItem.getAmount() >= input.getAmount()) {
-                            found.put(slot, amount + slotItem.getAmount());
-                            itemFound = true;
-                            break;
-                        }
-                    }
-                }
-
-                if (!itemFound) {
-                    recipeFound = false;
-                    break;
-                }
-            }
-
-            if (recipeFound) {
-                if (!InvUtils.fitAll(inv.toInventory(), recipe.getOutput(), this.getOutputSlots())) {
-                    return null;
-                }
-
-                for (Map.Entry<Integer, Integer> entry : found.entrySet()) {
-                    int slot = entry.getKey();
-                    int amount = entry.getValue();
-                    inv.consumeItem(slot, amount);
-                }
-
-                return recipe;
-            }
-        }
-
         return null;
     }
 }

@@ -1,4 +1,4 @@
-package org.lins.mmmjjkx.rykenslimefuncustomizer.objects.js.lambda;
+package org.lins.mmmjjkx.rykenslimefuncustomizer.objects.script.lambda;
 
 @FunctionalInterface
 public interface CiFunction<A, B, C, R> {
