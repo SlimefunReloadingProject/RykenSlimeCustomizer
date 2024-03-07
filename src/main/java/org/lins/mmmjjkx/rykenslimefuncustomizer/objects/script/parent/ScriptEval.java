@@ -1,4 +1,4 @@
-package org.lins.mmmjjkx.rykenslimefuncustomizer.objects.script;
+package org.lins.mmmjjkx.rykenslimefuncustomizer.objects.script.parent;
 
 import com.google.errorprone.annotations.CanIgnoreReturnValue;
 import com.xzavier0722.mc.plugin.slimefun4.storage.controller.SlimefunBlockData;
@@ -42,6 +42,8 @@ public abstract class ScriptEval {
         this.file = file;
 
         contextInit();
+
+        addon.getScripts().put(key(), this);
     }
 
     public abstract String key();

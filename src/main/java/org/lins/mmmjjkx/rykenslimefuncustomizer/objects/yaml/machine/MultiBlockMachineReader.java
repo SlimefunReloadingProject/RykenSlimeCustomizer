@@ -73,6 +73,11 @@ public class MultiBlockMachineReader extends YamlReader<CustomMultiBlockMachine>
             return null;
         }
 
+        if (recipe[workSlot-1] == null) {
+            ExceptionHandler.handleError("无法在附属"+addon.getAddonName()+"中加载多方块机器"+s+": 对应工作方块不存在");
+            return null;
+        }
+
         Map<ItemStack[], ItemStack> recipes = readRecipes(recipesSection, addon);
         SoundEffect sound = null;
         if (section.contains("sound")) {

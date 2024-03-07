@@ -51,7 +51,7 @@ public class CustomMultiBlockMachine extends MultiBlockMachine {
 
     @Override
     public void onInteract(Player p, Block block) {
-        Material material = super.getRecipe()[work].getType();
+        Material material = super.getRecipe()[work-1].getType();
         if (block.getType().equals(material)) {
             BlockFace dis = dispenserFaceGet();
             Block disBlock = block.getRelative(dis);
@@ -94,7 +94,7 @@ public class CustomMultiBlockMachine extends MultiBlockMachine {
     }
 
     private BlockFace dispenserFaceGet() {
-        int center = work;
+        int center = work - 1;
         ItemStack[] is = getRecipe();
         if (center - 3 > 0) {
             ItemStack o1 = is[center - 3];
@@ -117,8 +117,5 @@ public class CustomMultiBlockMachine extends MultiBlockMachine {
             }
         }
         return BlockFace.SELF;
-        //0 1 2
-        //3 4 5
-        //6 7 8
     }
 }

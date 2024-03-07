@@ -3,7 +3,9 @@ package org.lins.mmmjjkx.rykenslimefuncustomizer;
 import io.github.thebusybiscuit.slimefun4.api.SlimefunAddon;
 import org.bukkit.plugin.java.JavaPlugin;
 import org.jetbrains.annotations.NotNull;
+import org.lins.mmmjjkx.rykenslimefuncustomizer.bulit_in.JavaScriptCreator;
 import org.lins.mmmjjkx.rykenslimefuncustomizer.commands.MainCommand;
+import org.lins.mmmjjkx.rykenslimefuncustomizer.objects.global.ScriptCreators;
 import org.lins.mmmjjkx.rykenslimefuncustomizer.utils.ExceptionHandler;
 
 import java.io.File;
@@ -13,18 +15,21 @@ import java.nio.file.Paths;
 import java.util.Objects;
 
 public final class RykenSlimefunCustomizer extends JavaPlugin implements SlimefunAddon {
-    private static final String[] resourcePaths = {
-            "info.yml"
-    };
-
     private static boolean runtime = false;
 
     public static RykenSlimefunCustomizer INSTANCE;
     public static ProjectAddonManager addonManager;
 
     @Override
+    public void onLoad() {
+        ScriptCreators.pushScriptCreator(new JavaScriptCreator());
+    }
+
+    @Override
     public void onEnable() {
         // Plugin startup logic
+        System.setProperty("polyglot.engine.WarnInterpreterOnly", "false");
+
         INSTANCE = this;
         addonManager = new ProjectAddonManager();
 
@@ -35,9 +40,9 @@ public final class RykenSlimefunCustomizer extends JavaPlugin implements Slimefu
             saveExample();
         }
 
-        addonManager.setup(this);
-
         Objects.requireNonNull(getCommand("rykenslimecustomizer")).setExecutor(new MainCommand());
+
+        addonManager.setup(this);
 
         ExceptionHandler.info("RykenSlimeCustomizer加载成功！");
 
@@ -78,15 +83,13 @@ public final class RykenSlimefunCustomizer extends JavaPlugin implements Slimefu
     }
 
     public static void saveExample() {
-        String head = "addons/example/";
+        String head = "addons/example/info.yml";
 
-        for (String resourcePath : resourcePaths) {
-            String filePath = new File(INSTANCE.getDataFolder(),head + resourcePath).getAbsolutePath();
-            Path path = Paths.get(filePath);
+        String filePath = new File(INSTANCE.getDataFolder(),head).getAbsolutePath();
+        Path path = Paths.get(filePath);
 
-            if (!Files.exists(path)) {
-                INSTANCE.saveResource(head + resourcePath, false);
-            }
+        if (!Files.exists(path)) {
+            INSTANCE.saveResource(head, false);
         }
     }
 }

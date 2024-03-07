@@ -2,7 +2,6 @@ package org.lins.mmmjjkx.rykenslimefuncustomizer.objects;
 
 import com.google.common.collect.HashMultimap;
 import com.google.common.collect.Multimap;
-import com.google.common.collect.Multimaps;
 import io.github.thebusybiscuit.slimefun4.api.items.ItemGroup;
 import io.github.thebusybiscuit.slimefun4.api.items.SlimefunItem;
 import io.github.thebusybiscuit.slimefun4.api.recipes.RecipeType;
@@ -15,17 +14,20 @@ import lombok.RequiredArgsConstructor;
 import lombok.Setter;
 import org.jetbrains.annotations.NotNull;
 import org.jetbrains.annotations.Nullable;
-import org.lins.mmmjjkx.rykenslimefuncustomizer.objects.customs.item.CustomGeoResource;
-import org.lins.mmmjjkx.rykenslimefuncustomizer.objects.customs.parent.CustomItem;
 import org.lins.mmmjjkx.rykenslimefuncustomizer.objects.customs.CustomMenu;
+import org.lins.mmmjjkx.rykenslimefuncustomizer.objects.customs.item.CustomGeoResource;
 import org.lins.mmmjjkx.rykenslimefuncustomizer.objects.customs.item.CustomMobDrop;
 import org.lins.mmmjjkx.rykenslimefuncustomizer.objects.customs.machine.*;
 import org.lins.mmmjjkx.rykenslimefuncustomizer.objects.customs.parent.AbstractEmptyMachine;
-import org.lins.mmmjjkx.rykenslimefuncustomizer.objects.script.JavaScriptEval;
-import org.lins.mmmjjkx.rykenslimefuncustomizer.objects.script.ScriptEval;
+import org.lins.mmmjjkx.rykenslimefuncustomizer.objects.customs.parent.CustomItem;
+import org.lins.mmmjjkx.rykenslimefuncustomizer.objects.global.RecipeTypeMap;
+import org.lins.mmmjjkx.rykenslimefuncustomizer.bulit_in.JavaScriptEval;
+import org.lins.mmmjjkx.rykenslimefuncustomizer.objects.global.ScriptCreators;
+import org.lins.mmmjjkx.rykenslimefuncustomizer.objects.script.parent.ScriptEval;
 
 import java.io.File;
-import java.util.*;
+import java.util.ArrayList;
+import java.util.List;
 
 @RequiredArgsConstructor
 @Getter
@@ -45,7 +47,7 @@ public final class ProjectAddon {
 
     private @Nullable String githubRepo;
 
-    private Multimap<String, ScriptEval> scripts = HashMultimap.create(12, 10000);
+    private Multimap<String, ScriptEval> scripts = HashMultimap.create(12, 10000000);
     private List<JavaScriptEval> scriptEvals = new ArrayList<>();
 
     //groups.yml
@@ -96,6 +98,7 @@ public final class ProjectAddon {
     }
 
     public void unregister() {
+        //scripts.forEach((s, eval) -> eval.close());
         scriptEvals.forEach(JavaScriptEval::close);
         itemGroups.forEach(ig -> Slimefun.getRegistry().getAllItemGroups().remove(ig));
         researches.forEach(Research::disable);
@@ -112,9 +115,14 @@ public final class ProjectAddon {
         geoResources.forEach(this::unregisterGeo);
         materialGenerators.forEach(this::unregisterItem);
         recipeMachines.forEach(this::unregisterItem);
+
+        RecipeTypeMap.clearRecipeTypes();
+        ScriptCreators.clearScriptCreators();
+
         multiBlockMachines.forEach(this::unregisterItem);
         simpleMachines.forEach(this::unregisterItem);
 
+        //scripts.clear();
         scriptEvals.clear();
         researches.clear();
         items.clear();

@@ -88,6 +88,12 @@
 			<version>23.0.2</version>
 			<scope>provided</scope>
 		</dependency>
+		<dependency>
+			<groupId>org.graalvm.js</groupId>
+			<artifactId>js</artifactId>
+			<version>23.0.2</version>
+			<scope>provided</scope>
+		</dependency>
 		<!-- a shit
 		<dependency>
 			<groupId>org.openjdk.nashorn</groupId>

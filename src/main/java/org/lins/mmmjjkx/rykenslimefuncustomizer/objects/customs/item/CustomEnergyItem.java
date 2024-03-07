@@ -9,7 +9,7 @@ import io.github.thebusybiscuit.slimefun4.core.handlers.ItemUseHandler;
 import org.bukkit.inventory.ItemStack;
 import org.jetbrains.annotations.Nullable;
 import org.lins.mmmjjkx.rykenslimefuncustomizer.objects.customs.parent.CustomItem;
-import org.lins.mmmjjkx.rykenslimefuncustomizer.objects.script.JavaScriptEval;
+import org.lins.mmmjjkx.rykenslimefuncustomizer.bulit_in.JavaScriptEval;
 
 public class CustomEnergyItem extends CustomItem implements Rechargeable {
     private final float capacity;

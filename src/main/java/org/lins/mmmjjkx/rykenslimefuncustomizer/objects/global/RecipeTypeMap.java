@@ -22,6 +22,10 @@ public class RecipeTypeMap {
         types.forEach(RecipeTypeMap::pushRecipeType);
     }
 
+    public static void clearRecipeTypes() {
+        recipeTypes.clear();
+    }
+
     @Nullable
     public static RecipeType getRecipeType(String s) {
         return recipeTypes.get(s);

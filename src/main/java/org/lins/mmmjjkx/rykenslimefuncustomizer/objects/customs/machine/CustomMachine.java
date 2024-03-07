@@ -23,7 +23,7 @@ import org.jetbrains.annotations.NotNull;
 import org.jetbrains.annotations.Nullable;
 import org.lins.mmmjjkx.rykenslimefuncustomizer.objects.customs.CustomMenu;
 import org.lins.mmmjjkx.rykenslimefuncustomizer.objects.customs.parent.AbstractEmptyMachine;
-import org.lins.mmmjjkx.rykenslimefuncustomizer.objects.script.JavaScriptEval;
+import org.lins.mmmjjkx.rykenslimefuncustomizer.bulit_in.JavaScriptEval;
 import org.lins.mmmjjkx.rykenslimefuncustomizer.objects.machine.MachineInfo;
 import org.lins.mmmjjkx.rykenslimefuncustomizer.objects.machine.MachineRecord;
 
