@@ -13,6 +13,7 @@ import org.bukkit.Bukkit;
 import org.bukkit.Location;
 import org.bukkit.entity.Player;
 import org.bukkit.inventory.ItemStack;
+import org.graalvm.polyglot.HostAccess;
 import org.jetbrains.annotations.Nullable;
 import org.lins.mmmjjkx.rykenslimefuncustomizer.objects.ProjectAddon;
 import org.lins.mmmjjkx.rykenslimefuncustomizer.objects.script.ban.Delegations;
@@ -35,6 +36,28 @@ import java.util.stream.IntStream;
 
 @Getter(AccessLevel.PROTECTED)
 public abstract class ScriptEval {
+    protected final HostAccess UNIVERSAL_HOST_ACCESS = HostAccess.newBuilder()
+            .allowPublicAccess(true)
+            .allowAllImplementations(true)
+            .allowAllClassImplementations(true)
+            .allowArrayAccess(true)
+            .allowListAccess(true)
+            .allowBufferAccess(true)
+            .allowIterableAccess(true)
+            .allowIteratorAccess(true)
+            .allowMapAccess(true)
+            .allowAccessInheritance(true)
+            .targetTypeMapping(Double.class, Float.class, null, Double::floatValue)
+            .targetTypeMapping(Integer.class, Float.class, null, Integer::floatValue)
+            .targetTypeMapping(Boolean.class, String.class, null, String::valueOf)
+            .targetTypeMapping(Integer.class, String.class, null, String::valueOf)
+            .targetTypeMapping(Character.class, String.class, null, String::valueOf)
+            .targetTypeMapping(Long.class, String.class, null, String::valueOf)
+            .targetTypeMapping(Float.class, String.class, null, String::valueOf)
+            .targetTypeMapping(Double.class, String.class, null, String::valueOf)
+            .targetTypeMapping(Object.class, String.class, null, String::valueOf)
+            .build();
+
     private final File file;
     private String fileContext;
 
@@ -99,15 +122,15 @@ public abstract class ScriptEval {
         addThing("getSfItemByItem", (Function<ItemStack, SlimefunItem>) SlimefunItem::getByItem);
 
         //randint function
-        addThing("randint", (Function<Integer, Integer>) i -> new Random().nextInt(i));
-        addThing("randintC", (BiFunction<Integer, Boolean, Integer>) (i, b) -> new Random().nextInt(b ? (i + 1) : i));
-        addThing("randintSE", (BiFunction<Integer, Integer, Integer>) (start, end) -> {
+        addThing("randintA", (Function<Integer, Integer>) i -> new Random().nextInt(i));
+        addThing("randintB", (BiFunction<Integer, Boolean, Integer>) (i, b) -> new Random().nextInt(b ? (i + 1) : i));
+        addThing("randintC", (BiFunction<Integer, Integer, Integer>) (start, end) -> {
             IntStream is = IntStream.range(start, end);
             Random random = new Random();
             int[] arr = is.toArray();
             return arr[random.nextInt(arr.length)];
         });
-        addThing("randintF", (CiFunction<Integer, Integer, Boolean, Integer>) (start, end, rangeClosed) -> {
+        addThing("randintD", (CiFunction<Integer, Integer, Boolean, Integer>) (start, end, rangeClosed) -> {
             IntStream stream = rangeClosed ? IntStream.rangeClosed(start, end) : IntStream.range(start, end);
             Random random = new Random();
             int[] arr = stream.toArray();

@@ -9,10 +9,10 @@ import io.github.thebusybiscuit.slimefun4.core.handlers.ItemUseHandler;
 import org.bukkit.inventory.ItemStack;
 import org.jetbrains.annotations.Nullable;
 import org.lins.mmmjjkx.rykenslimefuncustomizer.objects.customs.parent.CustomItem;
-import org.lins.mmmjjkx.rykenslimefuncustomizer.bulit_in.JavaScriptEval;
+import org.lins.mmmjjkx.rykenslimefuncustomizer.objects.script.parent.ScriptEval;
 
 public class CustomUnplaceableItem extends CustomItem implements NotPlaceable {
-    public CustomUnplaceableItem(ItemGroup itemGroup, SlimefunItemStack item, RecipeType recipeType, ItemStack[] recipe, @Nullable JavaScriptEval eval) {
+    public CustomUnplaceableItem(ItemGroup itemGroup, SlimefunItemStack item, RecipeType recipeType, ItemStack[] recipe, @Nullable ScriptEval eval) {
         super(itemGroup, item, recipeType, recipe);
 
         if (eval != null) {

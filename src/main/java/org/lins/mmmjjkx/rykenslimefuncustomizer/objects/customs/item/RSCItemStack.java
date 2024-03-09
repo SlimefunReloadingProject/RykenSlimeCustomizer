@@ -18,6 +18,7 @@ public class RSCItemStack extends CustomItemStack {
             if (name != null && !name.isBlank()) {
                 meta.displayName(CommonUtils.parseToComponent(name));
             }
+
             if (lore != null && lore.length > 0) {
                 meta.lore(CommonUtils.toComponents(lore));
             }
@@ -29,6 +30,7 @@ public class RSCItemStack extends CustomItemStack {
             if (name != null && !name.isBlank()) {
                 meta.displayName(CommonUtils.parseToComponent(name));
             }
+
             if (lore != null && lore.length > 0) {
                 meta.lore(CommonUtils.toComponents(lore));
             }
@@ -40,6 +42,7 @@ public class RSCItemStack extends CustomItemStack {
             if (name != null && !name.isBlank()) {
                 meta.displayName(CommonUtils.parseToComponent(name));
             }
+
             if (lore != null && !lore.isEmpty()) {
                 meta.lore(CommonUtils.toComponents(lore));
             }
@@ -51,6 +54,7 @@ public class RSCItemStack extends CustomItemStack {
             if (name != null && !name.isBlank()) {
                 meta.displayName(CommonUtils.parseToComponent(name));
             }
+
             if (lore != null && !lore.isEmpty()) {
                 meta.lore(CommonUtils.toComponents(lore));
             }

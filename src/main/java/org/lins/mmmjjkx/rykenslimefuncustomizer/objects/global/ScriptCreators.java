@@ -5,6 +5,7 @@ import org.lins.mmmjjkx.rykenslimefuncustomizer.objects.script.parent.ScriptCrea
 
 import java.util.HashMap;
 import java.util.Map;
+import java.util.Set;
 
 public class ScriptCreators {
     private static final Map<String, ScriptCreator> scriptCreators;
@@ -20,6 +21,8 @@ public class ScriptCreators {
     public static void clearScriptCreators() {
         scriptCreators.clear();
     }
+
+    public static Set<String> scriptKeys() {return scriptCreators.keySet();}
 
     @Nullable
     public static ScriptCreator getScriptCreator(String s) {

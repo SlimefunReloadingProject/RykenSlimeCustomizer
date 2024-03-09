@@ -7,14 +7,15 @@ import io.github.thebusybiscuit.slimefun4.api.recipes.RecipeType;
 import io.github.thebusybiscuit.slimefun4.core.attributes.Rechargeable;
 import io.github.thebusybiscuit.slimefun4.core.handlers.ItemUseHandler;
 import org.bukkit.inventory.ItemStack;
+import org.graalvm.polyglot.HostAccess;
 import org.jetbrains.annotations.Nullable;
 import org.lins.mmmjjkx.rykenslimefuncustomizer.objects.customs.parent.CustomItem;
-import org.lins.mmmjjkx.rykenslimefuncustomizer.bulit_in.JavaScriptEval;
+import org.lins.mmmjjkx.rykenslimefuncustomizer.objects.script.parent.ScriptEval;
 
 public class CustomEnergyItem extends CustomItem implements Rechargeable {
     private final float capacity;
 
-    public CustomEnergyItem(ItemGroup itemGroup, SlimefunItemStack item, RecipeType recipeType, ItemStack[] recipe, float capacity, @Nullable JavaScriptEval eval) {
+    public CustomEnergyItem(ItemGroup itemGroup, SlimefunItemStack item, RecipeType recipeType, ItemStack[] recipe, float capacity, @Nullable ScriptEval eval) {
         super(itemGroup, item, recipeType, recipe);
 
         this.capacity = capacity;
@@ -29,6 +30,41 @@ public class CustomEnergyItem extends CustomItem implements Rechargeable {
         } else {
             this.addItemHandler((ItemUseHandler) PlayerRightClickEvent::cancel);
         }
+    }
+
+    @HostAccess.Export
+    public void setItemCharge(ItemStack item, int charge) {
+        Rechargeable.super.setItemCharge(item, charge);
+    }
+
+    @HostAccess.Export
+    public void setItemCharge(ItemStack item, double charge) {
+        Rechargeable.super.setItemCharge(item, (float) charge);
+    }
+
+    @HostAccess.Export
+    public void addItemCharge(ItemStack item, int charge) {
+        Rechargeable.super.addItemCharge(item, charge);
+    }
+
+    @HostAccess.Export
+    public void addItemCharge(ItemStack item, double charge) {
+        Rechargeable.super.addItemCharge(item, (float) charge);
+    }
+
+    @HostAccess.Export
+    public void removeItemCharge(ItemStack item, int charge) {
+        Rechargeable.super.removeItemCharge(item, charge);
+    }
+
+    @HostAccess.Export
+    public void removeItemCharge(ItemStack item, double charge) {
+        Rechargeable.super.addItemCharge(item, (float) charge);
+    }
+
+    @HostAccess.Export
+    public float getItemCharge(ItemStack item) {
+        return Rechargeable.super.getItemCharge(item);
     }
 
     @Override

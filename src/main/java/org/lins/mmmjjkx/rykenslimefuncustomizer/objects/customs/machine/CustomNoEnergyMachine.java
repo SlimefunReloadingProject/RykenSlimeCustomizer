@@ -11,9 +11,12 @@ import io.github.thebusybiscuit.slimefun4.core.handlers.BlockPlaceHandler;
 import io.github.thebusybiscuit.slimefun4.core.machines.MachineOperation;
 import io.github.thebusybiscuit.slimefun4.core.machines.MachineProcessor;
 import io.github.thebusybiscuit.slimefun4.implementation.handlers.SimpleBlockBreakHandler;
+import me.mrCookieSlime.CSCoreLibPlugin.general.Inventory.ChestMenu;
+import me.mrCookieSlime.CSCoreLibPlugin.general.Inventory.ClickAction;
 import me.mrCookieSlime.Slimefun.Objects.handlers.BlockTicker;
 import me.mrCookieSlime.Slimefun.api.inventory.BlockMenu;
 import org.bukkit.block.Block;
+import org.bukkit.entity.Player;
 import org.bukkit.event.block.BlockBreakEvent;
 import org.bukkit.event.block.BlockPlaceEvent;
 import org.bukkit.inventory.ItemStack;
@@ -21,28 +24,30 @@ import org.jetbrains.annotations.NotNull;
 import org.jetbrains.annotations.Nullable;
 import org.lins.mmmjjkx.rykenslimefuncustomizer.objects.customs.CustomMenu;
 import org.lins.mmmjjkx.rykenslimefuncustomizer.objects.customs.parent.AbstractEmptyMachine;
-import org.lins.mmmjjkx.rykenslimefuncustomizer.bulit_in.JavaScriptEval;
 import org.lins.mmmjjkx.rykenslimefuncustomizer.objects.machine.SmallerMachineInfo;
+import org.lins.mmmjjkx.rykenslimefuncustomizer.objects.script.lambda.RSCClickHandler;
+import org.lins.mmmjjkx.rykenslimefuncustomizer.objects.script.parent.ScriptEval;
 
 import java.util.Collections;
 import java.util.List;
 import java.util.function.Consumer;
 
+@SuppressWarnings("deprecation")
 public class CustomNoEnergyMachine extends AbstractEmptyMachine<MachineOperation> {
     private final List<Integer> input;
     private final List<Integer> output;
-    private final JavaScriptEval eval;
+    private final @Nullable ScriptEval eval;
     private final MachineProcessor<MachineOperation> processor;
 
     private boolean worked = false;
 
     public CustomNoEnergyMachine(ItemGroup itemGroup, SlimefunItemStack item, RecipeType recipeType, ItemStack[] recipe, CustomMenu menu,
-                                 List<Integer> input, List<Integer> output, @Nullable JavaScriptEval eval, int work) {
+                                 List<Integer> input, List<Integer> output, @Nullable ScriptEval eval, int work) {
         this(itemGroup, item, recipeType, recipe, menu, input, output, eval, Collections.singletonList(work));
     }
 
     public CustomNoEnergyMachine(ItemGroup itemGroup, SlimefunItemStack item, RecipeType recipeType, ItemStack[] recipe, CustomMenu menu,
-                                 List<Integer> input, List<Integer> output, @Nullable JavaScriptEval eval, List<Integer> work) {
+                                 List<Integer> input, List<Integer> output, @Nullable ScriptEval eval, List<Integer> work) {
         super(itemGroup, item, recipeType, recipe);
 
         this.input = input;
@@ -50,8 +55,8 @@ public class CustomNoEnergyMachine extends AbstractEmptyMachine<MachineOperation
         this.eval = eval;
         this.processor = new MachineProcessor<>(this);
 
-        if (this.eval != null) {
-            this.eval.doInit();
+        if (eval != null) {
+            eval.doInit();
 
             this.eval.addThing("setWorking", (Consumer<Boolean>) b -> worked = b);
             this.eval.addThing("working", worked);
@@ -88,9 +93,21 @@ public class CustomNoEnergyMachine extends AbstractEmptyMachine<MachineOperation
         if (menu != null) {
             for (int workSlot : work) {
                 if (workSlot > -1 && workSlot < 55) {
-                    menu.addMenuClickHandler(workSlot, (p, slot, is, ca) -> {
-                        worked = true;
-                        return false;
+                    ChestMenu.MenuClickHandler mcl = menu.getMenuClickHandler(workSlot);
+                    menu.addMenuClickHandler(workSlot, new RSCClickHandler() {
+                        @Override
+                        public boolean mainFunction(Player player, int slot, ItemStack itemStack, ClickAction action) {
+                            if (mcl != null) {
+                                return mcl.onClick(player, slot, itemStack, action);
+                            }
+                            return false;
+                        }
+
+                        @Override
+                        public boolean andThen(Player player, int slot, ItemStack itemStack, ClickAction action) {
+                            CustomNoEnergyMachine.this.worked = true;
+                            return false;
+                        }
                     });
                 }
             }

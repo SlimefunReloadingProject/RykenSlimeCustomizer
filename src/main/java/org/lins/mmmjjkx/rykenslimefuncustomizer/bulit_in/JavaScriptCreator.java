@@ -13,6 +13,11 @@ public final class JavaScriptCreator implements ScriptCreator {
     }
 
     @Override
+    public String getFileName(String name) {
+        return name + ".js";
+    }
+
+    @Override
     public ScriptEval createScript(File file, ProjectAddon addon) {
         return new JavaScriptEval(file, addon);
     }

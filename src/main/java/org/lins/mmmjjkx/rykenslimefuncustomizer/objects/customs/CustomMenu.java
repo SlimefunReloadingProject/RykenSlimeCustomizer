@@ -3,7 +3,6 @@ package org.lins.mmmjjkx.rykenslimefuncustomizer.objects.customs;
 import io.github.thebusybiscuit.slimefun4.api.items.SlimefunItem;
 import io.github.thebusybiscuit.slimefun4.implementation.Slimefun;
 import io.github.thebusybiscuit.slimefun4.libraries.dough.protection.Interaction;
-import io.github.thebusybiscuit.slimefun4.utils.ChestMenuUtils;
 import lombok.Getter;
 import lombok.Setter;
 import me.mrCookieSlime.Slimefun.Objects.SlimefunItem.abstractItems.AContainer;
@@ -16,6 +15,7 @@ import org.bukkit.inventory.ItemStack;
 import org.jetbrains.annotations.NotNull;
 import org.jetbrains.annotations.Nullable;
 import org.lins.mmmjjkx.rykenslimefuncustomizer.bulit_in.JavaScriptEval;
+import org.lins.mmmjjkx.rykenslimefuncustomizer.objects.script.lambda.RSCClickHandler;
 
 import java.util.HashMap;
 import java.util.Map;
@@ -66,10 +66,15 @@ public class CustomMenu extends BlockMenuPreset {
     }
 
     public void outSideInit() {
-        for (int i = 0; i <  54; i ++) {
+        for (int i = 0; i < 54; i ++) {
             ItemStack item = slotMap.get(i);
             if (item != null) {
-                addItem(i, item, ChestMenuUtils.getEmptyClickHandler());
+                addItem(i, item, (RSCClickHandler) (p, slot, is, ca) -> {
+                    if (eval != null) {
+                        eval.evalFunction("onClick", p, slot, is, ca);
+                    }
+                    return false;
+                });
             }
         }
 

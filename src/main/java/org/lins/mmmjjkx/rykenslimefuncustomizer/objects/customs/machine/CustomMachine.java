@@ -23,9 +23,9 @@ import org.jetbrains.annotations.NotNull;
 import org.jetbrains.annotations.Nullable;
 import org.lins.mmmjjkx.rykenslimefuncustomizer.objects.customs.CustomMenu;
 import org.lins.mmmjjkx.rykenslimefuncustomizer.objects.customs.parent.AbstractEmptyMachine;
-import org.lins.mmmjjkx.rykenslimefuncustomizer.bulit_in.JavaScriptEval;
 import org.lins.mmmjjkx.rykenslimefuncustomizer.objects.machine.MachineInfo;
 import org.lins.mmmjjkx.rykenslimefuncustomizer.objects.machine.MachineRecord;
+import org.lins.mmmjjkx.rykenslimefuncustomizer.objects.script.parent.ScriptEval;
 
 import java.util.List;
 
@@ -35,10 +35,10 @@ public class CustomMachine extends AbstractEmptyMachine<MachineOperation> implem
     private final List<Integer> output;
     private final EnergyNetComponentType type;
     private final MachineProcessor<MachineOperation> processor;
-    private final JavaScriptEval eval;
+    private final @Nullable ScriptEval eval;
 
     public CustomMachine(ItemGroup itemGroup, SlimefunItemStack item, RecipeType recipeType, ItemStack[] recipe, @Nullable CustomMenu menu,
-                         List<Integer> input, List<Integer> output, MachineRecord record, EnergyNetComponentType type, @Nullable JavaScriptEval eval) {
+                         List<Integer> input, List<Integer> output, MachineRecord record, EnergyNetComponentType type, @Nullable ScriptEval eval) {
         super(itemGroup, item, recipeType, recipe);
 
         this.input = input;
@@ -49,8 +49,8 @@ public class CustomMachine extends AbstractEmptyMachine<MachineOperation> implem
         this.eval = eval;
         this.processor = new MachineProcessor<>(this);
 
-        if (this.eval != null) {
-            this.eval.doInit();
+        if (eval != null) {
+            eval.doInit();
 
             addItemHandler(
                     new BlockBreakHandler(false, false) {

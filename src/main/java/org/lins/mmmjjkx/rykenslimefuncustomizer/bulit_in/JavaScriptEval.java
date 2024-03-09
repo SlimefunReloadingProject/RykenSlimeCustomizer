@@ -5,7 +5,6 @@ import com.oracle.truffle.js.scriptengine.GraalJSScriptEngine;
 import org.bukkit.entity.Player;
 import org.bukkit.event.Event;
 import org.graalvm.polyglot.Context;
-import org.graalvm.polyglot.HostAccess;
 import org.graalvm.polyglot.PolyglotAccess;
 import org.graalvm.polyglot.io.IOAccess;
 import org.jetbrains.annotations.NotNull;
@@ -31,7 +30,7 @@ public class JavaScriptEval extends ScriptEval {
 
         jsEngine = GraalJSScriptEngine.create(null, Context.newBuilder("js")
                 .allowAllAccess(true)
-                .allowHostAccess(HostAccess.ALL)
+                .allowHostAccess(UNIVERSAL_HOST_ACCESS)
                 .allowNativeAccess(false)
                 .allowExperimentalOptions(true)
                 .allowPolyglotAccess(PolyglotAccess.ALL)

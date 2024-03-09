@@ -6,6 +6,7 @@ import org.bukkit.configuration.file.YamlConfiguration;
 import org.bukkit.plugin.Plugin;
 import org.lins.mmmjjkx.rykenslimefuncustomizer.objects.ProjectAddon;
 import org.lins.mmmjjkx.rykenslimefuncustomizer.objects.ProjectAddonLoader;
+import org.lins.mmmjjkx.rykenslimefuncustomizer.objects.global.RecipeTypeMap;
 import org.lins.mmmjjkx.rykenslimefuncustomizer.utils.Constants;
 import org.lins.mmmjjkx.rykenslimefuncustomizer.utils.ExceptionHandler;
 
@@ -68,6 +69,11 @@ public class ProjectAddonManager {
                 continue;
             }
 
+            if (projectIds.containsKey(id) && projectAddons.containsKey(id)) {
+                notMatchTemplate.add(folder.getName());
+                continue;
+            }
+
             if (projectIds.containsKey(id)) {
                 ExceptionHandler.handleError("在名称为 " + folder.getName() + "的文件夹中有重复的附属ID，导致此附属无法加载！");
                 notMatchTemplate.add(folder.getName());
@@ -94,6 +100,9 @@ public class ProjectAddonManager {
         }
         projectAddons.clear();
         projectIds.clear();
+
+        RecipeTypeMap.clearRecipeTypes();
+
         setup(plugin);
     }
 

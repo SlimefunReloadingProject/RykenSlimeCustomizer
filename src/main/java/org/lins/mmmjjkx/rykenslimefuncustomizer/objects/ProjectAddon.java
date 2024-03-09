@@ -115,10 +115,6 @@ public final class ProjectAddon {
         geoResources.forEach(this::unregisterGeo);
         materialGenerators.forEach(this::unregisterItem);
         recipeMachines.forEach(this::unregisterItem);
-
-        RecipeTypeMap.clearRecipeTypes();
-        ScriptCreators.clearScriptCreators();
-
         multiBlockMachines.forEach(this::unregisterItem);
         simpleMachines.forEach(this::unregisterItem);
 
