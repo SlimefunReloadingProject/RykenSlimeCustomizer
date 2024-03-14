@@ -79,8 +79,9 @@ public class MobDropsReader extends YamlReader<CustomMobDrop> {
                     .append(CommonUtils.parseToComponent("&b"+chance+"%"))
                     .append(CommonUtils.parseToComponent("的概率掉落"))
                     .decoration(TextDecoration.ITALIC, false);
+
             ItemStack itemStack = new CustomItemStack(eggMaterial, meta -> {
-                meta.displayName(Component.text(entityType.toString()).decoration(TextDecoration.ITALIC, false));
+                meta.displayName(Component.text(entityType.toString()));
                 meta.lore(Collections.singletonList(lore));
             });
             ItemStack[] recipe = new ItemStack[]{null, null, null, null, itemStack};

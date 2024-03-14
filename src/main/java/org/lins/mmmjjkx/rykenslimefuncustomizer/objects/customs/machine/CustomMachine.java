@@ -7,16 +7,13 @@ import io.github.thebusybiscuit.slimefun4.api.items.SlimefunItem;
 import io.github.thebusybiscuit.slimefun4.api.items.SlimefunItemStack;
 import io.github.thebusybiscuit.slimefun4.api.recipes.RecipeType;
 import io.github.thebusybiscuit.slimefun4.core.attributes.EnergyNetComponent;
-import io.github.thebusybiscuit.slimefun4.core.handlers.BlockBreakHandler;
 import io.github.thebusybiscuit.slimefun4.core.handlers.BlockPlaceHandler;
 import io.github.thebusybiscuit.slimefun4.core.machines.MachineOperation;
 import io.github.thebusybiscuit.slimefun4.core.machines.MachineProcessor;
 import io.github.thebusybiscuit.slimefun4.core.networks.energy.EnergyNetComponentType;
-import io.github.thebusybiscuit.slimefun4.implementation.handlers.SimpleBlockBreakHandler;
 import me.mrCookieSlime.Slimefun.Objects.handlers.BlockTicker;
 import me.mrCookieSlime.Slimefun.api.inventory.BlockMenu;
 import org.bukkit.block.Block;
-import org.bukkit.event.block.BlockBreakEvent;
 import org.bukkit.event.block.BlockPlaceEvent;
 import org.bukkit.inventory.ItemStack;
 import org.jetbrains.annotations.NotNull;
@@ -25,6 +22,7 @@ import org.lins.mmmjjkx.rykenslimefuncustomizer.objects.customs.CustomMenu;
 import org.lins.mmmjjkx.rykenslimefuncustomizer.objects.customs.parent.AbstractEmptyMachine;
 import org.lins.mmmjjkx.rykenslimefuncustomizer.objects.machine.MachineInfo;
 import org.lins.mmmjjkx.rykenslimefuncustomizer.objects.machine.MachineRecord;
+import org.lins.mmmjjkx.rykenslimefuncustomizer.objects.machine.ScriptedEvalBreakHandler;
 import org.lins.mmmjjkx.rykenslimefuncustomizer.objects.script.parent.ScriptEval;
 
 import java.util.List;
@@ -49,16 +47,14 @@ public class CustomMachine extends AbstractEmptyMachine<MachineOperation> implem
         this.eval = eval;
         this.processor = new MachineProcessor<>(this);
 
+        if (menu != null) {
+            menu.reInit();
+        }
+
         if (eval != null) {
             eval.doInit();
 
             addItemHandler(
-                    new BlockBreakHandler(false, false) {
-                        @Override
-                        public void onPlayerBreak(@NotNull BlockBreakEvent e, @NotNull ItemStack is, @NotNull List<ItemStack> list) {
-                            CustomMachine.this.eval.evalFunction("onBreak", e, is, list);
-                        }
-                    },
                     new BlockPlaceHandler(false) {
                         @Override
                         public void onPlayerPlace(@NotNull BlockPlaceEvent e) {
@@ -68,20 +64,7 @@ public class CustomMachine extends AbstractEmptyMachine<MachineOperation> implem
             );
         }
 
-        if (menu != null) {
-            this.addItemHandler(
-                    new SimpleBlockBreakHandler() {
-                        @Override
-                        public void onBlockBreak(@NotNull Block b) {
-                            BlockMenu blockMenu = StorageCacheUtils.getMenu(b.getLocation());
-                            if (blockMenu != null) {
-                                blockMenu.dropItems(blockMenu.getLocation(), getInputSlots());
-                                blockMenu.dropItems(blockMenu.getLocation(), getOutputSlots());
-                            }
-                        }
-                    }
-            );
-        }
+        addItemHandler(new ScriptedEvalBreakHandler(this, eval));
     }
 
     @Override

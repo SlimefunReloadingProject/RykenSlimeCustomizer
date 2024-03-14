@@ -7,6 +7,7 @@ import io.github.thebusybiscuit.slimefun4.api.items.SlimefunItem;
 import io.github.thebusybiscuit.slimefun4.api.items.SlimefunItemStack;
 import io.github.thebusybiscuit.slimefun4.api.recipes.RecipeType;
 import io.github.thebusybiscuit.slimefun4.core.attributes.EnergyNetComponent;
+import io.github.thebusybiscuit.slimefun4.core.attributes.RecipeDisplayItem;
 import io.github.thebusybiscuit.slimefun4.core.networks.energy.EnergyNetComponentType;
 import io.github.thebusybiscuit.slimefun4.implementation.handlers.SimpleBlockBreakHandler;
 import io.github.thebusybiscuit.slimefun4.libraries.dough.items.CustomItemStack;
@@ -18,12 +19,14 @@ import org.bukkit.block.Block;
 import org.bukkit.inventory.ItemStack;
 import org.jetbrains.annotations.NotNull;
 import org.lins.mmmjjkx.rykenslimefuncustomizer.RykenSlimefunCustomizer;
+import org.lins.mmmjjkx.rykenslimefuncustomizer.objects.customs.item.RSCItemStack;
+import org.lins.mmmjjkx.rykenslimefuncustomizer.utils.CommonUtils;
 
 import java.util.List;
 import java.util.Objects;
 
 @SuppressWarnings("deprecation")
-public class CustomMaterialGenerator extends SlimefunItem implements InventoryBlock, EnergyNetComponent {
+public class CustomMaterialGenerator extends SlimefunItem implements InventoryBlock, EnergyNetComponent, RecipeDisplayItem {
     private final int capacity;
     private final List<Integer> output;
     private final int tickRate;
@@ -62,18 +65,18 @@ public class CustomMaterialGenerator extends SlimefunItem implements InventoryBl
 
         BlockMenu blockMenu = StorageCacheUtils.getMenu(b.getLocation());
 
-        if (getCharge(b.getLocation()) >= per) {
-            if (blockMenu != null) {
+        if (blockMenu != null) {
+            if (getCharge(b.getLocation()) >= per) {
                 if (progress >= tickRate) {
+                    setProgress(b, 0);
                     if (blockMenu.fits(generation, getOutputSlots())) {
                         blockMenu.pushItem(generation.clone(), getOutputSlots());
                         removeCharge(b.getLocation(), per);
-                        setProgress(b, 0);
                     } else {
                         if (blockMenu.hasViewer()) {
                             if (statusSlot > -1) {
                                 blockMenu.replaceExistingItem(statusSlot, new CustomItemStack(
-                                        Material.RED_STAINED_GLASS_PANE,
+                                        Material.ORANGE_STAINED_GLASS_PANE,
                                         "&c空间不足"
                                 ));
                             }
@@ -81,15 +84,21 @@ public class CustomMaterialGenerator extends SlimefunItem implements InventoryBl
                         return;
                     }
                 } else {
-                    progress++;
+                    addProgress(b);
                 }
+            }
 
-                setProgress(b, progress);
-                if (blockMenu.hasViewer()) {
-                    if (statusSlot > -1) {
+            if (blockMenu.hasViewer()) {
+                if (statusSlot > -1) {
+                    if (getCharge(b.getLocation()) >= per) {
                         blockMenu.replaceExistingItem(statusSlot, new CustomItemStack(
                                 Material.LIME_STAINED_GLASS_PANE,
                                 "&a生产中"
+                        ));
+                    } else {
+                        blockMenu.replaceExistingItem(statusSlot, new CustomItemStack(
+                                Material.RED_STAINED_GLASS_PANE,
+                                "&4电力不足"
                         ));
                     }
                 }
@@ -97,11 +106,15 @@ public class CustomMaterialGenerator extends SlimefunItem implements InventoryBl
         }
     }
 
-    private static void setProgress(Block b, int progress) {
+    private void addProgress(Block b) {
+        setProgress(b, getProgress(b)+1);
+    }
+
+    private void setProgress(Block b, int progress) {
         StorageCacheUtils.setData(b.getLocation(), "progress", String.valueOf(progress));
     }
 
-    private static int getProgress(Block b) {
+    private int getProgress(Block b) {
         int progress;
         try {
             progress = Integer.parseInt(Objects.requireNonNull(StorageCacheUtils.getData(b.getLocation(), "progress")));
@@ -150,5 +163,13 @@ public class CustomMaterialGenerator extends SlimefunItem implements InventoryBl
                 CustomMaterialGenerator.this.tick(b);
             }
         };
+    }
+
+    @NotNull
+    @Override
+    public List<ItemStack> getDisplayRecipes() {
+        ItemStack speed = new RSCItemStack(Material.KNOWLEDGE_BOOK, CommonUtils.parseToComponent("&a&l速度"),
+                CommonUtils.parseToComponent("&a&l每 &b&l" + tickRate + " &a&l个粘液刻生成一次"));
+        return List.of(speed, generation);
     }
 }

@@ -7,7 +7,7 @@ import io.github.thebusybiscuit.slimefun4.core.attributes.RandomMobDrop;
 import lombok.Getter;
 import org.bukkit.entity.EntityType;
 import org.bukkit.inventory.ItemStack;
-import org.lins.mmmjjkx.rykenslimefuncustomizer.objects.customs.item.CustomUnplaceableItem;
+import org.lins.mmmjjkx.rykenslimefuncustomizer.RykenSlimefunCustomizer;
 
 public class CustomMobDrop extends CustomUnplaceableItem implements RandomMobDrop {
     private final int chance;
@@ -18,6 +18,8 @@ public class CustomMobDrop extends CustomUnplaceableItem implements RandomMobDro
         super(itemGroup, item, RecipeType.MOB_DROP, recipe, null);
         this.chance = chance;
         this.entityType = type;
+
+        register(RykenSlimefunCustomizer.INSTANCE);
     }
 
     @Override

@@ -33,6 +33,8 @@ import java.nio.charset.StandardCharsets;
 import java.nio.file.Files;
 import java.nio.file.StandardOpenOption;
 import java.util.ArrayList;
+import java.util.Arrays;
+import java.util.Collections;
 import java.util.List;
 import java.util.function.Predicate;
 import java.util.regex.Matcher;
@@ -207,15 +209,6 @@ public class CommonUtils {
                 ExceptionHandler.handleError("无法找到粘液物品"+material+"，已转为石头");
                 itemStack = new RSCItemStack(Material.STONE, name);
             }
-            case "full_slimefun" -> {
-                SlimefunItem sis = SlimefunItem.getById(material);
-                if (sis != null) {
-                    ItemStack sfis = sis.getItem().clone();
-                    return countable ? new RSCItemStack(sfis, amount) : sis.getItem();
-                }
-                ExceptionHandler.handleError("无法找到粘液物品"+material+"，已转为石头");
-                itemStack = new RSCItemStack(Material.STONE, name);
-            }
             case "saveditem" -> {
                 File file = new File(addon.getSavedItemsFolder(), material + ".yml");
                 if (!file.exists()) {
@@ -278,6 +271,12 @@ public class CommonUtils {
         }
 
         return glow ? doGlow(itemStack) : itemStack;
+    }
+
+    public static void addLore(ItemStack stack, Component... lore) {
+        ItemMeta im = stack.getItemMeta();
+        im.lore(Arrays.asList(lore));
+        stack.setItemMeta(im);
     }
 
     public static void saveItem(ItemStack item, String fileName, ProjectAddon addon) {

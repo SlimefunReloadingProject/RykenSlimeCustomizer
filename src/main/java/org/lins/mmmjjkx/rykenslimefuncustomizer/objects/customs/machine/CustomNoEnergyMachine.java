@@ -6,24 +6,22 @@ import io.github.thebusybiscuit.slimefun4.api.items.ItemGroup;
 import io.github.thebusybiscuit.slimefun4.api.items.SlimefunItem;
 import io.github.thebusybiscuit.slimefun4.api.items.SlimefunItemStack;
 import io.github.thebusybiscuit.slimefun4.api.recipes.RecipeType;
-import io.github.thebusybiscuit.slimefun4.core.handlers.BlockBreakHandler;
 import io.github.thebusybiscuit.slimefun4.core.handlers.BlockPlaceHandler;
 import io.github.thebusybiscuit.slimefun4.core.machines.MachineOperation;
 import io.github.thebusybiscuit.slimefun4.core.machines.MachineProcessor;
-import io.github.thebusybiscuit.slimefun4.implementation.handlers.SimpleBlockBreakHandler;
 import me.mrCookieSlime.CSCoreLibPlugin.general.Inventory.ChestMenu;
 import me.mrCookieSlime.CSCoreLibPlugin.general.Inventory.ClickAction;
 import me.mrCookieSlime.Slimefun.Objects.handlers.BlockTicker;
 import me.mrCookieSlime.Slimefun.api.inventory.BlockMenu;
 import org.bukkit.block.Block;
 import org.bukkit.entity.Player;
-import org.bukkit.event.block.BlockBreakEvent;
 import org.bukkit.event.block.BlockPlaceEvent;
 import org.bukkit.inventory.ItemStack;
 import org.jetbrains.annotations.NotNull;
 import org.jetbrains.annotations.Nullable;
 import org.lins.mmmjjkx.rykenslimefuncustomizer.objects.customs.CustomMenu;
 import org.lins.mmmjjkx.rykenslimefuncustomizer.objects.customs.parent.AbstractEmptyMachine;
+import org.lins.mmmjjkx.rykenslimefuncustomizer.objects.machine.ScriptedEvalBreakHandler;
 import org.lins.mmmjjkx.rykenslimefuncustomizer.objects.machine.SmallerMachineInfo;
 import org.lins.mmmjjkx.rykenslimefuncustomizer.objects.script.lambda.RSCClickHandler;
 import org.lins.mmmjjkx.rykenslimefuncustomizer.objects.script.parent.ScriptEval;
@@ -62,12 +60,6 @@ public class CustomNoEnergyMachine extends AbstractEmptyMachine<MachineOperation
             this.eval.addThing("working", worked);
 
             addItemHandler(
-                    new BlockBreakHandler(false, false) {
-                        @Override
-                        public void onPlayerBreak(@NotNull BlockBreakEvent e, @NotNull ItemStack is, @NotNull List<ItemStack> list) {
-                            CustomNoEnergyMachine.this.eval.evalFunction("onBreak", e, is, list);
-                        }
-                    },
                     new BlockPlaceHandler(false) {
                         @Override
                         public void onPlayerPlace(@NotNull BlockPlaceEvent e) {
@@ -77,36 +69,23 @@ public class CustomNoEnergyMachine extends AbstractEmptyMachine<MachineOperation
             );
         }
 
-        this.addItemHandler(
-                new SimpleBlockBreakHandler() {
-                    @Override
-                    public void onBlockBreak(@NotNull Block b) {
-                        BlockMenu blockMenu = StorageCacheUtils.getMenu(b.getLocation());
-                        if (blockMenu != null) {
-                            blockMenu.dropItems(blockMenu.getLocation(), getInputSlots());
-                            blockMenu.dropItems(blockMenu.getLocation(), getOutputSlots());
-                        }
-                    }
-                }
-        );
+        addItemHandler(new ScriptedEvalBreakHandler(this, eval));
 
         if (menu != null) {
             for (int workSlot : work) {
-                if (workSlot > -1 && workSlot < 55) {
+                if (workSlot > -1 && workSlot < 54) {
                     ChestMenu.MenuClickHandler mcl = menu.getMenuClickHandler(workSlot);
                     menu.addMenuClickHandler(workSlot, new RSCClickHandler() {
                         @Override
-                        public boolean mainFunction(Player player, int slot, ItemStack itemStack, ClickAction action) {
+                        public void mainFunction(Player player, int slot, ItemStack itemStack, ClickAction action) {
                             if (mcl != null) {
-                                return mcl.onClick(player, slot, itemStack, action);
+                                mcl.onClick(player, slot, itemStack, action);
                             }
-                            return false;
                         }
 
                         @Override
-                        public boolean andThen(Player player, int slot, ItemStack itemStack, ClickAction action) {
+                        public void andThen(Player player, int slot, ItemStack itemStack, ClickAction action) {
                             CustomNoEnergyMachine.this.worked = true;
-                            return false;
                         }
                     });
                 }

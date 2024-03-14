@@ -10,10 +10,7 @@ import org.lins.mmmjjkx.rykenslimefuncustomizer.objects.yaml.ItemGroupReader;
 import org.lins.mmmjjkx.rykenslimefuncustomizer.objects.yaml.MenuReader;
 import org.lins.mmmjjkx.rykenslimefuncustomizer.objects.yaml.RecipeTypesReader;
 import org.lins.mmmjjkx.rykenslimefuncustomizer.objects.yaml.ResearchReader;
-import org.lins.mmmjjkx.rykenslimefuncustomizer.objects.yaml.item.CapacitorsReader;
-import org.lins.mmmjjkx.rykenslimefuncustomizer.objects.yaml.item.GeoResourceReader;
-import org.lins.mmmjjkx.rykenslimefuncustomizer.objects.yaml.item.ItemReader;
-import org.lins.mmmjjkx.rykenslimefuncustomizer.objects.yaml.item.MobDropsReader;
+import org.lins.mmmjjkx.rykenslimefuncustomizer.objects.yaml.item.*;
 import org.lins.mmmjjkx.rykenslimefuncustomizer.objects.yaml.machine.*;
 import org.lins.mmmjjkx.rykenslimefuncustomizer.update.GithubUpdater;
 import org.lins.mmmjjkx.rykenslimefuncustomizer.utils.Constants;
@@ -112,21 +109,25 @@ public class ProjectAddonLoader {
 
         RecipeTypeMap.pushRecipeType(addon.getRecipeTypes());
         //
-        YamlConfiguration items = doFileLoad(file, Constants.ITEMS_FILE);
-        ItemReader itemReader = new ItemReader(items);
-        addon.setItems(itemReader.readAll(addon));
+        YamlConfiguration mob_drops = doFileLoad(file, Constants.MOB_DROPS_FILE);
+        MobDropsReader mobDropsReader = new MobDropsReader(mob_drops);
+        addon.setMobDrops(mobDropsReader.readAll(addon));
         //
         YamlConfiguration geo_resources = doFileLoad(file, Constants.GEO_RES_FILE);
         GeoResourceReader resourceReader = new GeoResourceReader(geo_resources);
         addon.setGeoResources(resourceReader.readAll(addon));
         //
-        YamlConfiguration mob_drops = doFileLoad(file, Constants.MOB_DROPS_FILE);
-        MobDropsReader mobDropsReader = new MobDropsReader(mob_drops);
-        addon.setMobDrops(mobDropsReader.readAll(addon));
+        YamlConfiguration items = doFileLoad(file, Constants.ITEMS_FILE);
+        ItemReader itemReader = new ItemReader(items);
+        addon.setItems(itemReader.readAll(addon));
         //
         YamlConfiguration capacitors = doFileLoad(file, Constants.CAPACITORS_FILE);
         CapacitorsReader capacitorsReader = new CapacitorsReader(capacitors);
         addon.setCapacitors(capacitorsReader.readAll(addon));
+        //
+        YamlConfiguration foods = doFileLoad(file, Constants.FOODS_FILE);
+        FoodReader foodReader = new FoodReader(foods);
+        addon.setFoods(foodReader.readAll(addon));
         /////////////////
         YamlConfiguration menus = doFileLoad(file, Constants.MENUS_FILE);
         MenuReader menuReader = new MenuReader(menus);
@@ -165,9 +166,9 @@ public class ProjectAddonLoader {
         addon.setResearches(researchReader.readAll(addon));
 
         //late inits
-        addon.getItems().addAll(itemReader.loadLateInits(addon));
-        addon.getGeoResources().addAll(resourceReader.loadLateInits(addon));
         addon.getMobDrops().addAll(mobDropsReader.loadLateInits(addon));
+        addon.getGeoResources().addAll(resourceReader.loadLateInits(addon));
+        addon.getItems().addAll(itemReader.loadLateInits(addon));
         addon.getCapacitors().addAll(capacitorsReader.loadLateInits(addon));
         addon.getMenus().addAll(menuReader.loadLateInits(addon));
         addon.getMachines().addAll(machineReader.loadLateInits(addon));

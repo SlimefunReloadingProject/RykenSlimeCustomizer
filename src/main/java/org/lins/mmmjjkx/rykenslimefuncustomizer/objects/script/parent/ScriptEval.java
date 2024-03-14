@@ -1,6 +1,8 @@
 package org.lins.mmmjjkx.rykenslimefuncustomizer.objects.script.parent;
 
 import com.google.errorprone.annotations.CanIgnoreReturnValue;
+import com.oracle.truffle.api.strings.TruffleString;
+import com.oracle.truffle.js.runtime.Strings;
 import com.xzavier0722.mc.plugin.slimefun4.storage.controller.SlimefunBlockData;
 import com.xzavier0722.mc.plugin.slimefun4.storage.util.StorageCacheUtils;
 import io.github.thebusybiscuit.slimefun4.api.items.SlimefunItem;
@@ -36,6 +38,11 @@ import java.util.stream.IntStream;
 
 @Getter(AccessLevel.PROTECTED)
 public abstract class ScriptEval {
+    protected final TruffleString[] EXTERNAL_PACKAGES = new TruffleString[]{
+            Strings.constant("io"),
+            Strings.constant("net")
+    };
+
     protected final HostAccess UNIVERSAL_HOST_ACCESS = HostAccess.newBuilder()
             .allowPublicAccess(true)
             .allowAllImplementations(true)

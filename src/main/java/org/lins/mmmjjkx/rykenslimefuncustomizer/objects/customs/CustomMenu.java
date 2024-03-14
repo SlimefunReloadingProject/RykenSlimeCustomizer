@@ -73,7 +73,6 @@ public class CustomMenu extends BlockMenuPreset {
                     if (eval != null) {
                         eval.evalFunction("onClick", p, slot, is, ca);
                     }
-                    return false;
                 });
             }
         }

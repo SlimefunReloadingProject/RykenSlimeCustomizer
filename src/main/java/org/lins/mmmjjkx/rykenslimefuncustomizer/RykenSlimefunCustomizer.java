@@ -49,6 +49,10 @@ public final class RykenSlimefunCustomizer extends JavaPlugin implements Slimefu
         getServer().getScheduler().runTaskLater(this, () -> runtime = true, 1);
     }
 
+    public static boolean updatePreReleaseVersions() {
+        return INSTANCE.getConfig().getBoolean("update.pre-releases", false);
+    }
+
     @Override
     public void onDisable() {
         // Plugin shutdown logic

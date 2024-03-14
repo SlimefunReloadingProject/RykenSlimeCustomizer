@@ -14,15 +14,15 @@ import lombok.RequiredArgsConstructor;
 import lombok.Setter;
 import org.jetbrains.annotations.NotNull;
 import org.jetbrains.annotations.Nullable;
+import org.lins.mmmjjkx.rykenslimefuncustomizer.bulit_in.JavaScriptEval;
 import org.lins.mmmjjkx.rykenslimefuncustomizer.objects.customs.CustomMenu;
+import org.lins.mmmjjkx.rykenslimefuncustomizer.objects.customs.item.CustomFood;
 import org.lins.mmmjjkx.rykenslimefuncustomizer.objects.customs.item.CustomGeoResource;
 import org.lins.mmmjjkx.rykenslimefuncustomizer.objects.customs.item.CustomMobDrop;
 import org.lins.mmmjjkx.rykenslimefuncustomizer.objects.customs.machine.*;
 import org.lins.mmmjjkx.rykenslimefuncustomizer.objects.customs.parent.AbstractEmptyMachine;
 import org.lins.mmmjjkx.rykenslimefuncustomizer.objects.customs.parent.CustomItem;
 import org.lins.mmmjjkx.rykenslimefuncustomizer.objects.global.RecipeTypeMap;
-import org.lins.mmmjjkx.rykenslimefuncustomizer.bulit_in.JavaScriptEval;
-import org.lins.mmmjjkx.rykenslimefuncustomizer.objects.global.ScriptCreators;
 import org.lins.mmmjjkx.rykenslimefuncustomizer.objects.script.parent.ScriptEval;
 
 import java.io.File;
@@ -41,15 +41,14 @@ public final class ProjectAddon {
     private @NotNull final List<String> depends;
     private @NotNull final String description;
     private @NotNull final List<String> authors;
-
     //
     private @NotNull final File folder;
-
+    //
     private @Nullable String githubRepo;
-
+    //
     private Multimap<String, ScriptEval> scripts = HashMultimap.create(12, 10000000);
     private List<JavaScriptEval> scriptEvals = new ArrayList<>();
-
+    //
     //groups.yml
     private List<ItemGroup> itemGroups = new ArrayList<>();
     //menus.yml
@@ -80,6 +79,8 @@ public final class ProjectAddon {
     private List<RecipeType> recipeTypes = new ArrayList<>();
     //simple_machines.yml
     private List<SlimefunItem> simpleMachines = new ArrayList<>();
+    //foods.yml
+    private List<CustomFood> foods = new ArrayList<>();
 
     public File getScriptsFolder() {
         File scripts = new File(folder, "scripts");
@@ -109,6 +110,7 @@ public final class ProjectAddon {
           Slimefun.getRegistry().getMobDrops().get(md.getEntityType()).removeAll(md.getDrops());
         });
         capacitors.forEach(this::unregisterItem);
+        foods.forEach(this::unregisterItem);
         machines.forEach(this::unregisterItem);
         solarGenerators.forEach(this::unregisterItem);
         generators.forEach(this::unregisterItem);
@@ -117,6 +119,8 @@ public final class ProjectAddon {
         recipeMachines.forEach(this::unregisterItem);
         multiBlockMachines.forEach(this::unregisterItem);
         simpleMachines.forEach(this::unregisterItem);
+
+        recipeTypes.forEach(r -> RecipeTypeMap.removeRecipeTypes(r.getKey().getKey()));
 
         //scripts.clear();
         scriptEvals.clear();
@@ -135,6 +139,7 @@ public final class ProjectAddon {
         mobDrops.clear();
         recipeTypes.clear();
         simpleMachines.clear();
+        foods.clear();
     }
 
     private void unregisterItem(SlimefunItem item) {

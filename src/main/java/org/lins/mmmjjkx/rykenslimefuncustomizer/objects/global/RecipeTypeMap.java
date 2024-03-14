@@ -14,6 +14,12 @@ public class RecipeTypeMap {
         recipeTypes = new HashMap<>();
     }
 
+    public static void removeRecipeTypes(String... keys) {
+        for (String key : keys) {
+            recipeTypes.remove(key);
+        }
+    }
+
     public static void pushRecipeType(RecipeType type) {
         recipeTypes.put(type.getKey().getKey().toUpperCase(), type);
     }

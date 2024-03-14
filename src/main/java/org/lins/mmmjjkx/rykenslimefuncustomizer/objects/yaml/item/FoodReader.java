@@ -3,32 +3,26 @@ package org.lins.mmmjjkx.rykenslimefuncustomizer.objects.yaml.item;
 import io.github.thebusybiscuit.slimefun4.api.items.ItemGroup;
 import io.github.thebusybiscuit.slimefun4.api.items.SlimefunItemStack;
 import io.github.thebusybiscuit.slimefun4.api.recipes.RecipeType;
-import io.github.thebusybiscuit.slimefun4.core.attributes.Radioactivity;
 import io.github.thebusybiscuit.slimefun4.libraries.dough.collections.Pair;
-import net.kyori.adventure.text.Component;
 import org.bukkit.configuration.ConfigurationSection;
 import org.bukkit.configuration.file.YamlConfiguration;
 import org.bukkit.inventory.ItemStack;
-import org.lins.mmmjjkx.rykenslimefuncustomizer.RykenSlimefunCustomizer;
 import org.lins.mmmjjkx.rykenslimefuncustomizer.bulit_in.JavaScriptEval;
 import org.lins.mmmjjkx.rykenslimefuncustomizer.objects.ProjectAddon;
-import org.lins.mmmjjkx.rykenslimefuncustomizer.objects.customs.item.CustomEnergyItem;
-import org.lins.mmmjjkx.rykenslimefuncustomizer.objects.customs.item.CustomRadiationItem;
-import org.lins.mmmjjkx.rykenslimefuncustomizer.objects.customs.item.CustomUnplaceableItem;
-import org.lins.mmmjjkx.rykenslimefuncustomizer.objects.customs.parent.CustomItem;
+import org.lins.mmmjjkx.rykenslimefuncustomizer.objects.customs.item.CustomFood;
 import org.lins.mmmjjkx.rykenslimefuncustomizer.objects.yaml.YamlReader;
 import org.lins.mmmjjkx.rykenslimefuncustomizer.utils.CommonUtils;
 import org.lins.mmmjjkx.rykenslimefuncustomizer.utils.ExceptionHandler;
 
 import java.io.File;
 
-public class ItemReader extends YamlReader<CustomItem> {
-    public ItemReader(YamlConfiguration config) {
+public class FoodReader extends YamlReader<CustomFood> {
+    public FoodReader(YamlConfiguration config) {
         super(config);
     }
 
     @Override
-    public CustomItem readEach(String s, ProjectAddon addon) {
+    public CustomFood readEach(String s, ProjectAddon addon) {
         ConfigurationSection section = configuration.getConfigurationSection(s);
         if (section == null) return null;
         ExceptionHandler.HandleResult result = ExceptionHandler.handleIdConflict(s);
@@ -67,44 +61,6 @@ public class ItemReader extends YamlReader<CustomItem> {
             }
         }
 
-        CustomItem instance;
-
-        boolean energy = section.contains("energy_capacity");
-        boolean placeable = section.getBoolean("placeable", false);
-        boolean hasRadiation = section.contains("radiation");
-
-        if (hasRadiation) {
-            String radio = section.getString("radiation");
-            Pair<ExceptionHandler.HandleResult, Radioactivity> radioactivityPair =
-                    ExceptionHandler.handleEnumValueOf("错误的辐射等级级别: "+radio, Radioactivity.class, radio);
-            Radioactivity radioactivity = radioactivityPair.getSecondValue();
-
-            if (radioactivityPair.getFirstValue() == ExceptionHandler.HandleResult.FAILED || radioactivity == null) {
-                return null;
-            }
-
-            CommonUtils.addLore(stack, Component.newline(), CommonUtils.parseToComponent(radioactivity.getLore()));
-
-            return new CustomRadiationItem(group.getSecondValue(), new SlimefunItemStack(s, stack), rt.getSecondValue(), itemStacks, radioactivity, eval);
-        }
-
-        SlimefunItemStack slimefunItemStack = new SlimefunItemStack(s, stack);
-
-        if (energy) {
-            double energyCapacity = section.getDouble("energy_capacity");
-            if (energyCapacity < 1) {
-                ExceptionHandler.handleError("无法在附属" + addon.getAddonName() + "中加载物品" + s + "能源容量不能小于1");
-                return null;
-            }
-            instance = new CustomEnergyItem(group.getSecondValue(), slimefunItemStack, rt.getSecondValue(), itemStacks, (float) energyCapacity, eval);
-        } else if (placeable) {
-            instance = new CustomItem(group.getSecondValue(), slimefunItemStack, rt.getSecondValue(), itemStacks);
-        } else {
-            instance = new CustomUnplaceableItem(group.getSecondValue(), slimefunItemStack, rt.getSecondValue(), itemStacks, eval);
-        }
-
-        instance.register(RykenSlimefunCustomizer.INSTANCE);
-
-        return instance;
+        return new CustomFood(group.getSecondValue(), new SlimefunItemStack(s, stack), rt.getSecondValue(), itemStacks, eval);
     }
 }

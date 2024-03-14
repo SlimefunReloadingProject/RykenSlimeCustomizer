@@ -31,7 +31,7 @@ public class GithubUpdater {
             String releaseName = release.getName();
 
             if (releaseName == null) {
-                RykenSlimefunCustomizer.INSTANCE.getLogger().log(Level.WARNING,"无法更新附属 " + prjId + ": 已到达GitHub API速率限制(60请求/h)");
+                RykenSlimefunCustomizer.INSTANCE.getLogger().log(Level.WARNING,"无法检查附属 " + prjId + "的更新: 已到达GitHub API速率限制(60请求/h)");
                 return false;
             }
 
@@ -40,6 +40,10 @@ public class GithubUpdater {
             }
 
             if (!Objects.equals(currentVer, releaseName)) {
+                if (release.isPrerelease() && !RykenSlimefunCustomizer.updatePreReleaseVersions()) {
+                    return false;
+                }
+
                 File zip = new File(ConcurrentDownloader.downloadFolder, prjId + "-" + releaseName + ".zip");
 
                 if (zip.exists()) {

@@ -272,7 +272,7 @@ public class CustomRecipeMachine extends AContainer implements RecipeDisplayItem
                     if (slotItem != null && SlimefunUtils.isItemSimilar(slotItem, input, true)) {
                         int amount = found.getOrDefault(slot, 0);
                         if (amount + slotItem.getAmount() <= input.getAmount()) {
-                            found.put(slot, amount + slotItem.getAmount());
+                            found.put(slot, amount + input.getAmount());
                             itemFound = true;
                             break;
                         }
