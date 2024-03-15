@@ -55,7 +55,6 @@ public class ItemReader extends YamlReader<CustomItem> {
 
         if (rt.getFirstValue() == ExceptionHandler.HandleResult.FAILED) return null;
 
-
         JavaScriptEval eval = null;
         if (section.contains("script")) {
             String script = section.getString("script", "");
@@ -88,7 +87,6 @@ public class ItemReader extends YamlReader<CustomItem> {
             return new CustomRadiationItem(group.getSecondValue(), new SlimefunItemStack(s, stack), rt.getSecondValue(), itemStacks, radioactivity, eval);
         }
 
-        SlimefunItemStack slimefunItemStack = new SlimefunItemStack(s, stack);
 
         if (energy) {
             double energyCapacity = section.getDouble("energy_capacity");
@@ -96,11 +94,14 @@ public class ItemReader extends YamlReader<CustomItem> {
                 ExceptionHandler.handleError("无法在附属" + addon.getAddonName() + "中加载物品" + s + "能源容量不能小于1");
                 return null;
             }
-            instance = new CustomEnergyItem(group.getSecondValue(), slimefunItemStack, rt.getSecondValue(), itemStacks, (float) energyCapacity, eval);
+            
+            CommonUtils.addLore(stack, CommonUtils.parseToComponent("&8⇨ &e⚡ &70 / 100 J"));
+
+            instance = new CustomEnergyItem(group.getSecondValue(), new SlimefunItemStack(s, stack), rt.getSecondValue(), itemStacks, (float) energyCapacity, eval);
         } else if (placeable) {
-            instance = new CustomItem(group.getSecondValue(), slimefunItemStack, rt.getSecondValue(), itemStacks);
+            instance = new CustomItem(group.getSecondValue(), new SlimefunItemStack(s, stack), rt.getSecondValue(), itemStacks);
         } else {
-            instance = new CustomUnplaceableItem(group.getSecondValue(), slimefunItemStack, rt.getSecondValue(), itemStacks, eval);
+            instance = new CustomUnplaceableItem(group.getSecondValue(), new SlimefunItemStack(s, stack), rt.getSecondValue(), itemStacks, eval);
         }
 
         instance.register(RykenSlimefunCustomizer.INSTANCE);

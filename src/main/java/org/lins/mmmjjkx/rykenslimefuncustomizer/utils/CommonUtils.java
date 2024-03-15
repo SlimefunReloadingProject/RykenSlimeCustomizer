@@ -34,7 +34,6 @@ import java.nio.file.Files;
 import java.nio.file.StandardOpenOption;
 import java.util.ArrayList;
 import java.util.Arrays;
-import java.util.Collections;
 import java.util.List;
 import java.util.function.Predicate;
 import java.util.regex.Matcher;
@@ -184,30 +183,30 @@ public class CommonUtils {
                 PlayerSkin playerSkin = PlayerSkin.fromHashCode(material);
                 ItemStack head = PlayerHead.getItemStack(playerSkin);
 
-                itemStack = new RSCItemStack(head, name, lore.toArray(new String[]{}));
+                itemStack = new RSCItemStack(head, name, lore);
             }
             case "skull_base64","skull" -> {
                 PlayerSkin playerSkin = PlayerSkin.fromBase64(material);
                 ItemStack head = PlayerHead.getItemStack(playerSkin);
 
-                itemStack = new RSCItemStack(head, name, lore.toArray(new String[]{}));
+                itemStack = new RSCItemStack(head, name, lore);
             }
             case "skull_url" -> {
                 PlayerSkin playerSkin = PlayerSkin.fromURL(material);
                 ItemStack head = PlayerHead.getItemStack(playerSkin);
 
-                itemStack = new RSCItemStack(head, name, lore.toArray(new String[]{}));
+                itemStack = new RSCItemStack(head, name, lore);
             }
             case "slimefun" -> {
                 SlimefunItem sis = SlimefunItem.getById(material);
                 if (sis != null) {
                     ItemStack is = sis.getItem();
 
-                    itemStack = new RSCItemStack(is, name, lore.toArray(new String[]{}));
-                    break;
+                    itemStack = new RSCItemStack(is, name, lore);
+                } else {
+                    ExceptionHandler.handleError("无法找到粘液物品" + material + "，已转为石头");
+                    itemStack = new RSCItemStack(Material.STONE, name, lore);
                 }
-                ExceptionHandler.handleError("无法找到粘液物品"+material+"，已转为石头");
-                itemStack = new RSCItemStack(Material.STONE, name);
             }
             case "saveditem" -> {
                 File file = new File(addon.getSavedItemsFolder(), material + ".yml");
@@ -275,7 +274,13 @@ public class CommonUtils {
 
     public static void addLore(ItemStack stack, Component... lore) {
         ItemMeta im = stack.getItemMeta();
-        im.lore(Arrays.asList(lore));
+        var lorel = im.lore();
+        if (lorel != null) {
+            lorel.addAll(Arrays.asList(lore));
+        } else {
+            lorel = Arrays.asList(lore);
+        }
+        im.lore(lorel);
         stack.setItemMeta(im);
     }
 
