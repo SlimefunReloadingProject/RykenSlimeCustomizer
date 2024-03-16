@@ -95,7 +95,7 @@ public class ItemReader extends YamlReader<CustomItem> {
                 return null;
             }
             
-            CommonUtils.addLore(stack, CommonUtils.parseToComponent("&8⇨ &e⚡ &70 / 100 J"));
+            CommonUtils.addLore(stack, CommonUtils.parseToComponent("&8⇨ &e⚡ &70 / "+energyCapacity+" J"));
 
             instance = new CustomEnergyItem(group.getSecondValue(), new SlimefunItemStack(s, stack), rt.getSecondValue(), itemStacks, (float) energyCapacity, eval);
         } else if (placeable) {
