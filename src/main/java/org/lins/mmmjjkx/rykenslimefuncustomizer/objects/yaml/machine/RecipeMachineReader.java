@@ -154,11 +154,12 @@ public class RecipeMachineReader extends YamlReader<CustomRecipeMachine> {
             }
 
             boolean chooseOne = recipes.getBoolean("chooseOne", false);
+            boolean forDisplay = recipes.getBoolean("forDisplay", false);
 
             input = removeNulls(input);
             output = removeNulls(output);
 
-            list.add(new RecipeMachineRecipe(seconds, input, output, chances, chooseOne));
+            list.add(new RecipeMachineRecipe(seconds, input, output, chances, chooseOne, forDisplay));
         }
         return list;
     }

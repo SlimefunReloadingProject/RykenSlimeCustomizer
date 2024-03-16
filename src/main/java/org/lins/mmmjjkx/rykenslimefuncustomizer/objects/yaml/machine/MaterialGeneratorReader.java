@@ -83,7 +83,7 @@ public class MaterialGeneratorReader extends YamlReader<CustomMaterialGenerator>
             status = section.getInt("status");
         }
 
-        CustomMaterialGenerator cmg = new CustomMaterialGenerator(group.getSecondValue(), slimefunItemStack, rt.getSecondValue(), recipe, capacity, output, status, tickRate, out, per);
+        CustomMaterialGenerator cmg = new CustomMaterialGenerator(group.getSecondValue(), slimefunItemStack, rt.getSecondValue(), recipe, capacity, output, status, tickRate, out, menu, per);
         menu.setInvb(cmg);
         return cmg;
     }

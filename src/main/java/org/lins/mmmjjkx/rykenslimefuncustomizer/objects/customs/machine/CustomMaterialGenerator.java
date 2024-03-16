@@ -11,6 +11,7 @@ import io.github.thebusybiscuit.slimefun4.core.attributes.RecipeDisplayItem;
 import io.github.thebusybiscuit.slimefun4.core.networks.energy.EnergyNetComponentType;
 import io.github.thebusybiscuit.slimefun4.implementation.handlers.SimpleBlockBreakHandler;
 import io.github.thebusybiscuit.slimefun4.libraries.dough.items.CustomItemStack;
+import io.github.thebusybiscuit.slimefun4.utils.ChestMenuUtils;
 import me.mrCookieSlime.Slimefun.Objects.SlimefunItem.interfaces.InventoryBlock;
 import me.mrCookieSlime.Slimefun.Objects.handlers.BlockTicker;
 import me.mrCookieSlime.Slimefun.api.inventory.BlockMenu;
@@ -19,6 +20,7 @@ import org.bukkit.block.Block;
 import org.bukkit.inventory.ItemStack;
 import org.jetbrains.annotations.NotNull;
 import org.lins.mmmjjkx.rykenslimefuncustomizer.RykenSlimefunCustomizer;
+import org.lins.mmmjjkx.rykenslimefuncustomizer.objects.customs.CustomMenu;
 import org.lins.mmmjjkx.rykenslimefuncustomizer.objects.customs.item.RSCItemStack;
 import org.lins.mmmjjkx.rykenslimefuncustomizer.utils.CommonUtils;
 
@@ -36,7 +38,7 @@ public class CustomMaterialGenerator extends SlimefunItem implements InventoryBl
 
     public CustomMaterialGenerator(ItemGroup itemGroup, SlimefunItemStack item, RecipeType recipeType,
                                    ItemStack[] recipe, int capacity, List<Integer> output, int statusSlot,
-                                   int tickRate, ItemStack generation, int per) {
+                                   int tickRate, ItemStack generation, CustomMenu menu, int per) {
         super(itemGroup, item, recipeType, recipe);
 
         this.capacity = capacity;
@@ -57,6 +59,8 @@ public class CustomMaterialGenerator extends SlimefunItem implements InventoryBl
             }
         });
 
+        menu.addMenuClickHandler(statusSlot, ChestMenuUtils.getEmptyClickHandler());
+
         register(RykenSlimefunCustomizer.INSTANCE);
     }
 
@@ -70,6 +74,12 @@ public class CustomMaterialGenerator extends SlimefunItem implements InventoryBl
                 if (progress >= tickRate) {
                     setProgress(b, 0);
                     if (blockMenu.fits(generation, getOutputSlots())) {
+                        if (blockMenu.hasViewer()) {
+                            blockMenu.replaceExistingItem(statusSlot, new CustomItemStack(
+                                    Material.LIME_STAINED_GLASS_PANE,
+                                    "&a生产中"
+                            ));
+                        }
                         blockMenu.pushItem(generation.clone(), getOutputSlots());
                         removeCharge(b.getLocation(), per);
                     } else {
@@ -81,27 +91,15 @@ public class CustomMaterialGenerator extends SlimefunItem implements InventoryBl
                                 ));
                             }
                         }
-                        return;
                     }
                 } else {
                     addProgress(b);
                 }
-            }
-
-            if (blockMenu.hasViewer()) {
-                if (statusSlot > -1) {
-                    if (getCharge(b.getLocation()) >= per) {
-                        blockMenu.replaceExistingItem(statusSlot, new CustomItemStack(
-                                Material.LIME_STAINED_GLASS_PANE,
-                                "&a生产中"
-                        ));
-                    } else {
-                        blockMenu.replaceExistingItem(statusSlot, new CustomItemStack(
-                                Material.RED_STAINED_GLASS_PANE,
-                                "&4电力不足"
-                        ));
-                    }
-                }
+            } else {
+                blockMenu.replaceExistingItem(statusSlot, new CustomItemStack(
+                        Material.RED_STAINED_GLASS_PANE,
+                        "&4电力不足"
+                ));
             }
         }
     }

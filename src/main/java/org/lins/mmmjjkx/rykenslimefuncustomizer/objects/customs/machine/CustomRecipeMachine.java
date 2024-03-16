@@ -34,6 +34,7 @@ public final class CustomRecipeMachine extends AContainer implements RecipeDispl
     private final MachineProcessor<CraftingOperation> processor;
     private final List<Integer> input;
     private final List<Integer> output;
+    private final List<RecipeMachineRecipe> raw_recipes;
     private final List<RecipeMachineRecipe> recipes;
     private final int energyPerCraft;
     private final int capacity;
@@ -48,7 +49,8 @@ public final class CustomRecipeMachine extends AContainer implements RecipeDispl
         this.processor = new MachineProcessor<>(this);
         this.input = input;
         this.output = output;
-        this.recipes = recipes;
+        this.raw_recipes = recipes;
+        this.recipes = raw_recipes.stream().filter(r -> !r.isForDisplay()).toList();
         this.energyPerCraft = energyPerCraft;
         this.capacity = capacity;
         this.menu = menu;
@@ -119,7 +121,7 @@ public final class CustomRecipeMachine extends AContainer implements RecipeDispl
     public List<ItemStack> getDisplayRecipes() {
         List<ItemStack> displayRecipes = new ArrayList<>();
 
-        for (RecipeMachineRecipe recipe : recipes) {
+        for (RecipeMachineRecipe recipe : raw_recipes) {
             ItemStack[] input = recipe.getInput();
             ItemStack[] output = recipe.getOutput();
             int max = Math.max(input.length, output.length);
@@ -235,48 +237,5 @@ public final class CustomRecipeMachine extends AContainer implements RecipeDispl
                 }
             }
         }
-    }
-
-    protected MachineRecipe findNextRecipe(BlockMenu inv) {
-        int[] inputSlots = this.getInputSlots();
-
-        for (MachineRecipe recipe : this.recipes) {
-            Map<Integer, Integer> found = new HashMap<>();
-
-            int next = 1;
-            ItemStack[] inputs = recipe.getInput();
-
-            input:
-            for (ItemStack input : inputs) {
-                boolean sameItemType;
-                for (int slot : inputSlots) {
-                    ItemStack slotItem = inv.getItemInSlot(slot);
-                    if (slotItem != null && SlimefunUtils.isItemSimilar(slotItem, input, true)) {
-                        sameItemType = next < inputs.length && inputs[next].getType() == slotItem.getType();
-                        found.put(slot, input.getAmount());
-                        if (!sameItemType) {
-                            continue input;
-                        }
-                    }
-                }
-                next++;
-            }
-
-            if (found.size() == recipe.getInput().length) {
-                if (!InvUtils.fitAll(inv.toInventory(), recipe.getOutput(), this.getOutputSlots())) {
-                    return null;
-                }
-
-                for (Map.Entry<Integer, Integer> entry : found.entrySet()) {
-                    int slot = entry.getKey();
-                    int amount = entry.getValue();
-                    inv.consumeItem(slot, amount);
-                }
-
-                return recipe;
-            }
-        }
-
-        return null;
     }
 }

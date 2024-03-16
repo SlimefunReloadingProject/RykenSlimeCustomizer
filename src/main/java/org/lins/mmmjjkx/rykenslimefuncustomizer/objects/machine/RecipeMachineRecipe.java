@@ -13,14 +13,17 @@ public class RecipeMachineRecipe extends MachineRecipe {
     private final List<Integer> chances;
     @Getter
     private final boolean chooseOneIfHas;
+    @Getter
+    private final boolean forDisplay;
 
     private final Random RNG = new Random();
 
-    public RecipeMachineRecipe(int seconds, ItemStack[] input, ItemStack[] output, List<Integer> chances, boolean chooseOneIfHas) {
+    public RecipeMachineRecipe(int seconds, ItemStack[] input, ItemStack[] output, List<Integer> chances, boolean chooseOneIfHas, boolean forDisplay) {
         super(seconds, input.clone(), output.clone());
 
         this.chances = chances;
         this.chooseOneIfHas = chooseOneIfHas;
+        this.forDisplay = forDisplay;
     }
 
     public List<ItemStack> getMatchChanceResult() {

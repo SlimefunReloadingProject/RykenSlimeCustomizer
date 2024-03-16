@@ -170,6 +170,7 @@ public class ProjectAddonLoader {
         addon.getGeoResources().addAll(resourceReader.loadLateInits(addon));
         addon.getItems().addAll(itemReader.loadLateInits(addon));
         addon.getCapacitors().addAll(capacitorsReader.loadLateInits(addon));
+        addon.getFoods().addAll(foodReader.loadLateInits(addon));
         addon.getMenus().addAll(menuReader.loadLateInits(addon));
         addon.getMachines().addAll(machineReader.loadLateInits(addon));
         addon.getGenerators().addAll(generatorReader.loadLateInits(addon));

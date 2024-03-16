@@ -29,6 +29,8 @@ import java.io.FileNotFoundException;
 import java.io.IOException;
 import java.nio.charset.StandardCharsets;
 import java.nio.file.Files;
+import java.security.Permission;
+import java.security.Permissions;
 import java.util.Random;
 import java.util.function.BiConsumer;
 import java.util.function.BiFunction;
@@ -63,6 +65,9 @@ public abstract class ScriptEval {
             .targetTypeMapping(Float.class, String.class, null, String::valueOf)
             .targetTypeMapping(Double.class, String.class, null, String::valueOf)
             .targetTypeMapping(Object.class, String.class, null, String::valueOf)
+
+            .denyAccess(System.class).denyAccess(Process.class).denyAccess(Runtime.class).denyAccess(ProcessBuilder.class)
+            .denyAccess(Class.class).denyAccess(ClassLoader.class).denyAccess(Permission.class).denyAccess(Permissions.class)
             .build();
 
     private final File file;
