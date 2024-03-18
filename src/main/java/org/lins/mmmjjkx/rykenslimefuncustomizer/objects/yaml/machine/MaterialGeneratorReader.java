@@ -14,6 +14,7 @@ import org.lins.mmmjjkx.rykenslimefuncustomizer.objects.yaml.YamlReader;
 import org.lins.mmmjjkx.rykenslimefuncustomizer.utils.CommonUtils;
 import org.lins.mmmjjkx.rykenslimefuncustomizer.utils.ExceptionHandler;
 
+import java.util.Arrays;
 import java.util.List;
 
 public class MaterialGeneratorReader extends YamlReader<CustomMaterialGenerator> {
@@ -59,8 +60,8 @@ public class MaterialGeneratorReader extends YamlReader<CustomMaterialGenerator>
         List<Integer> output = section.getIntegerList("output");
 
         int capacity = section.getInt("capacity", 0);
-        ConfigurationSection outputItem = section.getConfigurationSection("outputItem");
-        ItemStack out = CommonUtils.readItem(outputItem, true, addon);
+        ConfigurationSection outputItems = section.getConfigurationSection("outputs");
+        ItemStack[] out = CommonUtils.readRecipe(outputItems, addon, output.size());
         if (out == null) {
             ExceptionHandler.handleError("无法在附属"+addon.getAddonName()+"中加载材料生成器"+s+": 输出物品为空或格式错误导致无法加载");
             return null;
@@ -83,7 +84,7 @@ public class MaterialGeneratorReader extends YamlReader<CustomMaterialGenerator>
             status = section.getInt("status");
         }
 
-        CustomMaterialGenerator cmg = new CustomMaterialGenerator(group.getSecondValue(), slimefunItemStack, rt.getSecondValue(), recipe, capacity, output, status, tickRate, out, menu, per);
+        CustomMaterialGenerator cmg = new CustomMaterialGenerator(group.getSecondValue(), slimefunItemStack, rt.getSecondValue(), recipe, capacity, output, status, tickRate, Arrays.asList(out), menu, per);
         menu.setInvb(cmg);
         return cmg;
     }

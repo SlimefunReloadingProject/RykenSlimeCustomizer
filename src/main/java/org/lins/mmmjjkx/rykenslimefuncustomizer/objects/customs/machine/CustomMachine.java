@@ -11,6 +11,7 @@ import io.github.thebusybiscuit.slimefun4.core.handlers.BlockPlaceHandler;
 import io.github.thebusybiscuit.slimefun4.core.machines.MachineOperation;
 import io.github.thebusybiscuit.slimefun4.core.machines.MachineProcessor;
 import io.github.thebusybiscuit.slimefun4.core.networks.energy.EnergyNetComponentType;
+import lombok.Getter;
 import me.mrCookieSlime.Slimefun.Objects.handlers.BlockTicker;
 import me.mrCookieSlime.Slimefun.api.inventory.BlockMenu;
 import org.bukkit.block.Block;
@@ -35,6 +36,9 @@ public class CustomMachine extends AbstractEmptyMachine<MachineOperation> implem
     private final MachineProcessor<MachineOperation> processor;
     private final @Nullable ScriptEval eval;
 
+    @Getter
+    private final CustomMenu menu;
+
     public CustomMachine(ItemGroup itemGroup, SlimefunItemStack item, RecipeType recipeType, ItemStack[] recipe, @Nullable CustomMenu menu,
                          List<Integer> input, List<Integer> output, MachineRecord record, EnergyNetComponentType type, @Nullable ScriptEval eval) {
         super(itemGroup, item, recipeType, recipe);
@@ -42,6 +46,7 @@ public class CustomMachine extends AbstractEmptyMachine<MachineOperation> implem
         this.input = input;
         this.output = output;
         this.theRecord = record;
+        this.menu = menu;
 
         this.type = type;
         this.eval = eval;

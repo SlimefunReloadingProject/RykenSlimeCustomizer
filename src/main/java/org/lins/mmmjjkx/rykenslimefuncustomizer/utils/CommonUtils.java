@@ -42,7 +42,7 @@ import java.util.regex.Pattern;
 public class CommonUtils {
     private static final NamespacedKey GLOW = new NamespacedKey(RykenSlimefunCustomizer.INSTANCE, "item_glow");
     private static final MiniMessage MINI_MESSAGE = MiniMessage.builder().build();
-    private static final LegacyComponentSerializer LEGACY_SERIALIZER = LegacyComponentSerializer.legacyAmpersand();
+    private static final LegacyComponentSerializer LEGACY_COMPONENT_SERIALIZER = LegacyComponentSerializer.legacyAmpersand().toBuilder().hexColors().build();
 
     public static <T extends ItemStack> T doGlow(T item) {
         item.addUnsafeEnchantment(Enchantment.ARROW_INFINITE, 1);
@@ -60,10 +60,15 @@ public class CommonUtils {
     public static Component parseToComponent(String text) {
         if (text == null) return Component.empty();
 
-        Component legacy1 = LegacyComponentSerializer.legacySection().deserialize(text);
-        Component legacy2 = LEGACY_SERIALIZER.deserialize(LEGACY_SERIALIZER.serialize(legacy1));
+        Component legacy1 = LEGACY_COMPONENT_SERIALIZER.deserialize(text);
+        String miniMessagedText = MINI_MESSAGE.serialize(legacy1);
 
-        return MINI_MESSAGE.deserialize(MINI_MESSAGE.serialize(legacy2)).decoration(TextDecoration.ITALIC, false);
+        try {
+            return MINI_MESSAGE.deserialize(miniMessagedText).decoration(TextDecoration.ITALIC, false);
+        } catch (Exception e) {
+            ExceptionHandler.handleError("无法解析" + text + "这些文本为消息组件，已转为旧版颜色文本（可能含有旧版颜色符号'§'）", e);
+            return legacy1;
+        }
     }
 
     public static List<Component> toComponents(String... texts) {
@@ -88,7 +93,7 @@ public class CommonUtils {
         if (texts == null) return components;
 
         for (String s : texts) {
-            if (s != null) {
+            if (s != null && !s.isBlank()) {
                 components.add(parseToComponent(s));
             } else {
                 components.add(Component.newline());

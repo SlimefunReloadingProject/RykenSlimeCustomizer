@@ -62,6 +62,16 @@ public class ExceptionHandler {
         logger.error(serializer.deserialize("&4ERROR | " + message));
     }
 
+    public static void handleError(String message, Throwable e) {
+        if (message == null || message.isBlank()) return;
+
+        if (e != null) {
+            logger.error(serializer.deserialize("&4ERROR | " + message), e);
+        } else {
+            handleError(message);
+        }
+    }
+
     /**
      * 检测后门等
      * @param message the message

@@ -24,6 +24,7 @@ import org.lins.mmmjjkx.rykenslimefuncustomizer.objects.customs.CustomMenu;
 import org.lins.mmmjjkx.rykenslimefuncustomizer.objects.customs.item.RSCItemStack;
 import org.lins.mmmjjkx.rykenslimefuncustomizer.utils.CommonUtils;
 
+import java.util.ArrayList;
 import java.util.List;
 import java.util.Objects;
 
@@ -33,12 +34,12 @@ public class CustomMaterialGenerator extends SlimefunItem implements InventoryBl
     private final List<Integer> output;
     private final int tickRate;
     private final int statusSlot;
-    private final ItemStack generation;
+    private final List<ItemStack> generation;
     private final int per;
 
     public CustomMaterialGenerator(ItemGroup itemGroup, SlimefunItemStack item, RecipeType recipeType,
                                    ItemStack[] recipe, int capacity, List<Integer> output, int statusSlot,
-                                   int tickRate, ItemStack generation, CustomMenu menu, int per) {
+                                   int tickRate, List<ItemStack> generation, CustomMenu menu, int per) {
         super(itemGroup, item, recipeType, recipe);
 
         this.capacity = capacity;
@@ -73,22 +74,24 @@ public class CustomMaterialGenerator extends SlimefunItem implements InventoryBl
             if (getCharge(b.getLocation()) >= per) {
                 if (progress >= tickRate) {
                     setProgress(b, 0);
-                    if (blockMenu.fits(generation, getOutputSlots())) {
-                        if (blockMenu.hasViewer()) {
-                            blockMenu.replaceExistingItem(statusSlot, new CustomItemStack(
-                                    Material.LIME_STAINED_GLASS_PANE,
-                                    "&a生产中"
-                            ));
-                        }
-                        blockMenu.pushItem(generation.clone(), getOutputSlots());
-                        removeCharge(b.getLocation(), per);
-                    } else {
-                        if (blockMenu.hasViewer()) {
-                            if (statusSlot > -1) {
+                    for (ItemStack item : generation) {
+                        if (blockMenu.fits(item, getOutputSlots())) {
+                            if (blockMenu.hasViewer()) {
                                 blockMenu.replaceExistingItem(statusSlot, new CustomItemStack(
-                                        Material.ORANGE_STAINED_GLASS_PANE,
-                                        "&c空间不足"
+                                        Material.LIME_STAINED_GLASS_PANE,
+                                        "&a生产中"
                                 ));
+                            }
+                            blockMenu.pushItem(item.clone(), getOutputSlots());
+                            removeCharge(b.getLocation(), per);
+                        } else {
+                            if (blockMenu.hasViewer()) {
+                                if (statusSlot > -1) {
+                                    blockMenu.replaceExistingItem(statusSlot, new CustomItemStack(
+                                            Material.ORANGE_STAINED_GLASS_PANE,
+                                            "&c空间不足"
+                                    ));
+                                }
                             }
                         }
                     }
@@ -168,6 +171,11 @@ public class CustomMaterialGenerator extends SlimefunItem implements InventoryBl
     public List<ItemStack> getDisplayRecipes() {
         ItemStack speed = new RSCItemStack(Material.KNOWLEDGE_BOOK, CommonUtils.parseToComponent("&a&l速度"),
                 CommonUtils.parseToComponent("&a&l每 &b&l" + tickRate + " &a&l个粘液刻生成一次"));
-        return List.of(speed, generation);
+        List<ItemStack> list = new ArrayList<>();
+        for (ItemStack gen : generation) {
+            list.add(speed);
+            list.add(gen.clone());
+        }
+        return list;
     }
 }
