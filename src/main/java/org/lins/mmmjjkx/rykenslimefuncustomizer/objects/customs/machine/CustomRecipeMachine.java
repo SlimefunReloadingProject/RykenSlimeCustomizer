@@ -140,7 +140,7 @@ public final class CustomRecipeMachine extends AContainer implements RecipeDispl
                         ItemStack out = output[i].clone();
 
                         if (chance < 100) {
-                            CommonUtils.addLore(out, CommonUtils.parseToComponent("&a有&b " + chance + "% &a的概率产出"));
+                            CommonUtils.addLore(out, true, CommonUtils.parseToComponent("&a有&b " + chance + "% &a的概率产出"));
                         }
 
                         displayRecipes.add(out);

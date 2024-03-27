@@ -60,12 +60,36 @@ public class RSCItemStack extends CustomItemStack {
 
     public RSCItemStack(Material material, Component name, Component... lore) {
         super(material, meta -> {
-            if (name != null && !name.children().isEmpty()) {
+            if (name != null) {
                 meta.displayName(name);
             }
 
             if (lore != null && lore.length != 0) {
                 meta.lore(Arrays.asList(lore));
+            }
+        });
+    }
+
+    public RSCItemStack(ItemStack item, Component name, List<String> lore) {
+        super(item, meta -> {
+            if (name != null) {
+                meta.displayName(name);
+            }
+
+            if (lore != null && !lore.isEmpty()) {
+                meta.lore(CommonUtils.toComponents(lore));
+            }
+        });
+    }
+
+    public RSCItemStack(Material material, Component name, List<String> lore) {
+        super(material, meta -> {
+            if (name != null) {
+                meta.displayName(name);
+            }
+
+            if (lore != null && !lore.isEmpty()) {
+                meta.lore(CommonUtils.toComponents(lore));
             }
         });
     }

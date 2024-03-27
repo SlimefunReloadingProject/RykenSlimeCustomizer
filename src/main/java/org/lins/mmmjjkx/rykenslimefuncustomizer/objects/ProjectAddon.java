@@ -18,7 +18,7 @@ import org.lins.mmmjjkx.rykenslimefuncustomizer.bulit_in.JavaScriptEval;
 import org.lins.mmmjjkx.rykenslimefuncustomizer.objects.customs.CustomMenu;
 import org.lins.mmmjjkx.rykenslimefuncustomizer.objects.customs.item.CustomFood;
 import org.lins.mmmjjkx.rykenslimefuncustomizer.objects.customs.item.CustomGeoResource;
-import org.lins.mmmjjkx.rykenslimefuncustomizer.objects.customs.item.CustomMobDrop;
+import org.lins.mmmjjkx.rykenslimefuncustomizer.objects.customs.item.exts.CustomMobDrop;
 import org.lins.mmmjjkx.rykenslimefuncustomizer.objects.customs.machine.*;
 import org.lins.mmmjjkx.rykenslimefuncustomizer.objects.customs.parent.AbstractEmptyMachine;
 import org.lins.mmmjjkx.rykenslimefuncustomizer.objects.customs.parent.CustomItem;

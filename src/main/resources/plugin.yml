@@ -44,7 +44,8 @@ softdepend:
   - Barrels
   #- ClayTech
   - FNAmplifications
-  - SMG
+  - SimpleMaterialGenerators
+  - Networks
   - EMC2
   - Simple-Storage
   - AlchimiaVitae
@@ -107,6 +108,7 @@ libraries:
   - org.graalvm.js:js-scriptengine:23.0.2
   - org.graalvm.js:js:23.0.2
   - org.graalvm.truffle:truffle-api:23.0.2
+  - net.bytebuddy:byte-buddy:1.12.6
 commands:
   rykenslimecustomizer:
     aliases: ["rsc"]

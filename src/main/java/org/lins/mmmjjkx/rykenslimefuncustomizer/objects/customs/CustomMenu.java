@@ -117,11 +117,13 @@ public class CustomMenu extends BlockMenuPreset {
     }
 
     private void cloneOriginalInventory(BlockMenuPreset preset) {
-        this.inventory = Bukkit.createInventory(this, preset.getSize(), CommonUtils.parseToComponent(title));
+        preset.getContents();
+        this.inventory = Bukkit.createInventory(this, preset.toInventory().getSize(), CommonUtils.parseToComponent(title));
 
         for (int i = 0; i < preset.getSize(); i++) {
             ItemStack item = preset.getItemInSlot(i);
             if (item != null) {
+                this.addItem(i, item.clone());
                 this.inventory.setItem(i, item.clone());
             }
             MenuClickHandler mch = preset.getMenuClickHandler(i);

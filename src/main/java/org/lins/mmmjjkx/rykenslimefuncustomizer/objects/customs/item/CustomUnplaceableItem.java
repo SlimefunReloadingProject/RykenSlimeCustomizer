@@ -12,6 +12,8 @@ import org.lins.mmmjjkx.rykenslimefuncustomizer.objects.customs.parent.CustomIte
 import org.lins.mmmjjkx.rykenslimefuncustomizer.objects.script.parent.ScriptEval;
 
 public class CustomUnplaceableItem extends CustomItem implements NotPlaceable {
+    private final Object[] constructorArgs;
+
     public CustomUnplaceableItem(ItemGroup itemGroup, SlimefunItemStack item, RecipeType recipeType, ItemStack[] recipe, @Nullable ScriptEval eval) {
         super(itemGroup, item, recipeType, recipe);
 
@@ -25,5 +27,12 @@ public class CustomUnplaceableItem extends CustomItem implements NotPlaceable {
         } else {
             this.addItemHandler((ItemUseHandler) PlayerRightClickEvent::cancel);
         }
+
+        this.constructorArgs = new Object[]{itemGroup, item, recipeType, recipe, eval};
+    }
+
+    @Override
+    public Object[] constructorArgs() {
+        return constructorArgs;
     }
 }

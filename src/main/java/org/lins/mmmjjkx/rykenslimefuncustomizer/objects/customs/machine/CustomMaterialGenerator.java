@@ -156,7 +156,7 @@ public class CustomMaterialGenerator extends SlimefunItem implements InventoryBl
         return new BlockTicker() {
             @Override
             public boolean isSynchronized() {
-                return true;
+                return false;
             }
 
             @Override

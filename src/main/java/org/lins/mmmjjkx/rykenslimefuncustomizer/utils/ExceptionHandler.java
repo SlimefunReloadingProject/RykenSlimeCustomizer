@@ -72,6 +72,12 @@ public class ExceptionHandler {
         }
     }
 
+    public static void debugLog(String message) {
+        if (message == null || message.isBlank()) return;
+
+        logger.info(serializer.deserialize("&6DEBUG | " + message));
+    }
+
     /**
      * 检测后门等
      * @param message the message

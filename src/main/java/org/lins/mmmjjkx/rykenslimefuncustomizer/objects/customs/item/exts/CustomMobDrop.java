@@ -1,4 +1,4 @@
-package org.lins.mmmjjkx.rykenslimefuncustomizer.objects.customs.item;
+package org.lins.mmmjjkx.rykenslimefuncustomizer.objects.customs.item.exts;
 
 import io.github.thebusybiscuit.slimefun4.api.items.ItemGroup;
 import io.github.thebusybiscuit.slimefun4.api.items.SlimefunItemStack;
@@ -8,6 +8,7 @@ import lombok.Getter;
 import org.bukkit.entity.EntityType;
 import org.bukkit.inventory.ItemStack;
 import org.lins.mmmjjkx.rykenslimefuncustomizer.RykenSlimefunCustomizer;
+import org.lins.mmmjjkx.rykenslimefuncustomizer.objects.customs.item.CustomUnplaceableItem;
 
 public class CustomMobDrop extends CustomUnplaceableItem implements RandomMobDrop {
     private final int chance;

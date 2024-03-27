@@ -60,13 +60,15 @@ public class CommonUtils {
     public static Component parseToComponent(String text) {
         if (text == null) return Component.empty();
 
+        text = text.replaceAll("§", "&");
+
         Component legacy1 = LEGACY_COMPONENT_SERIALIZER.deserialize(text);
         String miniMessagedText = MINI_MESSAGE.serialize(legacy1);
 
         try {
             return MINI_MESSAGE.deserialize(miniMessagedText).decoration(TextDecoration.ITALIC, false);
         } catch (Exception e) {
-            ExceptionHandler.handleError("无法解析" + text + "这些文本为消息组件，已转为旧版颜色文本（可能含有旧版颜色符号'§'）", e);
+            ExceptionHandler.handleError("无法解析 '" + text + "' 这些文本为消息组件，已转为旧版颜色文本（可能含有旧版颜色符号'§'）", e);
             return legacy1;
         }
     }
@@ -134,6 +136,7 @@ public class CommonUtils {
 
     @SneakyThrows
     @Nullable
+    @SuppressWarnings("deprecation")
     public static ItemStack readItem(ConfigurationSection section, boolean countable, ProjectAddon addon) {
         if (section == null) {
             return null;
@@ -157,7 +160,7 @@ public class CommonUtils {
         }
 
         List<String> lore = section.getStringList("lore");
-        String name = section.getString("name");
+        Component name = parseToComponent(section.getString("name"));
         boolean glow = section.getBoolean("glow", false);
         boolean hasEnchantment = section.contains("enchantments") && section.isConfigurationSection("enchantments");
         int modelId = section.getInt("modelId");
@@ -277,10 +280,13 @@ public class CommonUtils {
         return glow ? doGlow(itemStack) : itemStack;
     }
 
-    public static void addLore(ItemStack stack, Component... lore) {
+    public static void addLore(ItemStack stack, boolean emptyLine, Component... lore) {
         ItemMeta im = stack.getItemMeta();
         var lorel = im.lore();
         if (lorel != null) {
+            if (emptyLine) {
+                lorel.add(Component.text("\n"));
+            }
             lorel.addAll(Arrays.asList(lore));
         } else {
             lorel = Arrays.asList(lore);

@@ -49,7 +49,6 @@ public class FoodReader extends YamlReader<CustomFood> {
 
         if (rt.getFirstValue() == ExceptionHandler.HandleResult.FAILED) return null;
 
-
         JavaScriptEval eval = null;
         if (section.contains("script")) {
             String script = section.getString("script", "");

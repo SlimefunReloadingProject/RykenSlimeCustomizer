@@ -1,4 +1,4 @@
-package org.lins.mmmjjkx.rykenslimefuncustomizer.objects.customs.item;
+package org.lins.mmmjjkx.rykenslimefuncustomizer.objects.customs.item.exts;
 
 import io.github.thebusybiscuit.slimefun4.api.events.PlayerRightClickEvent;
 import io.github.thebusybiscuit.slimefun4.api.items.ItemGroup;
@@ -16,6 +16,8 @@ import org.lins.mmmjjkx.rykenslimefuncustomizer.objects.script.parent.ScriptEval
 public class CustomEnergyItem extends CustomItem implements Rechargeable, NotPlaceable {
     private final float capacity;
 
+    private final Object[] constructorArgs;
+
     public CustomEnergyItem(ItemGroup itemGroup, SlimefunItemStack item, RecipeType recipeType, ItemStack[] recipe, float capacity, @Nullable ScriptEval eval) {
         super(itemGroup, item, recipeType, recipe);
 
@@ -31,6 +33,8 @@ public class CustomEnergyItem extends CustomItem implements Rechargeable, NotPla
         } else {
             this.addItemHandler((ItemUseHandler) PlayerRightClickEvent::cancel);
         }
+
+        this.constructorArgs = new Object[]{itemGroup, item, recipeType, recipe, capacity, eval};
     }
 
     @HostAccess.Export
@@ -71,5 +75,10 @@ public class CustomEnergyItem extends CustomItem implements Rechargeable, NotPla
     @Override
     public float getMaxItemCharge(ItemStack itemStack) {
         return capacity;
+    }
+
+    @Override
+    public Object[] constructorArgs() {
+        return constructorArgs;
     }
 }
