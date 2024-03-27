@@ -11,6 +11,9 @@ import org.bukkit.configuration.file.YamlConfiguration;
 import org.bukkit.inventory.ItemStack;
 import org.lins.mmmjjkx.rykenslimefuncustomizer.RykenSlimefunCustomizer;
 import org.lins.mmmjjkx.rykenslimefuncustomizer.objects.ProjectAddon;
+import org.lins.mmmjjkx.rykenslimefuncustomizer.objects.customs.machine.accelerators.AdvancedAnimalGrowthAccelerator;
+import org.lins.mmmjjkx.rykenslimefuncustomizer.objects.customs.machine.accelerators.AdvancedCropGrowthAccelerator;
+import org.lins.mmmjjkx.rykenslimefuncustomizer.objects.customs.machine.accelerators.AdvancedTreeGrowthAccelerator;
 import org.lins.mmmjjkx.rykenslimefuncustomizer.objects.machine.SimpleMachineType;
 import org.lins.mmmjjkx.rykenslimefuncustomizer.objects.yaml.YamlReader;
 import org.lins.mmmjjkx.rykenslimefuncustomizer.utils.CommonUtils;
@@ -69,24 +72,41 @@ public class SimpleMachineReader extends YamlReader<SlimefunItem> {
         int capacity = 0;
         int consumption = 0;
         int speed = 1;
+        int radius = 1;
         
         if (machineType.isEnergy()) {
             capacity = settings.getInt("capacity");
             if (capacity < 1) {
-                ExceptionHandler.handleError("无法加载简单机器"+s+": 容量未设置或小于1");
+                ExceptionHandler.handleError("无法加载简单机器"+s+": 容量小于1");
                 return null;
             }
             
             consumption = settings.getInt("consumption");
             if (consumption < 1) {
-                ExceptionHandler.handleError("无法加载简单机器"+s+": 消耗能量未设置或小于1");
+                ExceptionHandler.handleError("无法加载简单机器"+s+": 消耗能量小于1");
                 return null;
             }
 
-            speed = settings.getInt("speed", 1);
-            if (speed < 1) {
-                ExceptionHandler.handleError("无法加载简单机器" + s + ": 处理速度未设置或小于1");
-                return null;
+            if (!isAccelerator(machineType)) {
+                speed = settings.getInt("speed", 1);
+                if (speed < 1) {
+                    ExceptionHandler.handleError("无法加载简单机器" + s + ": 处理速度小于1");
+                    return null;
+                }
+            } else {
+                radius = settings.getInt("radius", 1);
+                if (radius < 1) {
+                    ExceptionHandler.handleError("无法加载简单机器" + s + ": 范围小于1");
+                    return null;
+                }
+
+                if (machineType == SimpleMachineType.CROP_GROWTH_ACCELERATOR) {
+                    speed = settings.getInt("speed", 1);
+                    if (speed < 1) {
+                        ExceptionHandler.handleError("无法加载简单机器" + s + ": 处理速度小于1");
+                        return null;
+                    }
+                }
             }
         }
 
@@ -107,10 +127,17 @@ public class SimpleMachineReader extends YamlReader<SlimefunItem> {
                     .setCapacity(capacity).setEnergyConsumption(consumption).setProcessingSpeed(speed);
             case CHARGING_BENCH -> new ChargingBench(group.getSecondValue(), slimefunItemStack, rt.getSecondValue(), recipe)
                     .setCapacity(capacity).setEnergyConsumption(consumption).setProcessingSpeed(speed);
+            case TREE_GROWTH_ACCELERATOR -> new AdvancedTreeGrowthAccelerator(group.getSecondValue(), slimefunItemStack, rt.getSecondValue(), recipe, capacity, radius, consumption);
+            case ANIMAL_GROWTH_ACCELERATOR -> new AdvancedAnimalGrowthAccelerator(group.getSecondValue(), slimefunItemStack, rt.getSecondValue(), recipe, capacity, radius, consumption);
+            case CROP_GROWTH_ACCELERATOR -> new AdvancedCropGrowthAccelerator(group.getSecondValue(), slimefunItemStack, rt.getSecondValue(), recipe, capacity, radius, consumption, speed);
         };
 
         instance.register(RykenSlimefunCustomizer.INSTANCE);
 
         return instance;
+    }
+
+    private boolean isAccelerator(SimpleMachineType type) {
+        return type == SimpleMachineType.TREE_GROWTH_ACCELERATOR || type == SimpleMachineType.CROP_GROWTH_ACCELERATOR || type == SimpleMachineType.ANIMAL_GROWTH_ACCELERATOR;
     }
 }
