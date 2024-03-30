@@ -6,7 +6,6 @@ import com.oracle.truffle.js.runtime.Strings;
 import com.xzavier0722.mc.plugin.slimefun4.storage.controller.SlimefunBlockData;
 import com.xzavier0722.mc.plugin.slimefun4.storage.util.StorageCacheUtils;
 import io.github.thebusybiscuit.slimefun4.api.items.SlimefunItem;
-import io.github.thebusybiscuit.slimefun4.implementation.Slimefun;
 import io.github.thebusybiscuit.slimefun4.utils.SlimefunUtils;
 import lombok.AccessLevel;
 import lombok.Getter;
@@ -41,6 +40,7 @@ import java.util.stream.IntStream;
 
 @Getter(AccessLevel.PROTECTED)
 public abstract class ScriptEval {
+    //虽然引擎不让我们开放这两个包，但是我们还是把它留在这
     protected final TruffleString[] EXTERNAL_PACKAGES = new TruffleString[]{
             Strings.constant("io"),
             Strings.constant("net")
@@ -52,7 +52,7 @@ public abstract class ScriptEval {
             .allowAllClassImplementations(true)
             .allowArrayAccess(true)
             .allowListAccess(true)
-            .allowBufferAccess(true)
+            .allowBufferAccess(false)
             .allowIterableAccess(true)
             .allowIteratorAccess(true)
             .allowMapAccess(true)
@@ -79,7 +79,7 @@ public abstract class ScriptEval {
 
         contextInit();
 
-        addon.getScripts().put(key(), this);
+        //addon.getScripts().put(key(), this);
     }
 
     public abstract String key();
@@ -103,7 +103,6 @@ public abstract class ScriptEval {
 
     protected final void setup() {
         addThing("server", Delegations.delegateServer(file.getName()));
-        addThing("sfPlugin", Slimefun.getPlugin(Slimefun.class));
 
         //functions
         addThing("isPluginLoaded", (Function<String, Boolean>) s -> Bukkit.getPluginManager().isPluginEnabled(s));
@@ -163,7 +162,7 @@ public abstract class ScriptEval {
         addThing("getBlockData", (Function<Location, SlimefunBlockData>) StorageCacheUtils::getBlock);
         addThing("isSlimefunBlock", (Function<Location, Boolean>) StorageCacheUtils::hasBlock);
         addThing("isBlock", (BiFunction<Location, String, Boolean>) StorageCacheUtils::isBlock);
-        addThing("getSfItem", (Function<Location, SlimefunItem>) StorageCacheUtils::getSfItem);
+        addThing("getSfItemByBlock", (Function<Location, SlimefunItem>) StorageCacheUtils::getSfItem);
     }
 
     private String parsePlaceholder(@Nullable Player p, String text) {
@@ -193,5 +192,4 @@ public abstract class ScriptEval {
     public abstract Object evalFunction(String functionName, Object... args);
 
     public abstract void close();
-    
 }

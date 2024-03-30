@@ -1,12 +1,6 @@
 package org.lins.mmmjjkx.rykenslimefuncustomizer.bulit_in;
 
 import com.google.errorprone.annotations.CanIgnoreReturnValue;
-import com.oracle.truffle.api.strings.TruffleString;
-import com.oracle.truffle.js.lang.JavaScriptLanguage;
-import com.oracle.truffle.js.runtime.JSRealm;
-import com.oracle.truffle.js.runtime.java.JavaPackage;
-import com.oracle.truffle.js.runtime.objects.JSAttributes;
-import com.oracle.truffle.js.runtime.objects.JSObjectUtil;
 import com.oracle.truffle.js.scriptengine.GraalJSScriptEngine;
 import org.bukkit.entity.Player;
 import org.bukkit.event.Event;
@@ -41,7 +35,7 @@ public class JavaScriptEval extends ScriptEval {
                 .allowExperimentalOptions(true)
                 .allowPolyglotAccess(PolyglotAccess.ALL)
                 .allowCreateProcess(true)
-                .allowIO(IOAccess.NONE)
+                .allowIO(IOAccess.newBuilder().allowHostFileAccess(true).build())
                 .allowHostClassLookup(s -> {
                     if (s.equalsIgnoreCase("org.bukkit.Bukkit")) {
                         return false;
@@ -99,11 +93,6 @@ public class JavaScriptEval extends ScriptEval {
                 jsEngine.eval(getFileContext());
             } catch (ScriptException e) {
                 e.printStackTrace();
-            }
-
-            JSRealm realm = JavaScriptLanguage.getJSRealm(jsEngine.getPolyglotContext());
-            for (TruffleString ts : EXTERNAL_PACKAGES) {
-                JSObjectUtil.putDataProperty(realm.getGlobalObject(), ts, JavaPackage.createInit(realm, ts), JSAttributes.getDefaultNotEnumerable());
             }
         }
     }

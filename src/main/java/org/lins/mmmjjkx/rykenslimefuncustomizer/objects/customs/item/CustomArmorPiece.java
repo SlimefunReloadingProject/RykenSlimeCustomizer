@@ -11,26 +11,37 @@ import org.bukkit.inventory.ItemStack;
 import org.bukkit.potion.PotionEffect;
 import org.jetbrains.annotations.NotNull;
 import org.jetbrains.annotations.Nullable;
+import org.lins.mmmjjkx.rykenslimefuncustomizer.RykenSlimefunCustomizer;
 
 public class CustomArmorPiece extends SlimefunArmorPiece implements ProtectiveArmor {
+    private final String armorKey;
+    private final boolean fullSet;
+    private final ProtectionType[] protectionTypes;
+    private final String projectId;
+
     public CustomArmorPiece(ItemGroup itemGroup, SlimefunItemStack item, RecipeType recipeType, ItemStack[] recipe,
-                            @Nullable PotionEffect[] effects, boolean fullSet, String armorKey) {
+                            @Nullable PotionEffect[] effects, boolean fullSet, String armorKey, ProtectionType[] protectionTypes, String projectId) {
         super(itemGroup, item, recipeType, recipe, effects);
+        
+        this.armorKey = armorKey;
+        this.fullSet = fullSet;
+        this.protectionTypes = protectionTypes;
+        this.projectId = projectId;
     }
 
     @Override
     public @NotNull ProtectionType[] getProtectionTypes() {
-        return new ProtectionType[0];
+        return protectionTypes;
     }
 
     @Override
     public boolean isFullSetRequired() {
-        return false;
+        return fullSet;
     }
 
     @Nullable
     @Override
     public NamespacedKey getArmorSetId() {
-        return null;
+        return new NamespacedKey(RykenSlimefunCustomizer.INSTANCE, projectId + "_" + armorKey);
     }
 }

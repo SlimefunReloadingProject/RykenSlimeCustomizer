@@ -21,7 +21,6 @@ import org.lins.mmmjjkx.rykenslimefuncustomizer.objects.customs.item.CustomGeoRe
 import org.lins.mmmjjkx.rykenslimefuncustomizer.objects.customs.item.exts.CustomMobDrop;
 import org.lins.mmmjjkx.rykenslimefuncustomizer.objects.customs.machine.*;
 import org.lins.mmmjjkx.rykenslimefuncustomizer.objects.customs.parent.AbstractEmptyMachine;
-import org.lins.mmmjjkx.rykenslimefuncustomizer.objects.customs.parent.CustomItem;
 import org.lins.mmmjjkx.rykenslimefuncustomizer.objects.global.RecipeTypeMap;
 import org.lins.mmmjjkx.rykenslimefuncustomizer.objects.script.parent.ScriptEval;
 
@@ -46,7 +45,7 @@ public final class ProjectAddon {
     //
     private @Nullable String githubRepo;
     //
-    private Multimap<String, ScriptEval> scripts = HashMultimap.create(12, 10000000);
+    //private Multimap<String, ScriptEval> scripts = HashMultimap.create(12, 10000000);
     private List<JavaScriptEval> scriptEvals = new ArrayList<>();
     //
     //groups.yml
@@ -56,7 +55,7 @@ public final class ProjectAddon {
     //geo_resources.yml
     private List<CustomGeoResource> geoResources = new ArrayList<>();
     //items.yml
-    private List<CustomItem> items = new ArrayList<>();
+    private List<SlimefunItem> items = new ArrayList<>();
     //machines.yml
     private List<AbstractEmptyMachine<?>> machines = new ArrayList<>();
     //researches.yml

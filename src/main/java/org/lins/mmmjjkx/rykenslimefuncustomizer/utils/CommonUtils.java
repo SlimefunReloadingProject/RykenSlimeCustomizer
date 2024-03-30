@@ -41,7 +41,7 @@ import java.util.regex.Pattern;
 
 public class CommonUtils {
     private static final NamespacedKey GLOW = new NamespacedKey(RykenSlimefunCustomizer.INSTANCE, "item_glow");
-    private static final MiniMessage MINI_MESSAGE = MiniMessage.builder().build();
+    private static final MiniMessage MINI_MESSAGE = MiniMessage.miniMessage();
     private static final LegacyComponentSerializer LEGACY_COMPONENT_SERIALIZER = LegacyComponentSerializer.legacyAmpersand().toBuilder().hexColors().build();
 
     public static <T extends ItemStack> T doGlow(T item) {
@@ -160,7 +160,7 @@ public class CommonUtils {
         }
 
         List<String> lore = section.getStringList("lore");
-        Component name = parseToComponent(section.getString("name"));
+        String name = section.getString("name","");
         boolean glow = section.getBoolean("glow", false);
         boolean hasEnchantment = section.contains("enchantments") && section.isConfigurationSection("enchantments");
         int modelId = section.getInt("modelId");
@@ -285,7 +285,7 @@ public class CommonUtils {
         var lorel = im.lore();
         if (lorel != null) {
             if (emptyLine) {
-                lorel.add(Component.text("\n"));
+                lorel.add(Component.empty());
             }
             lorel.addAll(Arrays.asList(lore));
         } else {

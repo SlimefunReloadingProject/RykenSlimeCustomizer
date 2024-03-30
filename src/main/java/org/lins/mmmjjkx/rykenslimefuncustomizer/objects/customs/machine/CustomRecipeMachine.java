@@ -10,6 +10,7 @@ import io.github.thebusybiscuit.slimefun4.core.machines.MachineProcessor;
 import io.github.thebusybiscuit.slimefun4.implementation.handlers.SimpleBlockBreakHandler;
 import io.github.thebusybiscuit.slimefun4.implementation.operations.CraftingOperation;
 import io.github.thebusybiscuit.slimefun4.libraries.dough.items.CustomItemStack;
+import lombok.Getter;
 import me.mrCookieSlime.Slimefun.Objects.SlimefunItem.abstractItems.AContainer;
 import me.mrCookieSlime.Slimefun.Objects.SlimefunItem.abstractItems.MachineRecipe;
 import me.mrCookieSlime.Slimefun.api.inventory.BlockMenu;
@@ -38,6 +39,8 @@ public final class CustomRecipeMachine extends AContainer implements RecipeDispl
     private final List<RecipeMachineRecipe> recipes;
     private final int energyPerCraft;
     private final int capacity;
+    @Getter
+    @Nullable
     private final CustomMenu menu;
     private volatile RecipeMachineRecipe currentRecipe;
 
@@ -195,14 +198,15 @@ public final class CustomRecipeMachine extends AContainer implements RecipeDispl
     protected void tick(Block b) {
         BlockMenu inv = StorageCacheUtils.getMenu(b.getLocation());
         CraftingOperation currentOperation = this.processor.getOperation(b);
+        int progressSlot = menu == null ? 22 : menu.getProgressSlot();
         if (inv != null) {
             if (currentOperation != null) {
                 if (takeCharge(b.getLocation())) {
                     if (!currentOperation.isFinished()) {
-                        this.processor.updateProgressBar(inv, menu.getProgressSlot(), currentOperation);
+                        this.processor.updateProgressBar(inv, progressSlot, currentOperation);
                         currentOperation.addProgress(1);
                     } else {
-                        inv.replaceExistingItem(menu.getProgressSlot(), menu.getProgress());
+                        inv.replaceExistingItem(progressSlot, processor.getProgressBar());
 
                         if (currentRecipe != null) {
                             ItemStack[] outputs = currentRecipe.getMatchChanceResult().toArray(new ItemStack[]{});
@@ -233,7 +237,7 @@ public final class CustomRecipeMachine extends AContainer implements RecipeDispl
                     currentRecipe = (RecipeMachineRecipe) next;
                     currentOperation = new CraftingOperation(currentRecipe);
                     this.processor.startOperation(b, currentOperation);
-                    this.processor.updateProgressBar(inv, menu.getProgressSlot(), currentOperation);
+                    this.processor.updateProgressBar(inv, progressSlot, currentOperation);
                 }
             }
         }

@@ -17,6 +17,8 @@ import org.jetbrains.annotations.NotNull;
 import org.jetbrains.annotations.Nullable;
 import org.lins.mmmjjkx.rykenslimefuncustomizer.bulit_in.JavaScriptEval;
 import org.lins.mmmjjkx.rykenslimefuncustomizer.objects.customs.machine.CustomMachine;
+import org.lins.mmmjjkx.rykenslimefuncustomizer.objects.customs.machine.CustomNoEnergyMachine;
+import org.lins.mmmjjkx.rykenslimefuncustomizer.objects.customs.machine.CustomRecipeMachine;
 import org.lins.mmmjjkx.rykenslimefuncustomizer.objects.script.lambda.RSCClickHandler;
 import org.lins.mmmjjkx.rykenslimefuncustomizer.utils.CommonUtils;
 
@@ -38,7 +40,7 @@ public class CustomMenu extends BlockMenuPreset {
     private final String title;
 
     public CustomMenu(String id, String title, CustomMenu menu) {
-        this(id, title, menu.getSlotMap(), menu.isPlayerInventoryClickable(), menu.getProgressSlot(), menu.eval);
+        this(id, title, menu, menu.eval);
     }
 
     public CustomMenu(String id, String title, BlockMenuPreset preset, @Nullable JavaScriptEval eval) {
@@ -50,6 +52,12 @@ public class CustomMenu extends BlockMenuPreset {
         if (item instanceof CustomMachine cm) {
             this.progressSlot = cm.getMenu().getProgressSlot();
             this.progress = cm.getMenu().getProgress();
+        } else if (item instanceof CustomNoEnergyMachine cnem) {
+            this.progressSlot = cnem.getMenu().getProgressSlot();
+            this.progress = cnem.getMenu().getProgress();
+        } else if (item instanceof CustomRecipeMachine crm) {
+            this.progressSlot = crm.getMenu() != null ? crm.getMenu().getProgressSlot() : 22;
+            this.progress = crm.getProgressBar();
         } else if (item instanceof AContainer container) {
             this.progressSlot = 22;
             this.progress = container.getProgressBar();
@@ -120,19 +128,12 @@ public class CustomMenu extends BlockMenuPreset {
         preset.getContents();
         this.inventory = Bukkit.createInventory(this, preset.toInventory().getSize(), CommonUtils.parseToComponent(title));
 
-        for (int i = 0; i < preset.getSize(); i++) {
+        for (int i = 0; i < preset.getInventory().getSize(); i++) {
             ItemStack item = preset.getItemInSlot(i);
             if (item != null) {
                 this.addItem(i, item.clone());
                 this.inventory.setItem(i, item.clone());
             }
-            MenuClickHandler mch = preset.getMenuClickHandler(i);
-            if (mch != null) {
-                addMenuClickHandler(i, mch);
-            }
         }
-
-        addMenuOpeningHandler(preset.getMenuOpeningHandler());
-        addMenuCloseHandler(preset.getMenuCloseHandler());
     }
 }

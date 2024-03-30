@@ -7,15 +7,15 @@ import io.github.thebusybiscuit.slimefun4.core.attributes.Radioactive;
 import io.github.thebusybiscuit.slimefun4.core.attributes.Radioactivity;
 import org.bukkit.inventory.ItemStack;
 import org.jetbrains.annotations.NotNull;
-import org.lins.mmmjjkx.rykenslimefuncustomizer.objects.customs.item.CustomUnplaceableItem;
+import org.lins.mmmjjkx.rykenslimefuncustomizer.objects.customs.parent.BaseRadiationItem;
 import org.lins.mmmjjkx.rykenslimefuncustomizer.objects.script.parent.ScriptEval;
 
-public class CustomRadiationItem extends CustomUnplaceableItem implements Radioactive {
+public class CustomRadiationItem extends BaseRadiationItem implements Radioactive {
     private final Radioactivity radioactivity;
     private final Object[] constructorArgs;
 
     public CustomRadiationItem(ItemGroup itemGroup, SlimefunItemStack item, RecipeType recipeType, ItemStack[] recipe, ScriptEval eval, Radioactivity radioactivity) {
-        super(itemGroup, item, recipeType, recipe, eval);
+        super(itemGroup, radioactivity, item, recipeType, recipe);
 
         this.radioactivity = radioactivity;
 
@@ -23,7 +23,7 @@ public class CustomRadiationItem extends CustomUnplaceableItem implements Radioa
     }
 
     @Override
-    public Object[] constructorArgs() {
+    public Object[] constructArgs() {
         return constructorArgs;
     }
 

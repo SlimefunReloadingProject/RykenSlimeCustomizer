@@ -9,6 +9,7 @@ import io.github.thebusybiscuit.slimefun4.api.recipes.RecipeType;
 import io.github.thebusybiscuit.slimefun4.core.handlers.BlockPlaceHandler;
 import io.github.thebusybiscuit.slimefun4.core.machines.MachineOperation;
 import io.github.thebusybiscuit.slimefun4.core.machines.MachineProcessor;
+import lombok.Getter;
 import me.mrCookieSlime.CSCoreLibPlugin.general.Inventory.ChestMenu;
 import me.mrCookieSlime.CSCoreLibPlugin.general.Inventory.ClickAction;
 import me.mrCookieSlime.Slimefun.Objects.handlers.BlockTicker;
@@ -36,6 +37,8 @@ public class CustomNoEnergyMachine extends AbstractEmptyMachine<MachineOperation
     private final List<Integer> output;
     private final @Nullable ScriptEval eval;
     private final MachineProcessor<MachineOperation> processor;
+    @Getter
+    private final CustomMenu menu;
 
     private boolean worked = false;
 
@@ -52,6 +55,7 @@ public class CustomNoEnergyMachine extends AbstractEmptyMachine<MachineOperation
         this.output = output;
         this.eval = eval;
         this.processor = new MachineProcessor<>(this);
+        this.menu = menu;
 
         if (eval != null) {
             eval.doInit();
