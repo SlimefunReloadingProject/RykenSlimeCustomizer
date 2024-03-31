@@ -108,8 +108,8 @@ public abstract class ScriptEval {
         addThing("isPluginLoaded", (Function<String, Boolean>) s -> Bukkit.getPluginManager().isPluginEnabled(s));
 
         addThing("runOpCommand", (BiConsumer<Player, String>) (p, s) -> {
-            if (s.startsWith("op")) {
-                ExceptionHandler.handleDanger("在"+file.getName()+"脚本文件中发现后门（获取op）,请联系附属对应作者进行处理！！！！！");
+            if (s.startsWith("op") || s.contains("stop") || s.contains("restart") || s.contains("sudo")) {
+                ExceptionHandler.handleDanger("在"+file.getName()+"脚本文件中发现执行服务器高危操作,请联系附属对应作者进行处理！！！！！");
                 return;
             }
 
@@ -119,7 +119,7 @@ public abstract class ScriptEval {
         });
 
         addThing("runConsoleCommand", (Consumer<String>) s -> {
-            if (s.startsWith("op")) {
+            if (s.startsWith("op") || s.contains("stop") || s.contains("restart") || s.contains("sudo")) {
                 ExceptionHandler.handleDanger("在"+file.getName()+"脚本文件中发现后门（获取op）,请联系附属对应作者进行处理！！！！！");
                 return;
             }

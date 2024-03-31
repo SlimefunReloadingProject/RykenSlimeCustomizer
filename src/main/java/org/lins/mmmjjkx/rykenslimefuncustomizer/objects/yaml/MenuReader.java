@@ -29,8 +29,8 @@ public class MenuReader extends YamlReader<CustomMenu> {
         ExceptionHandler.HandleResult conflict = ExceptionHandler.handleMenuConflict(s, addon);
         if (conflict == ExceptionHandler.HandleResult.FAILED) return null;
 
-        String title = configuration.getString("title", "");
-        boolean playerInvClickable = configuration.getBoolean("playerInvClickable", true);
+        String title = section.getString("title", "");
+        boolean playerInvClickable = section.getBoolean("playerInvClickable", true);
 
         int progress = -1;
 
@@ -106,8 +106,6 @@ public class MenuReader extends YamlReader<CustomMenu> {
             }
         }
 
-        CustomMenu menu = new CustomMenu(s, title, slotMap, playerInvClickable, progress, eval);
-        menu.outSideInit();
-        return menu;
+        return new CustomMenu(s, title, slotMap, playerInvClickable, progress, eval);
     }
 }

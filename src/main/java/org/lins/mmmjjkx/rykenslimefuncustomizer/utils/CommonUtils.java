@@ -319,4 +319,15 @@ public class CommonUtils {
             throw new RuntimeException(e);
         }
     }
+
+    public static boolean isArmor(Material material) {
+        if (material == null) return false;
+
+        final String typeNameString = material.toString();
+
+        return typeNameString.endsWith("_HELMET")
+                || typeNameString.endsWith("_CHESTPLATE")
+                || typeNameString.endsWith("_LEGGINGS")
+                || typeNameString.endsWith("_BOOTS");
+    }
 }

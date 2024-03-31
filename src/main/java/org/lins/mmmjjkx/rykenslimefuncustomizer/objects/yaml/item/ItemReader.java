@@ -27,7 +27,7 @@ import org.lins.mmmjjkx.rykenslimefuncustomizer.objects.customs.parent.BaseRadia
 import org.lins.mmmjjkx.rykenslimefuncustomizer.objects.customs.parent.CustomItem;
 import org.lins.mmmjjkx.rykenslimefuncustomizer.objects.slimefun.WitherProofBlockImpl;
 import org.lins.mmmjjkx.rykenslimefuncustomizer.objects.yaml.YamlReader;
-import org.lins.mmmjjkx.rykenslimefuncustomizer.utils.ClassGenerator;
+import org.lins.mmmjjkx.rykenslimefuncustomizer.utils.ClassUtils;
 import org.lins.mmmjjkx.rykenslimefuncustomizer.utils.CommonUtils;
 import org.lins.mmmjjkx.rykenslimefuncustomizer.utils.ExceptionHandler;
 
@@ -147,7 +147,7 @@ public class ItemReader extends YamlReader<SlimefunItem> {
                 return null;
             }
 
-            Class<? extends CustomItem> clazz = (Class<? extends CustomItem>) ClassGenerator.generateClass(instance.getClass(), instance.getClass().getName(),
+            Class<? extends CustomItem> clazz = (Class<? extends CustomItem>) ClassUtils.generateClass(instance.getClass(), instance.getClass().getName(),
                     "WitherProof", "Item", new Class[]{WitherProofBlockImpl.class}, null
             );
 
@@ -155,7 +155,7 @@ public class ItemReader extends YamlReader<SlimefunItem> {
         }
 
         if (section.getBoolean("soulbound", false)) {
-            Class<? extends CustomItem> clazz = (Class<? extends CustomItem>) ClassGenerator.generateClass(instance.getClass(),
+            Class<? extends CustomItem> clazz = (Class<? extends CustomItem>) ClassUtils.generateClass(instance.getClass(),
                     instance.getClass().getName(), "Soulbound", "Item", new Class[]{Soulbound.class}, null
             );
 
@@ -169,7 +169,7 @@ public class ItemReader extends YamlReader<SlimefunItem> {
                 return null;
             }
 
-            Class<? extends CustomItem> clazz = (Class<? extends CustomItem>) ClassGenerator.generateClass(instance.getClass(),
+            Class<? extends CustomItem> clazz = (Class<? extends CustomItem>) ClassUtils.generateClass(instance.getClass(),
                     instance.getClass().getName(), "PiglinTradeAble", "Item", new Class[]{Radioactive.class}, builder ->
                             builder.method(ElementMatchers.isDeclaredBy(PiglinBarterDrop.class))
                                     .intercept(FixedValue.value(chance))
@@ -222,7 +222,7 @@ public class ItemReader extends YamlReader<SlimefunItem> {
                 return null;
             }
 
-            Class<? extends BaseRadiationItem> clazz = (Class<? extends BaseRadiationItem>) ClassGenerator.generateClass(instance.getClass(), instance.getClass().getName(),
+            Class<? extends BaseRadiationItem> clazz = (Class<? extends BaseRadiationItem>) ClassUtils.generateClass(instance.getClass(), instance.getClass().getName(),
                     "WitherProof", "Item", new Class[]{WitherProofBlockImpl.class}, null
             );
 
@@ -230,7 +230,7 @@ public class ItemReader extends YamlReader<SlimefunItem> {
         }
 
         if (section.getBoolean("soulbound", false)) {
-            Class<? extends BaseRadiationItem> clazz = (Class<? extends BaseRadiationItem>) ClassGenerator.generateClass(instance.getClass(),
+            Class<? extends BaseRadiationItem> clazz = (Class<? extends BaseRadiationItem>) ClassUtils.generateClass(instance.getClass(),
                     instance.getClass().getName(), "Soulbound", "Item", new Class[]{Soulbound.class}, null
             );
 
@@ -244,7 +244,7 @@ public class ItemReader extends YamlReader<SlimefunItem> {
                 return null;
             }
 
-            Class<? extends CustomItem> clazz = (Class<? extends CustomItem>) ClassGenerator.generateClass(instance.getClass(),
+            Class<? extends CustomItem> clazz = (Class<? extends CustomItem>) ClassUtils.generateClass(instance.getClass(),
                     instance.getClass().getName(), "PiglinTrade", "Item", new Class[]{Radioactive.class}, builder ->
                             builder.method(ElementMatchers.isDeclaredBy(PiglinBarterDrop.class))
                                     .intercept(FixedValue.value(chance))

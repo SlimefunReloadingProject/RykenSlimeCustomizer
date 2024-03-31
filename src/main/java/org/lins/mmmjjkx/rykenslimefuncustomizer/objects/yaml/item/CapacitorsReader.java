@@ -39,7 +39,7 @@ public class CapacitorsReader extends YamlReader<Capacitor> {
         }
 
         if (!stack.getType().isBlock()) {
-            ExceptionHandler.handleError("无法在附属"+addon.getAddonName()+"中加载电容"+s+": 物品的材料必须是可放置的方块");
+            ExceptionHandler.handleError("无法在附属"+addon.getAddonName()+"中加载电容"+s+": 物品的材料类型必须是可放置的方块");
             return null;
         }
 
@@ -57,7 +57,7 @@ public class CapacitorsReader extends YamlReader<Capacitor> {
 
         int capacity = section.getInt("capacity");
         if (capacity < 1) {
-            ExceptionHandler.handleError("无法在附属"+addon.getAddonName()+"中加载电容"+s+":容量不能小于1");
+            ExceptionHandler.handleError("无法在附属"+addon.getAddonName()+"中加载电容"+s+": 容量不能小于1");
             return null;
         }
 

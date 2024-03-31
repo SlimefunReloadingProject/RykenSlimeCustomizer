@@ -8,7 +8,7 @@ import java.util.HashMap;
 import java.util.Map;
 import java.util.function.Function;
 
-public class ClassGenerator {
+public class ClassUtils {
     private static final Map<String, Class<?>> cache = new HashMap<>();
 
     public static Class<?> generateClass(Class<?> extendClass, String className, String centerName, String nameReplacement,
