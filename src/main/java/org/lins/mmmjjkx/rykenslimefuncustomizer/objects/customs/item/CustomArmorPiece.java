@@ -27,6 +27,8 @@ public class CustomArmorPiece extends SlimefunArmorPiece implements ProtectiveAr
         this.fullSet = fullSet;
         this.protectionTypes = protectionTypes;
         this.projectId = projectId;
+
+        register(RykenSlimefunCustomizer.INSTANCE);
     }
 
     @Override

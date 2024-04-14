@@ -75,14 +75,13 @@ public class ArmorReader extends YamlReader<List<CustomArmorPiece>> {
             List<String> effects = pieceSection.getStringList("potion_effects");
 
             for (String effect : effects) {
-                String[] split = effect.split(":");
-                if (split.length != 3) {
+                String[] split = effect.split(" ");
+                if (split.length != 2) {
                     ExceptionHandler.handleError("错误的药水效果格式: " + effect);
                     return null;
                 }
                 String effectName = split[0];
-                int duration = Integer.parseInt(split[1]);
-                int amplifier = Integer.parseInt(split[2]);
+                int amplifier = Integer.parseInt(split[1]);
 
                 PotionEffectType type = PotionEffectType.getByName(effectName);
                 if (type == null) {
@@ -90,16 +89,12 @@ public class ArmorReader extends YamlReader<List<CustomArmorPiece>> {
                     return null;
                 }
 
-                if (duration < 1) {
-                    duration = 10;
-                }
-
                 if (amplifier < 0) {
                     ExceptionHandler.handleError("药水效果等级不能为负数: " + effect +"， 但你设置了"+amplifier);
                     return null;
                 }
 
-                potionEffects.add(new PotionEffect(type, duration, amplifier));
+                potionEffects.add(new PotionEffect(type, Integer.MAX_VALUE, amplifier));
             }
 
             SlimefunItemStack slimefunStack = new SlimefunItemStack(id, stack);

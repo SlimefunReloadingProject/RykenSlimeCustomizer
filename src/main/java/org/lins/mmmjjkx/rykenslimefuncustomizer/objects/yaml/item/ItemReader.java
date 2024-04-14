@@ -63,11 +63,19 @@ public class ItemReader extends YamlReader<SlimefunItem> {
         ItemStack[] itemStacks = CommonUtils.readRecipe(section.getConfigurationSection("recipe"), addon);
         String recipeType = section.getString("recipe_type", "NULL");
 
-        Pair<ExceptionHandler.HandleResult, RecipeType> rt = ExceptionHandler.getRecipeType(
-                "错误的配方类型" + recipeType + "!", recipeType
-        );
+        boolean piglin = section.getBoolean("piglin_trade", false);
+        RecipeType rt;
+        if (piglin) {
+            rt = RecipeType.BARTER_DROP;
+        } else {
+            Pair<ExceptionHandler.HandleResult, RecipeType> rt1 = ExceptionHandler.getRecipeType(
+                    "错误的配方类型" + recipeType + "!", recipeType
+            );
 
-        if (rt.getFirstValue() == ExceptionHandler.HandleResult.FAILED) return null;
+            if (rt1.getFirstValue() == ExceptionHandler.HandleResult.FAILED) return null;
+
+            rt = rt1.getSecondValue();
+        }
 
         JavaScriptEval eval = null;
         if (section.contains("script")) {
@@ -86,7 +94,7 @@ public class ItemReader extends YamlReader<SlimefunItem> {
         boolean hasRadiation = section.contains("radiation");
 
         if (hasRadiation) {
-            return setupRadiationItem(section, stack, group.getSecondValue(), s, rt.getSecondValue(), itemStacks, eval, addon);
+            return setupRadiationItem(section, stack, group.getSecondValue(), s, rt, itemStacks, eval, addon);
         }
 
         if (energy) {
@@ -98,9 +106,9 @@ public class ItemReader extends YamlReader<SlimefunItem> {
             
             CommonUtils.addLore(stack, true, CommonUtils.parseToComponent("&8⇨ &e⚡ &70 / "+energyCapacity+" J"));
 
-            instance = new CustomEnergyItem(group.getSecondValue(), new SlimefunItemStack(s, stack), rt.getSecondValue(), itemStacks, (float) energyCapacity, eval);
+            instance = new CustomEnergyItem(group.getSecondValue(), new SlimefunItemStack(s, stack), rt, itemStacks, (float) energyCapacity, eval);
         } else if (section.getBoolean("placeable", false)) {
-            instance = new CustomDefaultItem(group.getSecondValue(), new SlimefunItemStack(s, stack), rt.getSecondValue(), itemStacks);
+            instance = new CustomDefaultItem(group.getSecondValue(), new SlimefunItemStack(s, stack), rt, itemStacks);
         } else if (section.contains("rainbow")) {
             String materialType = section.getString("rainbow", "");
             if (!stack.getType().isBlock()) {
@@ -125,7 +133,7 @@ public class ItemReader extends YamlReader<SlimefunItem> {
                     colorMaterials.add(material1);
                 }
 
-                instance = new CustomRainbowBlock(group.getSecondValue(), new SlimefunItemStack(s, stack), rt.getSecondValue(), itemStacks, colorMaterials);
+                instance = new CustomRainbowBlock(group.getSecondValue(), new SlimefunItemStack(s, stack), rt, itemStacks, colorMaterials);
             } else {
                 Pair<ExceptionHandler.HandleResult, ColoredMaterial> coloredMaterialPair =
                         ExceptionHandler.handleEnumValueOf("错误的可染色材料类型: " + materialType, ColoredMaterial.class, materialType);
@@ -133,10 +141,10 @@ public class ItemReader extends YamlReader<SlimefunItem> {
                 if (coloredMaterialPair.getFirstValue() == ExceptionHandler.HandleResult.FAILED || coloredMaterial == null) {
                     return null;
                 }
-                instance = new CustomRainbowBlock(group.getSecondValue(), new SlimefunItemStack(s, stack), rt.getSecondValue(), itemStacks, coloredMaterial);
+                instance = new CustomRainbowBlock(group.getSecondValue(), new SlimefunItemStack(s, stack), rt, itemStacks, coloredMaterial);
             }
         } else {
-            instance = new CustomUnplaceableItem(group.getSecondValue(), new SlimefunItemStack(s, stack), rt.getSecondValue(), itemStacks, eval);
+            instance = new CustomUnplaceableItem(group.getSecondValue(), new SlimefunItemStack(s, stack), rt, itemStacks, eval);
         }
 
         Object[] constructorArgs = instance.constructorArgs();
@@ -237,7 +245,9 @@ public class ItemReader extends YamlReader<SlimefunItem> {
             instance = (BaseRadiationItem) clazz.getDeclaredConstructors()[0].newInstance(constructorArgs);
         }
 
-        if (section.getBoolean("piglin_trade", false)) {
+        boolean piglin = section.getBoolean("piglin_trade", false);
+
+        if (piglin) {
             int chance = section.getInt("piglin_trade_chance", 100);
             if (chance < 0 || chance > 100) {
                 ExceptionHandler.handleError("无法在附属" + addon.getAddonName() + "中加载物品" + id + "猪灵交易掉落几率必须在0-100之间");
