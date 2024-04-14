@@ -18,12 +18,9 @@ import org.bukkit.enchantments.Enchantment;
 import org.bukkit.inventory.ItemFlag;
 import org.bukkit.inventory.ItemStack;
 import org.bukkit.inventory.meta.ItemMeta;
-import org.bukkit.persistence.PersistentDataContainer;
-import org.bukkit.persistence.PersistentDataType;
 import org.jetbrains.annotations.Contract;
 import org.jetbrains.annotations.NotNull;
 import org.jetbrains.annotations.Nullable;
-import org.lins.mmmjjkx.rykenslimefuncustomizer.RykenSlimefunCustomizer;
 import org.lins.mmmjjkx.rykenslimefuncustomizer.objects.ProjectAddon;
 import org.lins.mmmjjkx.rykenslimefuncustomizer.objects.customs.item.RSCItemStack;
 
@@ -40,19 +37,12 @@ import java.util.regex.Matcher;
 import java.util.regex.Pattern;
 
 public class CommonUtils {
-    private static final NamespacedKey GLOW = new NamespacedKey(RykenSlimefunCustomizer.INSTANCE, "item_glow");
     private static final MiniMessage MINI_MESSAGE = MiniMessage.miniMessage();
     private static final LegacyComponentSerializer LEGACY_COMPONENT_SERIALIZER = LegacyComponentSerializer.legacyAmpersand().toBuilder().hexColors().build();
 
     public static <T extends ItemStack> T doGlow(T item) {
         item.addUnsafeEnchantment(Enchantment.ARROW_INFINITE, 1);
         item.addItemFlags(ItemFlag.HIDE_ENCHANTS);
-
-        ItemMeta meta = item.getItemMeta();
-        PersistentDataContainer container = meta.getPersistentDataContainer();
-        container.set(GLOW, PersistentDataType.INTEGER, 1);
-
-        item.setItemMeta(meta);
 
         return item;
     }
@@ -63,12 +53,13 @@ public class CommonUtils {
         text = text.replaceAll("§", "&");
 
         Component legacy1 = LEGACY_COMPONENT_SERIALIZER.deserialize(text);
-        String miniMessagedText = MINI_MESSAGE.serialize(legacy1);
+
+        ExceptionHandler.debugLog(text + " -> " + LegacyMessage.fromLegacy(text, "&"));
 
         try {
-            return MINI_MESSAGE.deserialize(miniMessagedText).decoration(TextDecoration.ITALIC, false);
+            return MINI_MESSAGE.deserialize(LegacyMessage.fromLegacy(text, "&")).decoration(TextDecoration.ITALIC, false);
         } catch (Exception e) {
-            ExceptionHandler.handleError("无法解析 '" + text + "' 这些文本为消息组件，已转为旧版颜色文本（可能含有旧版颜色符号'§'）", e);
+            ExceptionHandler.handleError("无法解析 '" + text + "' 这些文本为消息组件，已转为旧版颜色文本", e);
             return legacy1;
         }
     }
@@ -82,7 +73,7 @@ public class CommonUtils {
             if (s != null) {
                 components.add(parseToComponent(s));
             } else {
-                components.add(Component.newline());
+                components.add(Component.empty());
             }
         }
 
@@ -98,7 +89,7 @@ public class CommonUtils {
             if (s != null && !s.isBlank()) {
                 components.add(parseToComponent(s));
             } else {
-                components.add(Component.newline());
+                components.add(Component.empty());
             }
         }
 

@@ -121,6 +121,10 @@ public class ProjectAddonLoader {
         ItemReader itemReader = new ItemReader(items);
         addon.setItems(itemReader.readAll(addon));
         //
+        YamlConfiguration armors = doFileLoad(file, Constants.ARMORS_FILE);
+        ArmorReader armorReader = new ArmorReader(armors);
+        addon.setArmors(armorReader.readAll(addon));
+        //
         YamlConfiguration capacitors = doFileLoad(file, Constants.CAPACITORS_FILE);
         CapacitorsReader capacitorsReader = new CapacitorsReader(capacitors);
         addon.setCapacitors(capacitorsReader.readAll(addon));
@@ -169,6 +173,7 @@ public class ProjectAddonLoader {
         addon.getMobDrops().addAll(mobDropsReader.loadLateInits(addon));
         addon.getGeoResources().addAll(resourceReader.loadLateInits(addon));
         addon.getItems().addAll(itemReader.loadLateInits(addon));
+        addon.getArmors().addAll(armorReader.loadLateInits(addon));
         addon.getCapacitors().addAll(capacitorsReader.loadLateInits(addon));
         addon.getFoods().addAll(foodReader.loadLateInits(addon));
         addon.getMenus().addAll(menuReader.loadLateInits(addon));

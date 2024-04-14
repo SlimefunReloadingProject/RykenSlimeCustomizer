@@ -1,7 +1,5 @@
 package org.lins.mmmjjkx.rykenslimefuncustomizer.objects;
 
-import com.google.common.collect.HashMultimap;
-import com.google.common.collect.Multimap;
 import io.github.thebusybiscuit.slimefun4.api.items.ItemGroup;
 import io.github.thebusybiscuit.slimefun4.api.items.SlimefunItem;
 import io.github.thebusybiscuit.slimefun4.api.recipes.RecipeType;
@@ -16,13 +14,13 @@ import org.jetbrains.annotations.NotNull;
 import org.jetbrains.annotations.Nullable;
 import org.lins.mmmjjkx.rykenslimefuncustomizer.bulit_in.JavaScriptEval;
 import org.lins.mmmjjkx.rykenslimefuncustomizer.objects.customs.CustomMenu;
+import org.lins.mmmjjkx.rykenslimefuncustomizer.objects.customs.item.CustomArmorPiece;
 import org.lins.mmmjjkx.rykenslimefuncustomizer.objects.customs.item.CustomFood;
 import org.lins.mmmjjkx.rykenslimefuncustomizer.objects.customs.item.CustomGeoResource;
 import org.lins.mmmjjkx.rykenslimefuncustomizer.objects.customs.item.exts.CustomMobDrop;
 import org.lins.mmmjjkx.rykenslimefuncustomizer.objects.customs.machine.*;
 import org.lins.mmmjjkx.rykenslimefuncustomizer.objects.customs.parent.AbstractEmptyMachine;
 import org.lins.mmmjjkx.rykenslimefuncustomizer.objects.global.RecipeTypeMap;
-import org.lins.mmmjjkx.rykenslimefuncustomizer.objects.script.parent.ScriptEval;
 
 import java.io.File;
 import java.util.ArrayList;
@@ -80,6 +78,8 @@ public final class ProjectAddon {
     private List<SlimefunItem> simpleMachines = new ArrayList<>();
     //foods.yml
     private List<CustomFood> foods = new ArrayList<>();
+    //armors.yml
+    private List<List<CustomArmorPiece>> armors = new ArrayList<>();
 
     public File getScriptsFolder() {
         File scripts = new File(folder, "scripts");
@@ -118,6 +118,7 @@ public final class ProjectAddon {
         recipeMachines.forEach(this::unregisterItem);
         multiBlockMachines.forEach(this::unregisterItem);
         simpleMachines.forEach(this::unregisterItem);
+        armors.forEach(l -> l.forEach(this::unregisterItem));
 
         recipeTypes.forEach(r -> RecipeTypeMap.removeRecipeTypes(r.getKey().getKey()));
 
@@ -139,6 +140,7 @@ public final class ProjectAddon {
         recipeTypes.clear();
         simpleMachines.clear();
         foods.clear();
+        armors.clear();
     }
 
     private void unregisterItem(SlimefunItem item) {

@@ -81,13 +81,13 @@ public class GeneratorReader extends YamlReader<CustomGenerator> {
             ConfigurationSection item = section1.getConfigurationSection("item");
             ItemStack stack = CommonUtils.readItem(item, true, addon);
             if (stack == null) {
-                ExceptionHandler.handleError("无法在发电机"+id+"中加载燃料"+key+": 物品为空或格式错误，跳过加载");
+                ExceptionHandler.handleError("无法在发电机"+id+"中加载燃料"+key+": 物品为空或格式错误，已跳过加载");
                 continue;
             }
             int seconds = section1.getInt("seconds");
 
             if (seconds < 1) {
-                ExceptionHandler.handleError("无法在发电机"+id+"中加载燃料"+key+": 秒数小于0，跳过加载");
+                ExceptionHandler.handleError("无法在发电机"+id+"中加载燃料"+key+": 秒数不能小于1，已跳过加载");
                 continue;
             }
 

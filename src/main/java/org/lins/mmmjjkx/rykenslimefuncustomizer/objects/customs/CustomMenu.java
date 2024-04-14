@@ -28,7 +28,6 @@ import java.util.HashMap;
 import java.util.List;
 import java.util.Map;
 
-@SuppressWarnings("deprecation")
 public class CustomMenu extends BlockMenuPreset {
     @Getter
     private final Map<Integer, ItemStack> slotMap;
@@ -153,6 +152,9 @@ public class CustomMenu extends BlockMenuPreset {
             if (item != null) {
                 this.addItem(i, item.clone());
                 inventory.setItem(i, item.clone());
+            }
+            if (preset.getMenuClickHandler(i) != null) {
+                this.addMenuClickHandler(i, preset.getMenuClickHandler(i));
             }
         }
 

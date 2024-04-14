@@ -238,7 +238,7 @@ public class ItemReader extends YamlReader<SlimefunItem> {
         }
 
         if (section.getBoolean("piglin_trade", false)) {
-            int chance = section.getInt("piglin_chance", 100);
+            int chance = section.getInt("piglin_trade_chance", 100);
             if (chance < 0 || chance > 100) {
                 ExceptionHandler.handleError("无法在附属" + addon.getAddonName() + "中加载物品" + id + "猪灵交易掉落几率必须在0-100之间");
                 return null;

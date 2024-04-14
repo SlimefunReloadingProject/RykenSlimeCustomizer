@@ -73,9 +73,11 @@ public class ExceptionHandler {
     }
 
     public static void debugLog(String message) {
-        if (message == null || message.isBlank()) return;
+        if (RykenSlimefunCustomizer.INSTANCE.getConfig().getBoolean("debug")) {
+            if (message == null || message.isBlank()) return;
 
-        logger.info(serializer.deserialize("&6DEBUG | " + message));
+            logger.info(serializer.deserialize("&6DEBUG | " + message));
+        }
     }
 
     /**

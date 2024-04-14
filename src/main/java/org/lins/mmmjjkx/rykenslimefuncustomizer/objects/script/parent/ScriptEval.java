@@ -155,14 +155,16 @@ public abstract class ScriptEval {
             return arr[random.nextInt(arr.length)];
         });
 
-        //StorageCacheUtils functions
-        addThing("setData", (CiConsumer<Location, String, String>) StorageCacheUtils::setData);
-        addThing("getData", (BiFunction<Location, String, String>) StorageCacheUtils::getData);
-        addThing("getBlockMenu", (Function<Location, BlockMenu>) StorageCacheUtils::getMenu);
-        addThing("getBlockData", (Function<Location, SlimefunBlockData>) StorageCacheUtils::getBlock);
-        addThing("isSlimefunBlock", (Function<Location, Boolean>) StorageCacheUtils::hasBlock);
-        addThing("isBlock", (BiFunction<Location, String, Boolean>) StorageCacheUtils::isBlock);
-        addThing("getSfItemByBlock", (Function<Location, SlimefunItem>) StorageCacheUtils::getSfItem);
+        try {
+            //StorageCacheUtils functions
+            addThing("setData", (CiConsumer<Location, String, String>) StorageCacheUtils::setData);
+            addThing("getData", (BiFunction<Location, String, String>) StorageCacheUtils::getData);
+            addThing("getBlockMenu", (Function<Location, BlockMenu>) StorageCacheUtils::getMenu);
+            addThing("getBlockData", (Function<Location, SlimefunBlockData>) StorageCacheUtils::getBlock);
+            addThing("isSlimefunBlock", (Function<Location, Boolean>) StorageCacheUtils::hasBlock);
+            addThing("isBlock", (BiFunction<Location, String, Boolean>) StorageCacheUtils::isBlock);
+            addThing("getSfItemByBlock", (Function<Location, SlimefunItem>) StorageCacheUtils::getSfItem);
+        } catch (Exception ignored) {}
     }
 
     private String parsePlaceholder(@Nullable Player p, String text) {

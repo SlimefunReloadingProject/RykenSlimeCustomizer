@@ -16,7 +16,7 @@ import java.util.HashMap;
 import java.util.List;
 import java.util.Map;
 
-public class ProjectAddonManager {
+public final class ProjectAddonManager {
     public static File ADDONS_DIRECTORY;
     private final Map<String, ProjectAddon> projectAddons = new HashMap<>();
 
