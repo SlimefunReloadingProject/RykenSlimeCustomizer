@@ -196,6 +196,7 @@ public class ProjectAddonLoader {
                 ProjectAddonLoader loader = new ProjectAddonLoader(dependencyFile, ids);
                 ProjectAddon addon = loader.load();
                 if (addon != null) {
+                    addon.setMarkAsDepend(true);
                     RykenSlimefunCustomizer.addonManager.pushProjectAddon(addon);
                 }
             } else {

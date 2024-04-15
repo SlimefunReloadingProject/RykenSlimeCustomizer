@@ -18,7 +18,9 @@ import org.bukkit.inventory.ItemStack;
 import org.graalvm.polyglot.HostAccess;
 import org.jetbrains.annotations.Nullable;
 import org.lins.mmmjjkx.rykenslimefuncustomizer.objects.ProjectAddon;
+import org.lins.mmmjjkx.rykenslimefuncustomizer.objects.script.ban.CommandSafe;
 import org.lins.mmmjjkx.rykenslimefuncustomizer.objects.script.ban.Delegations;
+import org.lins.mmmjjkx.rykenslimefuncustomizer.objects.script.enhanced.NBTAPIIntegration;
 import org.lins.mmmjjkx.rykenslimefuncustomizer.objects.script.lambda.CiConsumer;
 import org.lins.mmmjjkx.rykenslimefuncustomizer.objects.script.lambda.CiFunction;
 import org.lins.mmmjjkx.rykenslimefuncustomizer.utils.CommonUtils;
@@ -108,7 +110,7 @@ public abstract class ScriptEval {
         addThing("isPluginLoaded", (Function<String, Boolean>) s -> Bukkit.getPluginManager().isPluginEnabled(s));
 
         addThing("runOpCommand", (BiConsumer<Player, String>) (p, s) -> {
-            if (s.startsWith("op") || s.contains("stop") || s.contains("restart") || s.contains("sudo")) {
+            if (CommandSafe.isBadCommand(s)) {
                 ExceptionHandler.handleDanger("在"+file.getName()+"脚本文件中发现执行服务器高危操作,请联系附属对应作者进行处理！！！！！");
                 return;
             }
@@ -119,8 +121,8 @@ public abstract class ScriptEval {
         });
 
         addThing("runConsoleCommand", (Consumer<String>) s -> {
-            if (s.startsWith("op") || s.contains("stop") || s.contains("restart") || s.contains("sudo")) {
-                ExceptionHandler.handleDanger("在"+file.getName()+"脚本文件中发现后门（获取op）,请联系附属对应作者进行处理！！！！！");
+            if (CommandSafe.isBadCommand(s)) {
+                ExceptionHandler.handleDanger("在"+file.getName()+"脚本文件中发现执行服务器高危操作,请联系附属对应作者进行处理！！！！！");
                 return;
             }
 
@@ -155,16 +157,18 @@ public abstract class ScriptEval {
             return arr[random.nextInt(arr.length)];
         });
 
-        try {
-            //StorageCacheUtils functions
-            addThing("setData", (CiConsumer<Location, String, String>) StorageCacheUtils::setData);
-            addThing("getData", (BiFunction<Location, String, String>) StorageCacheUtils::getData);
-            addThing("getBlockMenu", (Function<Location, BlockMenu>) StorageCacheUtils::getMenu);
-            addThing("getBlockData", (Function<Location, SlimefunBlockData>) StorageCacheUtils::getBlock);
-            addThing("isSlimefunBlock", (Function<Location, Boolean>) StorageCacheUtils::hasBlock);
-            addThing("isBlock", (BiFunction<Location, String, Boolean>) StorageCacheUtils::isBlock);
-            addThing("getSfItemByBlock", (Function<Location, SlimefunItem>) StorageCacheUtils::getSfItem);
-        } catch (Exception ignored) {}
+        //StorageCacheUtils functions
+        addThing("setData", (CiConsumer<Location, String, String>) StorageCacheUtils::setData);
+        addThing("getData", (BiFunction<Location, String, String>) StorageCacheUtils::getData);
+        addThing("getBlockMenu", (Function<Location, BlockMenu>) StorageCacheUtils::getMenu);
+        addThing("getBlockData", (Function<Location, SlimefunBlockData>) StorageCacheUtils::getBlock);
+        addThing("isSlimefunBlock", (Function<Location, Boolean>) StorageCacheUtils::hasBlock);
+        addThing("isBlock", (BiFunction<Location, String, Boolean>) StorageCacheUtils::isBlock);
+        addThing("getSfItemByBlock", (Function<Location, SlimefunItem>) StorageCacheUtils::getSfItem);
+
+        if (Bukkit.getPluginManager().isPluginEnabled("NBTAPI")) {
+            addThing("NBTAPI", NBTAPIIntegration.INSTANCE);
+        }
     }
 
     private String parsePlaceholder(@Nullable Player p, String text) {

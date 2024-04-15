@@ -30,6 +30,8 @@ import java.util.List;
 @Getter
 @Setter(AccessLevel.PACKAGE)
 public final class ProjectAddon {
+    private boolean markAsDepend = false;
+
     //info.yml
     private @NotNull final String addonId;
     private @NotNull final String addonName;

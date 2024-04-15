@@ -5,6 +5,7 @@ import io.github.thebusybiscuit.slimefun4.implementation.Slimefun;
 import io.github.thebusybiscuit.slimefun4.libraries.dough.protection.Interaction;
 import lombok.Getter;
 import lombok.Setter;
+import me.mrCookieSlime.CSCoreLibPlugin.general.Inventory.ClickAction;
 import me.mrCookieSlime.Slimefun.Objects.SlimefunItem.abstractItems.AContainer;
 import me.mrCookieSlime.Slimefun.Objects.SlimefunItem.interfaces.InventoryBlock;
 import me.mrCookieSlime.Slimefun.api.inventory.BlockMenuPreset;
@@ -28,6 +29,7 @@ import java.util.HashMap;
 import java.util.List;
 import java.util.Map;
 
+@SuppressWarnings("deprecation")
 public class CustomMenu extends BlockMenuPreset {
     @Getter
     private final Map<Integer, ItemStack> slotMap;
@@ -153,8 +155,23 @@ public class CustomMenu extends BlockMenuPreset {
                 this.addItem(i, item.clone());
                 inventory.setItem(i, item.clone());
             }
-            if (preset.getMenuClickHandler(i) != null) {
-                this.addMenuClickHandler(i, preset.getMenuClickHandler(i));
+
+            MenuClickHandler handler = preset.getMenuClickHandler(i);
+
+            if (handler != null) {
+                this.addMenuClickHandler(i, new RSCClickHandler() {
+                    @Override
+                    public void mainFunction(Player player, int slot, ItemStack itemStack, ClickAction action) {
+                        handler.onClick(player, slot, itemStack, action);
+                    }
+
+                    @Override
+                    public void andThen(Player player, int slot, ItemStack itemStack, ClickAction action) {
+                        if (eval != null) {
+                            eval.evalFunction("onClick", player, slot, itemStack, action);
+                        }
+                    }
+                });
             }
         }
 

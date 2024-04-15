@@ -102,6 +102,7 @@ softdepend:
   - SlimeCustomizer
    #Other plugins
   - PlaceholderAPI
+  - NBTAPI
 authors: [mmmjjkx]
 description: An advanced Slimefun customize plugin
 libraries:

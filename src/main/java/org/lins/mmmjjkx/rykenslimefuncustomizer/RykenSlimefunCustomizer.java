@@ -93,7 +93,7 @@ public final class RykenSlimefunCustomizer extends JavaPlugin implements Slimefu
         Path path = Paths.get(filePath);
 
         if (!Files.exists(path)) {
-            INSTANCE.saveResource(head, false);
+            INSTANCE.saveResource(head, true);
         }
     }
 }

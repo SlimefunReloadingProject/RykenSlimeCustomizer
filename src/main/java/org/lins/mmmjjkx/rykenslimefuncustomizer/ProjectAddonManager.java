@@ -69,12 +69,12 @@ public final class ProjectAddonManager {
                 continue;
             }
 
-            if (projectIds.containsKey(id) && projectAddons.containsKey(id)) {
-                notMatchTemplate.add(folder.getName());
-                continue;
-            }
-
             if (projectIds.containsKey(id)) {
+                ProjectAddon addon = projectAddons.get(id);
+                if (addon.isMarkAsDepend()) {
+                    continue;
+                }
+
                 ExceptionHandler.handleError("在名称为 " + folder.getName() + "的文件夹中有重复的附属ID，导致此附属无法加载！");
                 notMatchTemplate.add(folder.getName());
                 continue;
