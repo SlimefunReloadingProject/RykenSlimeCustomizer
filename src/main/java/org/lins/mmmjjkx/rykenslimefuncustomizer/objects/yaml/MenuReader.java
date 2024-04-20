@@ -33,8 +33,6 @@ public class MenuReader extends YamlReader<CustomMenu> {
         String title = section.getString("title", "");
         boolean playerInvClickable = section.getBoolean("playerInvClickable", true);
 
-        int progress = -1;
-
         JavaScriptEval eval = null;
         if (section.contains("script")) {
             String script = section.getString("script", "");
@@ -59,6 +57,8 @@ public class MenuReader extends YamlReader<CustomMenu> {
                 return new CustomMenu(s, title, menuPreset, new ItemStack(Material.BLACK_STAINED_GLASS_PANE), eval);
             }
         }
+
+        int progress = 22;
 
         Map<Integer, ItemStack> slotMap = new HashMap<>();
         ConfigurationSection slots = section.getConfigurationSection("slots");
@@ -114,6 +114,6 @@ public class MenuReader extends YamlReader<CustomMenu> {
             }
         }
 
-        return new CustomMenu(s, title, slotMap, playerInvClickable, progress, progressItem,eval);
+        return new CustomMenu(s, title, slotMap, playerInvClickable, progress, progressItem, eval);
     }
 }

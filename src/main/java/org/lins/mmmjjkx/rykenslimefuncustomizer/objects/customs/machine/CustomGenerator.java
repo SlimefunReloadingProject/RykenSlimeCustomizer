@@ -72,10 +72,12 @@ public class CustomGenerator extends AGenerator implements MachineProcessHolder<
         BlockMenu inv = StorageCacheUtils.getMenu(l);
         FuelOperation operation = processor.getOperation(l);
 
+        int progressSlot = menu == null || menu.getProgressSlot() == -1 ? 22 : menu.getProgressSlot();
+
         if (inv != null) {
             if (operation != null) {
                 if (!operation.isFinished()) {
-                    processor.updateProgressBar(inv, menu.getProgressSlot(), operation);
+                    processor.updateProgressBar(inv, progressSlot, operation);
 
                     if (isChargeable()) {
                         int charge = getCharge(l, data);
@@ -101,7 +103,7 @@ public class CustomGenerator extends AGenerator implements MachineProcessHolder<
                         inv.pushItem(operation.getResult().clone(), getOutputSlots());
                     }
 
-                    inv.replaceExistingItem(menu.getProgressSlot(), new CustomItemStack(Material.BLACK_STAINED_GLASS_PANE, " "));
+                    inv.replaceExistingItem(progressSlot, new CustomItemStack(Material.BLACK_STAINED_GLASS_PANE, " "));
 
                     processor.endOperation(l);
                     return 0;
@@ -171,7 +173,7 @@ public class CustomGenerator extends AGenerator implements MachineProcessHolder<
     @Override
     //outside init
     public ItemStack getProgressBar() {
-        return new ItemStack(Material.STONE, 1);
+        return new ItemStack(Material.FLINT_AND_STEEL);
     }
 
     @Override

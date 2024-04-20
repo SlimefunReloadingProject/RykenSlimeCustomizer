@@ -76,7 +76,7 @@ public class CustomMaterialGenerator extends SlimefunItem implements InventoryBl
                     setProgress(b, 0);
                     for (ItemStack item : generation) {
                         if (blockMenu.fits(item, getOutputSlots())) {
-                            if (blockMenu.hasViewer()) {
+                            if (blockMenu.hasViewer() && statusSlot > -1) {
                                 blockMenu.replaceExistingItem(statusSlot, new CustomItemStack(
                                         Material.LIME_STAINED_GLASS_PANE,
                                         "&a生产中"
@@ -99,10 +99,12 @@ public class CustomMaterialGenerator extends SlimefunItem implements InventoryBl
                     addProgress(b);
                 }
             } else {
-                blockMenu.replaceExistingItem(statusSlot, new CustomItemStack(
-                        Material.RED_STAINED_GLASS_PANE,
-                        "&4电力不足"
-                ));
+                if (statusSlot > -1) {
+                    blockMenu.replaceExistingItem(statusSlot, new CustomItemStack(
+                            Material.RED_STAINED_GLASS_PANE,
+                            "&4电力不足"
+                    ));
+                }
             }
         }
     }

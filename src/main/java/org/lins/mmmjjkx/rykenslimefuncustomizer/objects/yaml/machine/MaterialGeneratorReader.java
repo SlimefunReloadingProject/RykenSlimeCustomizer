@@ -62,10 +62,18 @@ public class MaterialGeneratorReader extends YamlReader<CustomMaterialGenerator>
         int capacity = section.getInt("capacity", 0);
         ConfigurationSection outputItems = section.getConfigurationSection("outputs");
         ItemStack[] out = CommonUtils.readRecipe(outputItems, addon, output.size());
-        if (out == null) {
-            ExceptionHandler.handleError("无法在附属"+addon.getAddonName()+"中加载材料生成器"+s+": 输出物品为空或格式错误导致无法加载");
-            return null;
+        if (out.length == 0) {
+            ConfigurationSection outputItem = section.getConfigurationSection("outputItem");
+            ItemStack outItem = CommonUtils.readItem(outputItem, false, addon);
+            if (outItem == null) {
+                ExceptionHandler.handleError("无法在附属" + addon.getAddonName() + "中加载材料生成器" + s + ": 输出物品为空或格式错误导致无法加载");
+                return null;
+            } else {
+                out = new ItemStack[]{outItem};
+            }
         }
+
+        out = removeNulls(out);
 
         int tickRate = section.getInt("tickRate");
         if (tickRate < 1) {
@@ -87,5 +95,25 @@ public class MaterialGeneratorReader extends YamlReader<CustomMaterialGenerator>
         CustomMaterialGenerator cmg = new CustomMaterialGenerator(group.getSecondValue(), slimefunItemStack, rt.getSecondValue(), recipe, capacity, output, status, tickRate, Arrays.asList(out), menu, per);
         menu.setInvb(cmg);
         return cmg;
+    }
+
+    private ItemStack[] removeNulls(ItemStack[] origin) {
+        int count = 0;
+        for (ItemStack element : origin) {
+            if (element != null) {
+                count++;
+            }
+        }
+        ItemStack[] newArray = new ItemStack[count];
+
+        int index = 0;
+        for (ItemStack element : origin) {
+            if (element != null) {
+                newArray[index] = element;
+                index++;
+            }
+        }
+
+        return newArray;
     }
 }

@@ -53,6 +53,7 @@ public class GeoResourceReader extends YamlReader<CustomGeoResource> {
             SlimefunItemStack slimefunItemStack = new SlimefunItemStack(s, stack);
 
             ConfigurationSection sup = section.getConfigurationSection("supply");
+
             BiFunction<World.Environment, Biome, Integer> supply = (e, b) -> {
                 if (sup == null) {
                     return 0;
@@ -63,19 +64,17 @@ public class GeoResourceReader extends YamlReader<CustomGeoResource> {
                 String env = e.toString().toLowerCase();
                 String path = b.toString().toLowerCase();
                 boolean isSection = sup.isConfigurationSection(env);
+
                 if (!isSection) {
                     return sup.getInt(env, 0);
                 }
+
                 ConfigurationSection biomes = sup.getConfigurationSection(env);
                 if (biomes == null) return 0;
                 if (biomes.contains(path)) {
                     return biomes.getInt(path, 0);
                 } else {
-                    if (biomes.contains("others")) {
-                        return biomes.getInt("others", 0);
-                    } else {
-                        return 0;
-                    }
+                    return biomes.getInt("others", 0);
                 }
             };
 
