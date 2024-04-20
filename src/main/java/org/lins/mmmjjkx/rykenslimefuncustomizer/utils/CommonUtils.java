@@ -239,6 +239,10 @@ public class CommonUtils {
                 YamlConfiguration configuration = YamlConfiguration.loadConfiguration(file);
 
                 itemStack = new RSCItemStack(configuration.getItemStack("item", new RSCItemStack(Material.STONE, name, lore)), name, lore);
+
+                if (itemStack.getAmount() > 1 && !countable) {
+                    itemStack.setAmount(1);
+                }
             }
         }
 

@@ -64,7 +64,7 @@ public class MaterialGeneratorReader extends YamlReader<CustomMaterialGenerator>
         ItemStack[] out = CommonUtils.readRecipe(outputItems, addon, output.size());
         if (out.length == 0) {
             ConfigurationSection outputItem = section.getConfigurationSection("outputItem");
-            ItemStack outItem = CommonUtils.readItem(outputItem, false, addon);
+            ItemStack outItem = CommonUtils.readItem(outputItem, true, addon);
             if (outItem == null) {
                 ExceptionHandler.handleError("无法在附属" + addon.getAddonName() + "中加载材料生成器" + s + ": 输出物品为空或格式错误导致无法加载");
                 return null;
