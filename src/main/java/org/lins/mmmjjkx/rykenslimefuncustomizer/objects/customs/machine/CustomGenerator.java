@@ -48,7 +48,7 @@ public class CustomGenerator extends AGenerator implements MachineProcessHolder<
         if (menu != null) {
             menu.setInvb(this);
             menu.reInit();
-            this.processor.setProgressBar(menu.getProgress());
+            this.processor.setProgressBar(menu.getProgressBarItem());
         }
 
         this.capacity = capacity;

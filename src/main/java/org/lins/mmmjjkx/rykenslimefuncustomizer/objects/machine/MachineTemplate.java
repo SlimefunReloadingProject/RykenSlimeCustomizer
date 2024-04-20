@@ -1,24 +1,27 @@
 package org.lins.mmmjjkx.rykenslimefuncustomizer.objects.machine;
 
-import io.github.thebusybiscuit.slimefun4.libraries.dough.inventory.InvUtils;
-import io.github.thebusybiscuit.slimefun4.utils.ChestMenuUtils;
 import lombok.Getter;
 import me.mrCookieSlime.Slimefun.api.inventory.BlockMenu;
 import org.bukkit.inventory.ItemStack;
 
+import java.util.List;
+
 @Getter
 public class MachineTemplate extends ItemStack {
     private final int cost;
-    private final RecipeMachineRecipe recipe;
+    private final List<RecipeMachineRecipe> recipes;
 
-    public MachineTemplate(ItemStack item, int cost, RecipeMachineRecipe recipe) {
+    public MachineTemplate(ItemStack item, int cost, List<RecipeMachineRecipe> recipes) {
         super(item);
 
         this.cost = cost;
-        this.recipe = recipe;
+        this.recipes = recipes;
     }
 
     public boolean matchRecipe(BlockMenu bm, int[] inputSlots) {
+        for (RecipeMachineRecipe recipe : recipes) {
 
+        }
+        return false;
     }
 }

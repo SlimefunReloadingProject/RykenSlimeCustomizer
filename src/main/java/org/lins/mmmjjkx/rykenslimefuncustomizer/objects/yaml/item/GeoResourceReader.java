@@ -36,6 +36,7 @@ public class GeoResourceReader extends YamlReader<CustomGeoResource> {
                 ExceptionHandler.handleError("无法在附属"+addon.getAddonName()+"中加载GEO资源"+s+": 物品为空或格式错误导致无法加载");
                 return null;
             }
+
             Pair<ExceptionHandler.HandleResult, ItemGroup> group = ExceptionHandler.handleItemGroupGet(addon, igId);
             if (group.getFirstValue() == ExceptionHandler.HandleResult.FAILED) return null;
             ItemStack[] recipe = CommonUtils.readRecipe(section.getConfigurationSection("recipe"), addon);

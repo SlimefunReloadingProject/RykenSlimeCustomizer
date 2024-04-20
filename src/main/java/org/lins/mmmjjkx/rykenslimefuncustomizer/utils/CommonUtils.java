@@ -1,5 +1,6 @@
 package org.lins.mmmjjkx.rykenslimefuncustomizer.utils;
 
+import de.themoep.minedown.adventure.MineDown;
 import io.github.thebusybiscuit.slimefun4.api.items.SlimefunItem;
 import io.github.thebusybiscuit.slimefun4.libraries.dough.collections.Pair;
 import io.github.thebusybiscuit.slimefun4.libraries.dough.skins.PlayerHead;
@@ -52,6 +53,7 @@ public class CommonUtils {
 
         text = text.replaceAll("§", "&");
 
+        /*
         Component legacy1 = LEGACY_COMPONENT_SERIALIZER.deserialize(text);
 
         ExceptionHandler.debugLog(text + " -> " + LegacyMessage.fromLegacy(text, "&"));
@@ -62,6 +64,8 @@ public class CommonUtils {
             ExceptionHandler.handleError("无法解析 '" + text + "' 这些文本为消息组件，已转为旧版颜色文本", e);
             return legacy1;
         }
+         */
+        return MineDown.parse(text).decoration(TextDecoration.ITALIC, false);
     }
 
     public static List<Component> toComponents(String... texts) {

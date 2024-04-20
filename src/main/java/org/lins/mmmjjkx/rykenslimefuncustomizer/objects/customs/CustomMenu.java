@@ -29,14 +29,12 @@ import java.util.HashMap;
 import java.util.List;
 import java.util.Map;
 
-@SuppressWarnings("deprecation")
 public class CustomMenu extends BlockMenuPreset {
     @Getter
     private final Map<Integer, ItemStack> slotMap;
     private final JavaScriptEval eval;
     @Getter
     private int progressSlot;
-    @Getter
     private ItemStack progress;
     @Setter
     private InventoryBlock invb;
@@ -46,21 +44,21 @@ public class CustomMenu extends BlockMenuPreset {
     private final String title;
 
     public CustomMenu(String id, String title, CustomMenu menu) {
-        this(id, title, menu, menu.eval);
+        this(id, title, menu, menu.getProgressBarItem(), menu.eval);
     }
 
-    public CustomMenu(String id, String title, BlockMenuPreset preset, @Nullable JavaScriptEval eval) {
-        this(id, title, new HashMap<>(), preset.isPlayerInventoryClickable(), eval);
+    public CustomMenu(String id, String title, BlockMenuPreset preset, @Nullable ItemStack progressBar, @Nullable JavaScriptEval eval) {
+        this(id, title, new HashMap<>(), preset.isPlayerInventoryClickable(), 22, progressBar, eval);
 
         cloneOriginalInventory(preset);
 
         SlimefunItem item = Slimefun.getRegistry().getSlimefunItemIds().get(preset.getID());
         if (item instanceof CustomMachine cm) {
             this.progressSlot = cm.getMenu().getProgressSlot();
-            this.progress = cm.getMenu().getProgress();
+            this.progress = cm.getMenu().getProgressBarItem();
         } else if (item instanceof CustomNoEnergyMachine cnem) {
             this.progressSlot = cnem.getMenu().getProgressSlot();
-            this.progress = cnem.getMenu().getProgress();
+            this.progress = cnem.getMenu().getProgressBarItem();
         } else if (item instanceof CustomRecipeMachine crm) {
             this.progressSlot = crm.getMenu() != null ? crm.getMenu().getProgressSlot() : 22;
             this.progress = crm.getProgressBar();
@@ -70,17 +68,13 @@ public class CustomMenu extends BlockMenuPreset {
         }
     }
 
-    public CustomMenu(String id, String title, @NotNull Map<Integer, ItemStack> mi, boolean playerInvClickable, @Nullable JavaScriptEval eval) {
-        this(id, title, mi, playerInvClickable, -1, eval);
-    }
-
-    public CustomMenu(String id, String title, @NotNull Map<Integer, ItemStack> mi, boolean playerInvClickable, int progress, @Nullable JavaScriptEval eval) {
+    public CustomMenu(String id, String title, @NotNull Map<Integer, ItemStack> mi, boolean playerInvClickable, int progress, @Nullable ItemStack progressBar, @Nullable JavaScriptEval eval) {
         super(id, title);
 
         this.title = title;
         this.slotMap = mi;
         this.eval = eval;
-        this.progress = mi.get(progress);
+        this.progress = progressBar != null ? progressBar.clone() : mi.get(progress);
         this.progressSlot = progress;
         setPlayerInventoryClickable(playerInvClickable);
 
@@ -130,6 +124,11 @@ public class CustomMenu extends BlockMenuPreset {
     @Override
     public boolean canOpen(@NotNull Block b, @NotNull Player p) {
         return Slimefun.getProtectionManager().hasPermission(p, b.getLocation(), Interaction.INTERACT_BLOCK);
+    }
+
+    @Nullable
+    public ItemStack getProgressBarItem() {
+        return progress;
     }
 
     @Override

@@ -9,7 +9,10 @@ import io.github.thebusybiscuit.slimefun4.core.handlers.BlockBreakHandler;
 import io.github.thebusybiscuit.slimefun4.core.machines.MachineProcessor;
 import io.github.thebusybiscuit.slimefun4.implementation.handlers.SimpleBlockBreakHandler;
 import io.github.thebusybiscuit.slimefun4.implementation.operations.CraftingOperation;
+import io.github.thebusybiscuit.slimefun4.libraries.dough.inventory.InvUtils;
 import io.github.thebusybiscuit.slimefun4.libraries.dough.items.CustomItemStack;
+import io.github.thebusybiscuit.slimefun4.utils.SlimefunUtils;
+import io.github.thebusybiscuit.slimefun4.utils.itemstack.ItemStackWrapper;
 import lombok.Getter;
 import me.mrCookieSlime.Slimefun.Objects.SlimefunItem.abstractItems.AContainer;
 import me.mrCookieSlime.Slimefun.Objects.SlimefunItem.abstractItems.MachineRecipe;
@@ -25,9 +28,7 @@ import org.lins.mmmjjkx.rykenslimefuncustomizer.objects.customs.CustomMenu;
 import org.lins.mmmjjkx.rykenslimefuncustomizer.objects.machine.RecipeMachineRecipe;
 import org.lins.mmmjjkx.rykenslimefuncustomizer.utils.CommonUtils;
 
-import java.util.ArrayList;
-import java.util.List;
-import java.util.Random;
+import java.util.*;
 
 public final class CustomRecipeMachine extends AContainer implements RecipeDisplayItem {
     private final ItemStack RECIPE_SPLITTER = new CustomItemStack(Material.GRAY_STAINED_GLASS_PANE, "&a").setCustomModel(2200002);
@@ -39,8 +40,7 @@ public final class CustomRecipeMachine extends AContainer implements RecipeDispl
     private final List<RecipeMachineRecipe> recipes;
     private final int energyPerCraft;
     private final int capacity;
-    @Getter
-    @Nullable
+    @Getter @Nullable
     private final CustomMenu menu;
     private volatile RecipeMachineRecipe currentRecipe;
 
@@ -65,7 +65,7 @@ public final class CustomRecipeMachine extends AContainer implements RecipeDispl
         if (menu != null) {
             menu.setInvb(this);
             menu.reInit();
-            this.processor.setProgressBar(menu.getProgress());
+            this.processor.setProgressBar(menu.getProgressBarItem());
         }
 
         setProcessingSpeed(speed);
@@ -164,20 +164,12 @@ public final class CustomRecipeMachine extends AContainer implements RecipeDispl
 
     @Override
     public int[] getInputSlots() {
-        int[] input = new int[this.input.size()];
-        for (int i = 0; i < this.input.size(); i ++) {
-            input[i] = this.input.get(i);
-        }
-        return input;
+        return input.stream().mapToInt(i -> i).toArray();
     }
 
     @Override
     public int[] getOutputSlots() {
-        int[] output = new int[this.output.size()];
-        for (int i = 0; i < this.output.size(); i ++) {
-            output[i] = this.output.get(i);
-        }
-        return output;
+        return output.stream().mapToInt(i -> i).toArray();
     }
 
     @Override

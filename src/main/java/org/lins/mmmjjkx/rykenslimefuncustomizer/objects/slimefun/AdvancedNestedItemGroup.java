@@ -1,5 +1,6 @@
 package org.lins.mmmjjkx.rykenslimefuncustomizer.objects.slimefun;
 
+import io.github.thebusybiscuit.slimefun4.api.SlimefunAddon;
 import io.github.thebusybiscuit.slimefun4.api.items.groups.NestedItemGroup;
 import io.github.thebusybiscuit.slimefun4.api.items.groups.SubItemGroup;
 import io.github.thebusybiscuit.slimefun4.api.player.PlayerProfile;
@@ -9,7 +10,6 @@ import io.github.thebusybiscuit.slimefun4.core.guide.SlimefunGuideMode;
 import io.github.thebusybiscuit.slimefun4.core.services.sounds.SoundEffect;
 import io.github.thebusybiscuit.slimefun4.implementation.Slimefun;
 import io.github.thebusybiscuit.slimefun4.implementation.guide.SurvivalSlimefunGuide;
-import io.github.thebusybiscuit.slimefun4.libraries.commons.lang.Validate;
 import io.github.thebusybiscuit.slimefun4.libraries.dough.items.CustomItemStack;
 import io.github.thebusybiscuit.slimefun4.utils.ChestMenuUtils;
 import me.mrCookieSlime.CSCoreLibPlugin.general.Inventory.ChestMenu;
@@ -17,42 +17,43 @@ import org.bukkit.ChatColor;
 import org.bukkit.NamespacedKey;
 import org.bukkit.entity.Player;
 import org.bukkit.inventory.ItemStack;
+import org.jetbrains.annotations.NotNull;
+import org.lins.mmmjjkx.rykenslimefuncustomizer.utils.ExceptionHandler;
 
 import javax.annotation.Nonnull;
+import java.util.ArrayList;
 import java.util.List;
 import java.util.Objects;
 
-@SuppressWarnings("deprecation")
-public class AdvancedNestItemGroup extends NestedItemGroup {
-    private List<SubItemGroup> subGroups;
-    private List<ItemGroupButton> buttons;
+public class AdvancedNestedItemGroup extends NestedItemGroup {
+    private final List<SubItemGroup> subGroups;
 
-    public AdvancedNestItemGroup(NamespacedKey key, ItemStack item, int tier) {
+    public AdvancedNestedItemGroup(NamespacedKey key, ItemStack item, int tier) {
         super(key, item, tier);
+
+        ExceptionHandler.debugLog("创建物品组: " + key);
+
+        subGroups = new ArrayList<>();
     }
 
     @Override
     public void open(Player p, PlayerProfile profile, SlimefunGuideMode mode) {
-        super.open(p, profile, mode);
-
         setup(p, profile, mode, 1);
     }
 
     public void addSubGroup(@Nonnull SubItemGroup group) {
         super.addSubGroup(group);
+
         this.subGroups.add(group);
     }
 
     public void removeSubGroup(@Nonnull SubItemGroup group) {
         super.removeSubGroup(group);
+
         this.subGroups.remove(group);
     }
 
-    public void addButton(@Nonnull ItemGroupButton button) {
-        Validate.isTrue(button.getParent() == this, "The button's parent ItemGroup must be the same as this NestedItemGroup.");
-        this.subGroups.add(button);
-    }
-
+    @SuppressWarnings("deprecation")
     private void setup(Player p, PlayerProfile profile, SlimefunGuideMode mode, int page) {
         GuideHistory history = profile.getGuideHistory();
         if (mode == SlimefunGuideMode.SURVIVAL_MODE) {
@@ -71,6 +72,7 @@ public class AdvancedNestItemGroup extends NestedItemGroup {
             SlimefunGuide.openMainMenu(profile, mode, history.getMainMenuPage());
             return false;
         });
+
         int index = 9;
         int target = 36 * (page - 1) - 1;
 
@@ -110,6 +112,6 @@ public class AdvancedNestItemGroup extends NestedItemGroup {
 
             return false;
         });
-        menu.open(new Player[]{p});
+        menu.open(p);
     }
 }

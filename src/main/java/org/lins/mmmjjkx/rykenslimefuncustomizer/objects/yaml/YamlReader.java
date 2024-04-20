@@ -26,18 +26,26 @@ public abstract class YamlReader<T> {
             ConfigurationSection section = configuration.getConfigurationSection(key);
             if (section == null) return objects;
 
+            ExceptionHandler.debugLog("开始读取项: " + key);
+
             ConfigurationSection register = section.getConfigurationSection("register");
             if (!checkForRegistration(register)) return objects;
+
+            ExceptionHandler.debugLog("检查延迟加载...");
 
             if (section.getBoolean("lateInit", false)) {
                 putLateInit(key);
                 continue;
             }
 
+            ExceptionHandler.debugLog("开始读取...");
+
             var object = readEach(key, addon);
             if (object != null) {
                 objects.add(object);
             }
+
+            ExceptionHandler.debugLog("读取项 " + key + " 完成, 添加结果： " + (object != null));
         }
         return objects;
     }

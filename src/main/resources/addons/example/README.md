@@ -1,3 +1,3 @@
-## 此处为RSC的过时示例!
-## 如需获取最新示例，请前往 
+## 此处不再会放入示例
+## 如需获取示例(最新)，请前往 
 ## <https://github.com/SlimefunReloadingProject/rsc-example/>

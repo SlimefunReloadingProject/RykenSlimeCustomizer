@@ -93,6 +93,7 @@ public class CustomNoEnergyMachine extends AbstractEmptyMachine<MachineOperation
                         }
                     });
                 }
+                this.processor.setProgressBar(menu.getProgressBarItem());
             }
         }
     }
@@ -113,20 +114,12 @@ public class CustomNoEnergyMachine extends AbstractEmptyMachine<MachineOperation
 
     @Override
     public int[] getInputSlots() {
-        int[] input = new int[this.input.size()];
-        for (int i = 0; i < this.input.size(); i ++) {
-            input[i] = this.input.get(i);
-        }
-        return input;
+        return input.stream().mapToInt(i -> i).toArray();
     }
 
     @Override
     public int[] getOutputSlots() {
-        int[] output = new int[this.output.size()];
-        for (int i = 0; i < this.output.size(); i ++) {
-            output[i] = this.output.get(i);
-        }
-        return output;
+        return output.stream().mapToInt(i -> i).toArray();
     }
 
     @Override

@@ -18,8 +18,8 @@ import java.util.List;
 public class ItemGroupButton extends SubItemGroup {
     private final List<String> actions;
 
-    public ItemGroupButton(NamespacedKey key, NestedItemGroup parent, ItemStack item, @Nullable List<String> actions) {
-        super(key, parent, item);
+    public ItemGroupButton(NamespacedKey key, NestedItemGroup parent, ItemStack item, int tier, @Nullable List<String> actions) {
+        super(key, parent, item, tier);
 
         this.actions = actions;
     }

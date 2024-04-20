@@ -50,7 +50,9 @@ public class ItemGroupReader extends YamlReader<ItemGroup> {
         }
 
         ItemGroup group = switch (type) {
-            default -> new ItemGroup(key, stack, tier);
+            default -> {
+                yield new ItemGroup(key, stack, tier);
+            }
             case "sub" -> {
                 NamespacedKey parent = new NamespacedKey(RykenSlimefunCustomizer.INSTANCE, section.getString("parent", "").toLowerCase());
                 ItemGroup raw = CommonUtils.getIf(Slimefun.getRegistry().getAllItemGroups(), ig -> ig.getKey().equals(parent));
@@ -81,8 +83,28 @@ public class ItemGroupReader extends YamlReader<ItemGroup> {
             case "nested", "parent" -> new NestedItemGroup(key, stack, tier);
             case "seasonal" -> {
                 Month month = Month.of(section.getInt("month", 1));
-                yield new SeasonalItemGroup(key, month, 3, stack);
+                yield new SeasonalItemGroup(key, month, tier, stack);
             }
+            /*
+            case "button" -> {
+                NamespacedKey parent = new NamespacedKey(RykenSlimefunCustomizer.INSTANCE, section.getString("parent", "").toLowerCase());
+                ItemGroup raw = CommonUtils.getIf(Slimefun.getRegistry().getAllItemGroups(), ig -> ig.getKey().equals(parent));
+                if (raw == null) {
+                    ExceptionHandler.handleError("无法在附属"+addon.getAddonName()+"中加载物品组"+s+": 无法找到父物品组" + parent.getKey());
+                    yield null;
+                }
+
+                if (!(raw instanceof AdvancedNestedItemGroup nig)) {
+                    ExceptionHandler.handleError("无法在附属"+addon.getAddonName()+"中加载物品组"+s+": 物品组" + parent.getKey() + "不是一个来自RSC的嵌套物品组");
+                    yield null;
+                }
+
+
+                List<String> actions = section.getStringList("actions");
+
+                yield null; //new ItemGroupButton(key, nig, stack, tier, actions);
+            }
+            */
         };
 
         if (group != null) {

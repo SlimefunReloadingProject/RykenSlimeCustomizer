@@ -38,6 +38,9 @@ public class ProjectAddonLoader {
     public ProjectAddon load() {
         ProjectAddon addon;
         YamlConfiguration info = doFileLoad(file, Constants.INFO_FILE);
+
+        ExceptionHandler.debugLog("开始读取文件夹 " + file.getName() + " 中的项目信息...");
+
         if (info.contains("name") && info.contains("version") && info.contains("id")) {
             String name = info.getString("name");
             String version = info.getString("version", "1.0");
@@ -98,6 +101,8 @@ public class ProjectAddonLoader {
             ExceptionHandler.handleError("在名称为 " + file.getName() + "的文件夹中有无效的项目信息，导致此附属无法加载！");
             return null;
         }
+
+        ExceptionHandler.debugLog("读取完成，开始加载附属 " + addon.getAddonId() + " 中的内容...");
 
         YamlConfiguration groups = doFileLoad(file, Constants.GROUPS_FILE);
         ItemGroupReader reader = new ItemGroupReader(groups);
@@ -169,6 +174,8 @@ public class ProjectAddonLoader {
         ResearchReader researchReader = new ResearchReader(researches);
         addon.setResearches(researchReader.readAll(addon));
 
+        ExceptionHandler.debugLog("开始加载要求延迟加载的内容...");
+
         //late inits
         addon.getMobDrops().addAll(mobDropsReader.loadLateInits(addon));
         addon.getGeoResources().addAll(resourceReader.loadLateInits(addon));
@@ -185,6 +192,8 @@ public class ProjectAddonLoader {
         addon.getSimpleMachines().addAll(simpleMachineReader.loadLateInits(addon));
         addon.getMultiBlockMachines().addAll(multiBlockMachineReader.loadLateInits(addon));
         addon.getResearches().addAll(researchReader.loadLateInits(addon));
+
+        ExceptionHandler.debugLog("加载附属 "+addon.getAddonId()+" 成功!");
 
         return addon;
     }

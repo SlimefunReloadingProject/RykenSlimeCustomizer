@@ -2,6 +2,7 @@ package org.lins.mmmjjkx.rykenslimefuncustomizer.objects.yaml;
 
 import io.github.thebusybiscuit.slimefun4.implementation.Slimefun;
 import me.mrCookieSlime.Slimefun.api.inventory.BlockMenuPreset;
+import org.bukkit.Material;
 import org.bukkit.configuration.ConfigurationSection;
 import org.bukkit.configuration.file.YamlConfiguration;
 import org.bukkit.inventory.ItemStack;
@@ -55,7 +56,7 @@ public class MenuReader extends YamlReader<CustomMenu> {
             if (menuPreset instanceof CustomMenu cm) {
                 return new CustomMenu(s, title, cm);
             } else {
-                return new CustomMenu(s, title, menuPreset, eval);
+                return new CustomMenu(s, title, menuPreset, new ItemStack(Material.BLACK_STAINED_GLASS_PANE), eval);
             }
         }
 
@@ -65,6 +66,8 @@ public class MenuReader extends YamlReader<CustomMenu> {
             ExceptionHandler.handleError("无法加载机器菜单"+s+": 没有设置物品。");
             return null;
         }
+
+        ItemStack progressItem = new ItemStack(Material.BLACK_STAINED_GLASS_PANE);
 
         for (String slot : slots.getKeys(false)) {
             try {
@@ -81,6 +84,11 @@ public class MenuReader extends YamlReader<CustomMenu> {
                 }
                 if (item.getBoolean("progressbar", false)) {
                     progress = realSlot;
+                    if (item.contains("progressBarItem")) {
+                        progressItem = CommonUtils.readItem(item.getConfigurationSection("progressBarItem"), true, addon);
+                    } else {
+                        progressItem = itemStack;
+                    }
                 }
                 slotMap.put(realSlot, itemStack);
             } catch (NumberFormatException e) {
@@ -106,6 +114,6 @@ public class MenuReader extends YamlReader<CustomMenu> {
             }
         }
 
-        return new CustomMenu(s, title, slotMap, playerInvClickable, progress, eval);
+        return new CustomMenu(s, title, slotMap, playerInvClickable, progress, progressItem,eval);
     }
 }
