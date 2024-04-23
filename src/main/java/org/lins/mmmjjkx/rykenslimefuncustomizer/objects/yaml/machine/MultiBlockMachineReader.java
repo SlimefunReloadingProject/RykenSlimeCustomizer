@@ -8,12 +8,14 @@ import org.bukkit.Material;
 import org.bukkit.configuration.ConfigurationSection;
 import org.bukkit.configuration.file.YamlConfiguration;
 import org.bukkit.inventory.ItemStack;
+import org.lins.mmmjjkx.rykenslimefuncustomizer.bulit_in.JavaScriptEval;
 import org.lins.mmmjjkx.rykenslimefuncustomizer.objects.ProjectAddon;
 import org.lins.mmmjjkx.rykenslimefuncustomizer.objects.customs.machine.CustomMultiBlockMachine;
 import org.lins.mmmjjkx.rykenslimefuncustomizer.objects.yaml.YamlReader;
 import org.lins.mmmjjkx.rykenslimefuncustomizer.utils.CommonUtils;
 import org.lins.mmmjjkx.rykenslimefuncustomizer.utils.ExceptionHandler;
 
+import java.io.File;
 import java.util.HashMap;
 import java.util.Map;
 
@@ -90,8 +92,19 @@ public class MultiBlockMachineReader extends YamlReader<CustomMultiBlockMachine>
                 sound = soundEffectPair.getSecondValue();
             }
         }
+
+        JavaScriptEval eval = null;
+        if (section.contains("script")) {
+            String script = section.getString("script", "");
+            File file = new File(addon.getScriptsFolder(), script + ".js");
+            if (!file.exists()) {
+                ExceptionHandler.handleWarning("找不到脚本文件 " + file.getName());
+            } else {
+                eval = new JavaScriptEval(file, addon);
+            }
+        }
         
-        return new CustomMultiBlockMachine(group.getSecondValue(), slimefunItemStack, recipe, recipes, workSlot, sound);
+        return new CustomMultiBlockMachine(group.getSecondValue(), slimefunItemStack, recipe, recipes, workSlot, sound, eval);
     }
 
     private Map<ItemStack[], ItemStack> readRecipes(ConfigurationSection section, ProjectAddon addon) {

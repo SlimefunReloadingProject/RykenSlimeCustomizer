@@ -10,11 +10,7 @@ import org.bukkit.inventory.ItemStack;
 
 public class NBTAPIIntegration {
 
-    public static NBTAPIIntegration INSTANCE;
-
-    static {
-        INSTANCE = new NBTAPIIntegration();
-    }
+    public NBTAPIIntegration() {}
 
     public NBTItem readItem(ItemStack item) {
         return new NBTItem(item.clone());

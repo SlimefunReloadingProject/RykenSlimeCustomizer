@@ -74,7 +74,7 @@ public class RecipeMachineReader extends YamlReader<CustomRecipeMachine> {
         int capacity = section.getInt("capacity");
 
         if (capacity < 0) {
-            ExceptionHandler.handleError("无法加载配方机器"+s+": 容量未设置或小于0");
+            ExceptionHandler.handleError("无法加载配方机器"+s+": 容量小于0");
             return null;
         }
 
@@ -82,11 +82,6 @@ public class RecipeMachineReader extends YamlReader<CustomRecipeMachine> {
 
         if (energy <= 0) {
             ExceptionHandler.handleError("无法加载配方机器"+s+": 合成一次的消耗能量未设置或小于等于0");
-            return null;
-        }
-
-        if (energy > capacity) {
-            ExceptionHandler.handleError("无法加载配方机器"+s+": 合成一次的消耗能量不能大于能量容量");
             return null;
         }
 

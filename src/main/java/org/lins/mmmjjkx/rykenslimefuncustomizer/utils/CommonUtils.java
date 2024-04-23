@@ -15,18 +15,23 @@ import org.bukkit.Material;
 import org.bukkit.NamespacedKey;
 import org.bukkit.configuration.ConfigurationSection;
 import org.bukkit.configuration.file.YamlConfiguration;
+import org.bukkit.configuration.file.YamlConfigurationOptions;
 import org.bukkit.enchantments.Enchantment;
 import org.bukkit.inventory.ItemFlag;
 import org.bukkit.inventory.ItemStack;
 import org.bukkit.inventory.meta.ItemMeta;
+import org.bukkit.plugin.java.JavaPlugin;
 import org.jetbrains.annotations.Contract;
 import org.jetbrains.annotations.NotNull;
 import org.jetbrains.annotations.Nullable;
+import org.lins.mmmjjkx.rykenslimefuncustomizer.RykenSlimefunCustomizer;
 import org.lins.mmmjjkx.rykenslimefuncustomizer.objects.ProjectAddon;
 import org.lins.mmmjjkx.rykenslimefuncustomizer.objects.customs.item.RSCItemStack;
 
 import java.io.File;
 import java.io.IOException;
+import java.io.InputStream;
+import java.io.InputStreamReader;
 import java.nio.charset.StandardCharsets;
 import java.nio.file.Files;
 import java.nio.file.StandardOpenOption;
@@ -53,18 +58,6 @@ public class CommonUtils {
 
         text = text.replaceAll("§", "&");
 
-        /*
-        Component legacy1 = LEGACY_COMPONENT_SERIALIZER.deserialize(text);
-
-        ExceptionHandler.debugLog(text + " -> " + LegacyMessage.fromLegacy(text, "&"));
-
-        try {
-            return MINI_MESSAGE.deserialize(LegacyMessage.fromLegacy(text, "&")).decoration(TextDecoration.ITALIC, false);
-        } catch (Exception e) {
-            ExceptionHandler.handleError("无法解析 '" + text + "' 这些文本为消息组件，已转为旧版颜色文本", e);
-            return legacy1;
-        }
-         */
         return MineDown.parse(text).decoration(TextDecoration.ITALIC, false);
     }
 
@@ -328,5 +321,69 @@ public class CommonUtils {
                 || typeNameString.endsWith("_CHESTPLATE")
                 || typeNameString.endsWith("_LEGGINGS")
                 || typeNameString.endsWith("_BOOTS");
+    }
+
+    public static void completeFile(String resourceFile, String... notNeedSyncKeys) {
+        JavaPlugin plugin = RykenSlimefunCustomizer.INSTANCE;
+
+        InputStream stream = plugin.getResource(resourceFile);
+        File file = new File(plugin.getDataFolder(), resourceFile);
+        if (!file.exists()) {
+            if (stream != null) {
+                plugin.saveResource(resourceFile, false);
+                return;
+            }
+            return;
+        }
+        if (stream == null) {
+            ExceptionHandler.handleError("无法找到文件" + resourceFile + "，请检查插件文件是否损坏！");
+            return;
+        }
+        try {
+            YamlConfiguration configuration = YamlConfiguration.loadConfiguration(new InputStreamReader(stream));
+            YamlConfiguration configuration2 = new YamlConfiguration();
+            configuration2.load(file);
+
+            for (String key : configuration.getKeys(true)) {
+                Object value = configuration.get(key);
+                if (value instanceof List<?>) {
+                    List<?> list2 = configuration2.getList(key);
+                    if (list2 == null) {
+                        configuration2.set(key, value);
+                        continue;
+                    }
+                }
+
+                if (!configuration2.contains(key)) {
+                    configuration2.set(key, value);
+                }
+                if (!configuration.getComments(key).equals(configuration2.getComments(key))) {
+                    configuration2.setComments(key, configuration.getComments(key));
+                }
+                YamlConfigurationOptions options1 = configuration.options();
+                YamlConfigurationOptions options2 = configuration2.options();
+
+                if (!options2.getHeader().equals(options1.getHeader())) {
+                    options2.setHeader(options1.getHeader());
+                }
+            }
+
+            List<String> notSync = Arrays.stream(notNeedSyncKeys).toList();
+
+            for (String key2 : configuration2.getKeys(true)) {
+                boolean b = notSync.contains(key2);
+
+                if (!configuration.contains(key2)) {
+                    if (!b) {
+                        configuration2.set(key2, null);
+                    }
+                }
+            }
+
+            configuration2.save(file);
+        } catch (Exception e) {
+            e.printStackTrace();
+            ExceptionHandler.handleError("无法完成文件" + resourceFile + "的同步，请检查插件文件是否损坏！");
+        }
     }
 }

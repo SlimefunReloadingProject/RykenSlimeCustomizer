@@ -20,6 +20,7 @@ import org.bukkit.inventory.Inventory;
 import org.bukkit.inventory.ItemStack;
 import org.jetbrains.annotations.Nullable;
 import org.lins.mmmjjkx.rykenslimefuncustomizer.RykenSlimefunCustomizer;
+import org.lins.mmmjjkx.rykenslimefuncustomizer.objects.script.parent.ScriptEval;
 
 import javax.annotation.Nonnull;
 import java.util.List;
@@ -29,13 +30,16 @@ import java.util.stream.Collectors;
 public class CustomMultiBlockMachine extends MultiBlockMachine {
     private final SoundEffect craftSound;
     private final int work;
+    private final ScriptEval eval;
 
     public CustomMultiBlockMachine(ItemGroup itemGroup, SlimefunItemStack item, ItemStack[] recipe,
-                                   Map<ItemStack[], ItemStack> craftRecipes, int work, @Nullable SoundEffect soundEffect) {
+                                   Map<ItemStack[], ItemStack> craftRecipes, int work, @Nullable SoundEffect soundEffect,
+                                   @Nullable ScriptEval eval) {
         super(itemGroup, item, recipe, BlockFace.SELF);
 
         this.work = work;
         this.craftSound = soundEffect;
+        this.eval = eval;
 
         for (Map.Entry<ItemStack[], ItemStack> e : craftRecipes.entrySet()) {
             addRecipe(e.getKey(), e.getValue());
@@ -60,35 +64,39 @@ public class CustomMultiBlockMachine extends MultiBlockMachine {
                 Inventory inv = dispenser.getInventory();
                 ItemStack[] contents = inv.getContents();
 
-                for (ItemStack current : contents) {
-                    for (ItemStack convert : RecipeType.getRecipeInputs(this)) {
-                        if (convert != null && SlimefunUtils.isItemSimilar(current, convert, true)) {
-                            ItemStack output = RecipeType.getRecipeOutput(this, convert);
-                            Inventory outputInv = this.findOutputInventory(output, disBlock, inv);
-                            MultiBlockCraftEvent event = new MultiBlockCraftEvent(p, this, current, output);
-                            Bukkit.getPluginManager().callEvent(event);
-                            if (event.isCancelled()) {
+                if (eval != null) {
+                    eval.evalFunction("onWork", p, block, contents);
+                } else {
+                    for (ItemStack current : contents) {
+                        for (ItemStack convert : RecipeType.getRecipeInputs(this)) {
+                            if (convert != null && SlimefunUtils.isItemSimilar(current, convert, true)) {
+                                ItemStack output = RecipeType.getRecipeOutput(this, convert);
+                                Inventory outputInv = this.findOutputInventory(output, disBlock, inv);
+                                MultiBlockCraftEvent event = new MultiBlockCraftEvent(p, this, current, output);
+                                Bukkit.getPluginManager().callEvent(event);
+                                if (event.isCancelled()) {
+                                    return;
+                                }
+
+                                if (outputInv != null) {
+                                    ItemStack removing = current.clone();
+                                    removing.setAmount(1);
+                                    inv.removeItem(removing);
+                                    outputInv.addItem(event.getOutput());
+
+                                    if (craftSound != null) {
+                                        craftSound.playAt(block);
+                                    }
+                                } else {
+                                    Slimefun.getLocalization().sendMessage(p, "machines.full-inventory", true);
+                                }
                                 return;
                             }
-
-                            if (outputInv != null) {
-                                ItemStack removing = current.clone();
-                                removing.setAmount(1);
-                                inv.removeItem(removing);
-                                outputInv.addItem(event.getOutput());
-
-                                if (craftSound != null) {
-                                    craftSound.playAt(block);
-                                }
-                            } else {
-                                Slimefun.getLocalization().sendMessage(p, "machines.full-inventory", true);
-                            }
-                            return;
                         }
                     }
-                }
 
-                Slimefun.getLocalization().sendMessage(p, "machines.unknown-material", true);
+                    Slimefun.getLocalization().sendMessage(p, "machines.unknown-material", true);
+                }
             }
         }
     }

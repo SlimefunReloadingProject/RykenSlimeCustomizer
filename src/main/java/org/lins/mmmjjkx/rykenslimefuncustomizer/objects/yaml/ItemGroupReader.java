@@ -12,6 +12,8 @@ import org.bukkit.configuration.file.YamlConfiguration;
 import org.bukkit.inventory.ItemStack;
 import org.lins.mmmjjkx.rykenslimefuncustomizer.RykenSlimefunCustomizer;
 import org.lins.mmmjjkx.rykenslimefuncustomizer.objects.ProjectAddon;
+import org.lins.mmmjjkx.rykenslimefuncustomizer.objects.slimefun.AdvancedNestedItemGroup;
+import org.lins.mmmjjkx.rykenslimefuncustomizer.objects.slimefun.ItemGroupButton;
 import org.lins.mmmjjkx.rykenslimefuncustomizer.utils.CommonUtils;
 import org.lins.mmmjjkx.rykenslimefuncustomizer.utils.ExceptionHandler;
 
@@ -50,9 +52,7 @@ public class ItemGroupReader extends YamlReader<ItemGroup> {
         }
 
         ItemGroup group = switch (type) {
-            default -> {
-                yield new ItemGroup(key, stack, tier);
-            }
+            default -> new ItemGroup(key, stack, tier);
             case "sub" -> {
                 NamespacedKey parent = new NamespacedKey(RykenSlimefunCustomizer.INSTANCE, section.getString("parent", "").toLowerCase());
                 ItemGroup raw = CommonUtils.getIf(Slimefun.getRegistry().getAllItemGroups(), ig -> ig.getKey().equals(parent));
@@ -80,12 +80,11 @@ public class ItemGroupReader extends YamlReader<ItemGroup> {
 
                 yield new LockedItemGroup(key, stack, tier, parents.toArray(new NamespacedKey[]{}));
             }
-            case "nested", "parent" -> new NestedItemGroup(key, stack, tier);
+            case "nested", "parent" -> new AdvancedNestedItemGroup(key, stack, tier);
             case "seasonal" -> {
                 Month month = Month.of(section.getInt("month", 1));
                 yield new SeasonalItemGroup(key, month, tier, stack);
             }
-            /*
             case "button" -> {
                 NamespacedKey parent = new NamespacedKey(RykenSlimefunCustomizer.INSTANCE, section.getString("parent", "").toLowerCase());
                 ItemGroup raw = CommonUtils.getIf(Slimefun.getRegistry().getAllItemGroups(), ig -> ig.getKey().equals(parent));
@@ -102,9 +101,8 @@ public class ItemGroupReader extends YamlReader<ItemGroup> {
 
                 List<String> actions = section.getStringList("actions");
 
-                yield null; //new ItemGroupButton(key, nig, stack, tier, actions);
+                yield new ItemGroupButton(key, nig, stack, tier, actions);
             }
-            */
         };
 
         if (group != null) {

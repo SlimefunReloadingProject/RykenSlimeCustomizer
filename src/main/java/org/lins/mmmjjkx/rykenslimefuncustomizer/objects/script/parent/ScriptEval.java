@@ -167,7 +167,7 @@ public abstract class ScriptEval {
         addThing("getSfItemByBlock", (Function<Location, SlimefunItem>) StorageCacheUtils::getSfItem);
 
         if (Bukkit.getPluginManager().isPluginEnabled("NBTAPI")) {
-            addThing("NBTAPI", NBTAPIIntegration.INSTANCE);
+            addThing("NBTAPI", new NBTAPIIntegration());
         }
     }
 

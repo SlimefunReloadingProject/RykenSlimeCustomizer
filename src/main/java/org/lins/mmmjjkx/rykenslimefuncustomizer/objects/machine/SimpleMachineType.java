@@ -14,7 +14,22 @@ public enum SimpleMachineType {
     CHARGING_BENCH(true),
     ANIMAL_GROWTH_ACCELERATOR(true),
     TREE_GROWTH_ACCELERATOR(true),
-    CROP_GROWTH_ACCELERATOR(true);
+    CROP_GROWTH_ACCELERATOR(true),
+    FREEZER(true),
+    CARBON_PRESS(true),
+    ELECTRIC_PRESS(true),
+    ELECTRIC_CRUCIBLE(true),
+    FOOD_FABRICATOR(true),
+    HEATED_PRESSURE_CHAMBER(true),
+    AUTO_ENCHANTER(true),
+    AUTO_DISENCHANTER(true),
+    BOOK_BINDER(true),
+    AUTO_ANVIL(true),
+    AUTO_DRIER(true),
+    AUTO_BREWER(true),
+    REFINERY(true),
+    PRODUCE_COLLECTOR(true),
+    ENTITY_ASSEMBLER(true);
 
     private final boolean energy;
 
