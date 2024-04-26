@@ -57,6 +57,10 @@ public class CustomMultiBlockMachine extends MultiBlockMachine {
     public void onInteract(Player p, Block block) {
         Material material = super.getRecipe()[work-1].getType();
         if (block.getType().equals(material)) {
+            if (eval != null) {
+                eval.evalFunction("onWork", p, block);
+            }
+
             BlockFace dis = dispenserFaceGet();
             Block disBlock = block.getRelative(dis);
             BlockState bs = PaperLib.getBlockState(disBlock, false).getState();
@@ -64,34 +68,30 @@ public class CustomMultiBlockMachine extends MultiBlockMachine {
                 Inventory inv = dispenser.getInventory();
                 ItemStack[] contents = inv.getContents();
 
-                if (eval != null) {
-                    eval.evalFunction("onWork", p, block, contents);
-                } else {
-                    for (ItemStack current : contents) {
-                        for (ItemStack convert : RecipeType.getRecipeInputs(this)) {
-                            if (convert != null && SlimefunUtils.isItemSimilar(current, convert, true)) {
-                                ItemStack output = RecipeType.getRecipeOutput(this, convert);
-                                Inventory outputInv = this.findOutputInventory(output, disBlock, inv);
-                                MultiBlockCraftEvent event = new MultiBlockCraftEvent(p, this, current, output);
-                                Bukkit.getPluginManager().callEvent(event);
-                                if (event.isCancelled()) {
-                                    return;
-                                }
-
-                                if (outputInv != null) {
-                                    ItemStack removing = current.clone();
-                                    removing.setAmount(1);
-                                    inv.removeItem(removing);
-                                    outputInv.addItem(event.getOutput());
-
-                                    if (craftSound != null) {
-                                        craftSound.playAt(block);
-                                    }
-                                } else {
-                                    Slimefun.getLocalization().sendMessage(p, "machines.full-inventory", true);
-                                }
+                for (ItemStack current : contents) {
+                    for (ItemStack convert : RecipeType.getRecipeInputs(this)) {
+                        if (convert != null && SlimefunUtils.isItemSimilar(current, convert, true)) {
+                            ItemStack output = RecipeType.getRecipeOutput(this, convert);
+                            Inventory outputInv = this.findOutputInventory(output, disBlock, inv);
+                            MultiBlockCraftEvent event = new MultiBlockCraftEvent(p, this, current, output);
+                            Bukkit.getPluginManager().callEvent(event);
+                            if (event.isCancelled()) {
                                 return;
                             }
+
+                            if (outputInv != null) {
+                                ItemStack removing = current.clone();
+                                removing.setAmount(1);
+                                inv.removeItem(removing);
+                                outputInv.addItem(event.getOutput());
+
+                                if (craftSound != null) {
+                                    craftSound.playAt(block);
+                                }
+                            } else {
+                                Slimefun.getLocalization().sendMessage(p, "machines.full-inventory", true);
+                            }
+                            return;
                         }
                     }
 
