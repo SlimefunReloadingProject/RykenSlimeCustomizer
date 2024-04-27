@@ -28,8 +28,7 @@ public enum SimpleMachineType {
     AUTO_DRIER(true),
     AUTO_BREWER(true),
     REFINERY(true),
-    PRODUCE_COLLECTOR(true),
-    ENTITY_ASSEMBLER(true);
+    PRODUCE_COLLECTOR(true);
 
     private final boolean energy;
 
