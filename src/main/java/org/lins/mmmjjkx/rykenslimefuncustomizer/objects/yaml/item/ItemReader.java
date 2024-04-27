@@ -155,7 +155,7 @@ public class ItemReader extends YamlReader<SlimefunItem> {
                 return null;
             }
 
-            Class<? extends CustomItem> clazz = (Class<? extends CustomItem>) ClassUtils.generateClass(instance.getClass(), instance.getClass().getName(),
+            Class<? extends CustomItem> clazz = (Class<? extends CustomItem>) ClassUtils.generateClass(instance.getClass(),
                     "WitherProof", "Item", new Class[]{WitherProofBlockImpl.class}, null
             );
 
@@ -164,7 +164,7 @@ public class ItemReader extends YamlReader<SlimefunItem> {
 
         if (section.getBoolean("soulbound", false)) {
             Class<? extends CustomItem> clazz = (Class<? extends CustomItem>) ClassUtils.generateClass(instance.getClass(),
-                    instance.getClass().getName(), "Soulbound", "Item", new Class[]{Soulbound.class}, null
+                    "Soulbound", "Item", new Class[]{Soulbound.class}, null
             );
 
             instance = (CustomItem) clazz.getDeclaredConstructors()[0].newInstance(constructorArgs);
@@ -178,7 +178,7 @@ public class ItemReader extends YamlReader<SlimefunItem> {
             }
 
             Class<? extends CustomItem> clazz = (Class<? extends CustomItem>) ClassUtils.generateClass(instance.getClass(),
-                    instance.getClass().getName(), "PiglinTradeAble", "Item", new Class[]{Radioactive.class}, builder ->
+                    "PiglinTradeAble", "Item", new Class[]{Radioactive.class}, builder ->
                             builder.method(ElementMatchers.isDeclaredBy(PiglinBarterDrop.class))
                                     .intercept(FixedValue.value(chance))
             );
@@ -230,7 +230,7 @@ public class ItemReader extends YamlReader<SlimefunItem> {
                 return null;
             }
 
-            Class<? extends BaseRadiationItem> clazz = (Class<? extends BaseRadiationItem>) ClassUtils.generateClass(instance.getClass(), instance.getClass().getName(),
+            Class<? extends BaseRadiationItem> clazz = (Class<? extends BaseRadiationItem>) ClassUtils.generateClass(instance.getClass(),
                     "WitherProof", "Item", new Class[]{WitherProofBlockImpl.class}, null
             );
 
@@ -239,7 +239,7 @@ public class ItemReader extends YamlReader<SlimefunItem> {
 
         if (section.getBoolean("soulbound", false)) {
             Class<? extends BaseRadiationItem> clazz = (Class<? extends BaseRadiationItem>) ClassUtils.generateClass(instance.getClass(),
-                    instance.getClass().getName(), "Soulbound", "Item", new Class[]{Soulbound.class}, null
+                    "Soulbound", "Item", new Class[]{Soulbound.class}, null
             );
 
             instance = (BaseRadiationItem) clazz.getDeclaredConstructors()[0].newInstance(constructorArgs);
@@ -255,7 +255,7 @@ public class ItemReader extends YamlReader<SlimefunItem> {
             }
 
             Class<? extends CustomItem> clazz = (Class<? extends CustomItem>) ClassUtils.generateClass(instance.getClass(),
-                    instance.getClass().getName(), "PiglinTrade", "Item", new Class[]{Radioactive.class}, builder ->
+                    "PiglinTrade", "Item", new Class[]{Radioactive.class}, builder ->
                             builder.method(ElementMatchers.isDeclaredBy(PiglinBarterDrop.class))
                                     .intercept(FixedValue.value(chance))
             );

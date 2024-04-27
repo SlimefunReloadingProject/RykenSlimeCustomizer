@@ -11,9 +11,10 @@ import java.util.function.Function;
 public class ClassUtils {
     private static final Map<String, Class<?>> cache = new HashMap<>();
 
-    public static Class<?> generateClass(Class<?> extendClass, String className, String centerName, String nameReplacement,
+    public static Class<?> generateClass(Class<?> extendClass, String centerName, String nameReplacement,
                                          Class<?>[] interfaces, @Nullable Function<DynamicType.Builder<?>, DynamicType.Builder<?>> delegation) {
-        String finalClassName = className.replace(nameReplacement, "") + centerName + nameReplacement;
+
+        String finalClassName = extendClass.getSimpleName().replace(nameReplacement, "") + centerName + nameReplacement;
         if (cache.containsKey(finalClassName)) {
             return cache.get(finalClassName);
         }

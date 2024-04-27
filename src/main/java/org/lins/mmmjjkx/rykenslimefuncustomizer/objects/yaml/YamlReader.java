@@ -54,6 +54,10 @@ public abstract class YamlReader<T> {
         lateInits.add(key);
     }
 
+    protected String getAttribute(ConfigurationSection section, String s) {
+        return section.getString(s);
+    }
+
     public List<T> loadLateInits(ProjectAddon addon) {
         List<T> objects = new ArrayList<>();
         lateInits.forEach(s -> objects.add(readEach(s, addon)));
@@ -119,10 +123,6 @@ public abstract class YamlReader<T> {
                         operation = "小于";
                         match = current < destination;
                     }
-                    case "=" -> {
-                        operation = "等于";
-                        match = current == destination;
-                    }
                     case ">=" -> {
                         operation = "大于或等于";
                         match = current >= destination;
@@ -130,10 +130,6 @@ public abstract class YamlReader<T> {
                     case "<=" -> {
                         operation = "小于或等于";
                         match = current <= destination;
-                    }
-                    case "!=" -> {
-                        operation = "不等于";
-                        match = current != destination;
                     }
                     default -> {
                         ExceptionHandler.handleError("读取"+section.getName()+"的注册条件时发现问题: version需要合法的比较符！");
