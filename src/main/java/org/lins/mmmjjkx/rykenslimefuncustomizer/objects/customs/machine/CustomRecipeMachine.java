@@ -20,14 +20,13 @@ import org.bukkit.block.Block;
 import org.bukkit.inventory.ItemStack;
 import org.jetbrains.annotations.NotNull;
 import org.jetbrains.annotations.Nullable;
-import org.lins.mmmjjkx.rykenslimefuncustomizer.RykenSlimefunCustomizer;
 import org.lins.mmmjjkx.rykenslimefuncustomizer.objects.customs.CustomMenu;
 import org.lins.mmmjjkx.rykenslimefuncustomizer.objects.machine.RecipeMachineRecipe;
 import org.lins.mmmjjkx.rykenslimefuncustomizer.utils.CommonUtils;
 
 import java.util.*;
 
-public final class CustomRecipeMachine extends AContainer implements RecipeDisplayItem {
+public class CustomRecipeMachine extends AContainer implements RecipeDisplayItem {
     private final ItemStack RECIPE_SPLITTER = new CustomItemStack(Material.GRAY_STAINED_GLASS_PANE, "&a").setCustomModel(2200002);
     private final ItemStack AIR = new ItemStack(Material.AIR);
     private final MachineProcessor<CraftingOperation> processor;
@@ -50,7 +49,7 @@ public final class CustomRecipeMachine extends AContainer implements RecipeDispl
         this.input = input;
         this.output = output;
         this.raw_recipes = recipes;
-        this.recipes = raw_recipes.stream().filter(r -> !r.isForDisplay()).toList();
+        this.recipes = new ArrayList<>(raw_recipes.stream().filter(r -> !r.isForDisplay()).toList());
         this.energyPerCraft = energyPerCraft;
         this.capacity = capacity;
         this.menu = menu;
@@ -71,8 +70,6 @@ public final class CustomRecipeMachine extends AContainer implements RecipeDispl
         setEnergyConsumption(energyPerCraft);
 
         registerDefaultRecipes();
-
-        register(RykenSlimefunCustomizer.INSTANCE);
     }
 
     @NotNull
@@ -97,7 +94,14 @@ public final class CustomRecipeMachine extends AContainer implements RecipeDispl
             return;
         }
 
-        recipes.forEach(this::registerRecipe);
+        recipes.forEach(super::registerRecipe);
+    }
+
+    @Override
+    public void registerRecipe(MachineRecipe recipe) {
+        super.registerRecipe(recipe);
+
+        this.recipes.add((RecipeMachineRecipe) recipe);
     }
 
     @Override

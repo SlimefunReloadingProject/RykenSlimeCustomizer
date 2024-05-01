@@ -25,6 +25,8 @@ import org.lins.mmmjjkx.rykenslimefuncustomizer.objects.customs.item.CustomUnpla
 import org.lins.mmmjjkx.rykenslimefuncustomizer.objects.customs.item.exts.*;
 import org.lins.mmmjjkx.rykenslimefuncustomizer.objects.customs.parent.BaseRadiationItem;
 import org.lins.mmmjjkx.rykenslimefuncustomizer.objects.customs.parent.CustomItem;
+import org.lins.mmmjjkx.rykenslimefuncustomizer.objects.global.DropFromBlock;
+import org.lins.mmmjjkx.rykenslimefuncustomizer.objects.global.XMaterial;
 import org.lins.mmmjjkx.rykenslimefuncustomizer.objects.slimefun.WitherProofBlockImpl;
 import org.lins.mmmjjkx.rykenslimefuncustomizer.objects.yaml.YamlReader;
 import org.lins.mmmjjkx.rykenslimefuncustomizer.utils.ClassUtils;
@@ -34,6 +36,7 @@ import org.lins.mmmjjkx.rykenslimefuncustomizer.utils.ExceptionHandler;
 import java.io.File;
 import java.util.ArrayList;
 import java.util.List;
+import java.util.Optional;
 
 public class ItemReader extends YamlReader<SlimefunItem> {
     public ItemReader(YamlConfiguration config) {
@@ -97,6 +100,8 @@ public class ItemReader extends YamlReader<SlimefunItem> {
             return setupRadiationItem(section, stack, group.getSecondValue(), s, rt, itemStacks, eval, addon);
         }
 
+        var sfis = new SlimefunItemStack(s, stack);
+
         if (energy) {
             double energyCapacity = section.getDouble("energy_capacity");
             if (energyCapacity < 1) {
@@ -106,9 +111,9 @@ public class ItemReader extends YamlReader<SlimefunItem> {
             
             CommonUtils.addLore(stack, true, CommonUtils.parseToComponent("&8⇨ &e⚡ &70 / "+energyCapacity+" J"));
 
-            instance = new CustomEnergyItem(group.getSecondValue(), new SlimefunItemStack(s, stack), rt, itemStacks, (float) energyCapacity, eval);
+            instance = new CustomEnergyItem(group.getSecondValue(), sfis, rt, itemStacks, (float) energyCapacity, eval);
         } else if (section.getBoolean("placeable", false)) {
-            instance = new CustomDefaultItem(group.getSecondValue(), new SlimefunItemStack(s, stack), rt, itemStacks);
+            instance = new CustomDefaultItem(group.getSecondValue(), sfis, rt, itemStacks);
         } else if (section.contains("rainbow")) {
             String materialType = section.getString("rainbow", "");
             if (!stack.getType().isBlock()) {
@@ -133,7 +138,7 @@ public class ItemReader extends YamlReader<SlimefunItem> {
                     colorMaterials.add(material1);
                 }
 
-                instance = new CustomRainbowBlock(group.getSecondValue(), new SlimefunItemStack(s, stack), rt, itemStacks, colorMaterials);
+                instance = new CustomRainbowBlock(group.getSecondValue(), sfis, rt, itemStacks, colorMaterials);
             } else {
                 Pair<ExceptionHandler.HandleResult, ColoredMaterial> coloredMaterialPair =
                         ExceptionHandler.handleEnumValueOf("错误的可染色材料类型: " + materialType, ColoredMaterial.class, materialType);
@@ -141,10 +146,10 @@ public class ItemReader extends YamlReader<SlimefunItem> {
                 if (coloredMaterialPair.getFirstValue() == ExceptionHandler.HandleResult.FAILED || coloredMaterial == null) {
                     return null;
                 }
-                instance = new CustomRainbowBlock(group.getSecondValue(), new SlimefunItemStack(s, stack), rt, itemStacks, coloredMaterial);
+                instance = new CustomRainbowBlock(group.getSecondValue(), sfis, rt, itemStacks, coloredMaterial);
             }
         } else {
-            instance = new CustomUnplaceableItem(group.getSecondValue(), new SlimefunItemStack(s, stack), rt, itemStacks, eval);
+            instance = new CustomUnplaceableItem(group.getSecondValue(), sfis, rt, itemStacks, eval);
         }
 
         Object[] constructorArgs = instance.constructorArgs();
@@ -189,6 +194,30 @@ public class ItemReader extends YamlReader<SlimefunItem> {
         instance.setHidden(section.getBoolean("hidden", false));
         instance.setUseableInWorkbench(section.getBoolean("vanilla", false));
 
+        if (section.contains("drop")) {
+            int chance = section.getInt("drop_chance", 100);
+            int amount = section.getInt("drop_amount", 1);
+
+            if (chance < 0 || chance > 100) {
+                ExceptionHandler.handleError("在附属"+addon.getAddonName()+"中加载物品"+s+"时发现问题: 掉落几率"+chance+"不在0-100范围内!已转为100%");
+                chance = 100;
+            }
+
+            Optional<XMaterial> xm = XMaterial.matchXMaterial(section.getString("drop",""));
+            if (xm.isPresent()) {
+                Material material = xm.get().parseMaterial();
+                if (material == null) {
+                    ExceptionHandler.handleError("无法在附属" + addon.getAddonName() + "中读取材料" + material + "，已转为石头");
+                } else {
+                    ItemStack drop = sfis.clone();
+                    drop.setAmount(amount);
+                    DropFromBlock.addDrop(material, new DropFromBlock.Drop(drop, chance, addon));
+                }
+            } else {
+                ExceptionHandler.handleError("在附属" + addon.getAddonName() + "中加载物品" + s + "时发现问题: 指定掉落方块材料类型" + section.getString("drop") + "不存在!");
+            }
+        }
+        
         instance.register(RykenSlimefunCustomizer.INSTANCE);
 
         return instance;
@@ -213,6 +242,8 @@ public class ItemReader extends YamlReader<SlimefunItem> {
 
         BaseRadiationItem instance;
 
+        var sfis = new SlimefunItemStack(id, original);
+        
         if (energy) {
             double energyCapacity = section.getDouble("energy_capacity");
             instance = new CustomEnergyRadiationItem(itemGroup, new SlimefunItemStack(id, original), recipeType, recipe, radioactivity, (float) energyCapacity, eval);
@@ -265,6 +296,31 @@ public class ItemReader extends YamlReader<SlimefunItem> {
 
         instance.setHidden(section.getBoolean("hidden", false));
         instance.setUseableInWorkbench(section.getBoolean("vanilla", false));
+
+        if (section.contains("drop")) {
+            int chance = section.getInt("drop_chance", 100);
+            int amount = section.getInt("drop_amount", 1);
+
+            if (chance < 0 || chance > 100) {
+                ExceptionHandler.handleError("在附属"+addon.getAddonName()+"中加载物品"+ id +"时发现问题: 掉落几率"+chance+"不在0-100范围内!已转为100%");
+                chance = 100;
+            }
+
+            Optional<XMaterial> xm = XMaterial.matchXMaterial(section.getString("drop",""));
+            if (xm.isPresent()) {
+                Material material = xm.get().parseMaterial();
+                if (material == null) {
+                    ExceptionHandler.handleError("无法在附属" + addon.getAddonName() + "中读取材料" + material + "，已转为石头");
+                } else {
+                    ItemStack drop = sfis.clone();
+                    drop.setAmount(amount);
+                    DropFromBlock.addDrop(material, new DropFromBlock.Drop(drop, chance, addon));
+                }
+            } else {
+                ExceptionHandler.handleError("在附属" + addon.getAddonName() + "中加载物品" + id + "时发现问题: 指定掉落方块材料类型" + section.getString("drop") + "不存在!");
+            }
+        }
+        
         instance.register(RykenSlimefunCustomizer.INSTANCE);
 
         return instance;

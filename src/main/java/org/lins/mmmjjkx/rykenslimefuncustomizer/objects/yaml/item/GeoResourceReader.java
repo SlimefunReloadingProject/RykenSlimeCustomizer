@@ -4,6 +4,7 @@ import io.github.thebusybiscuit.slimefun4.api.items.ItemGroup;
 import io.github.thebusybiscuit.slimefun4.api.items.SlimefunItemStack;
 import io.github.thebusybiscuit.slimefun4.api.recipes.RecipeType;
 import io.github.thebusybiscuit.slimefun4.libraries.dough.collections.Pair;
+import org.bukkit.Material;
 import org.bukkit.World;
 import org.bukkit.block.Biome;
 import org.bukkit.configuration.ConfigurationSection;
@@ -11,10 +12,13 @@ import org.bukkit.configuration.file.YamlConfiguration;
 import org.bukkit.inventory.ItemStack;
 import org.lins.mmmjjkx.rykenslimefuncustomizer.objects.ProjectAddon;
 import org.lins.mmmjjkx.rykenslimefuncustomizer.objects.customs.item.CustomGeoResource;
+import org.lins.mmmjjkx.rykenslimefuncustomizer.objects.global.DropFromBlock;
+import org.lins.mmmjjkx.rykenslimefuncustomizer.objects.global.XMaterial;
 import org.lins.mmmjjkx.rykenslimefuncustomizer.objects.yaml.YamlReader;
 import org.lins.mmmjjkx.rykenslimefuncustomizer.utils.CommonUtils;
 import org.lins.mmmjjkx.rykenslimefuncustomizer.utils.ExceptionHandler;
 
+import java.util.Optional;
 import java.util.function.BiFunction;
 
 public class GeoResourceReader extends YamlReader<CustomGeoResource> {
@@ -77,6 +81,30 @@ public class GeoResourceReader extends YamlReader<CustomGeoResource> {
                     return biomes.getInt("others", 0);
                 }
             };
+
+            if (section.contains("drop")) {
+                int chance = section.getInt("drop_chance", 100);
+                int amount = section.getInt("drop_amount", 1);
+
+                if (chance < 0 || chance > 100) {
+                    ExceptionHandler.handleError("在附属"+addon.getAddonName()+"中加载GEO资源"+s+"时发现问题: 掉落几率"+chance+"不在0-100范围内!已转为100%");
+                    chance = 100;
+                }
+
+                Optional<XMaterial> xm = XMaterial.matchXMaterial(section.getString("drop",""));
+                if (xm.isPresent()) {
+                    Material material = xm.get().parseMaterial();
+                    if (material == null) {
+                        ExceptionHandler.handleError("无法在附属" + addon.getAddonName() + "中读取材料" + material + "，已转为石头");
+                    } else {
+                        ItemStack drop = stack.clone();
+                        drop.setAmount(amount);
+                        DropFromBlock.addDrop(material, new DropFromBlock.Drop(drop, chance, addon));
+                    }
+                } else {
+                    ExceptionHandler.handleError("在附属" + addon.getAddonName() + "中加载GEO资源" + s + "时发现问题: 指定掉落方块材料类型" + section.getString("drop") + "不存在!");
+                }
+            }
 
             if (recipe == null) recipe = new ItemStack[9];
 
