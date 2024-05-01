@@ -2,7 +2,6 @@ package org.lins.mmmjjkx.rykenslimefuncustomizer.utils;
 
 import de.themoep.minedown.adventure.MineDown;
 import io.github.thebusybiscuit.slimefun4.api.items.SlimefunItem;
-import io.github.thebusybiscuit.slimefun4.libraries.dough.collections.Pair;
 import io.github.thebusybiscuit.slimefun4.libraries.dough.skins.PlayerHead;
 import io.github.thebusybiscuit.slimefun4.libraries.dough.skins.PlayerSkin;
 import lombok.SneakyThrows;
@@ -27,6 +26,7 @@ import org.jetbrains.annotations.Nullable;
 import org.lins.mmmjjkx.rykenslimefuncustomizer.RykenSlimefunCustomizer;
 import org.lins.mmmjjkx.rykenslimefuncustomizer.objects.ProjectAddon;
 import org.lins.mmmjjkx.rykenslimefuncustomizer.objects.customs.item.RSCItemStack;
+import org.lins.mmmjjkx.rykenslimefuncustomizer.objects.global.XMaterial;
 
 import java.io.File;
 import java.io.IOException;
@@ -38,6 +38,7 @@ import java.nio.file.StandardOpenOption;
 import java.util.ArrayList;
 import java.util.Arrays;
 import java.util.List;
+import java.util.Optional;
 import java.util.function.Predicate;
 import java.util.regex.Matcher;
 import java.util.regex.Pattern;
@@ -158,16 +159,17 @@ public class CommonUtils {
 
         switch (type.toLowerCase()) {
             default -> {
+                Optional<XMaterial> xMaterial = XMaterial.matchXMaterial(material);
                 Material mat;
-                Pair<ExceptionHandler.HandleResult, Material> result =
-                        ExceptionHandler.handleEnumValueOf("无法在附属"+addon.getAddonName()+"中读取材料"+material+"错误，已转为石头", Material.class, material);
-                if (result.getFirstValue() == ExceptionHandler.HandleResult.FAILED) {
+                if (xMaterial.isEmpty()) {
+                    ExceptionHandler.handleError("无法在附属" + addon.getAddonName() + "中读取材料" + material + "，已转为石头");
                     mat = Material.STONE;
                 } else {
-                    if (result.getSecondValue() == null) {
-                        //It shouldn't happen
+                    mat = xMaterial.get().parseMaterial();
+                    if (mat == null) {
+                        ExceptionHandler.handleError("无法在附属" + addon.getAddonName() + "中读取材料" + material + "，已转为石头");
                         mat = Material.STONE;
-                    } else mat = result.getSecondValue();
+                    }
                 }
 
                 itemStack = new RSCItemStack(mat, name, lore);
@@ -294,10 +296,10 @@ public class CommonUtils {
         }
         File file = new File(folder, fileName + ".yml");
         if (!file.exists()) {
-            try {file.createNewFile();
+            try {
+                Files.createFile(file.toPath());
             } catch (IOException e) {
-                e.printStackTrace();
-                return;
+                throw new RuntimeException(e);
             }
         }
 

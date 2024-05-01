@@ -6,6 +6,7 @@ import org.jetbrains.annotations.NotNull;
 import org.lins.mmmjjkx.rykenslimefuncustomizer.bulit_in.JavaScriptCreator;
 import org.lins.mmmjjkx.rykenslimefuncustomizer.commands.MainCommand;
 import org.lins.mmmjjkx.rykenslimefuncustomizer.objects.global.ScriptCreators;
+import org.lins.mmmjjkx.rykenslimefuncustomizer.utils.CommonUtils;
 import org.lins.mmmjjkx.rykenslimefuncustomizer.utils.ExceptionHandler;
 
 import java.io.File;
@@ -33,8 +34,7 @@ public final class RykenSlimefunCustomizer extends JavaPlugin implements Slimefu
         INSTANCE = this;
         addonManager = new ProjectAddonManager();
 
-        saveDefaultConfig();
-        saveConfig();
+        CommonUtils.completeFile("config.yml");
 
         if (getConfig().getBoolean("saveExample")) {
             saveExample();
