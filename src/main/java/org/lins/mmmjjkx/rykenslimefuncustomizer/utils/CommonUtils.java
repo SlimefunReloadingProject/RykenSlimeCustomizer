@@ -24,6 +24,7 @@ import org.jetbrains.annotations.Contract;
 import org.jetbrains.annotations.NotNull;
 import org.jetbrains.annotations.Nullable;
 import org.lins.mmmjjkx.rykenslimefuncustomizer.RykenSlimefunCustomizer;
+import org.lins.mmmjjkx.rykenslimefuncustomizer.libraries.Colors.CMIChatColor;
 import org.lins.mmmjjkx.rykenslimefuncustomizer.objects.ProjectAddon;
 import org.lins.mmmjjkx.rykenslimefuncustomizer.objects.customs.item.RSCItemStack;
 import org.lins.mmmjjkx.rykenslimefuncustomizer.objects.global.XMaterial;
@@ -148,8 +149,8 @@ public class CommonUtils {
             type = "skull_hash";
         }
 
-        List<String> lore = section.getStringList("lore");
-        String name = section.getString("name","");
+        List<String> lore = CMIChatColor.translate(section.getStringList("lore"));
+        String name = CMIChatColor.translate(section.getString("name",""));
         boolean glow = section.getBoolean("glow", false);
         boolean hasEnchantment = section.contains("enchantments") && section.isConfigurationSection("enchantments");
         int modelId = section.getInt("modelId");
