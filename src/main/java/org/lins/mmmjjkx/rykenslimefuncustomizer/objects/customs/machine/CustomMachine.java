@@ -11,6 +11,7 @@ import io.github.thebusybiscuit.slimefun4.core.handlers.BlockPlaceHandler;
 import io.github.thebusybiscuit.slimefun4.core.machines.MachineOperation;
 import io.github.thebusybiscuit.slimefun4.core.machines.MachineProcessor;
 import io.github.thebusybiscuit.slimefun4.core.networks.energy.EnergyNetComponentType;
+import java.util.List;
 import lombok.Getter;
 import me.mrCookieSlime.Slimefun.Objects.handlers.BlockTicker;
 import me.mrCookieSlime.Slimefun.api.inventory.BlockMenu;
@@ -26,8 +27,6 @@ import org.lins.mmmjjkx.rykenslimefuncustomizer.objects.machine.MachineRecord;
 import org.lins.mmmjjkx.rykenslimefuncustomizer.objects.machine.ScriptedEvalBreakHandler;
 import org.lins.mmmjjkx.rykenslimefuncustomizer.objects.script.parent.ScriptEval;
 
-import java.util.List;
-
 public class CustomMachine extends AbstractEmptyMachine<MachineOperation> implements EnergyNetComponent {
     private final MachineRecord theRecord;
     private final List<Integer> input;
@@ -39,8 +38,17 @@ public class CustomMachine extends AbstractEmptyMachine<MachineOperation> implem
     @Getter
     private final CustomMenu menu;
 
-    public CustomMachine(ItemGroup itemGroup, SlimefunItemStack item, RecipeType recipeType, ItemStack[] recipe, @Nullable CustomMenu menu,
-                         List<Integer> input, List<Integer> output, MachineRecord record, EnergyNetComponentType type, @Nullable ScriptEval eval) {
+    public CustomMachine(
+            ItemGroup itemGroup,
+            SlimefunItemStack item,
+            RecipeType recipeType,
+            ItemStack[] recipe,
+            @Nullable CustomMenu menu,
+            List<Integer> input,
+            List<Integer> output,
+            MachineRecord record,
+            EnergyNetComponentType type,
+            @Nullable ScriptEval eval) {
         super(itemGroup, item, recipeType, recipe);
 
         this.input = input;
@@ -61,14 +69,12 @@ public class CustomMachine extends AbstractEmptyMachine<MachineOperation> implem
         if (eval != null) {
             eval.doInit();
 
-            addItemHandler(
-                    new BlockPlaceHandler(false) {
-                        @Override
-                        public void onPlayerPlace(@NotNull BlockPlaceEvent e) {
-                            CustomMachine.this.eval.evalFunction("onPlace", e);
-                        }
-                    }
-            );
+            addItemHandler(new BlockPlaceHandler(false) {
+                @Override
+                public void onPlayerPlace(@NotNull BlockPlaceEvent e) {
+                    CustomMachine.this.eval.evalFunction("onPlace", e);
+                }
+            });
         }
 
         addItemHandler(new ScriptedEvalBreakHandler(this, eval));
@@ -83,7 +89,16 @@ public class CustomMachine extends AbstractEmptyMachine<MachineOperation> implem
     protected void tick(Block b, SlimefunItem item, SlimefunBlockData data) {
         if (eval != null) {
             BlockMenu blockMenu = StorageCacheUtils.getMenu(b.getLocation());
-            MachineInfo info = new MachineInfo(blockMenu, data, item, b, theRecord.totalTicks(), theRecord.getProgress(), processor, theRecord, this);
+            MachineInfo info = new MachineInfo(
+                    blockMenu,
+                    data,
+                    item,
+                    b,
+                    theRecord.totalTicks(),
+                    theRecord.getProgress(),
+                    processor,
+                    theRecord,
+                    this);
             eval.evalFunction("tick", info);
         }
     }
@@ -113,8 +128,7 @@ public class CustomMachine extends AbstractEmptyMachine<MachineOperation> implem
         return output.stream().mapToInt(i -> i).toArray();
     }
 
-    @NotNull
-    @Override
+    @NotNull @Override
     public EnergyNetComponentType getEnergyComponentType() {
         return type;
     }
@@ -124,8 +138,7 @@ public class CustomMachine extends AbstractEmptyMachine<MachineOperation> implem
         return theRecord.capacity();
     }
 
-    @NotNull
-    @Override
+    @NotNull @Override
     public MachineProcessor<MachineOperation> getMachineProcessor() {
         return processor;
     }

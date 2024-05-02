@@ -1,8 +1,7 @@
 package org.lins.mmmjjkx.rykenslimefuncustomizer.objects.script.parent;
 
-import org.lins.mmmjjkx.rykenslimefuncustomizer.objects.ProjectAddon;
-
 import java.io.File;
+import org.lins.mmmjjkx.rykenslimefuncustomizer.objects.ProjectAddon;
 
 public interface ScriptCreator {
     String scriptKey();

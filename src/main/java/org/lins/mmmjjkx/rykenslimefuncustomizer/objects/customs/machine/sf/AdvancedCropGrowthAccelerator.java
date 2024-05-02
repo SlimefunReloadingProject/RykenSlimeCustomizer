@@ -12,8 +12,15 @@ public class AdvancedCropGrowthAccelerator extends CropGrowthAccelerator {
     private final int energy_consumption;
     private final int speed;
 
-    public AdvancedCropGrowthAccelerator(ItemGroup itemGroup, SlimefunItemStack item, RecipeType recipeType, ItemStack[] recipe,
-                                         int capacity, int radius, int energy_consumption, int speed) {
+    public AdvancedCropGrowthAccelerator(
+            ItemGroup itemGroup,
+            SlimefunItemStack item,
+            RecipeType recipeType,
+            ItemStack[] recipe,
+            int capacity,
+            int radius,
+            int energy_consumption,
+            int speed) {
         super(itemGroup, item, recipeType, recipe);
 
         this.capacity = capacity;

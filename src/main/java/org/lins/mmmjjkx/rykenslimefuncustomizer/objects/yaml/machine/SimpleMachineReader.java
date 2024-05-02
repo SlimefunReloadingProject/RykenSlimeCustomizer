@@ -43,18 +43,18 @@ public class SimpleMachineReader extends YamlReader<SlimefunItem> {
         ItemStack stack = CommonUtils.readItem(item, false, addon);
 
         if (stack == null) {
-            ExceptionHandler.handleError("无法在附属"+addon.getAddonName()+"中加载简单机器"+s+": 物品为空或格式错误导致无法加载");
+            ExceptionHandler.handleError("无法在附属" + addon.getAddonName() + "中加载简单机器" + s + ": 物品为空或格式错误导致无法加载");
             return null;
         }
 
         Pair<ExceptionHandler.HandleResult, ItemGroup> group = ExceptionHandler.handleItemGroupGet(addon, igId);
-        if (group.getFirstValue() == ExceptionHandler.HandleResult.FAILED || group.getSecondValue() == null) return null;
+        if (group.getFirstValue() == ExceptionHandler.HandleResult.FAILED || group.getSecondValue() == null)
+            return null;
         ItemStack[] recipe = CommonUtils.readRecipe(section.getConfigurationSection("recipe"), addon);
         String recipeType = section.getString("recipe_type", "NULL");
 
-        Pair<ExceptionHandler.HandleResult, RecipeType> rt = ExceptionHandler.getRecipeType(
-                "错误的配方类型" + recipeType + "!", recipeType
-        );
+        Pair<ExceptionHandler.HandleResult, RecipeType> rt =
+                ExceptionHandler.getRecipeType("错误的配方类型" + recipeType + "!", recipeType);
 
         if (rt.getFirstValue() == ExceptionHandler.HandleResult.FAILED || rt.getSecondValue() == null) return null;
         SlimefunItemStack slimefunItemStack = new SlimefunItemStack(s, stack);
@@ -63,7 +63,8 @@ public class SimpleMachineReader extends YamlReader<SlimefunItem> {
 
         Pair<ExceptionHandler.HandleResult, SimpleMachineType> machineTypePair = ExceptionHandler.handleEnumValueOf(
                 "错误的简单机器类型 " + machineTypeStr, SimpleMachineType.class, machineTypeStr);
-        if (machineTypePair.getFirstValue() == ExceptionHandler.HandleResult.FAILED || machineTypePair.getSecondValue() == null) {
+        if (machineTypePair.getFirstValue() == ExceptionHandler.HandleResult.FAILED
+                || machineTypePair.getSecondValue() == null) {
             return null;
         }
 
@@ -71,7 +72,7 @@ public class SimpleMachineReader extends YamlReader<SlimefunItem> {
         ConfigurationSection settings = section.getConfigurationSection("settings");
 
         if (settings == null) {
-            ExceptionHandler.handleError("无法在附属"+addon.getAddonName()+"中加载简单机器"+s+": 机器没有设置");
+            ExceptionHandler.handleError("无法在附属" + addon.getAddonName() + "中加载简单机器" + s + ": 机器没有设置");
             return null;
         }
 
@@ -80,17 +81,17 @@ public class SimpleMachineReader extends YamlReader<SlimefunItem> {
         int speed = 1;
         int radius = 1;
         int repairFactor = 10;
-        
+
         if (machineType.isEnergy()) {
             capacity = settings.getInt("capacity");
             if (capacity < 1) {
-                ExceptionHandler.handleError("无法加载简单机器"+s+": 容量小于1");
+                ExceptionHandler.handleError("无法加载简单机器" + s + ": 容量小于1");
                 return null;
             }
-            
+
             consumption = settings.getInt("consumption");
             if (consumption < 1) {
-                ExceptionHandler.handleError("无法加载简单机器"+s+": 消耗能量小于1");
+                ExceptionHandler.handleError("无法加载简单机器" + s + ": 消耗能量小于1");
                 return null;
             }
 
@@ -125,77 +126,182 @@ public class SimpleMachineReader extends YamlReader<SlimefunItem> {
             }
         }
 
-        SlimefunItem instance = switch (machineType) {
-            case ELECTRIC_FURNACE -> new ElectricFurnace(group.getSecondValue(), slimefunItemStack, rt.getSecondValue(), recipe)
-                    .setCapacity(capacity).setEnergyConsumption(consumption).setProcessingSpeed(speed);
-            case ELECTRIC_GOLD_PAN -> new ElectricGoldPan(group.getSecondValue(), slimefunItemStack, rt.getSecondValue(), recipe)
-                    .setCapacity(capacity).setEnergyConsumption(consumption).setProcessingSpeed(speed);
-            case ELECTRIC_SMELTERY -> new ElectricSmeltery(group.getSecondValue(), slimefunItemStack, rt.getSecondValue(), recipe)
-                    .setCapacity(capacity).setEnergyConsumption(consumption).setProcessingSpeed(speed);
-            case ELECTRIC_DUST_WASHER -> new ElectricDustWasher(group.getSecondValue(), slimefunItemStack, rt.getSecondValue(), recipe)
-                    .setCapacity(capacity).setEnergyConsumption(consumption).setProcessingSpeed(speed);
-            case ELECTRIC_ORE_GRINDER -> new ElectricOreGrinder(group.getSecondValue(), slimefunItemStack, rt.getSecondValue(), recipe)
-                    .setCapacity(capacity).setEnergyConsumption(consumption).setProcessingSpeed(speed);
-            case ELECTRIC_INGOT_FACTORY -> new ElectricIngotFactory(group.getSecondValue(), slimefunItemStack, rt.getSecondValue(), recipe)
-                    .setCapacity(capacity).setEnergyConsumption(consumption).setProcessingSpeed(speed);
-            case ELECTRIC_INGOT_PULVERIZER -> new ElectricIngotPulverizer(group.getSecondValue(), slimefunItemStack, rt.getSecondValue(), recipe)
-                    .setCapacity(capacity).setEnergyConsumption(consumption).setProcessingSpeed(speed);
-            case CHARGING_BENCH -> new ChargingBench(group.getSecondValue(), slimefunItemStack, rt.getSecondValue(), recipe)
-                    .setCapacity(capacity).setEnergyConsumption(consumption).setProcessingSpeed(speed);
-            case TREE_GROWTH_ACCELERATOR -> new AdvancedTreeGrowthAccelerator(group.getSecondValue(), slimefunItemStack, rt.getSecondValue(), recipe, capacity, radius, consumption);
-            case ANIMAL_GROWTH_ACCELERATOR -> new AdvancedAnimalGrowthAccelerator(group.getSecondValue(), slimefunItemStack, rt.getSecondValue(), recipe, capacity, radius, consumption);
-            case CROP_GROWTH_ACCELERATOR -> new AdvancedCropGrowthAccelerator(group.getSecondValue(), slimefunItemStack, rt.getSecondValue(), recipe, capacity, radius, consumption, speed);
-            case FREEZER -> new Freezer(group.getSecondValue(), slimefunItemStack, rt.getSecondValue(), recipe)
-                    .setCapacity(capacity).setEnergyConsumption(consumption).setProcessingSpeed(speed);
-            case CARBON_PRESS -> new CarbonPress(group.getSecondValue(), slimefunItemStack, rt.getSecondValue(), recipe)
-                    .setCapacity(capacity).setEnergyConsumption(consumption).setProcessingSpeed(speed);
-            case ELECTRIC_PRESS -> new ElectricPress(group.getSecondValue(), slimefunItemStack, rt.getSecondValue(), recipe)
-                    .setCapacity(capacity).setEnergyConsumption(consumption).setProcessingSpeed(speed);
-            case ELECTRIC_CRUCIBLE -> new ElectrifiedCrucible(group.getSecondValue(), slimefunItemStack, rt.getSecondValue(), recipe)
-                    .setCapacity(capacity).setEnergyConsumption(consumption).setProcessingSpeed(speed);
-            case FOOD_FABRICATOR -> new FoodFabricator(group.getSecondValue(), slimefunItemStack, rt.getSecondValue(), recipe)
-                    .setCapacity(capacity).setEnergyConsumption(consumption).setProcessingSpeed(speed);
-            case HEATED_PRESSURE_CHAMBER -> new HeatedPressureChamber(group.getSecondValue(), slimefunItemStack, rt.getSecondValue(), recipe)
-                    .setCapacity(capacity).setEnergyConsumption(consumption).setProcessingSpeed(speed);
-            case BOOK_BINDER -> new BookBinder(group.getSecondValue(), slimefunItemStack, rt.getSecondValue(), recipe)
-                    .setCapacity(capacity).setEnergyConsumption(consumption).setProcessingSpeed(speed);
-            case AUTO_ENCHANTER -> new AutoEnchanter(group.getSecondValue(), slimefunItemStack, rt.getSecondValue(), recipe)
-                    .setCapacity(capacity).setEnergyConsumption(consumption).setProcessingSpeed(speed);
-            case AUTO_DISENCHANTER -> new AutoDisenchanter(group.getSecondValue(), slimefunItemStack, rt.getSecondValue(), recipe)
-                    .setCapacity(capacity).setEnergyConsumption(consumption).setProcessingSpeed(speed);
-            case AUTO_ANVIL -> new AutoAnvil(group.getSecondValue(), repairFactor, slimefunItemStack, rt.getSecondValue(), recipe)
-                    .setCapacity(capacity).setEnergyConsumption(consumption).setProcessingSpeed(speed);
-            case AUTO_DRIER -> new AutoDrier(group.getSecondValue(), slimefunItemStack, rt.getSecondValue(), recipe)
-                    .setCapacity(capacity).setEnergyConsumption(consumption).setProcessingSpeed(speed);
-            case AUTO_BREWER -> new AutoBrewer(group.getSecondValue(), slimefunItemStack, rt.getSecondValue(), recipe)
-                    .setCapacity(capacity).setEnergyConsumption(consumption).setProcessingSpeed(speed);
-            case REFINERY -> new Refinery(group.getSecondValue(), slimefunItemStack, rt.getSecondValue(), recipe)
-                    .setCapacity(capacity).setEnergyConsumption(consumption).setProcessingSpeed(speed);
-            case PRODUCE_COLLECTOR -> new ProduceCollector(group.getSecondValue(), slimefunItemStack, rt.getSecondValue(), recipe)
-                    .setCapacity(capacity).setEnergyConsumption(consumption).setProcessingSpeed(speed);
-            case ENTITY_ASSEMBLER -> {
-                String entityTypeStr = settings.getString("entity_type", "");
-                Pair<ExceptionHandler.HandleResult, EntityType> type = ExceptionHandler.handleEnumValueOf("错误的实体类型: " + entityTypeStr, EntityType.class, entityTypeStr);
-                if (type.getFirstValue() == ExceptionHandler.HandleResult.FAILED || type.getSecondValue() == null) {
-                    yield null;
-                }
-                ItemStack head = CommonUtils.readItem(settings.getConfigurationSection("head"), true, addon);
+        SlimefunItem instance =
+                switch (machineType) {
+                    case ELECTRIC_FURNACE -> new ElectricFurnace(
+                                    group.getSecondValue(), slimefunItemStack, rt.getSecondValue(), recipe)
+                            .setCapacity(capacity)
+                            .setEnergyConsumption(consumption)
+                            .setProcessingSpeed(speed);
+                    case ELECTRIC_GOLD_PAN -> new ElectricGoldPan(
+                                    group.getSecondValue(), slimefunItemStack, rt.getSecondValue(), recipe)
+                            .setCapacity(capacity)
+                            .setEnergyConsumption(consumption)
+                            .setProcessingSpeed(speed);
+                    case ELECTRIC_SMELTERY -> new ElectricSmeltery(
+                                    group.getSecondValue(), slimefunItemStack, rt.getSecondValue(), recipe)
+                            .setCapacity(capacity)
+                            .setEnergyConsumption(consumption)
+                            .setProcessingSpeed(speed);
+                    case ELECTRIC_DUST_WASHER -> new ElectricDustWasher(
+                                    group.getSecondValue(), slimefunItemStack, rt.getSecondValue(), recipe)
+                            .setCapacity(capacity)
+                            .setEnergyConsumption(consumption)
+                            .setProcessingSpeed(speed);
+                    case ELECTRIC_ORE_GRINDER -> new ElectricOreGrinder(
+                                    group.getSecondValue(), slimefunItemStack, rt.getSecondValue(), recipe)
+                            .setCapacity(capacity)
+                            .setEnergyConsumption(consumption)
+                            .setProcessingSpeed(speed);
+                    case ELECTRIC_INGOT_FACTORY -> new ElectricIngotFactory(
+                                    group.getSecondValue(), slimefunItemStack, rt.getSecondValue(), recipe)
+                            .setCapacity(capacity)
+                            .setEnergyConsumption(consumption)
+                            .setProcessingSpeed(speed);
+                    case ELECTRIC_INGOT_PULVERIZER -> new ElectricIngotPulverizer(
+                                    group.getSecondValue(), slimefunItemStack, rt.getSecondValue(), recipe)
+                            .setCapacity(capacity)
+                            .setEnergyConsumption(consumption)
+                            .setProcessingSpeed(speed);
+                    case CHARGING_BENCH -> new ChargingBench(
+                                    group.getSecondValue(), slimefunItemStack, rt.getSecondValue(), recipe)
+                            .setCapacity(capacity)
+                            .setEnergyConsumption(consumption)
+                            .setProcessingSpeed(speed);
+                    case TREE_GROWTH_ACCELERATOR -> new AdvancedTreeGrowthAccelerator(
+                            group.getSecondValue(),
+                            slimefunItemStack,
+                            rt.getSecondValue(),
+                            recipe,
+                            capacity,
+                            radius,
+                            consumption);
+                    case ANIMAL_GROWTH_ACCELERATOR -> new AdvancedAnimalGrowthAccelerator(
+                            group.getSecondValue(),
+                            slimefunItemStack,
+                            rt.getSecondValue(),
+                            recipe,
+                            capacity,
+                            radius,
+                            consumption);
+                    case CROP_GROWTH_ACCELERATOR -> new AdvancedCropGrowthAccelerator(
+                            group.getSecondValue(),
+                            slimefunItemStack,
+                            rt.getSecondValue(),
+                            recipe,
+                            capacity,
+                            radius,
+                            consumption,
+                            speed);
+                    case FREEZER -> new Freezer(group.getSecondValue(), slimefunItemStack, rt.getSecondValue(), recipe)
+                            .setCapacity(capacity)
+                            .setEnergyConsumption(consumption)
+                            .setProcessingSpeed(speed);
+                    case CARBON_PRESS -> new CarbonPress(
+                                    group.getSecondValue(), slimefunItemStack, rt.getSecondValue(), recipe)
+                            .setCapacity(capacity)
+                            .setEnergyConsumption(consumption)
+                            .setProcessingSpeed(speed);
+                    case ELECTRIC_PRESS -> new ElectricPress(
+                                    group.getSecondValue(), slimefunItemStack, rt.getSecondValue(), recipe)
+                            .setCapacity(capacity)
+                            .setEnergyConsumption(consumption)
+                            .setProcessingSpeed(speed);
+                    case ELECTRIC_CRUCIBLE -> new ElectrifiedCrucible(
+                                    group.getSecondValue(), slimefunItemStack, rt.getSecondValue(), recipe)
+                            .setCapacity(capacity)
+                            .setEnergyConsumption(consumption)
+                            .setProcessingSpeed(speed);
+                    case FOOD_FABRICATOR -> new FoodFabricator(
+                                    group.getSecondValue(), slimefunItemStack, rt.getSecondValue(), recipe)
+                            .setCapacity(capacity)
+                            .setEnergyConsumption(consumption)
+                            .setProcessingSpeed(speed);
+                    case HEATED_PRESSURE_CHAMBER -> new HeatedPressureChamber(
+                                    group.getSecondValue(), slimefunItemStack, rt.getSecondValue(), recipe)
+                            .setCapacity(capacity)
+                            .setEnergyConsumption(consumption)
+                            .setProcessingSpeed(speed);
+                    case BOOK_BINDER -> new BookBinder(
+                                    group.getSecondValue(), slimefunItemStack, rt.getSecondValue(), recipe)
+                            .setCapacity(capacity)
+                            .setEnergyConsumption(consumption)
+                            .setProcessingSpeed(speed);
+                    case AUTO_ENCHANTER -> new AutoEnchanter(
+                                    group.getSecondValue(), slimefunItemStack, rt.getSecondValue(), recipe)
+                            .setCapacity(capacity)
+                            .setEnergyConsumption(consumption)
+                            .setProcessingSpeed(speed);
+                    case AUTO_DISENCHANTER -> new AutoDisenchanter(
+                                    group.getSecondValue(), slimefunItemStack, rt.getSecondValue(), recipe)
+                            .setCapacity(capacity)
+                            .setEnergyConsumption(consumption)
+                            .setProcessingSpeed(speed);
+                    case AUTO_ANVIL -> new AutoAnvil(
+                                    group.getSecondValue(),
+                                    repairFactor,
+                                    slimefunItemStack,
+                                    rt.getSecondValue(),
+                                    recipe)
+                            .setCapacity(capacity)
+                            .setEnergyConsumption(consumption)
+                            .setProcessingSpeed(speed);
+                    case AUTO_DRIER -> new AutoDrier(
+                                    group.getSecondValue(), slimefunItemStack, rt.getSecondValue(), recipe)
+                            .setCapacity(capacity)
+                            .setEnergyConsumption(consumption)
+                            .setProcessingSpeed(speed);
+                    case AUTO_BREWER -> new AutoBrewer(
+                                    group.getSecondValue(), slimefunItemStack, rt.getSecondValue(), recipe)
+                            .setCapacity(capacity)
+                            .setEnergyConsumption(consumption)
+                            .setProcessingSpeed(speed);
+                    case REFINERY -> new Refinery(
+                                    group.getSecondValue(), slimefunItemStack, rt.getSecondValue(), recipe)
+                            .setCapacity(capacity)
+                            .setEnergyConsumption(consumption)
+                            .setProcessingSpeed(speed);
+                    case PRODUCE_COLLECTOR -> new ProduceCollector(
+                                    group.getSecondValue(), slimefunItemStack, rt.getSecondValue(), recipe)
+                            .setCapacity(capacity)
+                            .setEnergyConsumption(consumption)
+                            .setProcessingSpeed(speed);
+                    case ENTITY_ASSEMBLER -> {
+                        String entityTypeStr = settings.getString("entity_type", "");
+                        Pair<ExceptionHandler.HandleResult, EntityType> type = ExceptionHandler.handleEnumValueOf(
+                                "错误的实体类型: " + entityTypeStr, EntityType.class, entityTypeStr);
+                        if (type.getFirstValue() == ExceptionHandler.HandleResult.FAILED
+                                || type.getSecondValue() == null) {
+                            yield null;
+                        }
+                        ItemStack head = CommonUtils.readItem(settings.getConfigurationSection("head"), true, addon);
 
-                if (head == null) {
-                    ExceptionHandler.handleError("无法在附属"+addon.getAddonName()+"中加载简单机器"+s+": 实体装配器的头部输入为空或格式错误导致无法加载");
-                    yield null;
-                }
+                        if (head == null) {
+                            ExceptionHandler.handleError(
+                                    "无法在附属" + addon.getAddonName() + "中加载简单机器" + s + ": 实体装配器的头部输入为空或格式错误导致无法加载");
+                            yield null;
+                        }
 
-                ItemStack body = CommonUtils.readItem(settings.getConfigurationSection("body"), true, addon);
+                        ItemStack body = CommonUtils.readItem(settings.getConfigurationSection("body"), true, addon);
 
-                if (body == null) {
-                    ExceptionHandler.handleError("无法在附属"+addon.getAddonName()+"中加载简单机器"+s+": 实体装配器的身体输入为空或格式错误导致无法加载");
-                    yield null;
-                }
+                        if (body == null) {
+                            ExceptionHandler.handleError(
+                                    "无法在附属" + addon.getAddonName() + "中加载简单机器" + s + ": 实体装配器的身体输入为空或格式错误导致无法加载");
+                            yield null;
+                        }
 
-                yield new EntityAssembler(group.getSecondValue(), slimefunItemStack, rt.getSecondValue(), recipe, type.getSecondValue(), capacity, consumption, head, body);
-            }
-        };
+                        yield new EntityAssembler(
+                                group.getSecondValue(),
+                                slimefunItemStack,
+                                rt.getSecondValue(),
+                                recipe,
+                                type.getSecondValue(),
+                                capacity,
+                                consumption,
+                                head,
+                                body);
+                    }
+                };
 
         if (instance != null) {
             instance.register(RykenSlimefunCustomizer.INSTANCE);
@@ -205,6 +311,8 @@ public class SimpleMachineReader extends YamlReader<SlimefunItem> {
     }
 
     private boolean isAccelerator(SimpleMachineType type) {
-        return type == SimpleMachineType.TREE_GROWTH_ACCELERATOR || type == SimpleMachineType.CROP_GROWTH_ACCELERATOR || type == SimpleMachineType.ANIMAL_GROWTH_ACCELERATOR;
+        return type == SimpleMachineType.TREE_GROWTH_ACCELERATOR
+                || type == SimpleMachineType.CROP_GROWTH_ACCELERATOR
+                || type == SimpleMachineType.ANIMAL_GROWTH_ACCELERATOR;
     }
 }

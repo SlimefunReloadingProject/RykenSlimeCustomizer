@@ -1,11 +1,10 @@
 package org.lins.mmmjjkx.rykenslimefuncustomizer.objects.global;
 
-import org.jetbrains.annotations.Nullable;
-import org.lins.mmmjjkx.rykenslimefuncustomizer.objects.script.parent.ScriptCreator;
-
 import java.util.HashMap;
 import java.util.Map;
 import java.util.Set;
+import org.jetbrains.annotations.Nullable;
+import org.lins.mmmjjkx.rykenslimefuncustomizer.objects.script.parent.ScriptCreator;
 
 public class ScriptCreators {
     private static final Map<String, ScriptCreator> scriptCreators;
@@ -22,10 +21,11 @@ public class ScriptCreators {
         scriptCreators.clear();
     }
 
-    public static Set<String> scriptKeys() {return scriptCreators.keySet();}
+    public static Set<String> scriptKeys() {
+        return scriptCreators.keySet();
+    }
 
-    @Nullable
-    public static ScriptCreator getScriptCreator(String s) {
+    @Nullable public static ScriptCreator getScriptCreator(String s) {
         return scriptCreators.get(s);
     }
 }

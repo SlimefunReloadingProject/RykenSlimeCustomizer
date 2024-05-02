@@ -4,6 +4,8 @@ import io.github.thebusybiscuit.slimefun4.api.items.ItemGroup;
 import io.github.thebusybiscuit.slimefun4.api.items.SlimefunItemStack;
 import io.github.thebusybiscuit.slimefun4.api.recipes.RecipeType;
 import io.github.thebusybiscuit.slimefun4.libraries.dough.collections.Pair;
+import java.util.Optional;
+import java.util.function.BiFunction;
 import org.bukkit.Material;
 import org.bukkit.World;
 import org.bukkit.block.Biome;
@@ -17,9 +19,6 @@ import org.lins.mmmjjkx.rykenslimefuncustomizer.objects.global.XMaterial;
 import org.lins.mmmjjkx.rykenslimefuncustomizer.objects.yaml.YamlReader;
 import org.lins.mmmjjkx.rykenslimefuncustomizer.utils.CommonUtils;
 import org.lins.mmmjjkx.rykenslimefuncustomizer.utils.ExceptionHandler;
-
-import java.util.Optional;
-import java.util.function.BiFunction;
 
 public class GeoResourceReader extends YamlReader<CustomGeoResource> {
     public GeoResourceReader(YamlConfiguration config) {
@@ -37,7 +36,7 @@ public class GeoResourceReader extends YamlReader<CustomGeoResource> {
             ConfigurationSection item = section.getConfigurationSection("item");
             ItemStack stack = CommonUtils.readItem(item, false, addon);
             if (stack == null) {
-                ExceptionHandler.handleError("无法在附属"+addon.getAddonName()+"中加载GEO资源"+s+": 物品为空或格式错误导致无法加载");
+                ExceptionHandler.handleError("无法在附属" + addon.getAddonName() + "中加载GEO资源" + s + ": 物品为空或格式错误导致无法加载");
                 return null;
             }
 
@@ -49,9 +48,8 @@ public class GeoResourceReader extends YamlReader<CustomGeoResource> {
             boolean obtainableFromGEOMiner = section.getBoolean("obtain_from_geo_miner", true);
             String name = section.getString("geo_name", "");
 
-            Pair<ExceptionHandler.HandleResult, RecipeType> rt = ExceptionHandler.getRecipeType(
-                    "错误的配方类型" + recipeType + "!", recipeType
-            );
+            Pair<ExceptionHandler.HandleResult, RecipeType> rt =
+                    ExceptionHandler.getRecipeType("错误的配方类型" + recipeType + "!", recipeType);
 
             if (rt.getFirstValue() == ExceptionHandler.HandleResult.FAILED) return null;
             SlimefunItemStack slimefunItemStack = new SlimefunItemStack(s, stack);
@@ -87,11 +85,12 @@ public class GeoResourceReader extends YamlReader<CustomGeoResource> {
                 int amount = section.getInt("drop_amount", 1);
 
                 if (chance < 0 || chance > 100) {
-                    ExceptionHandler.handleError("在附属"+addon.getAddonName()+"中加载GEO资源"+s+"时发现问题: 掉落几率"+chance+"不在0-100范围内!已转为100%");
+                    ExceptionHandler.handleError("在附属" + addon.getAddonName() + "中加载GEO资源" + s + "时发现问题: 掉落几率" + chance
+                            + "不在0-100范围内!已转为100%");
                     chance = 100;
                 }
 
-                Optional<XMaterial> xm = XMaterial.matchXMaterial(section.getString("drop",""));
+                Optional<XMaterial> xm = XMaterial.matchXMaterial(section.getString("drop", ""));
                 if (xm.isPresent()) {
                     Material material = xm.get().parseMaterial();
                     if (material == null) {
@@ -102,14 +101,22 @@ public class GeoResourceReader extends YamlReader<CustomGeoResource> {
                         DropFromBlock.addDrop(material, new DropFromBlock.Drop(drop, chance, addon));
                     }
                 } else {
-                    ExceptionHandler.handleError("在附属" + addon.getAddonName() + "中加载GEO资源" + s + "时发现问题: 指定掉落方块材料类型" + section.getString("drop") + "不存在!");
+                    ExceptionHandler.handleError("在附属" + addon.getAddonName() + "中加载GEO资源" + s + "时发现问题: 指定掉落方块材料类型"
+                            + section.getString("drop") + "不存在!");
                 }
             }
 
             if (recipe == null) recipe = new ItemStack[9];
 
-            return new CustomGeoResource(group.getSecondValue(), slimefunItemStack,
-                    rt.getSecondValue(), recipe, supply, maxDeviation, obtainableFromGEOMiner, name);
+            return new CustomGeoResource(
+                    group.getSecondValue(),
+                    slimefunItemStack,
+                    rt.getSecondValue(),
+                    recipe,
+                    supply,
+                    maxDeviation,
+                    obtainableFromGEOMiner,
+                    name);
         }
         return null;
     }

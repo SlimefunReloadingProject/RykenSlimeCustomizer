@@ -12,7 +12,7 @@ public class CustomDefaultItem extends CustomItem {
     public CustomDefaultItem(ItemGroup itemGroup, SlimefunItemStack item, RecipeType recipeType, ItemStack[] recipe) {
         super(itemGroup, item, recipeType, recipe);
 
-        constructorArgs = new Object[]{itemGroup, item, recipeType, recipe};
+        constructorArgs = new Object[] {itemGroup, item, recipeType, recipe};
     }
 
     @Override

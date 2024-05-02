@@ -8,7 +8,13 @@ import me.mrCookieSlime.Slimefun.api.inventory.BlockMenu;
 import org.bukkit.block.Block;
 import org.lins.mmmjjkx.rykenslimefuncustomizer.objects.customs.machine.CustomMachine;
 
-public record MachineInfo(BlockMenu blockMenu, SlimefunBlockData data, SlimefunItem machineItem,
-                          Block block, int totalTicks, int progress, MachineProcessor<?> processor,
-                          MachineOperation operation, CustomMachine machine){
-}
+public record MachineInfo(
+        BlockMenu blockMenu,
+        SlimefunBlockData data,
+        SlimefunItem machineItem,
+        Block block,
+        int totalTicks,
+        int progress,
+        MachineProcessor<?> processor,
+        MachineOperation operation,
+        CustomMachine machine) {}

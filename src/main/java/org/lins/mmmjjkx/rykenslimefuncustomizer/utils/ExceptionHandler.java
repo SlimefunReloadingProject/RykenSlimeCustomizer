@@ -5,15 +5,14 @@ import io.github.thebusybiscuit.slimefun4.api.items.SlimefunItem;
 import io.github.thebusybiscuit.slimefun4.api.recipes.RecipeType;
 import io.github.thebusybiscuit.slimefun4.implementation.Slimefun;
 import io.github.thebusybiscuit.slimefun4.libraries.dough.collections.Pair;
+import java.lang.reflect.Field;
 import net.kyori.adventure.text.logger.slf4j.ComponentLogger;
 import net.kyori.adventure.text.serializer.legacy.LegacyComponentSerializer;
 import org.jetbrains.annotations.NotNull;
 import org.lins.mmmjjkx.rykenslimefuncustomizer.RykenSlimefunCustomizer;
 import org.lins.mmmjjkx.rykenslimefuncustomizer.objects.ProjectAddon;
-import org.lins.mmmjjkx.rykenslimefuncustomizer.objects.global.RecipeTypeMap;
 import org.lins.mmmjjkx.rykenslimefuncustomizer.objects.customs.CustomMenu;
-
-import java.lang.reflect.Field;
+import org.lins.mmmjjkx.rykenslimefuncustomizer.objects.global.RecipeTypeMap;
 
 public class ExceptionHandler {
     private static final LegacyComponentSerializer serializer = LegacyComponentSerializer.legacyAmpersand();
@@ -22,7 +21,8 @@ public class ExceptionHandler {
     public static HandleResult handleIdConflict(String id) {
         SlimefunItem i = SlimefunItem.getById(id);
         if (i != null) {
-            logger.error(serializer.deserialize("&4ERROR | ID冲突：" + id + "与" + i.getAddon().getName() + "中的物品ID冲突"));
+            logger.error(serializer.deserialize(
+                    "&4ERROR | ID冲突：" + id + "与" + i.getAddon().getName() + "中的物品ID冲突"));
             return HandleResult.FAILED;
         }
         return HandleResult.SUCCESS;
@@ -31,26 +31,30 @@ public class ExceptionHandler {
     public static HandleResult handleMenuConflict(String id, ProjectAddon addon) {
         CustomMenu menu = CommonUtils.getIf(addon.getMenus(), m -> m.getID().equalsIgnoreCase(id));
         if (menu != null) {
-            logger.error(serializer.deserialize("&4ERROR | 菜单ID冲突：已存在菜单ID为"+id+"的菜单"));
+            logger.error(serializer.deserialize("&4ERROR | 菜单ID冲突：已存在菜单ID为" + id + "的菜单"));
             return HandleResult.FAILED;
         }
         return HandleResult.SUCCESS;
     }
 
     public static HandleResult handleGroupIdConflict(String id) {
-        ItemGroup ig = CommonUtils.getIf(Slimefun.getRegistry().getAllItemGroups(), i -> i.getKey().getKey().equalsIgnoreCase(id));
+        ItemGroup ig = CommonUtils.getIf(
+                Slimefun.getRegistry().getAllItemGroups(),
+                i -> i.getKey().getKey().equalsIgnoreCase(id));
         if (ig != null) {
             if (ig.getAddon() != null) {
-                logger.error(serializer.deserialize("&4ERROR | ID冲突：" + id + "与物品组 " + ig.getKey().getKey() + "(来自"+ig.getAddon().getName()+")冲突"));
+                logger.error(serializer.deserialize("&4ERROR | ID冲突：" + id + "与物品组 "
+                        + ig.getKey().getKey() + "(来自" + ig.getAddon().getName() + ")冲突"));
                 return HandleResult.FAILED;
             }
-            logger.error(serializer.deserialize("&4ERROR | ID冲突：" + id + "与物品组 " + ig.getKey().getKey() + "冲突"));
+            logger.error(serializer.deserialize(
+                    "&4ERROR | ID冲突：" + id + "与物品组 " + ig.getKey().getKey() + "冲突"));
             return HandleResult.FAILED;
         }
         return HandleResult.SUCCESS;
     }
 
-    public static void handleWarning(String message){
+    public static void handleWarning(String message) {
         if (message == null || message.isBlank()) return;
 
         logger.warn(serializer.deserialize("&eWARNING | " + message));
@@ -96,7 +100,8 @@ public class ExceptionHandler {
         logger.info(serializer.deserialize("&aINFO | " + message));
     }
 
-    public static <T extends Enum<T>> Pair<HandleResult, T> handleEnumValueOf(String msg, Class<T> enumClass, String name) {
+    public static <T extends Enum<T>> Pair<HandleResult, T> handleEnumValueOf(
+            String msg, Class<T> enumClass, String name) {
         try {
             return new Pair<>(HandleResult.SUCCESS, Enum.valueOf(enumClass, name.toUpperCase()));
         } catch (NullPointerException | IllegalArgumentException e) {
@@ -106,9 +111,12 @@ public class ExceptionHandler {
     }
 
     public static Pair<HandleResult, ItemGroup> handleItemGroupGet(ProjectAddon addon, String id) {
-        ItemGroup ig = CommonUtils.getIf(addon.getItemGroups(), i -> i.getKey().getKey().equalsIgnoreCase(id));
+        ItemGroup ig = CommonUtils.getIf(
+                addon.getItemGroups(), i -> i.getKey().getKey().equalsIgnoreCase(id));
         if (ig == null) {
-            ItemGroup ig2 = CommonUtils.getIf(Slimefun.getRegistry().getAllItemGroups(), i -> i.getKey().getKey().equalsIgnoreCase(id));
+            ItemGroup ig2 = CommonUtils.getIf(
+                    Slimefun.getRegistry().getAllItemGroups(),
+                    i -> i.getKey().getKey().equalsIgnoreCase(id));
             if (ig2 == null) {
                 handleError("无法在附属" + addon.getAddonName() + "中找不到该物品组 " + id);
                 return new Pair<>(HandleResult.FAILED, null);
@@ -130,7 +138,7 @@ public class ExceptionHandler {
             }
             return new Pair<>(HandleResult.SUCCESS, recipeType);
         } catch (IllegalAccessException ignored) {
-            //it doesn't happen
+            // it doesn't happen
         }
         return new Pair<>(HandleResult.FAILED, null);
     }

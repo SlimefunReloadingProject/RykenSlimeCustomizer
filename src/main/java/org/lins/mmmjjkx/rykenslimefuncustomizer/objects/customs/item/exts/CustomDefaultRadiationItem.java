@@ -13,15 +13,19 @@ public class CustomDefaultRadiationItem extends BaseRadiationItem {
 
     private final Object[] constructorArgs;
 
-    public CustomDefaultRadiationItem(ItemGroup itemGroup, SlimefunItemStack item, RecipeType recipeType, ItemStack[] recipe, Radioactivity radioactivity) {
+    public CustomDefaultRadiationItem(
+            ItemGroup itemGroup,
+            SlimefunItemStack item,
+            RecipeType recipeType,
+            ItemStack[] recipe,
+            Radioactivity radioactivity) {
         super(itemGroup, radioactivity, item, recipeType, recipe);
 
         this.constructorArgs = new Object[] {itemGroup, item, recipeType, recipe, radioactivity};
         this.radioactivity = radioactivity;
     }
 
-    @NotNull
-    @Override
+    @NotNull @Override
     public Radioactivity getRadioactivity() {
         return radioactivity;
     }

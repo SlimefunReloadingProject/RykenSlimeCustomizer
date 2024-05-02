@@ -2,15 +2,14 @@ package org.lins.mmmjjkx.rykenslimefuncustomizer.objects.yaml;
 
 import io.github.thebusybiscuit.slimefun4.api.items.SlimefunItem;
 import io.github.thebusybiscuit.slimefun4.api.researches.Research;
+import java.util.List;
+import java.util.regex.Pattern;
 import org.bukkit.NamespacedKey;
 import org.bukkit.configuration.ConfigurationSection;
 import org.bukkit.configuration.file.YamlConfiguration;
 import org.lins.mmmjjkx.rykenslimefuncustomizer.RykenSlimefunCustomizer;
 import org.lins.mmmjjkx.rykenslimefuncustomizer.objects.ProjectAddon;
 import org.lins.mmmjjkx.rykenslimefuncustomizer.utils.ExceptionHandler;
-
-import java.util.List;
-import java.util.regex.Pattern;
 
 public class ResearchReader extends YamlReader<Research> {
     private static final Pattern VALID_KEY = Pattern.compile("[a-z0-9/._-]+");
@@ -59,7 +58,8 @@ public class ResearchReader extends YamlReader<Research> {
 
         Research research;
         if (hasCurrency) {
-            research = new Research(new NamespacedKey(RykenSlimefunCustomizer.INSTANCE, s), researchId, name, cost, currency);
+            research = new Research(
+                    new NamespacedKey(RykenSlimefunCustomizer.INSTANCE, s), researchId, name, cost, currency);
         } else {
             research = new Research(new NamespacedKey(RykenSlimefunCustomizer.INSTANCE, s), researchId, name, cost);
         }

@@ -9,6 +9,10 @@ import io.github.thebusybiscuit.slimefun4.core.services.sounds.SoundEffect;
 import io.github.thebusybiscuit.slimefun4.implementation.Slimefun;
 import io.github.thebusybiscuit.slimefun4.libraries.paperlib.PaperLib;
 import io.github.thebusybiscuit.slimefun4.utils.SlimefunUtils;
+import java.util.List;
+import java.util.Map;
+import java.util.stream.Collectors;
+import javax.annotation.Nonnull;
 import org.bukkit.Bukkit;
 import org.bukkit.Material;
 import org.bukkit.block.Block;
@@ -22,19 +26,19 @@ import org.jetbrains.annotations.Nullable;
 import org.lins.mmmjjkx.rykenslimefuncustomizer.RykenSlimefunCustomizer;
 import org.lins.mmmjjkx.rykenslimefuncustomizer.objects.script.parent.ScriptEval;
 
-import javax.annotation.Nonnull;
-import java.util.List;
-import java.util.Map;
-import java.util.stream.Collectors;
-
 public class CustomMultiBlockMachine extends MultiBlockMachine {
     private final SoundEffect craftSound;
     private final int work;
     private final ScriptEval eval;
 
-    public CustomMultiBlockMachine(ItemGroup itemGroup, SlimefunItemStack item, ItemStack[] recipe,
-                                   Map<ItemStack[], ItemStack> craftRecipes, int work, @Nullable SoundEffect soundEffect,
-                                   @Nullable ScriptEval eval) {
+    public CustomMultiBlockMachine(
+            ItemGroup itemGroup,
+            SlimefunItemStack item,
+            ItemStack[] recipe,
+            Map<ItemStack[], ItemStack> craftRecipes,
+            int work,
+            @Nullable SoundEffect soundEffect,
+            @Nullable ScriptEval eval) {
         super(itemGroup, item, recipe, BlockFace.SELF);
 
         this.work = work;
@@ -55,7 +59,7 @@ public class CustomMultiBlockMachine extends MultiBlockMachine {
 
     @Override
     public void onInteract(Player p, Block block) {
-        Material material = super.getRecipe()[work-1].getType();
+        Material material = super.getRecipe()[work - 1].getType();
         if (block.getType().equals(material)) {
             if (eval != null) {
                 eval.evalFunction("onWork", p, block);
@@ -110,11 +114,11 @@ public class CustomMultiBlockMachine extends MultiBlockMachine {
                 return BlockFace.UP;
             }
         }
-        ItemStack o2 = is[center-1];
+        ItemStack o2 = is[center - 1];
         if (o2 != null && o2.getType().equals(Material.DISPENSER)) {
             return BlockFace.EAST;
         }
-        ItemStack o3 = is[center+1];
+        ItemStack o3 = is[center + 1];
         if (o3 != null && o3.getType().equals(Material.DISPENSER)) {
             return BlockFace.WEST;
         }

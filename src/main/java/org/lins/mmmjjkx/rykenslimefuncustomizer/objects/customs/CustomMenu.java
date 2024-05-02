@@ -3,6 +3,10 @@ package org.lins.mmmjjkx.rykenslimefuncustomizer.objects.customs;
 import io.github.thebusybiscuit.slimefun4.api.items.SlimefunItem;
 import io.github.thebusybiscuit.slimefun4.implementation.Slimefun;
 import io.github.thebusybiscuit.slimefun4.libraries.dough.protection.Interaction;
+import java.util.ArrayList;
+import java.util.HashMap;
+import java.util.List;
+import java.util.Map;
 import lombok.Getter;
 import lombok.Setter;
 import me.mrCookieSlime.CSCoreLibPlugin.general.Inventory.ClickAction;
@@ -24,18 +28,17 @@ import org.lins.mmmjjkx.rykenslimefuncustomizer.objects.customs.machine.CustomRe
 import org.lins.mmmjjkx.rykenslimefuncustomizer.objects.script.lambda.RSCClickHandler;
 import org.lins.mmmjjkx.rykenslimefuncustomizer.utils.CommonUtils;
 
-import java.util.ArrayList;
-import java.util.HashMap;
-import java.util.List;
-import java.util.Map;
-
 public class CustomMenu extends BlockMenuPreset {
     @Getter
     private final Map<Integer, ItemStack> slotMap;
+
     private final JavaScriptEval eval;
+
     @Getter
     private int progressSlot;
+
     private ItemStack progress;
+
     @Setter
     private InventoryBlock invb;
 
@@ -47,7 +50,12 @@ public class CustomMenu extends BlockMenuPreset {
         this(id, title, menu, menu.getProgressBarItem(), menu.eval);
     }
 
-    public CustomMenu(String id, String title, BlockMenuPreset preset, @Nullable ItemStack progressBar, @Nullable JavaScriptEval eval) {
+    public CustomMenu(
+            String id,
+            String title,
+            BlockMenuPreset preset,
+            @Nullable ItemStack progressBar,
+            @Nullable JavaScriptEval eval) {
         this(id, title, new HashMap<>(), preset.isPlayerInventoryClickable(), 22, progressBar, eval);
 
         cloneOriginalInventory(preset);
@@ -68,7 +76,14 @@ public class CustomMenu extends BlockMenuPreset {
         }
     }
 
-    public CustomMenu(String id, String title, @NotNull Map<Integer, ItemStack> mi, boolean playerInvClickable, int progress, @Nullable ItemStack progressBar, @Nullable JavaScriptEval eval) {
+    public CustomMenu(
+            String id,
+            String title,
+            @NotNull Map<Integer, ItemStack> mi,
+            boolean playerInvClickable,
+            int progress,
+            @Nullable ItemStack progressBar,
+            @Nullable JavaScriptEval eval) {
         super(id, title);
 
         this.title = title;
@@ -89,7 +104,7 @@ public class CustomMenu extends BlockMenuPreset {
 
     public void outSideInit() {
         int size = 9;
-        for (int i = 0; i < 54; i ++) {
+        for (int i = 0; i < 54; i++) {
             ItemStack item = slotMap.get(i);
             if (item != null) {
                 addItem(i, item, (RSCClickHandler) (p, slot, is, ca) -> {
@@ -103,7 +118,7 @@ public class CustomMenu extends BlockMenuPreset {
 
         Inventory inventory = Bukkit.createInventory(this, size, CommonUtils.parseToComponent(title));
 
-        for (int i = 0; i < size; i ++) {
+        for (int i = 0; i < size; i++) {
             ItemStack item = slotMap.get(i);
             if (item != null) {
                 inventory.setItem(i, item);
@@ -126,8 +141,7 @@ public class CustomMenu extends BlockMenuPreset {
         return Slimefun.getProtectionManager().hasPermission(p, b.getLocation(), Interaction.INTERACT_BLOCK);
     }
 
-    @Nullable
-    public ItemStack getProgressBarItem() {
+    @Nullable public ItemStack getProgressBarItem() {
         return progress;
     }
 
@@ -146,7 +160,8 @@ public class CustomMenu extends BlockMenuPreset {
 
     private void cloneOriginalInventory(BlockMenuPreset preset) {
         preset.getContents();
-        Inventory inventory = Bukkit.createInventory(this, preset.toInventory().getSize(), CommonUtils.parseToComponent(title));
+        Inventory inventory =
+                Bukkit.createInventory(this, preset.toInventory().getSize(), CommonUtils.parseToComponent(title));
 
         for (int i = 0; i < preset.getInventory().getSize(); i++) {
             ItemStack item = preset.getItemInSlot(i);
@@ -182,7 +197,7 @@ public class CustomMenu extends BlockMenuPreset {
         if (size > slot) {
             this.items.set(slot, item);
         } else {
-            for(int i = 0; i < slot - size; ++i) {
+            for (int i = 0; i < slot - size; ++i) {
                 this.items.add(null);
             }
 

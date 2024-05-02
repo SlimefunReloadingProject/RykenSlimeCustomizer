@@ -1,6 +1,11 @@
 package org.lins.mmmjjkx.rykenslimefuncustomizer.update;
 
 import com.google.gson.Gson;
+import java.io.*;
+import java.util.Objects;
+import java.util.logging.Level;
+import java.util.zip.ZipEntry;
+import java.util.zip.ZipInputStream;
 import org.apache.http.HttpResponse;
 import org.apache.http.client.methods.HttpGet;
 import org.apache.http.impl.client.CloseableHttpClient;
@@ -12,16 +17,15 @@ import org.lins.mmmjjkx.rykenslimefuncustomizer.ProjectAddonManager;
 import org.lins.mmmjjkx.rykenslimefuncustomizer.RykenSlimefunCustomizer;
 import org.lins.mmmjjkx.rykenslimefuncustomizer.utils.CommonUtils;
 
-import java.io.*;
-import java.util.Objects;
-import java.util.logging.Level;
-import java.util.zip.ZipEntry;
-import java.util.zip.ZipInputStream;
-
 public class GithubUpdater {
-    public static boolean checkAndUpdate(@NotNull String currentVer, @NotNull String author, @NotNull String repo, @NotNull String prjId, @NotNull String folderName) {
-        try (CloseableHttpClient client = HttpClients.createDefault()){
-            String url = "https://api.github.com/repos/"+author+"/"+repo+"/releases/latest";
+    public static boolean checkAndUpdate(
+            @NotNull String currentVer,
+            @NotNull String author,
+            @NotNull String repo,
+            @NotNull String prjId,
+            @NotNull String folderName) {
+        try (CloseableHttpClient client = HttpClients.createDefault()) {
+            String url = "https://api.github.com/repos/" + author + "/" + repo + "/releases/latest";
             HttpGet get = new HttpGet(url);
             HttpResponse response = client.execute(get);
             String entity = EntityUtils.toString(response.getEntity());
@@ -31,7 +35,9 @@ public class GithubUpdater {
             String releaseName = release.getName();
 
             if (releaseName == null) {
-                RykenSlimefunCustomizer.INSTANCE.getLogger().log(Level.WARNING,"无法检查附属 " + prjId + "的更新: 已到达GitHub API速率限制(60请求/h)");
+                RykenSlimefunCustomizer.INSTANCE
+                        .getLogger()
+                        .log(Level.WARNING, "无法检查附属 " + prjId + "的更新: 已到达GitHub API速率限制(60请求/h)");
                 return false;
             }
 
@@ -71,14 +77,14 @@ public class GithubUpdater {
                     String id = infoYml.getString("id", "");
 
                     if (!id.equals(prjId)) {
-                        RykenSlimefunCustomizer.INSTANCE.getComponentLogger().info(
-                                CommonUtils.parseToComponent("&a成功更新附属 " + prjId + "!" + "\n" +
-                                                                   "&b注意：原先的附属ID为 &e" + prjId + " &b现在已变更为 &d" + id)
-                        );
+                        RykenSlimefunCustomizer.INSTANCE
+                                .getComponentLogger()
+                                .info(CommonUtils.parseToComponent("&a成功更新附属 " + prjId + "!" + "\n" + "&b注意：原先的附属ID为 &e"
+                                        + prjId + " &b现在已变更为 &d" + id));
                     } else {
-                        RykenSlimefunCustomizer.INSTANCE.getComponentLogger().info(
-                                CommonUtils.parseToComponent("&a成功更新附属 " + prjId + "!")
-                        );
+                        RykenSlimefunCustomizer.INSTANCE
+                                .getComponentLogger()
+                                .info(CommonUtils.parseToComponent("&a成功更新附属 " + prjId + "!"));
                     }
 
                     return true;
@@ -88,7 +94,7 @@ public class GithubUpdater {
             }
             return true;
         } catch (Exception e) {
-            RykenSlimefunCustomizer.INSTANCE.getLogger().log(Level.WARNING,"无法更新附属 "+prjId, e);
+            RykenSlimefunCustomizer.INSTANCE.getLogger().log(Level.WARNING, "无法更新附属 " + prjId, e);
             return false;
         }
     }
@@ -118,7 +124,8 @@ public class GithubUpdater {
                     File outFile = new File(desDirectory, entryName);
                     mkdir(outFile.getParentFile());
 
-                    try (BufferedOutputStream bufferedOutputStream = new BufferedOutputStream(new FileOutputStream(outFile))) {
+                    try (BufferedOutputStream bufferedOutputStream =
+                            new BufferedOutputStream(new FileOutputStream(outFile))) {
                         byte[] bytes = new byte[1024];
                         int readLen;
                         long totalBytesRead = 0;
@@ -136,7 +143,6 @@ public class GithubUpdater {
             }
         }
     }
-
 
     private static void mkdir(File file) {
         if (file == null || file.exists()) {

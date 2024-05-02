@@ -23,8 +23,14 @@ public class AdvancedAnimalGrowthAccelerator extends AbstractGrowthAccelerator {
     private final int radius;
     private final int energy_consumption;
 
-    public AdvancedAnimalGrowthAccelerator(ItemGroup itemGroup, SlimefunItemStack item, RecipeType recipeType, ItemStack[] recipe,
-                                           int capacity, int radius, int energy_consumption) {
+    public AdvancedAnimalGrowthAccelerator(
+            ItemGroup itemGroup,
+            SlimefunItemStack item,
+            RecipeType recipeType,
+            ItemStack[] recipe,
+            int capacity,
+            int radius,
+            int energy_consumption) {
         super(itemGroup, item, recipeType, recipe);
 
         this.capacity = capacity;
@@ -36,7 +42,8 @@ public class AdvancedAnimalGrowthAccelerator extends AbstractGrowthAccelerator {
         BlockMenu inv = StorageCacheUtils.getMenu(b.getLocation());
 
         if (inv != null) {
-            for (Entity n : b.getWorld().getNearbyEntities(b.getLocation(), radius, radius, radius, this::isReadyToGrow)) {
+            for (Entity n :
+                    b.getWorld().getNearbyEntities(b.getLocation(), radius, radius, radius, this::isReadyToGrow)) {
                 int[] var5 = this.getInputSlots();
                 int var6 = var5.length;
 
@@ -54,7 +61,14 @@ public class AdvancedAnimalGrowthAccelerator extends AbstractGrowthAccelerator {
                             ageable.setAge(0);
                         }
 
-                        n.getWorld().spawnParticle(Particle.VILLAGER_HAPPY, ((LivingEntity) n).getEyeLocation(), 8, 0.20000000298023224, 0.20000000298023224, 0.20000000298023224);
+                        n.getWorld()
+                                .spawnParticle(
+                                        Particle.VILLAGER_HAPPY,
+                                        ((LivingEntity) n).getEyeLocation(),
+                                        8,
+                                        0.20000000298023224,
+                                        0.20000000298023224,
+                                        0.20000000298023224);
                         return;
                     }
                 }

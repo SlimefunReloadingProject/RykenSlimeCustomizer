@@ -1,6 +1,11 @@
 package org.lins.mmmjjkx.rykenslimefuncustomizer.commands;
 
 import io.github.thebusybiscuit.slimefun4.implementation.Slimefun;
+import java.io.File;
+import java.util.ArrayList;
+import java.util.Arrays;
+import java.util.List;
+import java.util.Objects;
 import me.mrCookieSlime.Slimefun.api.inventory.BlockMenuPreset;
 import net.kyori.adventure.text.Component;
 import org.bukkit.Material;
@@ -19,15 +24,10 @@ import org.lins.mmmjjkx.rykenslimefuncustomizer.objects.ProjectAddon;
 import org.lins.mmmjjkx.rykenslimefuncustomizer.objects.ProjectAddonLoader;
 import org.lins.mmmjjkx.rykenslimefuncustomizer.utils.CommonUtils;
 
-import java.io.File;
-import java.util.ArrayList;
-import java.util.Arrays;
-import java.util.List;
-import java.util.Objects;
-
 public class MainCommand implements TabExecutor {
     @Override
-    public boolean onCommand(@NotNull CommandSender sender, @NotNull Command command, @NotNull String label, @NotNull String[] args) {
+    public boolean onCommand(
+            @NotNull CommandSender sender, @NotNull Command command, @NotNull String label, @NotNull String[] args) {
         if (args.length == 0) {
             sendHelp(sender);
             return true;
@@ -51,7 +51,9 @@ public class MainCommand implements TabExecutor {
                 }
 
                 List<ProjectAddon> addons = RykenSlimefunCustomizer.addonManager.getAllValues();
-                List<String> nameWithId = addons.stream().map(a -> a.getAddonName() + "(id: " + a.getAddonId() + ")").toList();
+                List<String> nameWithId = addons.stream()
+                        .map(a -> a.getAddonName() + "(id: " + a.getAddonId() + ")")
+                        .toList();
                 Component component = CommonUtils.parseToComponent("&a已加载的附属: ");
                 for (String nwi : nameWithId) {
                     component = component.append(CommonUtils.parseToComponent("&a" + nwi));
@@ -100,7 +102,8 @@ public class MainCommand implements TabExecutor {
                     return false;
                 }
 
-                ProjectAddonLoader loader = new ProjectAddonLoader(file, RykenSlimefunCustomizer.addonManager.getProjectIds());
+                ProjectAddonLoader loader =
+                        new ProjectAddonLoader(file, RykenSlimefunCustomizer.addonManager.getProjectIds());
                 ProjectAddon addon = loader.load();
                 RykenSlimefunCustomizer.addonManager.pushProjectAddon(addon);
 
@@ -140,13 +143,27 @@ public class MainCommand implements TabExecutor {
                 String authors = addon.getAuthors().toString();
                 String authorsRemoveBrackets = authors.substring(1, authors.length() - 1);
 
-                StringBuilder builder = new StringBuilder().append("名称: &a").append(addon.getAddonName()).append("\n&f")
-                        .append("ID: &a").append(addon.getAddonId()).append("\n&f")
-                        .append("作者(们): &a").append(authorsRemoveBrackets).append("\n&f")
-                        .append("版本: &a").append(addon.getAddonVersion()).append("\n&f")
-                        .append("依赖: &a").append(addon.getDepends()).append("\n&f")
-                        .append("插件依赖: &a").append(addon.getPluginDepends()).append("\n&f")
-                        .append("描述: &a").append(addon.getDescription());
+                StringBuilder builder = new StringBuilder()
+                        .append("名称: &a")
+                        .append(addon.getAddonName())
+                        .append("\n&f")
+                        .append("ID: &a")
+                        .append(addon.getAddonId())
+                        .append("\n&f")
+                        .append("作者(们): &a")
+                        .append(authorsRemoveBrackets)
+                        .append("\n&f")
+                        .append("版本: &a")
+                        .append(addon.getAddonVersion())
+                        .append("\n&f")
+                        .append("依赖: &a")
+                        .append(addon.getDepends())
+                        .append("\n&f")
+                        .append("插件依赖: &a")
+                        .append(addon.getPluginDepends())
+                        .append("\n&f")
+                        .append("描述: &a")
+                        .append(addon.getDescription());
 
                 if (addon.getGithubRepo() != null && !addon.getGithubRepo().isBlank()) {
                     builder.append("\n&f").append("Github仓库: &e").append(addon.getGithubRepo());
@@ -210,9 +227,10 @@ public class MainCommand implements TabExecutor {
     }
 
     @Override
-    public @Nullable List<String> onTabComplete(@NotNull CommandSender sender, @NotNull Command command, @NotNull String label, @NotNull String[] args) {
+    public @Nullable List<String> onTabComplete(
+            @NotNull CommandSender sender, @NotNull Command command, @NotNull String label, @NotNull String[] args) {
         List<String> raw = onTabCompleteRaw(args);
-        return StringUtil.copyPartialMatches(args[args.length-1], raw, new ArrayList<>());
+        return StringUtil.copyPartialMatches(args[args.length - 1], raw, new ArrayList<>());
     }
 
     public @NotNull List<String> onTabCompleteRaw(@NotNull String[] args) {
@@ -220,9 +238,14 @@ public class MainCommand implements TabExecutor {
             return List.of("list", "reload", "reloadPlugin", "list", "enable", "disable", "saveitem", "menupreview");
         } else if (args.length == 2) {
             return switch (args[0]) {
-                case "enable" -> Arrays.stream(Objects.requireNonNull(ProjectAddonManager.ADDONS_DIRECTORY.listFiles())).map(File::getName).toList();
-                case "disable","saveitem" -> RykenSlimefunCustomizer.addonManager.getAllValues().stream().map(ProjectAddon::getAddonId).toList();
-                case "menupreview" -> Slimefun.getRegistry().getMenuPresets().keySet().stream().toList();
+                case "enable" -> Arrays.stream(Objects.requireNonNull(ProjectAddonManager.ADDONS_DIRECTORY.listFiles()))
+                        .map(File::getName)
+                        .toList();
+                case "disable", "saveitem" -> RykenSlimefunCustomizer.addonManager.getAllValues().stream()
+                        .map(ProjectAddon::getAddonId)
+                        .toList();
+                case "menupreview" -> Slimefun.getRegistry().getMenuPresets().keySet().stream()
+                        .toList();
                 default -> new ArrayList<>();
             };
         }
@@ -234,7 +257,9 @@ public class MainCommand implements TabExecutor {
             sender.sendMessage(CommonUtils.parseToComponent("&4你没有权限去做这些！"));
             return;
         }
-        sender.sendMessage(CommonUtils.parseToComponent("""
+        sender.sendMessage(
+                CommonUtils.parseToComponent(
+                        """
                         &aRykenSlimeCustomizer帮助
                         &e/rsc (help) 显示帮助
                         &e/rsc reload 重载插件及附属

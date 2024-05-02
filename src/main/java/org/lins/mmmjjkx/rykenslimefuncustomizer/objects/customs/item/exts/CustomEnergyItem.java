@@ -18,7 +18,13 @@ public class CustomEnergyItem extends CustomItem implements Rechargeable, NotPla
 
     private final Object[] constructorArgs;
 
-    public CustomEnergyItem(ItemGroup itemGroup, SlimefunItemStack item, RecipeType recipeType, ItemStack[] recipe, float capacity, @Nullable ScriptEval eval) {
+    public CustomEnergyItem(
+            ItemGroup itemGroup,
+            SlimefunItemStack item,
+            RecipeType recipeType,
+            ItemStack[] recipe,
+            float capacity,
+            @Nullable ScriptEval eval) {
         super(itemGroup, item, recipeType, recipe);
 
         this.capacity = capacity;
@@ -34,7 +40,7 @@ public class CustomEnergyItem extends CustomItem implements Rechargeable, NotPla
             this.addItemHandler((ItemUseHandler) PlayerRightClickEvent::cancel);
         }
 
-        this.constructorArgs = new Object[]{itemGroup, item, recipeType, recipe, capacity, eval};
+        this.constructorArgs = new Object[] {itemGroup, item, recipeType, recipe, capacity, eval};
     }
 
     @HostAccess.Export

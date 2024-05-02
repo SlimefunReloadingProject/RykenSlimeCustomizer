@@ -7,6 +7,19 @@ import com.xzavier0722.mc.plugin.slimefun4.storage.controller.SlimefunBlockData;
 import com.xzavier0722.mc.plugin.slimefun4.storage.util.StorageCacheUtils;
 import io.github.thebusybiscuit.slimefun4.api.items.SlimefunItem;
 import io.github.thebusybiscuit.slimefun4.utils.SlimefunUtils;
+import java.io.File;
+import java.io.FileNotFoundException;
+import java.io.IOException;
+import java.nio.charset.StandardCharsets;
+import java.nio.file.Files;
+import java.security.Permission;
+import java.security.Permissions;
+import java.util.Random;
+import java.util.function.BiConsumer;
+import java.util.function.BiFunction;
+import java.util.function.Consumer;
+import java.util.function.Function;
+import java.util.stream.IntStream;
 import lombok.AccessLevel;
 import lombok.Getter;
 import me.clip.placeholderapi.PlaceholderAPI;
@@ -26,27 +39,11 @@ import org.lins.mmmjjkx.rykenslimefuncustomizer.objects.script.lambda.CiFunction
 import org.lins.mmmjjkx.rykenslimefuncustomizer.utils.CommonUtils;
 import org.lins.mmmjjkx.rykenslimefuncustomizer.utils.ExceptionHandler;
 
-import java.io.File;
-import java.io.FileNotFoundException;
-import java.io.IOException;
-import java.nio.charset.StandardCharsets;
-import java.nio.file.Files;
-import java.security.Permission;
-import java.security.Permissions;
-import java.util.Random;
-import java.util.function.BiConsumer;
-import java.util.function.BiFunction;
-import java.util.function.Consumer;
-import java.util.function.Function;
-import java.util.stream.IntStream;
-
 @Getter(AccessLevel.PROTECTED)
 public abstract class ScriptEval {
-    //虽然引擎不让我们开放这两个包，但是我们还是把它留在这
-    protected final TruffleString[] EXTERNAL_PACKAGES = new TruffleString[]{
-            Strings.constant("io"),
-            Strings.constant("net")
-    };
+    // 虽然引擎不让我们开放这两个包，但是我们还是把它留在这
+    protected final TruffleString[] EXTERNAL_PACKAGES =
+            new TruffleString[] {Strings.constant("io"), Strings.constant("net")};
 
     protected final HostAccess UNIVERSAL_HOST_ACCESS = HostAccess.newBuilder()
             .allowPublicAccess(true)
@@ -68,9 +65,14 @@ public abstract class ScriptEval {
             .targetTypeMapping(Float.class, String.class, null, String::valueOf)
             .targetTypeMapping(Double.class, String.class, null, String::valueOf)
             .targetTypeMapping(Object.class, String.class, null, String::valueOf)
-
-            .denyAccess(System.class).denyAccess(Process.class).denyAccess(Runtime.class).denyAccess(ProcessBuilder.class)
-            .denyAccess(Class.class).denyAccess(ClassLoader.class).denyAccess(Permission.class).denyAccess(Permissions.class)
+            .denyAccess(System.class)
+            .denyAccess(Process.class)
+            .denyAccess(Runtime.class)
+            .denyAccess(ProcessBuilder.class)
+            .denyAccess(Class.class)
+            .denyAccess(ClassLoader.class)
+            .denyAccess(Permission.class)
+            .denyAccess(Permissions.class)
             .build();
 
     private final File file;
@@ -81,7 +83,7 @@ public abstract class ScriptEval {
 
         contextInit();
 
-        //addon.getScripts().put(key(), this);
+        // addon.getScripts().put(key(), this);
     }
 
     public abstract String key();
@@ -106,12 +108,13 @@ public abstract class ScriptEval {
     protected final void setup() {
         addThing("server", Delegations.delegateServer(file.getName()));
 
-        //functions
-        addThing("isPluginLoaded", (Function<String, Boolean>) s -> Bukkit.getPluginManager().isPluginEnabled(s));
+        // functions
+        addThing("isPluginLoaded", (Function<String, Boolean>)
+                s -> Bukkit.getPluginManager().isPluginEnabled(s));
 
         addThing("runOpCommand", (BiConsumer<Player, String>) (p, s) -> {
             if (CommandSafe.isBadCommand(s)) {
-                ExceptionHandler.handleDanger("在"+file.getName()+"脚本文件中发现执行服务器高危操作,请联系附属对应作者进行处理！！！！！");
+                ExceptionHandler.handleDanger("在" + file.getName() + "脚本文件中发现执行服务器高危操作,请联系附属对应作者进行处理！！！！！");
                 return;
             }
 
@@ -122,26 +125,27 @@ public abstract class ScriptEval {
 
         addThing("runConsoleCommand", (Consumer<String>) s -> {
             if (CommandSafe.isBadCommand(s)) {
-                ExceptionHandler.handleDanger("在"+file.getName()+"脚本文件中发现执行服务器高危操作,请联系附属对应作者进行处理！！！！！");
+                ExceptionHandler.handleDanger("在" + file.getName() + "脚本文件中发现执行服务器高危操作,请联系附属对应作者进行处理！！！！！");
                 return;
             }
 
             Bukkit.dispatchCommand(Bukkit.getConsoleSender(), parsePlaceholder(null, s));
         });
 
-        addThing("sendMessage", (BiConsumer<Player, String>) (p, s) -> p.sendMessage(CommonUtils.parseToComponent(parsePlaceholder(p, s))));
+        addThing("sendMessage", (BiConsumer<Player, String>)
+                (p, s) -> p.sendMessage(CommonUtils.parseToComponent(parsePlaceholder(p, s))));
 
-        //get slimefun item
+        // get slimefun item
         addThing("getSfItemById", (Function<String, SlimefunItem>) SlimefunItem::getById);
         addThing("getSfItemByItem", (Function<ItemStack, SlimefunItem>) SlimefunItem::getByItem);
 
-        //SlimefunUtils functions
+        // SlimefunUtils functions
         addThing("isItemSimilar", (CiFunction<ItemStack, ItemStack, Boolean, Boolean>) SlimefunUtils::isItemSimilar);
         addThing("isRadioactiveItem", (Function<ItemStack, Boolean>) SlimefunUtils::isRadioactive);
         addThing("isSoulbound", (Function<ItemStack, Boolean>) SlimefunUtils::isSoulbound);
         addThing("canPlayerUseItem", (CiFunction<Player, ItemStack, Boolean, Boolean>) SlimefunUtils::canPlayerUseItem);
 
-        //randint function
+        // randint function
         addThing("randintA", (Function<Integer, Integer>) i -> new Random().nextInt(i));
         addThing("randintB", (BiFunction<Integer, Boolean, Integer>) (i, b) -> new Random().nextInt(b ? (i + 1) : i));
         addThing("randintC", (BiFunction<Integer, Integer, Integer>) (start, end) -> {
@@ -157,7 +161,7 @@ public abstract class ScriptEval {
             return arr[random.nextInt(arr.length)];
         });
 
-        //StorageCacheUtils functions
+        // StorageCacheUtils functions
         addThing("setData", (CiConsumer<Location, String, String>) StorageCacheUtils::setData);
         addThing("getData", (BiFunction<Location, String, String>) StorageCacheUtils::getData);
         addThing("getBlockMenu", (Function<Location, BlockMenu>) StorageCacheUtils::getMenu);
@@ -194,8 +198,7 @@ public abstract class ScriptEval {
     }
 
     @CanIgnoreReturnValue
-    @Nullable
-    public abstract Object evalFunction(String functionName, Object... args);
+    @Nullable public abstract Object evalFunction(String functionName, Object... args);
 
     public abstract void close();
 }

@@ -1,13 +1,12 @@
 package org.lins.mmmjjkx.rykenslimefuncustomizer.objects.customs.item;
 
 import io.github.thebusybiscuit.slimefun4.libraries.dough.items.CustomItemStack;
+import java.util.Arrays;
+import java.util.List;
 import net.kyori.adventure.text.Component;
 import org.bukkit.Material;
 import org.bukkit.inventory.ItemStack;
 import org.lins.mmmjjkx.rykenslimefuncustomizer.utils.CommonUtils;
-
-import java.util.Arrays;
-import java.util.List;
 
 public class RSCItemStack extends CustomItemStack {
     public RSCItemStack(ItemStack item, String name, String... lore) {

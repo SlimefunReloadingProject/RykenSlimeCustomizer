@@ -5,6 +5,7 @@ import io.github.thebusybiscuit.slimefun4.api.items.SlimefunItemStack;
 import io.github.thebusybiscuit.slimefun4.api.recipes.RecipeType;
 import io.github.thebusybiscuit.slimefun4.implementation.items.electric.Capacitor;
 import io.github.thebusybiscuit.slimefun4.libraries.dough.collections.Pair;
+import java.util.Objects;
 import org.bukkit.configuration.ConfigurationSection;
 import org.bukkit.configuration.file.YamlConfiguration;
 import org.bukkit.inventory.ItemStack;
@@ -13,8 +14,6 @@ import org.lins.mmmjjkx.rykenslimefuncustomizer.objects.ProjectAddon;
 import org.lins.mmmjjkx.rykenslimefuncustomizer.objects.yaml.YamlReader;
 import org.lins.mmmjjkx.rykenslimefuncustomizer.utils.CommonUtils;
 import org.lins.mmmjjkx.rykenslimefuncustomizer.utils.ExceptionHandler;
-
-import java.util.Objects;
 
 public class CapacitorsReader extends YamlReader<Capacitor> {
     public CapacitorsReader(YamlConfiguration config) {
@@ -34,12 +33,12 @@ public class CapacitorsReader extends YamlReader<Capacitor> {
         ItemStack stack = CommonUtils.readItem(item, false, addon);
 
         if (stack == null) {
-            ExceptionHandler.handleError("无法在附属"+addon.getAddonName()+"中加载电容"+s+": 物品为空或格式错误导致无法加载");
+            ExceptionHandler.handleError("无法在附属" + addon.getAddonName() + "中加载电容" + s + ": 物品为空或格式错误导致无法加载");
             return null;
         }
 
         if (!stack.getType().isBlock()) {
-            ExceptionHandler.handleError("无法在附属"+addon.getAddonName()+"中加载电容"+s+": 物品的材料类型必须是可放置的方块");
+            ExceptionHandler.handleError("无法在附属" + addon.getAddonName() + "中加载电容" + s + ": 物品的材料类型必须是可放置的方块");
             return null;
         }
 
@@ -48,20 +47,24 @@ public class CapacitorsReader extends YamlReader<Capacitor> {
         ItemStack[] recipe = CommonUtils.readRecipe(section.getConfigurationSection("recipe"), addon);
         String recipeType = section.getString("recipe_type", "NULL");
 
-        Pair<ExceptionHandler.HandleResult, RecipeType> rt = ExceptionHandler.getRecipeType(
-                "错误的配方类型" + recipeType + "!", recipeType
-        );
+        Pair<ExceptionHandler.HandleResult, RecipeType> rt =
+                ExceptionHandler.getRecipeType("错误的配方类型" + recipeType + "!", recipeType);
 
         if (rt.getFirstValue() == ExceptionHandler.HandleResult.FAILED) return null;
         SlimefunItemStack slimefunItemStack = new SlimefunItemStack(s, stack);
 
         int capacity = section.getInt("capacity");
         if (capacity < 1) {
-            ExceptionHandler.handleError("无法在附属"+addon.getAddonName()+"中加载电容"+s+": 容量不能小于1");
+            ExceptionHandler.handleError("无法在附属" + addon.getAddonName() + "中加载电容" + s + ": 容量不能小于1");
             return null;
         }
 
-        Capacitor instance = new Capacitor(Objects.requireNonNull(group.getSecondValue()), capacity, slimefunItemStack, Objects.requireNonNull(rt.getSecondValue()), recipe);
+        Capacitor instance = new Capacitor(
+                Objects.requireNonNull(group.getSecondValue()),
+                capacity,
+                slimefunItemStack,
+                Objects.requireNonNull(rt.getSecondValue()),
+                recipe);
         instance.register(RykenSlimefunCustomizer.INSTANCE);
         return instance;
     }

@@ -10,6 +10,10 @@ import io.github.thebusybiscuit.slimefun4.core.attributes.Radioactivity;
 import io.github.thebusybiscuit.slimefun4.core.attributes.Soulbound;
 import io.github.thebusybiscuit.slimefun4.libraries.dough.collections.Pair;
 import io.github.thebusybiscuit.slimefun4.utils.ColoredMaterial;
+import java.io.File;
+import java.util.ArrayList;
+import java.util.List;
+import java.util.Optional;
 import lombok.SneakyThrows;
 import net.bytebuddy.implementation.FixedValue;
 import net.bytebuddy.matcher.ElementMatchers;
@@ -32,11 +36,6 @@ import org.lins.mmmjjkx.rykenslimefuncustomizer.objects.yaml.YamlReader;
 import org.lins.mmmjjkx.rykenslimefuncustomizer.utils.ClassUtils;
 import org.lins.mmmjjkx.rykenslimefuncustomizer.utils.CommonUtils;
 import org.lins.mmmjjkx.rykenslimefuncustomizer.utils.ExceptionHandler;
-
-import java.io.File;
-import java.util.ArrayList;
-import java.util.List;
-import java.util.Optional;
 
 public class ItemReader extends YamlReader<SlimefunItem> {
     public ItemReader(YamlConfiguration config) {
@@ -71,9 +70,8 @@ public class ItemReader extends YamlReader<SlimefunItem> {
         if (piglin) {
             rt = RecipeType.BARTER_DROP;
         } else {
-            Pair<ExceptionHandler.HandleResult, RecipeType> rt1 = ExceptionHandler.getRecipeType(
-                    "错误的配方类型" + recipeType + "!", recipeType
-            );
+            Pair<ExceptionHandler.HandleResult, RecipeType> rt1 =
+                    ExceptionHandler.getRecipeType("错误的配方类型" + recipeType + "!", recipeType);
 
             if (rt1.getFirstValue() == ExceptionHandler.HandleResult.FAILED) return null;
 
@@ -108,8 +106,8 @@ public class ItemReader extends YamlReader<SlimefunItem> {
                 ExceptionHandler.handleError("无法在附属" + addon.getAddonName() + "中加载物品" + s + "能源容量不能小于1");
                 return null;
             }
-            
-            CommonUtils.addLore(stack, true, CommonUtils.parseToComponent("&8⇨ &e⚡ &70 / "+energyCapacity+" J"));
+
+            CommonUtils.addLore(stack, true, CommonUtils.parseToComponent("&8⇨ &e⚡ &70 / " + energyCapacity + " J"));
 
             instance = new CustomEnergyItem(group.getSecondValue(), sfis, rt, itemStacks, (float) energyCapacity, eval);
         } else if (section.getBoolean("placeable", false)) {
@@ -130,7 +128,7 @@ public class ItemReader extends YamlReader<SlimefunItem> {
 
                 for (String material : materials) {
                     Pair<ExceptionHandler.HandleResult, Material> materialPair =
-                            ExceptionHandler.handleEnumValueOf("错误的材料类型: "+material, Material.class, material);
+                            ExceptionHandler.handleEnumValueOf("错误的材料类型: " + material, Material.class, material);
                     Material material1 = materialPair.getSecondValue();
                     if (materialPair.getFirstValue() == ExceptionHandler.HandleResult.FAILED || material1 == null) {
                         return null;
@@ -141,9 +139,11 @@ public class ItemReader extends YamlReader<SlimefunItem> {
                 instance = new CustomRainbowBlock(group.getSecondValue(), sfis, rt, itemStacks, colorMaterials);
             } else {
                 Pair<ExceptionHandler.HandleResult, ColoredMaterial> coloredMaterialPair =
-                        ExceptionHandler.handleEnumValueOf("错误的可染色材料类型: " + materialType, ColoredMaterial.class, materialType);
+                        ExceptionHandler.handleEnumValueOf(
+                                "错误的可染色材料类型: " + materialType, ColoredMaterial.class, materialType);
                 ColoredMaterial coloredMaterial = coloredMaterialPair.getSecondValue();
-                if (coloredMaterialPair.getFirstValue() == ExceptionHandler.HandleResult.FAILED || coloredMaterial == null) {
+                if (coloredMaterialPair.getFirstValue() == ExceptionHandler.HandleResult.FAILED
+                        || coloredMaterial == null) {
                     return null;
                 }
                 instance = new CustomRainbowBlock(group.getSecondValue(), sfis, rt, itemStacks, coloredMaterial);
@@ -160,17 +160,15 @@ public class ItemReader extends YamlReader<SlimefunItem> {
                 return null;
             }
 
-            Class<? extends CustomItem> clazz = (Class<? extends CustomItem>) ClassUtils.generateClass(instance.getClass(),
-                    "WitherProof", "Item", new Class[]{WitherProofBlockImpl.class}, null
-            );
+            Class<? extends CustomItem> clazz = (Class<? extends CustomItem>) ClassUtils.generateClass(
+                    instance.getClass(), "WitherProof", "Item", new Class[] {WitherProofBlockImpl.class}, null);
 
             instance = (CustomItem) clazz.getDeclaredConstructors()[0].newInstance(constructorArgs);
         }
 
         if (section.getBoolean("soulbound", false)) {
-            Class<? extends CustomItem> clazz = (Class<? extends CustomItem>) ClassUtils.generateClass(instance.getClass(),
-                    "Soulbound", "Item", new Class[]{Soulbound.class}, null
-            );
+            Class<? extends CustomItem> clazz = (Class<? extends CustomItem>) ClassUtils.generateClass(
+                    instance.getClass(), "Soulbound", "Item", new Class[] {Soulbound.class}, null);
 
             instance = (CustomItem) clazz.getDeclaredConstructors()[0].newInstance(constructorArgs);
         }
@@ -182,11 +180,13 @@ public class ItemReader extends YamlReader<SlimefunItem> {
                 return null;
             }
 
-            Class<? extends CustomItem> clazz = (Class<? extends CustomItem>) ClassUtils.generateClass(instance.getClass(),
-                    "PiglinTradeAble", "Item", new Class[]{Radioactive.class}, builder ->
-                            builder.method(ElementMatchers.isDeclaredBy(PiglinBarterDrop.class))
-                                    .intercept(FixedValue.value(chance))
-            );
+            Class<? extends CustomItem> clazz = (Class<? extends CustomItem>) ClassUtils.generateClass(
+                    instance.getClass(),
+                    "PiglinTradeAble",
+                    "Item",
+                    new Class[] {Radioactive.class},
+                    builder -> builder.method(ElementMatchers.isDeclaredBy(PiglinBarterDrop.class))
+                            .intercept(FixedValue.value(chance)));
 
             instance = (CustomItem) clazz.getDeclaredConstructors()[0].newInstance(constructorArgs);
         }
@@ -199,11 +199,12 @@ public class ItemReader extends YamlReader<SlimefunItem> {
             int amount = section.getInt("drop_amount", 1);
 
             if (chance < 0 || chance > 100) {
-                ExceptionHandler.handleError("在附属"+addon.getAddonName()+"中加载物品"+s+"时发现问题: 掉落几率"+chance+"不在0-100范围内!已转为100%");
+                ExceptionHandler.handleError(
+                        "在附属" + addon.getAddonName() + "中加载物品" + s + "时发现问题: 掉落几率" + chance + "不在0-100范围内!已转为100%");
                 chance = 100;
             }
 
-            Optional<XMaterial> xm = XMaterial.matchXMaterial(section.getString("drop",""));
+            Optional<XMaterial> xm = XMaterial.matchXMaterial(section.getString("drop", ""));
             if (xm.isPresent()) {
                 Material material = xm.get().parseMaterial();
                 if (material == null) {
@@ -214,22 +215,29 @@ public class ItemReader extends YamlReader<SlimefunItem> {
                     DropFromBlock.addDrop(material, new DropFromBlock.Drop(drop, chance, addon));
                 }
             } else {
-                ExceptionHandler.handleError("在附属" + addon.getAddonName() + "中加载物品" + s + "时发现问题: 指定掉落方块材料类型" + section.getString("drop") + "不存在!");
+                ExceptionHandler.handleError("在附属" + addon.getAddonName() + "中加载物品" + s + "时发现问题: 指定掉落方块材料类型"
+                        + section.getString("drop") + "不存在!");
             }
         }
-        
+
         instance.register(RykenSlimefunCustomizer.INSTANCE);
 
         return instance;
     }
 
     @SneakyThrows
-    private SlimefunItem setupRadiationItem(ConfigurationSection section, ItemStack original, ItemGroup itemGroup,
-                                            String id, RecipeType recipeType, ItemStack[] recipe, JavaScriptEval eval,
-                                            ProjectAddon addon) {
+    private SlimefunItem setupRadiationItem(
+            ConfigurationSection section,
+            ItemStack original,
+            ItemGroup itemGroup,
+            String id,
+            RecipeType recipeType,
+            ItemStack[] recipe,
+            JavaScriptEval eval,
+            ProjectAddon addon) {
         String radio = section.getString("radiation");
         Pair<ExceptionHandler.HandleResult, Radioactivity> radioactivityPair =
-                ExceptionHandler.handleEnumValueOf("错误的辐射等级级别: "+radio, Radioactivity.class, radio);
+                ExceptionHandler.handleEnumValueOf("错误的辐射等级级别: " + radio, Radioactivity.class, radio);
         Radioactivity radioactivity = radioactivityPair.getSecondValue();
 
         if (radioactivityPair.getFirstValue() == ExceptionHandler.HandleResult.FAILED || radioactivity == null) {
@@ -243,14 +251,23 @@ public class ItemReader extends YamlReader<SlimefunItem> {
         BaseRadiationItem instance;
 
         var sfis = new SlimefunItemStack(id, original);
-        
+
         if (energy) {
             double energyCapacity = section.getDouble("energy_capacity");
-            instance = new CustomEnergyRadiationItem(itemGroup, new SlimefunItemStack(id, original), recipeType, recipe, radioactivity, (float) energyCapacity, eval);
+            instance = new CustomEnergyRadiationItem(
+                    itemGroup,
+                    new SlimefunItemStack(id, original),
+                    recipeType,
+                    recipe,
+                    radioactivity,
+                    (float) energyCapacity,
+                    eval);
         } else if (section.getBoolean("placeable", false)) {
-            instance = new CustomDefaultRadiationItem(itemGroup, new SlimefunItemStack(id, original), recipeType, recipe, radioactivity);
+            instance = new CustomDefaultRadiationItem(
+                    itemGroup, new SlimefunItemStack(id, original), recipeType, recipe, radioactivity);
         } else {
-            instance = new CustomRadiationItem(itemGroup, new SlimefunItemStack(id, original), recipeType, recipe, eval, radioactivity);
+            instance = new CustomRadiationItem(
+                    itemGroup, new SlimefunItemStack(id, original), recipeType, recipe, eval, radioactivity);
         }
 
         Object[] constructorArgs = instance.constructArgs();
@@ -261,17 +278,15 @@ public class ItemReader extends YamlReader<SlimefunItem> {
                 return null;
             }
 
-            Class<? extends BaseRadiationItem> clazz = (Class<? extends BaseRadiationItem>) ClassUtils.generateClass(instance.getClass(),
-                    "WitherProof", "Item", new Class[]{WitherProofBlockImpl.class}, null
-            );
+            Class<? extends BaseRadiationItem> clazz = (Class<? extends BaseRadiationItem>) ClassUtils.generateClass(
+                    instance.getClass(), "WitherProof", "Item", new Class[] {WitherProofBlockImpl.class}, null);
 
             instance = (BaseRadiationItem) clazz.getDeclaredConstructors()[0].newInstance(constructorArgs);
         }
 
         if (section.getBoolean("soulbound", false)) {
-            Class<? extends BaseRadiationItem> clazz = (Class<? extends BaseRadiationItem>) ClassUtils.generateClass(instance.getClass(),
-                    "Soulbound", "Item", new Class[]{Soulbound.class}, null
-            );
+            Class<? extends BaseRadiationItem> clazz = (Class<? extends BaseRadiationItem>) ClassUtils.generateClass(
+                    instance.getClass(), "Soulbound", "Item", new Class[] {Soulbound.class}, null);
 
             instance = (BaseRadiationItem) clazz.getDeclaredConstructors()[0].newInstance(constructorArgs);
         }
@@ -285,11 +300,13 @@ public class ItemReader extends YamlReader<SlimefunItem> {
                 return null;
             }
 
-            Class<? extends CustomItem> clazz = (Class<? extends CustomItem>) ClassUtils.generateClass(instance.getClass(),
-                    "PiglinTrade", "Item", new Class[]{Radioactive.class}, builder ->
-                            builder.method(ElementMatchers.isDeclaredBy(PiglinBarterDrop.class))
-                                    .intercept(FixedValue.value(chance))
-            );
+            Class<? extends CustomItem> clazz = (Class<? extends CustomItem>) ClassUtils.generateClass(
+                    instance.getClass(),
+                    "PiglinTrade",
+                    "Item",
+                    new Class[] {Radioactive.class},
+                    builder -> builder.method(ElementMatchers.isDeclaredBy(PiglinBarterDrop.class))
+                            .intercept(FixedValue.value(chance)));
 
             instance = (BaseRadiationItem) clazz.getDeclaredConstructors()[0].newInstance(constructorArgs);
         }
@@ -302,11 +319,12 @@ public class ItemReader extends YamlReader<SlimefunItem> {
             int amount = section.getInt("drop_amount", 1);
 
             if (chance < 0 || chance > 100) {
-                ExceptionHandler.handleError("在附属"+addon.getAddonName()+"中加载物品"+ id +"时发现问题: 掉落几率"+chance+"不在0-100范围内!已转为100%");
+                ExceptionHandler.handleError(
+                        "在附属" + addon.getAddonName() + "中加载物品" + id + "时发现问题: 掉落几率" + chance + "不在0-100范围内!已转为100%");
                 chance = 100;
             }
 
-            Optional<XMaterial> xm = XMaterial.matchXMaterial(section.getString("drop",""));
+            Optional<XMaterial> xm = XMaterial.matchXMaterial(section.getString("drop", ""));
             if (xm.isPresent()) {
                 Material material = xm.get().parseMaterial();
                 if (material == null) {
@@ -317,10 +335,11 @@ public class ItemReader extends YamlReader<SlimefunItem> {
                     DropFromBlock.addDrop(material, new DropFromBlock.Drop(drop, chance, addon));
                 }
             } else {
-                ExceptionHandler.handleError("在附属" + addon.getAddonName() + "中加载物品" + id + "时发现问题: 指定掉落方块材料类型" + section.getString("drop") + "不存在!");
+                ExceptionHandler.handleError("在附属" + addon.getAddonName() + "中加载物品" + id + "时发现问题: 指定掉落方块材料类型"
+                        + section.getString("drop") + "不存在!");
             }
         }
-        
+
         instance.register(RykenSlimefunCustomizer.INSTANCE);
 
         return instance;

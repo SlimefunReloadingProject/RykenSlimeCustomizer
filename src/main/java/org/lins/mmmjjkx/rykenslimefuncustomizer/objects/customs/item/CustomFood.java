@@ -14,7 +14,12 @@ import org.lins.mmmjjkx.rykenslimefuncustomizer.objects.script.parent.ScriptEval
 public class CustomFood extends SimpleSlimefunItem<ItemConsumptionHandler> {
     private final ScriptEval eval;
 
-    public CustomFood(ItemGroup itemGroup, SlimefunItemStack item, RecipeType recipeType, ItemStack[] recipe, @Nullable ScriptEval eval) {
+    public CustomFood(
+            ItemGroup itemGroup,
+            SlimefunItemStack item,
+            RecipeType recipeType,
+            ItemStack[] recipe,
+            @Nullable ScriptEval eval) {
         super(itemGroup, item, recipeType, recipe);
 
         this.eval = eval;
@@ -22,8 +27,7 @@ public class CustomFood extends SimpleSlimefunItem<ItemConsumptionHandler> {
         register(RykenSlimefunCustomizer.INSTANCE);
     }
 
-    @NotNull
-    @Override
+    @NotNull @Override
     public ItemConsumptionHandler getItemHandler() {
         return (e, p, i) -> {
             if (eval != null) {

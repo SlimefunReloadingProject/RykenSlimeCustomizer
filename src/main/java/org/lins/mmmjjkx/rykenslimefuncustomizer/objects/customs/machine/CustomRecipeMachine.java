@@ -10,6 +10,7 @@ import io.github.thebusybiscuit.slimefun4.core.machines.MachineProcessor;
 import io.github.thebusybiscuit.slimefun4.implementation.handlers.SimpleBlockBreakHandler;
 import io.github.thebusybiscuit.slimefun4.implementation.operations.CraftingOperation;
 import io.github.thebusybiscuit.slimefun4.libraries.dough.items.CustomItemStack;
+import java.util.*;
 import lombok.Getter;
 import me.mrCookieSlime.Slimefun.Objects.SlimefunItem.abstractItems.AContainer;
 import me.mrCookieSlime.Slimefun.Objects.SlimefunItem.abstractItems.MachineRecipe;
@@ -24,10 +25,9 @@ import org.lins.mmmjjkx.rykenslimefuncustomizer.objects.customs.CustomMenu;
 import org.lins.mmmjjkx.rykenslimefuncustomizer.objects.machine.RecipeMachineRecipe;
 import org.lins.mmmjjkx.rykenslimefuncustomizer.utils.CommonUtils;
 
-import java.util.*;
-
 public class CustomRecipeMachine extends AContainer implements RecipeDisplayItem {
-    private final ItemStack RECIPE_SPLITTER = new CustomItemStack(Material.GRAY_STAINED_GLASS_PANE, "&a").setCustomModel(2200002);
+    private final ItemStack RECIPE_SPLITTER =
+            new CustomItemStack(Material.GRAY_STAINED_GLASS_PANE, "&a").setCustomModel(2200002);
     private final ItemStack AIR = new ItemStack(Material.AIR);
     private final MachineProcessor<CraftingOperation> processor;
     private final List<Integer> input;
@@ -36,20 +36,32 @@ public class CustomRecipeMachine extends AContainer implements RecipeDisplayItem
     private final List<RecipeMachineRecipe> recipes;
     private final int energyPerCraft;
     private final int capacity;
-    @Getter @Nullable
-    private final CustomMenu menu;
+
+    @Getter
+    @Nullable private final CustomMenu menu;
+
     private volatile RecipeMachineRecipe currentRecipe;
 
-    public CustomRecipeMachine(ItemGroup itemGroup, SlimefunItemStack item, RecipeType recipeType, ItemStack[] recipe,
-                               List<Integer> input, List<Integer> output, List<RecipeMachineRecipe> recipes, int energyPerCraft,
-                               int capacity, @Nullable CustomMenu menu, int speed) {
+    public CustomRecipeMachine(
+            ItemGroup itemGroup,
+            SlimefunItemStack item,
+            RecipeType recipeType,
+            ItemStack[] recipe,
+            List<Integer> input,
+            List<Integer> output,
+            List<RecipeMachineRecipe> recipes,
+            int energyPerCraft,
+            int capacity,
+            @Nullable CustomMenu menu,
+            int speed) {
         super(itemGroup, item, recipeType, recipe);
 
         this.processor = new MachineProcessor<>(this);
         this.input = input;
         this.output = output;
         this.raw_recipes = recipes;
-        this.recipes = new ArrayList<>(raw_recipes.stream().filter(r -> !r.isForDisplay()).toList());
+        this.recipes = new ArrayList<>(
+                raw_recipes.stream().filter(r -> !r.isForDisplay()).toList());
         this.energyPerCraft = energyPerCraft;
         this.capacity = capacity;
         this.menu = menu;
@@ -72,8 +84,7 @@ public class CustomRecipeMachine extends AContainer implements RecipeDisplayItem
         registerDefaultRecipes();
     }
 
-    @NotNull
-    @Override
+    @NotNull @Override
     protected BlockBreakHandler onBlockBreak() {
         return new SimpleBlockBreakHandler() {
             public void onBlockBreak(@NotNull Block b) {
@@ -115,14 +126,13 @@ public class CustomRecipeMachine extends AContainer implements RecipeDisplayItem
     }
 
     @Override
-    //Outside init
+    // Outside init
     public ItemStack getProgressBar() {
         return new ItemStack(Material.GREEN_STAINED_GLASS_PANE);
     }
 
     @Override
-    @NotNull
-    public List<ItemStack> getDisplayRecipes() {
+    @NotNull public List<ItemStack> getDisplayRecipes() {
         List<ItemStack> displayRecipes = new ArrayList<>();
 
         for (RecipeMachineRecipe recipe : raw_recipes) {
@@ -144,7 +154,8 @@ public class CustomRecipeMachine extends AContainer implements RecipeDisplayItem
                         ItemStack out = output[i].clone();
 
                         if (chance < 100) {
-                            CommonUtils.addLore(out, true, CommonUtils.parseToComponent("&a有&b " + chance + "% &a的概率产出"));
+                            CommonUtils.addLore(
+                                    out, true, CommonUtils.parseToComponent("&a有&b " + chance + "% &a的概率产出"));
                         }
 
                         displayRecipes.add(out);
@@ -178,8 +189,7 @@ public class CustomRecipeMachine extends AContainer implements RecipeDisplayItem
         return capacity;
     }
 
-    @NotNull
-    @Override
+    @NotNull @Override
     public String getMachineIdentifier() {
         return getId();
     }
@@ -202,7 +212,8 @@ public class CustomRecipeMachine extends AContainer implements RecipeDisplayItem
                         inv.replaceExistingItem(progressSlot, processor.getProgressBar());
 
                         if (currentRecipe != null) {
-                            ItemStack[] outputs = currentRecipe.getMatchChanceResult().toArray(new ItemStack[]{});
+                            ItemStack[] outputs =
+                                    currentRecipe.getMatchChanceResult().toArray(new ItemStack[] {});
 
                             if (!currentRecipe.isChooseOneIfHas()) {
                                 for (ItemStack o : outputs) {

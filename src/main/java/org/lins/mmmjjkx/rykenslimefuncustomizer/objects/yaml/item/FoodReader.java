@@ -4,6 +4,7 @@ import io.github.thebusybiscuit.slimefun4.api.items.ItemGroup;
 import io.github.thebusybiscuit.slimefun4.api.items.SlimefunItemStack;
 import io.github.thebusybiscuit.slimefun4.api.recipes.RecipeType;
 import io.github.thebusybiscuit.slimefun4.libraries.dough.collections.Pair;
+import java.io.File;
 import org.bukkit.configuration.ConfigurationSection;
 import org.bukkit.configuration.file.YamlConfiguration;
 import org.bukkit.inventory.ItemStack;
@@ -13,8 +14,6 @@ import org.lins.mmmjjkx.rykenslimefuncustomizer.objects.customs.item.CustomFood;
 import org.lins.mmmjjkx.rykenslimefuncustomizer.objects.yaml.YamlReader;
 import org.lins.mmmjjkx.rykenslimefuncustomizer.utils.CommonUtils;
 import org.lins.mmmjjkx.rykenslimefuncustomizer.utils.ExceptionHandler;
-
-import java.io.File;
 
 public class FoodReader extends YamlReader<CustomFood> {
     public FoodReader(YamlConfiguration config) {
@@ -43,9 +42,8 @@ public class FoodReader extends YamlReader<CustomFood> {
         ItemStack[] itemStacks = CommonUtils.readRecipe(section.getConfigurationSection("recipe"), addon);
         String recipeType = section.getString("recipe_type", "NULL");
 
-        Pair<ExceptionHandler.HandleResult, RecipeType> rt = ExceptionHandler.getRecipeType(
-                "错误的配方类型" + recipeType + "!", recipeType
-        );
+        Pair<ExceptionHandler.HandleResult, RecipeType> rt =
+                ExceptionHandler.getRecipeType("错误的配方类型" + recipeType + "!", recipeType);
 
         if (rt.getFirstValue() == ExceptionHandler.HandleResult.FAILED) return null;
 
@@ -60,6 +58,7 @@ public class FoodReader extends YamlReader<CustomFood> {
             }
         }
 
-        return new CustomFood(group.getSecondValue(), new SlimefunItemStack(s, stack), rt.getSecondValue(), itemStacks, eval);
+        return new CustomFood(
+                group.getSecondValue(), new SlimefunItemStack(s, stack), rt.getSecondValue(), itemStacks, eval);
     }
 }

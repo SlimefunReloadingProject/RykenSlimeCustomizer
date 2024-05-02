@@ -1,10 +1,9 @@
 package org.lins.mmmjjkx.rykenslimefuncustomizer.libraries.Colors;
 
+import java.awt.*;
 import lombok.Getter;
 import lombok.Setter;
 import org.bukkit.Material;
-
-import java.awt.*;
 
 public enum CMIColors {
     White(0, "White", Material.WHITE_DYE, new Color(249, 255, 254)),
@@ -26,10 +25,13 @@ public enum CMIColors {
 
     @Getter
     private int id;
+
     @Getter
     private String name;
+
     @Setter
     private Material material;
+
     private Color color;
 
     CMIColors(int id, String name, Material material, Color color) {
@@ -47,8 +49,7 @@ public enum CMIColors {
 
     public static CMIColors getById(int id) {
         for (CMIColors one : CMIColors.values()) {
-            if (one.getId() == id)
-                return one;
+            if (one.getId() == id) return one;
         }
         return CMIColors.White;
     }
@@ -56,7 +57,6 @@ public enum CMIColors {
     public Material getMaterial() {
         return material;
     }
-
 
     public Color getColor() {
         return color;

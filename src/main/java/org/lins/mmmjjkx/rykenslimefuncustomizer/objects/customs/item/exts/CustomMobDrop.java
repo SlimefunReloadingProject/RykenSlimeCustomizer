@@ -12,6 +12,7 @@ import org.lins.mmmjjkx.rykenslimefuncustomizer.objects.customs.item.CustomUnpla
 
 public class CustomMobDrop extends CustomUnplaceableItem implements RandomMobDrop {
     private final int chance;
+
     @Getter
     private final EntityType entityType;
 

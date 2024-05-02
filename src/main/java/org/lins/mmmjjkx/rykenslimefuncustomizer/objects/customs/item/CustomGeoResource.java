@@ -5,6 +5,7 @@ import io.github.thebusybiscuit.slimefun4.api.items.ItemGroup;
 import io.github.thebusybiscuit.slimefun4.api.items.SlimefunItemStack;
 import io.github.thebusybiscuit.slimefun4.api.recipes.RecipeType;
 import io.github.thebusybiscuit.slimefun4.implementation.items.blocks.UnplaceableBlock;
+import java.util.function.BiFunction;
 import org.bukkit.NamespacedKey;
 import org.bukkit.World;
 import org.bukkit.block.Biome;
@@ -12,17 +13,21 @@ import org.bukkit.inventory.ItemStack;
 import org.jetbrains.annotations.NotNull;
 import org.lins.mmmjjkx.rykenslimefuncustomizer.RykenSlimefunCustomizer;
 
-import java.util.function.BiFunction;
-
 public class CustomGeoResource extends UnplaceableBlock implements GEOResource {
     private final BiFunction<World.Environment, Biome, Integer> supply;
     private final int maxDeviation;
     private final boolean obtainableFromGEOMiner;
     private final String name;
 
-    public CustomGeoResource(ItemGroup itemGroup, SlimefunItemStack item, RecipeType type, ItemStack[] recipe,
-                             BiFunction<World.Environment, Biome, Integer> supply, int maxDeviation,
-                             boolean obtainableFromGEOMiner, String name) {
+    public CustomGeoResource(
+            ItemGroup itemGroup,
+            SlimefunItemStack item,
+            RecipeType type,
+            ItemStack[] recipe,
+            BiFunction<World.Environment, Biome, Integer> supply,
+            int maxDeviation,
+            boolean obtainableFromGEOMiner,
+            String name) {
         super(itemGroup, item, type, recipe);
 
         this.supply = supply;
@@ -44,8 +49,7 @@ public class CustomGeoResource extends UnplaceableBlock implements GEOResource {
         return maxDeviation;
     }
 
-    @NotNull
-    @Override
+    @NotNull @Override
     public String getName() {
         return name;
     }

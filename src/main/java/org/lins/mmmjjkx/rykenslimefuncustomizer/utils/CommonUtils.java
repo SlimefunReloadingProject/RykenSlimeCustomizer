@@ -4,6 +4,20 @@ import de.themoep.minedown.adventure.MineDown;
 import io.github.thebusybiscuit.slimefun4.api.items.SlimefunItem;
 import io.github.thebusybiscuit.slimefun4.libraries.dough.skins.PlayerHead;
 import io.github.thebusybiscuit.slimefun4.libraries.dough.skins.PlayerSkin;
+import java.io.File;
+import java.io.IOException;
+import java.io.InputStream;
+import java.io.InputStreamReader;
+import java.nio.charset.StandardCharsets;
+import java.nio.file.Files;
+import java.nio.file.StandardOpenOption;
+import java.util.ArrayList;
+import java.util.Arrays;
+import java.util.List;
+import java.util.Optional;
+import java.util.function.Predicate;
+import java.util.regex.Matcher;
+import java.util.regex.Pattern;
 import lombok.SneakyThrows;
 import net.kyori.adventure.text.Component;
 import net.kyori.adventure.text.format.TextDecoration;
@@ -29,24 +43,10 @@ import org.lins.mmmjjkx.rykenslimefuncustomizer.objects.ProjectAddon;
 import org.lins.mmmjjkx.rykenslimefuncustomizer.objects.customs.item.RSCItemStack;
 import org.lins.mmmjjkx.rykenslimefuncustomizer.objects.global.XMaterial;
 
-import java.io.File;
-import java.io.IOException;
-import java.io.InputStream;
-import java.io.InputStreamReader;
-import java.nio.charset.StandardCharsets;
-import java.nio.file.Files;
-import java.nio.file.StandardOpenOption;
-import java.util.ArrayList;
-import java.util.Arrays;
-import java.util.List;
-import java.util.Optional;
-import java.util.function.Predicate;
-import java.util.regex.Matcher;
-import java.util.regex.Pattern;
-
 public class CommonUtils {
     private static final MiniMessage MINI_MESSAGE = MiniMessage.miniMessage();
-    private static final LegacyComponentSerializer LEGACY_COMPONENT_SERIALIZER = LegacyComponentSerializer.legacyAmpersand().toBuilder().hexColors().build();
+    private static final LegacyComponentSerializer LEGACY_COMPONENT_SERIALIZER =
+            LegacyComponentSerializer.legacyAmpersand().toBuilder().hexColors().build();
 
     public static <T extends ItemStack> T doGlow(T item) {
         item.addUnsafeEnchantment(Enchantment.ARROW_INFINITE, 1);
@@ -54,7 +54,7 @@ public class CommonUtils {
 
         return item;
     }
-    
+
     public static Component parseToComponent(String text) {
         if (text == null) return Component.empty();
 
@@ -95,8 +95,7 @@ public class CommonUtils {
         return components;
     }
 
-    @Nullable
-    public static <T> T getIf(Iterable<T> iterable, Predicate<T> filter) {
+    @Nullable public static <T> T getIf(Iterable<T> iterable, Predicate<T> filter) {
         if (iterable == null) return null;
 
         for (T t : iterable) {
@@ -107,15 +106,13 @@ public class CommonUtils {
         return null;
     }
 
-    @NotNull
-    public static ItemStack[] readRecipe(ConfigurationSection section, ProjectAddon addon) {
+    @NotNull public static ItemStack[] readRecipe(ConfigurationSection section, ProjectAddon addon) {
         return readRecipe(section, addon, 9);
     }
 
-    @NotNull
-    @Contract("null,_,_ -> new")
+    @NotNull @Contract("null,_,_ -> new")
     public static ItemStack[] readRecipe(ConfigurationSection section, ProjectAddon addon, int size) {
-        if (section == null) return new ItemStack[]{};
+        if (section == null) return new ItemStack[] {};
         ItemStack[] itemStacks = new ItemStack[size];
         for (int i = 0; i < size; i++) {
             ConfigurationSection section1 = section.getConfigurationSection(String.valueOf(i + 1));
@@ -125,8 +122,7 @@ public class CommonUtils {
     }
 
     @SneakyThrows
-    @Nullable
-    @SuppressWarnings("deprecation")
+    @Nullable @SuppressWarnings("deprecation")
     public static ItemStack readItem(ConfigurationSection section, boolean countable, ProjectAddon addon) {
         if (section == null) {
             return null;
@@ -139,7 +135,7 @@ public class CommonUtils {
             return null;
         }
 
-        String material = section.getString("material","");
+        String material = section.getString("material", "");
 
         if (material.startsWith("ey")) {
             type = "skull";
@@ -150,7 +146,7 @@ public class CommonUtils {
         }
 
         List<String> lore = CMIChatColor.translate(section.getStringList("lore"));
-        String name = CMIChatColor.translate(section.getString("name",""));
+        String name = CMIChatColor.translate(section.getString("name", ""));
         boolean glow = section.getBoolean("glow", false);
         boolean hasEnchantment = section.contains("enchantments") && section.isConfigurationSection("enchantments");
         int modelId = section.getInt("modelId");
@@ -184,7 +180,7 @@ public class CommonUtils {
 
                 itemStack = new RSCItemStack(head, name, lore);
             }
-            case "skull_base64","skull" -> {
+            case "skull_base64", "skull" -> {
                 PlayerSkin playerSkin = PlayerSkin.fromBase64(material);
                 ItemStack head = PlayerHead.getItemStack(playerSkin);
 
@@ -210,7 +206,7 @@ public class CommonUtils {
             case "saveditem" -> {
                 File file = new File(addon.getSavedItemsFolder(), material + ".yml");
                 if (!file.exists()) {
-                    ExceptionHandler.handleError("保存物品的文件"+material+"不存在，已转为石头");
+                    ExceptionHandler.handleError("保存物品的文件" + material + "不存在，已转为石头");
                     itemStack = new RSCItemStack(Material.STONE, name, lore);
                     break;
                 }
@@ -226,15 +222,23 @@ public class CommonUtils {
                     int v = Integer.parseInt(replace.replace("v: ", ""));
 
                     if (v > Bukkit.getUnsafe().getDataVersion()) {
-                        String r2 = replace.replace(String.valueOf(v), String.valueOf(Bukkit.getUnsafe().getDataVersion()));
+                        String r2 = replace.replace(
+                                String.valueOf(v),
+                                String.valueOf(Bukkit.getUnsafe().getDataVersion()));
                         fileContext = fileContext.replace(replace, r2);
-                        Files.writeString(file.toPath(), fileContext, StandardCharsets.UTF_8, StandardOpenOption.CREATE, StandardOpenOption.TRUNCATE_EXISTING);
+                        Files.writeString(
+                                file.toPath(),
+                                fileContext,
+                                StandardCharsets.UTF_8,
+                                StandardOpenOption.CREATE,
+                                StandardOpenOption.TRUNCATE_EXISTING);
                     }
                 }
 
                 YamlConfiguration configuration = YamlConfiguration.loadConfiguration(file);
 
-                itemStack = new RSCItemStack(configuration.getItemStack("item", new RSCItemStack(Material.STONE, name, lore)), name, lore);
+                itemStack = new RSCItemStack(
+                        configuration.getItemStack("item", new RSCItemStack(Material.STONE, name, lore)), name, lore);
 
                 if (itemStack.getAmount() > 1 && !countable) {
                     itemStack.setAmount(1);
@@ -251,7 +255,8 @@ public class CommonUtils {
 
         if (countable) {
             if (amount > 64 || amount < 1) {
-                ExceptionHandler.handleError("无法在附属"+addon.getAddonName()+"中读取"+section.getCurrentPath()+"的物品: 物品数量不能大于64或小于1");
+                ExceptionHandler.handleError(
+                        "无法在附属" + addon.getAddonName() + "中读取" + section.getCurrentPath() + "的物品: 物品数量不能大于64或小于1");
                 return null;
             }
             itemStack.setAmount(amount);
@@ -263,7 +268,8 @@ public class CommonUtils {
                 for (String enchant : enchants.getKeys(false)) {
                     Enchantment enchantment = Enchantment.getByKey(NamespacedKey.minecraft(enchant.toLowerCase()));
                     if (enchantment == null) {
-                        ExceptionHandler.handleError("无法在附属"+addon.getAddonName()+"中读取物品附魔"+enchant+", 跳过添加此附魔");
+                        ExceptionHandler.handleError(
+                                "无法在附属" + addon.getAddonName() + "中读取物品附魔" + enchant + ", 跳过添加此附魔");
                         continue;
                     }
                     int lvl = enchants.getInt(enchant, 1);
