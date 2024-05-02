@@ -23,6 +23,7 @@ import org.lins.mmmjjkx.rykenslimefuncustomizer.objects.customs.item.CustomGeoRe
 import org.lins.mmmjjkx.rykenslimefuncustomizer.objects.customs.item.exts.CustomMobDrop;
 import org.lins.mmmjjkx.rykenslimefuncustomizer.objects.customs.machine.*;
 import org.lins.mmmjjkx.rykenslimefuncustomizer.objects.customs.parent.AbstractEmptyMachine;
+import org.lins.mmmjjkx.rykenslimefuncustomizer.objects.global.DropFromBlock;
 import org.lins.mmmjjkx.rykenslimefuncustomizer.objects.global.RecipeTypeMap;
 
 @RequiredArgsConstructor
@@ -146,6 +147,8 @@ public final class ProjectAddon {
         foods.clear();
         armors.clear();
         supers.clear();
+
+        DropFromBlock.unregisterAddonDrops(this);
     }
 
     private void unregisterItem(SlimefunItem item) {

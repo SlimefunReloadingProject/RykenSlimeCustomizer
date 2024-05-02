@@ -13,6 +13,7 @@ import io.github.thebusybiscuit.slimefun4.implementation.handlers.SimpleBlockBre
 import io.github.thebusybiscuit.slimefun4.libraries.dough.items.CustomItemStack;
 import io.github.thebusybiscuit.slimefun4.utils.ChestMenuUtils;
 import java.util.ArrayList;
+import java.util.Collections;
 import java.util.List;
 import java.util.Objects;
 import me.mrCookieSlime.Slimefun.Objects.SlimefunItem.interfaces.InventoryBlock;
@@ -25,7 +26,6 @@ import org.jetbrains.annotations.NotNull;
 import org.lins.mmmjjkx.rykenslimefuncustomizer.RykenSlimefunCustomizer;
 import org.lins.mmmjjkx.rykenslimefuncustomizer.objects.customs.CustomMenu;
 import org.lins.mmmjjkx.rykenslimefuncustomizer.objects.customs.item.RSCItemStack;
-import org.lins.mmmjjkx.rykenslimefuncustomizer.utils.CommonUtils;
 
 @SuppressWarnings("deprecation")
 public class CustomMaterialGenerator extends SlimefunItem
@@ -175,8 +175,8 @@ public class CustomMaterialGenerator extends SlimefunItem
     public List<ItemStack> getDisplayRecipes() {
         ItemStack speed = new RSCItemStack(
                 Material.KNOWLEDGE_BOOK,
-                CommonUtils.parseToComponent("&a&l速度"),
-                CommonUtils.parseToComponent("&a&l每 &b&l" + tickRate + " &a&l个粘液刻生成一次"));
+                "&a&l速度",
+                Collections.singletonList("&a&l每 &b&l" + tickRate + " &a&l个粘液刻生成一次"));
         List<ItemStack> list = new ArrayList<>();
         for (ItemStack gen : generation) {
             list.add(speed);

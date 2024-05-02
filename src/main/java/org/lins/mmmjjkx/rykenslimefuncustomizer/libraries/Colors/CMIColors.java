@@ -5,6 +5,7 @@ import lombok.Getter;
 import lombok.Setter;
 import org.bukkit.Material;
 
+@Getter
 public enum CMIColors {
     White(0, "White", Material.WHITE_DYE, new Color(249, 255, 254)),
     Orange(1, "Orange", Material.ORANGE_DYE, new Color(249, 128, 29)),
@@ -23,10 +24,8 @@ public enum CMIColors {
     Red(14, "Red", Material.RED_DYE, new Color(176, 46, 38)),
     Black(15, "Black", Material.BLACK_DYE, new Color(29, 29, 33));
 
-    @Getter
     private int id;
 
-    @Getter
     private String name;
 
     @Setter
@@ -52,13 +51,5 @@ public enum CMIColors {
             if (one.getId() == id) return one;
         }
         return CMIColors.White;
-    }
-
-    public Material getMaterial() {
-        return material;
-    }
-
-    public Color getColor() {
-        return color;
     }
 }

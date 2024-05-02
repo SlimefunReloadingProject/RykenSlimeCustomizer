@@ -1,5 +1,6 @@
 package org.lins.mmmjjkx.rykenslimefuncustomizer.libraries.Version;
 
+import lombok.Getter;
 import org.bukkit.Bukkit;
 
 import java.util.ArrayList;
@@ -9,25 +10,6 @@ import java.util.stream.Collectors;
 
 public enum Version {
 
-    v1_7_R1,
-    v1_7_R2,
-    v1_7_R3,
-    v1_7_R4,
-    v1_8_R1,
-    v1_8_R2,
-    v1_8_R3,
-    v1_9_R1,
-    v1_9_R2,
-    v1_10_R1,
-    v1_11_R1,
-    v1_12_R1,
-    v1_13_R1,
-    v1_13_R2,
-    v1_13_R3,
-    v1_14_R1,
-    v1_14_R2,
-    v1_15_R1,
-    v1_15_R2,
     v1_16_R1,
     v1_16_R2,
     v1_16_R3,
@@ -51,9 +33,11 @@ public enum Version {
     v1_23_R2,
     v1_23_R3;
 
+    @Getter
     private Integer value;
     private int[] minorVersions = null;
-    private String shortVersion;
+    @Getter
+    private final String shortVersion;
     private static int subVersion = 0;
     private static Version current = null;
     private static MinecraftPlatform platform = null;
@@ -75,10 +59,6 @@ public enum Version {
         shortVersion = this.name().substring(0, this.name().length() - 3);
     }
 
-    public Integer getValue() {
-        return value;
-    }
-
     public static boolean isPaperBranch() {
         switch (getPlatform()) {
             case mohist:
@@ -88,15 +68,8 @@ public enum Version {
             case paper:
             case pufferfish:
                 return true;
-            case craftbukkit:
-            case spigot:
-                return false;
         }
         return false;
-    }
-
-    public String getShortVersion() {
-        return shortVersion;
     }
 
     public String getShortFormated() {
@@ -109,10 +82,6 @@ public enum Version {
 
     public static boolean isPaper() {
         return getPlatform().equals(MinecraftPlatform.paper) || getPlatform().equals(MinecraftPlatform.folia) || getPlatform().equals(MinecraftPlatform.purpur);
-    }
-
-    public static boolean isSpigot() {
-        return !getPlatform().equals(MinecraftPlatform.craftbukkit);
     }
 
     public static boolean isFolia() {
@@ -154,13 +123,6 @@ public enum Version {
             platform = MinecraftPlatform.paper;
             return platform;
         } catch (ClassNotFoundException e) {
-        }
-
-        try {
-            Class.forName("org.spigotmc.SpigotConfig");
-            platform = MinecraftPlatform.spigot;
-        } catch (ClassNotFoundException e1) {
-            platform = MinecraftPlatform.craftbukkit;
         }
 
         return platform;
@@ -280,18 +242,18 @@ public enum Version {
 
     public static Integer convertVersion(String v) {
         v = v.replaceAll("[^\\d.]", "");
-        Integer version = 0;
+        int version = 0;
         if (v.contains(".")) {
-            String lVersion = "";
+            StringBuilder lVersion = new StringBuilder();
             for (String one : v.split("\\.")) {
                 String s = one;
                 if (s.length() == 1)
                     s = "0" + s;
-                lVersion += s;
+                lVersion.append(s);
             }
 
             try {
-                version = Integer.parseInt(lVersion);
+                version = Integer.parseInt(lVersion.toString());
             } catch (Exception e) {
             }
         } else {
@@ -309,8 +271,8 @@ public enum Version {
 
         String vs = String.valueOf(v);
 
-        while (vs.length() > 0) {
-            int subv = 0;
+        while (!vs.isEmpty()) {
+            int subv;
             try {
                 if (vs.length() > 2) {
                     subv = Integer.parseInt(vs.substring(vs.length() - 2));
@@ -319,9 +281,9 @@ public enum Version {
                     subv = Integer.parseInt(vs);
                     version.insert(0, subv);
                 }
-            } catch (Throwable e) {
-
+            } catch (Throwable ignored) {
             }
+
             if (vs.length() > 2)
                 vs = vs.substring(0, vs.length() - 2);
             else
@@ -338,7 +300,7 @@ public enum Version {
     public List<String> getMinorVersions() {
 
         if (minorVersions == null)
-            return new ArrayList<String>();
+            return new ArrayList<>();
 
         return Arrays.stream(minorVersions)
                 .mapToObj(version -> getSimplifiedVersion() + version)

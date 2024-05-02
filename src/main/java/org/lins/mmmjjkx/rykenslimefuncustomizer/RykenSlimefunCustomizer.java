@@ -10,6 +10,7 @@ import org.bukkit.plugin.java.JavaPlugin;
 import org.jetbrains.annotations.NotNull;
 import org.lins.mmmjjkx.rykenslimefuncustomizer.bulit_in.JavaScriptCreator;
 import org.lins.mmmjjkx.rykenslimefuncustomizer.commands.MainCommand;
+import org.lins.mmmjjkx.rykenslimefuncustomizer.listeners.BlockBreak;
 import org.lins.mmmjjkx.rykenslimefuncustomizer.objects.global.ScriptCreators;
 import org.lins.mmmjjkx.rykenslimefuncustomizer.utils.CommonUtils;
 import org.lins.mmmjjkx.rykenslimefuncustomizer.utils.ExceptionHandler;
@@ -44,6 +45,8 @@ public final class RykenSlimefunCustomizer extends JavaPlugin implements Slimefu
         addonManager.setup(this);
 
         ExceptionHandler.info("RykenSlimeCustomizer加载成功！");
+
+        new BlockBreak(this);
 
         getServer().getScheduler().runTaskLater(this, () -> runtime = true, 1);
     }

@@ -1577,7 +1577,7 @@ public enum CMICustomColors {
     Portafino("FFFFB4"),
     Ivory("FFFFF0");
 
-    private String hex;
+    private final String hex;
     //    private String[] extra;
     private long rgb = 0;
 
