@@ -104,6 +104,7 @@ public class RecipeMachineReader extends YamlReader<CustomRecipeMachine> {
                 capacity,
                 menu,
                 speed);
+        return crm;
     }
 
     private List<RecipeMachineRecipe> readRecipes(

@@ -19,4 +19,5 @@ public class Constants {
     public static final String SIMPLE_MACHINES_FILE = "simple_machines.yml";
     public static final String FOODS_FILE = "foods.yml";
     public static final String ARMORS_FILE = "armors.yml";
+    public static final String SUPERS_FILE = "supers.yml";
 }
