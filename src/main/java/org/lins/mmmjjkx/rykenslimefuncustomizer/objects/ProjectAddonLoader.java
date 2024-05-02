@@ -169,6 +169,10 @@ public class ProjectAddonLoader {
         YamlConfiguration multiBlockMachines = doFileLoad(file, Constants.MULTI_BLOCK_MACHINES_FILE);
         MultiBlockMachineReader multiBlockMachineReader = new MultiBlockMachineReader(multiBlockMachines);
         addon.setMultiBlockMachines(multiBlockMachineReader.readAll(addon));
+        //
+        YamlConfiguration supers = doFileLoad(file, Constants.MULTI_BLOCK_MACHINES_FILE);
+        SuperReader superReader = new SuperReader(supers);
+        addon.setSupers(superReader.readAll(addon));
         //////////////////////////
         YamlConfiguration researches = doFileLoad(file, Constants.RESEARCHES_FILE);
         ResearchReader researchReader = new ResearchReader(researches);
@@ -191,6 +195,7 @@ public class ProjectAddonLoader {
         addon.getRecipeMachines().addAll(recipeMachineReader.loadLateInits(addon));
         addon.getSimpleMachines().addAll(simpleMachineReader.loadLateInits(addon));
         addon.getMultiBlockMachines().addAll(multiBlockMachineReader.loadLateInits(addon));
+        addon.getSupers().addAll(superReader.loadLateInits(addon));
         addon.getResearches().addAll(researchReader.loadLateInits(addon));
 
         ExceptionHandler.debugLog("加载附属 " + addon.getAddonId() + " 成功!");

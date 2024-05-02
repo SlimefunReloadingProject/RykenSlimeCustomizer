@@ -81,6 +81,8 @@ public final class ProjectAddon {
     private List<CustomFood> foods = new ArrayList<>();
     // armors.yml
     private List<List<CustomArmorPiece>> armors = new ArrayList<>();
+    // supers.yml
+    private List<SlimefunItem> supers = new ArrayList<>();
 
     public File getScriptsFolder() {
         File scripts = new File(folder, "scripts");
@@ -120,6 +122,7 @@ public final class ProjectAddon {
         multiBlockMachines.forEach(this::unregisterItem);
         simpleMachines.forEach(this::unregisterItem);
         armors.forEach(l -> l.forEach(this::unregisterItem));
+        supers.forEach(this::unregisterItem);
 
         recipeTypes.forEach(r -> RecipeTypeMap.removeRecipeTypes(r.getKey().getKey()));
 
@@ -142,11 +145,11 @@ public final class ProjectAddon {
         simpleMachines.clear();
         foods.clear();
         armors.clear();
+        supers.clear();
     }
 
     private void unregisterItem(SlimefunItem item) {
         item.disable();
-        Slimefun.getRegistry().getDisabledSlimefunItems().remove(item);
         Slimefun.getRegistry().getSlimefunItemIds().remove(item.getId());
         Slimefun.getRegistry().getAllSlimefunItems().remove(item);
     }
