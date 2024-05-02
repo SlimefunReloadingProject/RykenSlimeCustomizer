@@ -7,6 +7,7 @@ import io.github.thebusybiscuit.slimefun4.api.recipes.RecipeType;
 import io.github.thebusybiscuit.slimefun4.libraries.dough.collections.Pair;
 import java.lang.reflect.Constructor;
 import java.lang.reflect.InvocationTargetException;
+import java.lang.reflect.Method;
 import java.util.Arrays;
 import java.util.List;
 import org.bukkit.configuration.ConfigurationSection;
@@ -43,7 +44,7 @@ public class SuperReader extends YamlReader<SlimefunItem> {
         if (rt.getFirstValue() == ExceptionHandler.HandleResult.FAILED) return null;
 
         String className = section.getString("class", "");
-        Class<?> clazz = null;
+        Class<?> clazz;
         try {
             clazz = Class.forName(className);
         } catch (ClassNotFoundException e) {
@@ -64,15 +65,45 @@ public class SuperReader extends YamlReader<SlimefunItem> {
         Constructor<? extends SlimefunItem> ctor =
                 (Constructor<? extends SlimefunItem>) clazz.getConstructors()[ctorIndex];
         SlimefunItemStack slimefunItemStack = new SlimefunItemStack(s, stack);
-        Object[] args = section.getObject("args", Object[].class, null);
+        Object[] args =
+                section.getList("args") == null ? null : section.getList("args").toArray();
+        SlimefunItem instance;
         try {
-            if (args == null) return ctor.newInstance(group.getSecondValue(), slimefunItemStack, recipeType, recipe);
-            List<Object> newArgs = Arrays.asList(group.getSecondValue(), slimefunItemStack, recipeType, recipe);
-            newArgs.addAll(List.of(args));
-            return ctor.newInstance(newArgs.toArray());
+            if (args == null)
+                instance = ctor.newInstance(group.getSecondValue(), slimefunItemStack, recipeType, recipe);
+            else {
+                List<Object> newArgs = Arrays.asList(group.getSecondValue(), slimefunItemStack, recipeType, recipe);
+                newArgs.addAll(List.of(args));
+                instance = ctor.newInstance(newArgs.toArray());
+            }
         } catch (InstantiationException | InvocationTargetException | IllegalAccessException e) {
             ExceptionHandler.handleError("无法创建类", e);
             return null;
         }
+
+        if (section.contains("method")) {
+            ConfigurationSection methodArray = section.getConfigurationSection("method");
+            for (String methodName : methodArray.getKeys(false)) {
+                Object[] args1 = methodArray.getList(methodName).toArray();
+                Method method = null;
+                try {
+                    method = clazz.getDeclaredMethod(
+                            methodName,
+                            Arrays.stream(args1).map(x -> x.getClass()).toArray(Class<?>[]::new));
+                } catch (NoSuchMethodException e) {
+                    ExceptionHandler.handleError("没有找到方法", e);
+                }
+                if (method != null) {
+                    try {
+                        method.setAccessible(true);
+                        method.invoke(instance, args1);
+                    } catch (IllegalAccessException | InvocationTargetException e) {
+                        ExceptionHandler.handleError("方法调用异常", e);
+                    }
+                }
+            }
+        }
+
+        return instance;
     }
 }
