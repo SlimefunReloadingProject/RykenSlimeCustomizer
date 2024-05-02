@@ -11,17 +11,16 @@ import io.github.thebusybiscuit.slimefun4.implementation.Slimefun;
 import io.github.thebusybiscuit.slimefun4.implementation.guide.SurvivalSlimefunGuide;
 import io.github.thebusybiscuit.slimefun4.libraries.dough.items.CustomItemStack;
 import io.github.thebusybiscuit.slimefun4.utils.ChestMenuUtils;
+import java.util.ArrayList;
+import java.util.List;
+import java.util.Objects;
+import javax.annotation.Nonnull;
 import me.mrCookieSlime.CSCoreLibPlugin.general.Inventory.ChestMenu;
 import org.bukkit.ChatColor;
 import org.bukkit.NamespacedKey;
 import org.bukkit.entity.Player;
 import org.bukkit.inventory.ItemStack;
 import org.lins.mmmjjkx.rykenslimefuncustomizer.utils.ExceptionHandler;
-
-import javax.annotation.Nonnull;
-import java.util.ArrayList;
-import java.util.List;
-import java.util.Objects;
 
 public class AdvancedNestedItemGroup extends NestedItemGroup {
     private final List<SubItemGroup> subGroups;
@@ -59,13 +58,17 @@ public class AdvancedNestedItemGroup extends NestedItemGroup {
         }
 
         ChestMenu menu = new ChestMenu(Slimefun.getLocalization().getMessage(p, "guide.title.main"));
-        SurvivalSlimefunGuide guide = (SurvivalSlimefunGuide)Slimefun.getRegistry().getSlimefunGuide(mode);
+        SurvivalSlimefunGuide guide =
+                (SurvivalSlimefunGuide) Slimefun.getRegistry().getSlimefunGuide(mode);
         menu.setEmptySlotsClickable(false);
         SoundEffect var10001 = SoundEffect.GUIDE_BUTTON_CLICK_SOUND;
         Objects.requireNonNull(var10001);
         menu.addMenuOpeningHandler(var10001::playFor);
         guide.createHeader(p, profile, menu);
-        menu.addItem(1, new CustomItemStack(ChestMenuUtils.getBackButton(p, "", ChatColor.GRAY + Slimefun.getLocalization().getMessage(p, "guide.back.guide"))));
+        menu.addItem(
+                1,
+                new CustomItemStack(ChestMenuUtils.getBackButton(
+                        p, "", ChatColor.GRAY + Slimefun.getLocalization().getMessage(p, "guide.back.guide"))));
         menu.addMenuClickHandler(1, (pl, s, is, action) -> {
             SlimefunGuide.openMainMenu(profile, mode, history.getMainMenuPage());
             return false;
@@ -74,7 +77,7 @@ public class AdvancedNestedItemGroup extends NestedItemGroup {
         int index = 9;
         int target = 36 * (page - 1) - 1;
 
-        while(target < this.subGroups.size() - 1 && index < 45) {
+        while (target < this.subGroups.size() - 1 && index < 45) {
             ++target;
             SubItemGroup itemGroup = this.subGroups.get(target);
             if (itemGroup.isVisibleInNested(p)) {

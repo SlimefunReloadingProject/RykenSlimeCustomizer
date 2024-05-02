@@ -1,10 +1,9 @@
 package org.lins.mmmjjkx.rykenslimefuncustomizer.objects.machine;
 
+import java.util.List;
 import lombok.Getter;
 import me.mrCookieSlime.Slimefun.api.inventory.BlockMenu;
 import org.bukkit.inventory.ItemStack;
-
-import java.util.List;
 
 @Getter
 public class MachineTemplate extends ItemStack {
@@ -19,9 +18,8 @@ public class MachineTemplate extends ItemStack {
     }
 
     public boolean matchRecipe(BlockMenu bm, int[] inputSlots) {
-        for (RecipeMachineRecipe recipe : recipes) {
+        for (RecipeMachineRecipe recipe : recipes) {}
 
-        }
         return false;
     }
 }

@@ -1,10 +1,9 @@
 package org.lins.mmmjjkx.rykenslimefuncustomizer.objects.global;
 
+import java.util.*;
 import org.bukkit.Material;
 import org.bukkit.inventory.ItemStack;
 import org.lins.mmmjjkx.rykenslimefuncustomizer.objects.ProjectAddon;
-
-import java.util.*;
 
 public class DropFromBlock {
     private static final Map<Material, List<Drop>> drops;

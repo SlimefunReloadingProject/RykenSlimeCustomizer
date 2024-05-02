@@ -6,6 +6,9 @@ import io.github.thebusybiscuit.slimefun4.api.recipes.RecipeType;
 import io.github.thebusybiscuit.slimefun4.api.researches.Research;
 import io.github.thebusybiscuit.slimefun4.implementation.Slimefun;
 import io.github.thebusybiscuit.slimefun4.implementation.items.electric.Capacitor;
+import java.io.File;
+import java.util.ArrayList;
+import java.util.List;
 import lombok.AccessLevel;
 import lombok.Getter;
 import lombok.RequiredArgsConstructor;
@@ -22,17 +25,13 @@ import org.lins.mmmjjkx.rykenslimefuncustomizer.objects.customs.machine.*;
 import org.lins.mmmjjkx.rykenslimefuncustomizer.objects.customs.parent.AbstractEmptyMachine;
 import org.lins.mmmjjkx.rykenslimefuncustomizer.objects.global.RecipeTypeMap;
 
-import java.io.File;
-import java.util.ArrayList;
-import java.util.List;
-
 @RequiredArgsConstructor
 @Getter
 @Setter(AccessLevel.PACKAGE)
 public final class ProjectAddon {
     private boolean markAsDepend = false;
 
-    //info.yml
+    // info.yml
     private @NotNull final String addonId;
     private @NotNull final String addonName;
     private @NotNull final String addonVersion;
@@ -45,42 +44,42 @@ public final class ProjectAddon {
     //
     private @Nullable String githubRepo;
     //
-    //private Multimap<String, ScriptEval> scripts = HashMultimap.create(12, 10000000);
+    // private Multimap<String, ScriptEval> scripts = HashMultimap.create(12, 10000000);
     private List<JavaScriptEval> scriptEvals = new ArrayList<>();
     //
-    //groups.yml
+    // groups.yml
     private List<ItemGroup> itemGroups = new ArrayList<>();
-    //menus.yml
+    // menus.yml
     private List<CustomMenu> menus = new ArrayList<>();
-    //geo_resources.yml
+    // geo_resources.yml
     private List<CustomGeoResource> geoResources = new ArrayList<>();
-    //items.yml
+    // items.yml
     private List<SlimefunItem> items = new ArrayList<>();
-    //machines.yml
+    // machines.yml
     private List<AbstractEmptyMachine<?>> machines = new ArrayList<>();
-    //researches.yml
+    // researches.yml
     private List<Research> researches = new ArrayList<>();
-    //generators.yml
+    // generators.yml
     private List<CustomGenerator> generators = new ArrayList<>();
-    //mat_generators.yml
+    // mat_generators.yml
     private List<CustomMaterialGenerator> materialGenerators = new ArrayList<>();
-    //recipe_machines.yml
+    // recipe_machines.yml
     private List<CustomRecipeMachine> recipeMachines = new ArrayList<>();
-    //mb_machines.yml
+    // mb_machines.yml
     private List<CustomMultiBlockMachine> multiBlockMachines = new ArrayList<>();
-    //solar_generators.yml
+    // solar_generators.yml
     private List<CustomSolarGenerator> solarGenerators = new ArrayList<>();
-    //mob_drops.yml
+    // mob_drops.yml
     private List<CustomMobDrop> mobDrops = new ArrayList<>();
-    //capacitors.yml
+    // capacitors.yml
     private List<Capacitor> capacitors = new ArrayList<>();
-    //recipe_types.yml
+    // recipe_types.yml
     private List<RecipeType> recipeTypes = new ArrayList<>();
-    //simple_machines.yml
+    // simple_machines.yml
     private List<SlimefunItem> simpleMachines = new ArrayList<>();
-    //foods.yml
+    // foods.yml
     private List<CustomFood> foods = new ArrayList<>();
-    //armors.yml
+    // armors.yml
     private List<List<CustomArmorPiece>> armors = new ArrayList<>();
 
     public File getScriptsFolder() {
@@ -100,15 +99,15 @@ public final class ProjectAddon {
     }
 
     public void unregister() {
-        //scripts.forEach((s, eval) -> eval.close());
+        // scripts.forEach((s, eval) -> eval.close());
         scriptEvals.forEach(JavaScriptEval::close);
         itemGroups.forEach(ig -> Slimefun.getRegistry().getAllItemGroups().remove(ig));
         researches.forEach(Research::disable);
         menus.forEach(m -> Slimefun.getRegistry().getMenuPresets().remove(m.getID()));
         items.forEach(this::unregisterItem);
         mobDrops.forEach(md -> {
-          unregisterItem(md);
-          Slimefun.getRegistry().getMobDrops().get(md.getEntityType()).removeAll(md.getDrops());
+            unregisterItem(md);
+            Slimefun.getRegistry().getMobDrops().get(md.getEntityType()).removeAll(md.getDrops());
         });
         capacitors.forEach(this::unregisterItem);
         foods.forEach(this::unregisterItem);
@@ -124,7 +123,7 @@ public final class ProjectAddon {
 
         recipeTypes.forEach(r -> RecipeTypeMap.removeRecipeTypes(r.getKey().getKey()));
 
-        //scripts.clear();
+        // scripts.clear();
         scriptEvals.clear();
         researches.clear();
         items.clear();

@@ -1,6 +1,11 @@
 package org.lins.mmmjjkx.rykenslimefuncustomizer;
 
 import io.github.thebusybiscuit.slimefun4.api.SlimefunAddon;
+import java.io.File;
+import java.nio.file.Files;
+import java.nio.file.Path;
+import java.nio.file.Paths;
+import java.util.Objects;
 import org.bukkit.plugin.java.JavaPlugin;
 import org.jetbrains.annotations.NotNull;
 import org.lins.mmmjjkx.rykenslimefuncustomizer.bulit_in.JavaScriptCreator;
@@ -8,12 +13,6 @@ import org.lins.mmmjjkx.rykenslimefuncustomizer.commands.MainCommand;
 import org.lins.mmmjjkx.rykenslimefuncustomizer.objects.global.ScriptCreators;
 import org.lins.mmmjjkx.rykenslimefuncustomizer.utils.CommonUtils;
 import org.lins.mmmjjkx.rykenslimefuncustomizer.utils.ExceptionHandler;
-
-import java.io.File;
-import java.nio.file.Files;
-import java.nio.file.Path;
-import java.nio.file.Paths;
-import java.util.Objects;
 
 public final class RykenSlimefunCustomizer extends JavaPlugin implements SlimefunAddon {
     private static boolean runtime = false;
@@ -62,14 +61,13 @@ public final class RykenSlimefunCustomizer extends JavaPlugin implements Slimefu
     public static void reload() {
         INSTANCE.reloadConfig();
         addonManager.reload(INSTANCE);
-        
+
         if (INSTANCE.getConfig().getBoolean("saveExample")) {
             saveExample();
         }
     }
 
-    @NotNull
-    @Override
+    @NotNull @Override
     public JavaPlugin getJavaPlugin() {
         return this;
     }
@@ -82,14 +80,14 @@ public final class RykenSlimefunCustomizer extends JavaPlugin implements Slimefu
     public static boolean allowUpdate(String prjId) {
         if (runtime) return false;
 
-        return INSTANCE.getConfig().getBoolean("update.auto") &&
-                !INSTANCE.getConfig().getStringList("update.blocks").contains(prjId);
+        return INSTANCE.getConfig().getBoolean("update.auto")
+                && !INSTANCE.getConfig().getStringList("update.blocks").contains(prjId);
     }
 
     public static void saveExample() {
         String head = "addons/example/info.yml";
 
-        String filePath = new File(INSTANCE.getDataFolder(),head).getAbsolutePath();
+        String filePath = new File(INSTANCE.getDataFolder(), head).getAbsolutePath();
         Path path = Paths.get(filePath);
 
         if (!Files.exists(path)) {

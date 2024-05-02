@@ -1,6 +1,11 @@
 package org.lins.mmmjjkx.rykenslimefuncustomizer.objects;
 
 import io.github.thebusybiscuit.slimefun4.libraries.commons.lang.Validate;
+import java.io.File;
+import java.util.ArrayList;
+import java.util.List;
+import java.util.Map;
+import java.util.Objects;
 import org.bukkit.Bukkit;
 import org.bukkit.configuration.file.YamlConfiguration;
 import org.jetbrains.annotations.Nullable;
@@ -16,12 +21,6 @@ import org.lins.mmmjjkx.rykenslimefuncustomizer.update.GithubUpdater;
 import org.lins.mmmjjkx.rykenslimefuncustomizer.utils.Constants;
 import org.lins.mmmjjkx.rykenslimefuncustomizer.utils.ExceptionHandler;
 
-import java.io.File;
-import java.util.ArrayList;
-import java.util.List;
-import java.util.Map;
-import java.util.Objects;
-
 public class ProjectAddonLoader {
     private final Map<String, File> ids;
     private final File file;
@@ -34,8 +33,7 @@ public class ProjectAddonLoader {
         this.ids = ids;
     }
 
-    @Nullable
-    public ProjectAddon load() {
+    @Nullable public ProjectAddon load() {
         ProjectAddon addon;
         YamlConfiguration info = doFileLoad(file, Constants.INFO_FILE);
 
@@ -44,7 +42,7 @@ public class ProjectAddonLoader {
         if (info.contains("name") && info.contains("version") && info.contains("id")) {
             String name = info.getString("name");
             String version = info.getString("version", "1.0");
-            String id = info.getString("id", ""); //checked in ProjectAddonManager
+            String id = info.getString("id", ""); // checked in ProjectAddonManager
             String description = info.getString("description", "");
             List<String> depends = new ArrayList<>();
             List<String> pluginDepends = new ArrayList<>();
@@ -59,7 +57,7 @@ public class ProjectAddonLoader {
                         if (b) {
                             YamlConfiguration info2 = doFileLoad(file, Constants.INFO_FILE);
                             if (!Objects.equals(info2.getString("version"), version)) {
-                                return load(); //reload
+                                return load(); // reload
                             }
                         }
                     }
@@ -76,7 +74,8 @@ public class ProjectAddonLoader {
                 if (!RykenSlimefunCustomizer.addonManager.isLoaded(depends.toArray(new String[0]))) {
                     boolean loadResult = loadDependencies(depends);
                     if (!loadResult) {
-                        ExceptionHandler.handleError("在名称为 " + name + " 的附属(附属id：" + id + ")中需要依赖项 " + depends + "，由于部分依赖项在加载时出错或未安装，导致此附属无法加载！");
+                        ExceptionHandler.handleError("在名称为 " + name + " 的附属(附属id：" + id + ")中需要依赖项 " + depends
+                                + "，由于部分依赖项在加载时出错或未安装，导致此附属无法加载！");
                         return null;
                     }
                 }
@@ -86,7 +85,8 @@ public class ProjectAddonLoader {
                 pluginDepends = info.getStringList("pluginDepends");
                 for (String pluginDepend : pluginDepends) {
                     if (!Bukkit.getPluginManager().isPluginEnabled(pluginDepend)) {
-                        ExceptionHandler.handleError("在名称为 "+ name + " 的附属(附属id："+id+")中需要插件依赖项 "+ pluginDepends +"，由于部分依赖项在加载时出错或未安装，导致此附属无法加载！");
+                        ExceptionHandler.handleError("在名称为 " + name + " 的附属(附属id：" + id + ")中需要插件依赖项 " + pluginDepends
+                                + "，由于部分依赖项在加载时出错或未安装，导致此附属无法加载！");
                         return null;
                     }
                 }
@@ -95,7 +95,7 @@ public class ProjectAddonLoader {
             addon = new ProjectAddon(id, name, version, pluginDepends, depends, description, authors, file);
 
             if (!repo.isBlank()) {
-                addon.setGithubRepo("https://github.com/"+repo);
+                addon.setGithubRepo("https://github.com/" + repo);
             }
         } else {
             ExceptionHandler.handleError("在名称为 " + file.getName() + "的文件夹中有无效的项目信息，导致此附属无法加载！");
@@ -176,7 +176,7 @@ public class ProjectAddonLoader {
 
         ExceptionHandler.debugLog("开始加载要求延迟加载的内容...");
 
-        //late inits
+        // late inits
         addon.getMobDrops().addAll(mobDropsReader.loadLateInits(addon));
         addon.getGeoResources().addAll(resourceReader.loadLateInits(addon));
         addon.getItems().addAll(itemReader.loadLateInits(addon));
@@ -193,7 +193,7 @@ public class ProjectAddonLoader {
         addon.getMultiBlockMachines().addAll(multiBlockMachineReader.loadLateInits(addon));
         addon.getResearches().addAll(researchReader.loadLateInits(addon));
 
-        ExceptionHandler.debugLog("加载附属 "+addon.getAddonId()+" 成功!");
+        ExceptionHandler.debugLog("加载附属 " + addon.getAddonId() + " 成功!");
 
         return addon;
     }

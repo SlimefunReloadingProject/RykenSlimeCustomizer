@@ -4,6 +4,7 @@ import io.github.thebusybiscuit.slimefun4.api.items.ItemGroup;
 import io.github.thebusybiscuit.slimefun4.api.items.SlimefunItemStack;
 import io.github.thebusybiscuit.slimefun4.libraries.dough.collections.Pair;
 import io.github.thebusybiscuit.slimefun4.libraries.dough.items.CustomItemStack;
+import java.util.Collections;
 import net.kyori.adventure.text.Component;
 import net.kyori.adventure.text.format.TextDecoration;
 import org.bukkit.Material;
@@ -16,8 +17,6 @@ import org.lins.mmmjjkx.rykenslimefuncustomizer.objects.customs.item.exts.Custom
 import org.lins.mmmjjkx.rykenslimefuncustomizer.objects.yaml.YamlReader;
 import org.lins.mmmjjkx.rykenslimefuncustomizer.utils.CommonUtils;
 import org.lins.mmmjjkx.rykenslimefuncustomizer.utils.ExceptionHandler;
-
-import java.util.Collections;
 
 public class MobDropsReader extends YamlReader<CustomMobDrop> {
     public MobDropsReader(YamlConfiguration config) {
@@ -46,9 +45,8 @@ public class MobDropsReader extends YamlReader<CustomMobDrop> {
 
             String type = section.getString("entity");
 
-            Pair<ExceptionHandler.HandleResult, EntityType> entity =
-                    ExceptionHandler.handleEnumValueOf("无法在附属" + addon.getAddonName() + "中加载生物掉落" + s + ": 错误的生物类型",
-                            EntityType.class, type);
+            Pair<ExceptionHandler.HandleResult, EntityType> entity = ExceptionHandler.handleEnumValueOf(
+                    "无法在附属" + addon.getAddonName() + "中加载生物掉落" + s + ": 错误的生物类型", EntityType.class, type);
             if (entity.getFirstValue() == ExceptionHandler.HandleResult.FAILED) {
                 return null;
             }
@@ -68,15 +66,17 @@ public class MobDropsReader extends YamlReader<CustomMobDrop> {
             int chance = section.getInt("chance");
 
             if (chance < 1 || chance > 100) {
-                ExceptionHandler.handleError("在附属" + addon.getAddonName() + "中加载生物掉落" + s + "时发现问题: 掉落概率未设置或不应该小于1或大于100，已转换为1或100");
+                ExceptionHandler.handleError(
+                        "在附属" + addon.getAddonName() + "中加载生物掉落" + s + "时发现问题: 掉落概率未设置或不应该小于1或大于100，已转换为1或100");
                 chance = chance >= 100 ? 100 : 1;
             }
 
             Component translate = Component.translatable(entityType.translationKey());
             Component lore = CommonUtils.parseToComponent("&a击杀 ")
-                    .append(translate).append(Component.space())
+                    .append(translate)
+                    .append(Component.space())
                     .append(CommonUtils.parseToComponent("&a时会有"))
-                    .append(CommonUtils.parseToComponent("&b"+chance+"%"))
+                    .append(CommonUtils.parseToComponent("&b" + chance + "%"))
                     .append(CommonUtils.parseToComponent("的概率掉落"))
                     .decoration(TextDecoration.ITALIC, false);
 
@@ -84,7 +84,7 @@ public class MobDropsReader extends YamlReader<CustomMobDrop> {
                 meta.displayName(Component.text(entityType.toString()));
                 meta.lore(Collections.singletonList(lore));
             });
-            ItemStack[] recipe = new ItemStack[]{null, null, null, null, itemStack};
+            ItemStack[] recipe = new ItemStack[] {null, null, null, null, itemStack};
 
             return new CustomMobDrop(group.getSecondValue(), sfis, recipe, chance, entityType);
         }

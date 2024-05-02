@@ -25,6 +25,13 @@ package org.lins.mmmjjkx.rykenslimefuncustomizer.objects.global;
 import com.google.common.base.Enums;
 import com.google.common.cache.Cache;
 import com.google.common.cache.CacheBuilder;
+import java.util.*;
+import java.util.concurrent.TimeUnit;
+import java.util.regex.Matcher;
+import java.util.regex.Pattern;
+import java.util.regex.PatternSyntaxException;
+import javax.annotation.Nonnull;
+import javax.annotation.Nullable;
 import lombok.Getter;
 import org.bukkit.Bukkit;
 import org.bukkit.Material;
@@ -32,15 +39,6 @@ import org.bukkit.inventory.ItemStack;
 import org.bukkit.inventory.meta.ItemMeta;
 import org.bukkit.inventory.meta.SpawnEggMeta;
 import org.bukkit.potion.Potion;
-
-import javax.annotation.Nonnull;
-import javax.annotation.Nullable;
-import java.util.*;
-import java.util.concurrent.TimeUnit;
-import java.util.regex.Matcher;
-import java.util.regex.Pattern;
-import java.util.regex.PatternSyntaxException;
-import java.util.stream.Collectors;
 
 /**
  * <b>XMaterial</b> - Data Values/Pre-flattening<br>
@@ -1636,7 +1634,6 @@ public enum XMaterial {
     ZOMBIE_WALL_HEAD(2, "SKULL", "SKULL_ITEM"),
     ZOMBIFIED_PIGLIN_SPAWN_EGG(57, "MONSTER_EGG", "ZOMBIE_PIGMAN_SPAWN_EGG");
 
-
     /**
      * Cached array of {@link XMaterial#values()} to avoid allocating memory for
      * calling the method every time.
@@ -1658,17 +1655,15 @@ public enum XMaterial {
      *
      * @since 1.0.0
      */
-    private static final Cache<String, XMaterial> NAME_CACHE = CacheBuilder.newBuilder()
-            .expireAfterAccess(1, TimeUnit.HOURS)
-            .build();
+    private static final Cache<String, XMaterial> NAME_CACHE =
+            CacheBuilder.newBuilder().expireAfterAccess(1, TimeUnit.HOURS).build();
     /**
      * This is used for {@link #isOneOf(Collection)}
      *
      * @since 3.4.0
      */
-    private static final Cache<String, Pattern> CACHED_REGEX = CacheBuilder.newBuilder()
-            .expireAfterAccess(3, TimeUnit.HOURS)
-            .build();
+    private static final Cache<String, Pattern> CACHED_REGEX =
+            CacheBuilder.newBuilder().expireAfterAccess(3, TimeUnit.HOURS).build();
     /**
      * The maximum data value in the pre-flattening update which belongs to {@link #VILLAGER_SPAWN_EGG}<br>
      * <a href="https://minecraftitemids.com/types/spawn-egg">Spawn Eggs</a>
@@ -1742,8 +1737,7 @@ public enum XMaterial {
      * @see #parseMaterial()
      * @since 9.0.0
      */
-    @Nullable
-    private final Material material;
+    @Nullable private final Material material;
 
     XMaterial(int data, @Nonnull String... legacy) {
         this.data = (byte) data;
@@ -1794,8 +1788,7 @@ public enum XMaterial {
      * @see #matchDefinedXMaterial(String, byte)
      * @since 1.0.0
      */
-    @Nullable
-    private static XMaterial requestOldXMaterial(@Nonnull String name, byte data) {
+    @Nullable private static XMaterial requestOldXMaterial(@Nonnull String name, byte data) {
         String holder = name + data;
         XMaterial cache = NAME_CACHE.getIfPresent(holder);
         if (cache != null) return cache;
@@ -1835,7 +1828,9 @@ public enum XMaterial {
             try {
                 // We don't use Byte.parseByte because we have our own range check.
                 byte data = (byte) Integer.parseInt(name.substring(index + 1).replace(" ", ""));
-                return data >= 0 && data < MAX_DATA_VALUE ? matchDefinedXMaterial(mat, data) : matchDefinedXMaterial(mat, UNKNOWN_DATA_VALUE);
+                return data >= 0 && data < MAX_DATA_VALUE
+                        ? matchDefinedXMaterial(mat, data)
+                        : matchDefinedXMaterial(mat, UNKNOWN_DATA_VALUE);
             } catch (NumberFormatException ignored) {
                 return matchDefinedXMaterial(mat, UNKNOWN_DATA_VALUE);
             }
@@ -1854,8 +1849,7 @@ public enum XMaterial {
      */
     @Nonnull
     public static Optional<XMaterial> matchXMaterial(@Nonnull String name) {
-        if (name.isBlank())
-            throw new IllegalArgumentException("Cannot match a material with blank material name");
+        if (name.isBlank()) throw new IllegalArgumentException("Cannot match a material with blank material name");
         Optional<XMaterial> oldMatch = matchXMaterialWithData(name);
         return oldMatch.isPresent() ? oldMatch : matchDefinedXMaterial(format(name), UNKNOWN_DATA_VALUE);
     }
@@ -1872,7 +1866,8 @@ public enum XMaterial {
     public static XMaterial matchXMaterial(@Nonnull Material material) {
         Objects.requireNonNull(material, "Cannot match null material");
         return matchDefinedXMaterial(material.name(), UNKNOWN_DATA_VALUE)
-                .orElseThrow(() -> new IllegalArgumentException("Unsupported material with no data value: " + material.name()));
+                .orElseThrow(() ->
+                        new IllegalArgumentException("Unsupported material with no data value: " + material.name()));
     }
 
     /**
@@ -1892,9 +1887,13 @@ public enum XMaterial {
         String material = item.getType().name();
 
         // 1.13+ doesn't use data values at all.
-        // Maps are given different data values for different parts of the map also some plugins use negative values for custom images.
+        // Maps are given different data values for different parts of the map also some plugins use negative values for
+        // custom images.
         // Items that have durability, such as armor and tools don't use the data value to distinguish their material.
-        byte data = (byte) (Data.ISFLAT || material.equals("MAP") || item.getType().getMaxDurability() > 0 ? 0 : item.getDurability());
+        byte data = (byte)
+                (Data.ISFLAT || material.equals("MAP") || item.getType().getMaxDurability() > 0
+                        ? 0
+                        : item.getDurability());
 
         // Versions 1.9-1.12 didn't really use the items data value.
         if (supports(9) && !supports(13) && item.hasItemMeta() && material.equals("MONSTER_EGG")) {
@@ -1918,14 +1917,21 @@ public enum XMaterial {
         if (supports(13) && !supports(14)) {
             // https://hub.spigotmc.org/stash/projects/SPIGOT/repos/bukkit/diff/src/main/java/org/bukkit/Material.java?until=67d908a9830c71267ee740f5bddd728ce9c64cc7
             switch (material) {
-                case "CACTUS_GREEN" -> {return GREEN_DYE;}
-                case "ROSE_RED" -> {return RED_DYE;}
-                case "DANDELION_YELLOW" -> {return YELLOW_DYE;}
+                case "CACTUS_GREEN" -> {
+                    return GREEN_DYE;
+                }
+                case "ROSE_RED" -> {
+                    return RED_DYE;
+                }
+                case "DANDELION_YELLOW" -> {
+                    return YELLOW_DYE;
+                }
             }
         }
 
         // Check FILLED_MAP enum for more info.
-        // if (!Data.ISFLAT && item.hasItemMeta() && item.getItemMeta() instanceof org.bukkit.inventory.meta.MapMeta) return FILLED_MAP;
+        // if (!Data.ISFLAT && item.hasItemMeta() && item.getItemMeta() instanceof org.bukkit.inventory.meta.MapMeta)
+        // return FILLED_MAP;
 
         // No orElseThrow, I don't want to deal with Java's final variable bullshit.
         Optional<XMaterial> result = matchDefinedXMaterial(material, data);
@@ -1947,7 +1953,8 @@ public enum XMaterial {
     @SuppressWarnings({"DanglingJavadoc", "JavadocBlankLines"})
     @Nonnull
     private static Optional<XMaterial> matchDefinedXMaterial(@Nonnull String name, byte data) {
-        // if (!Boolean.valueOf(Boolean.getBoolean(Boolean.TRUE.toString())).equals(Boolean.FALSE.booleanValue())) return null;
+        // if (!Boolean.valueOf(Boolean.getBoolean(Boolean.TRUE.toString())).equals(Boolean.FALSE.booleanValue()))
+        // return null;
         Boolean duplicated = null;
         boolean isAMap = name.equalsIgnoreCase("MAP");
 
@@ -2171,8 +2178,7 @@ public enum XMaterial {
      * @see #setType(ItemStack)
      * @since 2.0.0
      */
-    @Nullable
-    @SuppressWarnings("deprecation")
+    @Nullable @SuppressWarnings("deprecation")
     public ItemStack parseItem() {
         Material material = this.parseMaterial();
         if (material == null) return null;
@@ -2190,8 +2196,7 @@ public enum XMaterial {
      * @return the material related to this XMaterial based on the server version.
      * @since 1.0.0
      */
-    @Nullable
-    public Material parseMaterial() {
+    @Nullable public Material parseMaterial() {
         return this.material;
     }
 
@@ -2210,7 +2215,9 @@ public enum XMaterial {
         if (this == SPLASH_POTION) {
             return Data.ISFLAT || item.getDurability() == (short) 16384;
         }
-        return Data.ISFLAT || item.getDurability() == this.data || item.getType().getMaxDurability() > 0;
+        return Data.ISFLAT
+                || item.getDurability() == this.data
+                || item.getType().getMaxDurability() > 0;
     }
 
     /**
@@ -2237,8 +2244,7 @@ public enum XMaterial {
      * @param alternateMaterial the material to get if this one is not supported.
      * @return this material or the {@code alternateMaterial} if not supported.
      */
-    @Nullable
-    public XMaterial or(@Nullable XMaterial alternateMaterial) {
+    @Nullable public XMaterial or(@Nullable XMaterial alternateMaterial) {
         return isSupported() ? this : alternateMaterial;
     }
 
@@ -2254,7 +2260,8 @@ public enum XMaterial {
      * @since 2.0.0
      */
     private static boolean isDuplicated(@Nonnull String name) {
-        // Don't use matchXMaterial() since this method is being called from matchXMaterial() itself and will cause a StackOverflowError.
+        // Don't use matchXMaterial() since this method is being called from matchXMaterial() itself and will cause a
+        // StackOverflowError.
         return DUPLICATED.contains(name);
     }
 

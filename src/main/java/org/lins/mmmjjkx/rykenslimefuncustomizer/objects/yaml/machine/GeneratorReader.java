@@ -6,6 +6,9 @@ import io.github.thebusybiscuit.slimefun4.api.recipes.RecipeType;
 import io.github.thebusybiscuit.slimefun4.core.attributes.NotCardinallyRotatable;
 import io.github.thebusybiscuit.slimefun4.core.attributes.NotDiagonallyRotatable;
 import io.github.thebusybiscuit.slimefun4.libraries.dough.collections.Pair;
+import java.util.ArrayList;
+import java.util.List;
+import java.util.Objects;
 import lombok.SneakyThrows;
 import me.mrCookieSlime.Slimefun.Objects.SlimefunItem.abstractItems.MachineFuel;
 import org.bukkit.configuration.ConfigurationSection;
@@ -19,10 +22,6 @@ import org.lins.mmmjjkx.rykenslimefuncustomizer.objects.yaml.YamlReader;
 import org.lins.mmmjjkx.rykenslimefuncustomizer.utils.ClassUtils;
 import org.lins.mmmjjkx.rykenslimefuncustomizer.utils.CommonUtils;
 import org.lins.mmmjjkx.rykenslimefuncustomizer.utils.ExceptionHandler;
-
-import java.util.ArrayList;
-import java.util.List;
-import java.util.Objects;
 
 public class GeneratorReader extends YamlReader<CustomGenerator> {
     public GeneratorReader(YamlConfiguration config) {
@@ -43,7 +42,7 @@ public class GeneratorReader extends YamlReader<CustomGenerator> {
         ItemStack stack = CommonUtils.readItem(item, false, addon);
 
         if (stack == null) {
-            ExceptionHandler.handleError("无法在附属"+addon.getAddonName()+"中加载发电机"+s+": 物品为空或格式错误导致无法加载");
+            ExceptionHandler.handleError("无法在附属" + addon.getAddonName() + "中加载发电机" + s + ": 物品为空或格式错误导致无法加载");
             return null;
         }
 
@@ -52,9 +51,8 @@ public class GeneratorReader extends YamlReader<CustomGenerator> {
         ItemStack[] recipe = CommonUtils.readRecipe(section.getConfigurationSection("recipe"), addon);
         String recipeType = section.getString("recipe_type", "NULL");
 
-        Pair<ExceptionHandler.HandleResult, RecipeType> rt = ExceptionHandler.getRecipeType(
-                "错误的配方类型" + recipeType + "!", recipeType
-        );
+        Pair<ExceptionHandler.HandleResult, RecipeType> rt =
+                ExceptionHandler.getRecipeType("错误的配方类型" + recipeType + "!", recipeType);
 
         if (rt.getFirstValue() == ExceptionHandler.HandleResult.FAILED) return null;
         SlimefunItemStack slimefunItemStack = new SlimefunItemStack(s, stack);
@@ -70,31 +68,57 @@ public class GeneratorReader extends YamlReader<CustomGenerator> {
         int production = section.getInt("production");
 
         if (production < 1) {
-            ExceptionHandler.handleError("无法加载发电机"+s+": 产量不能小于1");
+            ExceptionHandler.handleError("无法加载发电机" + s + ": 产量不能小于1");
             return null;
         }
 
-        Object[] constructorArgs = {group.getSecondValue(), slimefunItemStack, rt.getSecondValue(), recipe, menu, capacity, input, output, production, fuels};
+        Object[] constructorArgs = {
+            group.getSecondValue(),
+            slimefunItemStack,
+            rt.getSecondValue(),
+            recipe,
+            menu,
+            capacity,
+            input,
+            output,
+            production,
+            fuels
+        };
 
         String rotationStr = section.getString("rotation", "NOT_ROTATABLE");
-        Pair<ExceptionHandler.HandleResult,Rotation> rotationPair = ExceptionHandler.handleEnumValueOf(
-                "错误的旋转类型: " + rotationStr + "!", Rotation.class, rotationStr
-        );
+        Pair<ExceptionHandler.HandleResult, Rotation> rotationPair =
+                ExceptionHandler.handleEnumValueOf("错误的旋转类型: " + rotationStr + "!", Rotation.class, rotationStr);
 
         if (rotationPair.getFirstValue() == ExceptionHandler.HandleResult.FAILED) return null;
 
         return switch (Objects.requireNonNull(rotationPair.getSecondValue())) {
-            case NOT_ROTATABLE -> new CustomGenerator(group.getSecondValue(), slimefunItemStack, rt.getSecondValue(), recipe, menu, capacity, input, output, production, fuels);
+            case NOT_ROTATABLE -> new CustomGenerator(
+                    group.getSecondValue(),
+                    slimefunItemStack,
+                    rt.getSecondValue(),
+                    recipe,
+                    menu,
+                    capacity,
+                    input,
+                    output,
+                    production,
+                    fuels);
             case NOT_DIAGONALLY -> {
                 Class<? extends CustomGenerator> clazz = (Class<? extends CustomGenerator>) ClassUtils.generateClass(
-                        CustomGenerator.class, "NotRiagonallyRotatable", "Generator", new Class[]{NotDiagonallyRotatable.class}, null
-                );
+                        CustomGenerator.class,
+                        "NotRiagonallyRotatable",
+                        "Generator",
+                        new Class[] {NotDiagonallyRotatable.class},
+                        null);
                 yield (CustomGenerator) clazz.getDeclaredConstructors()[0].newInstance(constructorArgs);
             }
             case NOT_CARDINALLY -> {
                 Class<? extends CustomGenerator> clazz = (Class<? extends CustomGenerator>) ClassUtils.generateClass(
-                        CustomGenerator.class, "NotCardinallyRotatable", "Generator", new Class[]{NotCardinallyRotatable.class}, null
-                );
+                        CustomGenerator.class,
+                        "NotCardinallyRotatable",
+                        "Generator",
+                        new Class[] {NotCardinallyRotatable.class},
+                        null);
                 yield (CustomGenerator) clazz.getDeclaredConstructors()[0].newInstance(constructorArgs);
             }
         };
@@ -111,13 +135,13 @@ public class GeneratorReader extends YamlReader<CustomGenerator> {
             ConfigurationSection item = section1.getConfigurationSection("item");
             ItemStack stack = CommonUtils.readItem(item, true, addon);
             if (stack == null) {
-                ExceptionHandler.handleError("无法在发电机"+id+"中加载燃料"+key+": 物品为空或格式错误，已跳过加载");
+                ExceptionHandler.handleError("无法在发电机" + id + "中加载燃料" + key + ": 物品为空或格式错误，已跳过加载");
                 continue;
             }
             int seconds = section1.getInt("seconds");
 
             if (seconds < 1) {
-                ExceptionHandler.handleError("无法在发电机"+id+"中加载燃料"+key+": 秒数不能小于1，已跳过加载");
+                ExceptionHandler.handleError("无法在发电机" + id + "中加载燃料" + key + ": 秒数不能小于1，已跳过加载");
                 continue;
             }
 
@@ -126,7 +150,7 @@ public class GeneratorReader extends YamlReader<CustomGenerator> {
                 ConfigurationSection outputSet = section1.getConfigurationSection("output");
                 output = CommonUtils.readItem(outputSet, true, addon);
                 if (output == null) {
-                    ExceptionHandler.handleError("无法在发电机"+id+"中读取燃料"+key+"的输出: 物品为空或格式错误，已转为空");
+                    ExceptionHandler.handleError("无法在发电机" + id + "中读取燃料" + key + "的输出: 物品为空或格式错误，已转为空");
                 }
             }
 

@@ -1,13 +1,12 @@
 package org.lins.mmmjjkx.rykenslimefuncustomizer.objects.yaml;
 
+import java.util.ArrayList;
+import java.util.List;
 import org.bukkit.Bukkit;
 import org.bukkit.configuration.ConfigurationSection;
 import org.bukkit.configuration.file.YamlConfiguration;
 import org.lins.mmmjjkx.rykenslimefuncustomizer.objects.ProjectAddon;
 import org.lins.mmmjjkx.rykenslimefuncustomizer.utils.ExceptionHandler;
-
-import java.util.ArrayList;
-import java.util.List;
 
 public abstract class YamlReader<T> {
     private final List<String> lateInits;
@@ -81,31 +80,31 @@ public abstract class YamlReader<T> {
             String head = splits[0];
             if (head.equalsIgnoreCase("hasplugin")) {
                 if (splits.length != 2) {
-                    ExceptionHandler.handleError("读取"+section.getName()+"的注册条件时发现问题: hasplugin仅需要一个参数");
+                    ExceptionHandler.handleError("读取" + section.getName() + "的注册条件时发现问题: hasplugin仅需要一个参数");
                     continue;
                 }
                 boolean b = Bukkit.getPluginManager().isPluginEnabled(splits[1]);
                 if (!b) {
                     if (warn) {
-                        ExceptionHandler.handleError(section.getName()+"需要服务端插件"+splits[1]+"才能被注册");
+                        ExceptionHandler.handleError(section.getName() + "需要服务端插件" + splits[1] + "才能被注册");
                     }
                     return false;
                 }
             } else if (head.equalsIgnoreCase("!hasplugin")) {
                 if (splits.length != 2) {
-                    ExceptionHandler.handleError("读取"+section.getName()+"的注册条件时发现问题: !hasplugin仅需要一个参数");
+                    ExceptionHandler.handleError("读取" + section.getName() + "的注册条件时发现问题: !hasplugin仅需要一个参数");
                     continue;
                 }
                 boolean b = Bukkit.getPluginManager().isPluginEnabled(splits[1]);
                 if (!b) {
                     if (warn) {
-                        ExceptionHandler.handleError(section.getName()+"需要卸载服务端插件"+splits[1]+"才能被注册(可能与其冲突？)");
+                        ExceptionHandler.handleError(section.getName() + "需要卸载服务端插件" + splits[1] + "才能被注册(可能与其冲突？)");
                     }
                     return false;
                 }
             } else if (head.equalsIgnoreCase("version")) {
                 if (splits.length != 3) {
-                    ExceptionHandler.handleError("读取"+section.getName()+"的注册条件时发现问题: version需要两个参数");
+                    ExceptionHandler.handleError("读取" + section.getName() + "的注册条件时发现问题: version需要两个参数");
                     continue;
                 }
 
@@ -132,14 +131,14 @@ public abstract class YamlReader<T> {
                         match = current <= destination;
                     }
                     default -> {
-                        ExceptionHandler.handleError("读取"+section.getName()+"的注册条件时发现问题: version需要合法的比较符！");
+                        ExceptionHandler.handleError("读取" + section.getName() + "的注册条件时发现问题: version需要合法的比较符！");
                         continue;
                     }
                 }
 
                 if (!match) {
                     if (warn) {
-                        ExceptionHandler.handleError(section.getName()+"需要版本"+operation+splits[1]+"才能被注册");
+                        ExceptionHandler.handleError(section.getName() + "需要版本" + operation + splits[1] + "才能被注册");
                     }
                     return false;
                 }

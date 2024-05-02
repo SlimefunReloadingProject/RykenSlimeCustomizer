@@ -8,7 +8,12 @@ import io.github.thebusybiscuit.slimefun4.implementation.items.RadioactiveItem;
 import org.bukkit.inventory.ItemStack;
 
 public abstract class BaseRadiationItem extends RadioactiveItem {
-    public BaseRadiationItem(ItemGroup itemGroup, Radioactivity radioactivity, SlimefunItemStack item, RecipeType recipeType, ItemStack[] recipe) {
+    public BaseRadiationItem(
+            ItemGroup itemGroup,
+            Radioactivity radioactivity,
+            SlimefunItemStack item,
+            RecipeType recipeType,
+            ItemStack[] recipe) {
         super(itemGroup, radioactivity, item, recipeType, recipe);
     }
 

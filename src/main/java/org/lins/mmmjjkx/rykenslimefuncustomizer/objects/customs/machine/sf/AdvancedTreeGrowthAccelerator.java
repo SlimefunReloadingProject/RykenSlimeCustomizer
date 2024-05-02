@@ -10,6 +10,9 @@ import io.github.thebusybiscuit.slimefun4.implementation.SlimefunItems;
 import io.github.thebusybiscuit.slimefun4.implementation.items.electric.machines.accelerators.AbstractGrowthAccelerator;
 import io.github.thebusybiscuit.slimefun4.utils.SlimefunUtils;
 import io.github.thebusybiscuit.slimefun4.utils.itemstack.ItemStackWrapper;
+import javax.annotation.Nonnull;
+import javax.annotation.Nullable;
+import javax.annotation.ParametersAreNonnullByDefault;
 import me.mrCookieSlime.Slimefun.api.inventory.BlockMenu;
 import org.bukkit.Particle;
 import org.bukkit.Tag;
@@ -18,10 +21,6 @@ import org.bukkit.block.BlockFace;
 import org.bukkit.block.data.type.Sapling;
 import org.bukkit.inventory.ItemStack;
 
-import javax.annotation.Nonnull;
-import javax.annotation.Nullable;
-import javax.annotation.ParametersAreNonnullByDefault;
-
 public class AdvancedTreeGrowthAccelerator extends AbstractGrowthAccelerator {
     private static final ItemStack organicFertilizer = ItemStackWrapper.wrap(SlimefunItems.FERTILIZER);
 
@@ -29,8 +28,14 @@ public class AdvancedTreeGrowthAccelerator extends AbstractGrowthAccelerator {
     private final int radius;
     private final int energy_consumption;
 
-    public AdvancedTreeGrowthAccelerator(ItemGroup itemGroup, SlimefunItemStack item, RecipeType recipeType, ItemStack[] recipe,
-                                         int capacity, int radius, int energy_consumption) {
+    public AdvancedTreeGrowthAccelerator(
+            ItemGroup itemGroup,
+            SlimefunItemStack item,
+            RecipeType recipeType,
+            ItemStack[] recipe,
+            int capacity,
+            int radius,
+            int energy_consumption) {
         super(itemGroup, item, recipeType, recipe);
 
         this.capacity = capacity;
@@ -47,8 +52,8 @@ public class AdvancedTreeGrowthAccelerator extends AbstractGrowthAccelerator {
         BlockMenu inv = StorageCacheUtils.getMenu(b.getLocation());
         if (inv != null) {
             if (this.getCharge(b.getLocation()) >= energy_consumption) {
-                for(int x = -radius; x <= radius; ++x) {
-                    for(int z = -radius; z <= radius; ++z) {
+                for (int x = -radius; x <= radius; ++x) {
+                    for (int z = -radius; z <= radius; ++z) {
                         Block block = b.getRelative(x, 0, z);
                         if (Tag.SAPLINGS.isTagged(block.getType())) {
                             boolean isGrowthBoosted = this.tryToBoostGrowth(b, inv, block);
@@ -67,8 +72,9 @@ public class AdvancedTreeGrowthAccelerator extends AbstractGrowthAccelerator {
         if (Slimefun.getMinecraftVersion().isAtLeast(MinecraftVersion.MINECRAFT_1_17)) {
             return this.applyBoneMeal(machine, sapling, inv);
         } else {
-            Sapling saplingData = (Sapling)sapling.getBlockData();
-            return saplingData.getStage() < saplingData.getMaximumStage() && this.updateSaplingData(machine, sapling, inv, saplingData);
+            Sapling saplingData = (Sapling) sapling.getBlockData();
+            return saplingData.getStage() < saplingData.getMaximumStage()
+                    && this.updateSaplingData(machine, sapling, inv, saplingData);
         }
     }
 
@@ -81,7 +87,14 @@ public class AdvancedTreeGrowthAccelerator extends AbstractGrowthAccelerator {
                 this.removeCharge(machine.getLocation(), energy_consumption);
                 sapling.applyBoneMeal(BlockFace.UP);
                 inv.consumeItem(slot);
-                sapling.getWorld().spawnParticle(Particle.VILLAGER_HAPPY, sapling.getLocation().add(0.5, 0.5, 0.5), 4, 0.10000000149011612, 0.10000000149011612, 0.10000000149011612);
+                sapling.getWorld()
+                        .spawnParticle(
+                                Particle.VILLAGER_HAPPY,
+                                sapling.getLocation().add(0.5, 0.5, 0.5),
+                                4,
+                                0.10000000149011612,
+                                0.10000000149011612,
+                                0.10000000149011612);
                 return true;
             }
         }
@@ -99,7 +112,14 @@ public class AdvancedTreeGrowthAccelerator extends AbstractGrowthAccelerator {
                 sapling.setStage(sapling.getStage() + 1);
                 block.setBlockData(sapling, false);
                 inv.consumeItem(slot);
-                block.getWorld().spawnParticle(Particle.VILLAGER_HAPPY, block.getLocation().add(0.5, 0.5, 0.5), 4, 0.10000000149011612, 0.10000000149011612, 0.10000000149011612);
+                block.getWorld()
+                        .spawnParticle(
+                                Particle.VILLAGER_HAPPY,
+                                block.getLocation().add(0.5, 0.5, 0.5),
+                                4,
+                                0.10000000149011612,
+                                0.10000000149011612,
+                                0.10000000149011612);
                 return true;
             }
         }

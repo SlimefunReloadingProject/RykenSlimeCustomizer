@@ -12,6 +12,9 @@ import io.github.thebusybiscuit.slimefun4.core.networks.energy.EnergyNetComponen
 import io.github.thebusybiscuit.slimefun4.implementation.handlers.SimpleBlockBreakHandler;
 import io.github.thebusybiscuit.slimefun4.libraries.dough.items.CustomItemStack;
 import io.github.thebusybiscuit.slimefun4.utils.ChestMenuUtils;
+import java.util.ArrayList;
+import java.util.List;
+import java.util.Objects;
 import me.mrCookieSlime.Slimefun.Objects.SlimefunItem.interfaces.InventoryBlock;
 import me.mrCookieSlime.Slimefun.Objects.handlers.BlockTicker;
 import me.mrCookieSlime.Slimefun.api.inventory.BlockMenu;
@@ -24,12 +27,9 @@ import org.lins.mmmjjkx.rykenslimefuncustomizer.objects.customs.CustomMenu;
 import org.lins.mmmjjkx.rykenslimefuncustomizer.objects.customs.item.RSCItemStack;
 import org.lins.mmmjjkx.rykenslimefuncustomizer.utils.CommonUtils;
 
-import java.util.ArrayList;
-import java.util.List;
-import java.util.Objects;
-
 @SuppressWarnings("deprecation")
-public class CustomMaterialGenerator extends SlimefunItem implements InventoryBlock, EnergyNetComponent, RecipeDisplayItem {
+public class CustomMaterialGenerator extends SlimefunItem
+        implements InventoryBlock, EnergyNetComponent, RecipeDisplayItem {
     private final int capacity;
     private final List<Integer> output;
     private final int tickRate;
@@ -37,9 +37,18 @@ public class CustomMaterialGenerator extends SlimefunItem implements InventoryBl
     private final List<ItemStack> generation;
     private final int per;
 
-    public CustomMaterialGenerator(ItemGroup itemGroup, SlimefunItemStack item, RecipeType recipeType,
-                                   ItemStack[] recipe, int capacity, List<Integer> output, int statusSlot,
-                                   int tickRate, List<ItemStack> generation, CustomMenu menu, int per) {
+    public CustomMaterialGenerator(
+            ItemGroup itemGroup,
+            SlimefunItemStack item,
+            RecipeType recipeType,
+            ItemStack[] recipe,
+            int capacity,
+            List<Integer> output,
+            int statusSlot,
+            int tickRate,
+            List<ItemStack> generation,
+            CustomMenu menu,
+            int per) {
         super(itemGroup, item, recipeType, recipe);
 
         this.capacity = capacity;
@@ -77,20 +86,17 @@ public class CustomMaterialGenerator extends SlimefunItem implements InventoryBl
                     for (ItemStack item : generation) {
                         if (blockMenu.fits(item, getOutputSlots())) {
                             if (blockMenu.hasViewer() && statusSlot > -1) {
-                                blockMenu.replaceExistingItem(statusSlot, new CustomItemStack(
-                                        Material.LIME_STAINED_GLASS_PANE,
-                                        "&a生产中"
-                                ));
+                                blockMenu.replaceExistingItem(
+                                        statusSlot, new CustomItemStack(Material.LIME_STAINED_GLASS_PANE, "&a生产中"));
                             }
                             blockMenu.pushItem(item.clone(), getOutputSlots());
                             removeCharge(b.getLocation(), per);
                         } else {
                             if (blockMenu.hasViewer()) {
                                 if (statusSlot > -1) {
-                                    blockMenu.replaceExistingItem(statusSlot, new CustomItemStack(
-                                            Material.ORANGE_STAINED_GLASS_PANE,
-                                            "&c空间不足"
-                                    ));
+                                    blockMenu.replaceExistingItem(
+                                            statusSlot,
+                                            new CustomItemStack(Material.ORANGE_STAINED_GLASS_PANE, "&c空间不足"));
                                 }
                             }
                         }
@@ -100,17 +106,15 @@ public class CustomMaterialGenerator extends SlimefunItem implements InventoryBl
                 }
             } else {
                 if (statusSlot > -1) {
-                    blockMenu.replaceExistingItem(statusSlot, new CustomItemStack(
-                            Material.RED_STAINED_GLASS_PANE,
-                            "&4电力不足"
-                    ));
+                    blockMenu.replaceExistingItem(
+                            statusSlot, new CustomItemStack(Material.RED_STAINED_GLASS_PANE, "&4电力不足"));
                 }
             }
         }
     }
 
     private void addProgress(Block b) {
-        setProgress(b, getProgress(b)+1);
+        setProgress(b, getProgress(b) + 1);
     }
 
     private void setProgress(Block b, int progress) {
@@ -128,8 +132,7 @@ public class CustomMaterialGenerator extends SlimefunItem implements InventoryBl
         return progress;
     }
 
-    @NotNull
-    @Override
+    @NotNull @Override
     public EnergyNetComponentType getEnergyComponentType() {
         return EnergyNetComponentType.CONSUMER;
     }
@@ -147,7 +150,7 @@ public class CustomMaterialGenerator extends SlimefunItem implements InventoryBl
     @Override
     public int[] getOutputSlots() {
         int[] output = new int[this.output.size()];
-        for (int i = 0; i < this.output.size(); i ++) {
+        for (int i = 0; i < this.output.size(); i++) {
             output[i] = this.output.get(i);
         }
         return output;
@@ -168,10 +171,11 @@ public class CustomMaterialGenerator extends SlimefunItem implements InventoryBl
         };
     }
 
-    @NotNull
-    @Override
+    @NotNull @Override
     public List<ItemStack> getDisplayRecipes() {
-        ItemStack speed = new RSCItemStack(Material.KNOWLEDGE_BOOK, CommonUtils.parseToComponent("&a&l速度"),
+        ItemStack speed = new RSCItemStack(
+                Material.KNOWLEDGE_BOOK,
+                CommonUtils.parseToComponent("&a&l速度"),
                 CommonUtils.parseToComponent("&a&l每 &b&l" + tickRate + " &a&l个粘液刻生成一次"));
         List<ItemStack> list = new ArrayList<>();
         for (ItemStack gen : generation) {

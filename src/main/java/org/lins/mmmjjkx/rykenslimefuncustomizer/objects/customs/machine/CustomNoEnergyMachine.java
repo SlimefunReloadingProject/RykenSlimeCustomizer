@@ -9,6 +9,9 @@ import io.github.thebusybiscuit.slimefun4.api.recipes.RecipeType;
 import io.github.thebusybiscuit.slimefun4.core.handlers.BlockPlaceHandler;
 import io.github.thebusybiscuit.slimefun4.core.machines.MachineOperation;
 import io.github.thebusybiscuit.slimefun4.core.machines.MachineProcessor;
+import java.util.Collections;
+import java.util.List;
+import java.util.function.Consumer;
 import lombok.Getter;
 import me.mrCookieSlime.CSCoreLibPlugin.general.Inventory.ChestMenu;
 import me.mrCookieSlime.CSCoreLibPlugin.general.Inventory.ClickAction;
@@ -27,28 +30,41 @@ import org.lins.mmmjjkx.rykenslimefuncustomizer.objects.machine.SmallerMachineIn
 import org.lins.mmmjjkx.rykenslimefuncustomizer.objects.script.lambda.RSCClickHandler;
 import org.lins.mmmjjkx.rykenslimefuncustomizer.objects.script.parent.ScriptEval;
 
-import java.util.Collections;
-import java.util.List;
-import java.util.function.Consumer;
-
 @SuppressWarnings("deprecation")
 public class CustomNoEnergyMachine extends AbstractEmptyMachine<MachineOperation> {
     private final List<Integer> input;
     private final List<Integer> output;
     private final @Nullable ScriptEval eval;
     private final MachineProcessor<MachineOperation> processor;
+
     @Getter
     private final CustomMenu menu;
 
     private boolean worked = false;
 
-    public CustomNoEnergyMachine(ItemGroup itemGroup, SlimefunItemStack item, RecipeType recipeType, ItemStack[] recipe, CustomMenu menu,
-                                 List<Integer> input, List<Integer> output, @Nullable ScriptEval eval, int work) {
+    public CustomNoEnergyMachine(
+            ItemGroup itemGroup,
+            SlimefunItemStack item,
+            RecipeType recipeType,
+            ItemStack[] recipe,
+            CustomMenu menu,
+            List<Integer> input,
+            List<Integer> output,
+            @Nullable ScriptEval eval,
+            int work) {
         this(itemGroup, item, recipeType, recipe, menu, input, output, eval, Collections.singletonList(work));
     }
 
-    public CustomNoEnergyMachine(ItemGroup itemGroup, SlimefunItemStack item, RecipeType recipeType, ItemStack[] recipe, CustomMenu menu,
-                                 List<Integer> input, List<Integer> output, @Nullable ScriptEval eval, List<Integer> work) {
+    public CustomNoEnergyMachine(
+            ItemGroup itemGroup,
+            SlimefunItemStack item,
+            RecipeType recipeType,
+            ItemStack[] recipe,
+            CustomMenu menu,
+            List<Integer> input,
+            List<Integer> output,
+            @Nullable ScriptEval eval,
+            List<Integer> work) {
         super(itemGroup, item, recipeType, recipe);
 
         this.input = input;
@@ -63,14 +79,12 @@ public class CustomNoEnergyMachine extends AbstractEmptyMachine<MachineOperation
             this.eval.addThing("setWorking", (Consumer<Boolean>) b -> worked = b);
             this.eval.addThing("working", worked);
 
-            addItemHandler(
-                    new BlockPlaceHandler(false) {
-                        @Override
-                        public void onPlayerPlace(@NotNull BlockPlaceEvent e) {
-                            CustomNoEnergyMachine.this.eval.evalFunction("onPlace", e);
-                        }
-                    }
-            );
+            addItemHandler(new BlockPlaceHandler(false) {
+                @Override
+                public void onPlayerPlace(@NotNull BlockPlaceEvent e) {
+                    CustomNoEnergyMachine.this.eval.evalFunction("onPlace", e);
+                }
+            });
         }
 
         addItemHandler(new ScriptedEvalBreakHandler(this, eval));
@@ -137,8 +151,7 @@ public class CustomNoEnergyMachine extends AbstractEmptyMachine<MachineOperation
         };
     }
 
-    @NotNull
-    @Override
+    @NotNull @Override
     public MachineProcessor<MachineOperation> getMachineProcessor() {
         return processor;
     }

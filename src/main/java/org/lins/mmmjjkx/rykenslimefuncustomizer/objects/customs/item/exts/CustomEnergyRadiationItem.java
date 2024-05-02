@@ -19,11 +19,18 @@ public class CustomEnergyRadiationItem extends BaseRadiationItem implements NotP
     private final float capacity;
     private final Object[] constructArgs;
 
-    public CustomEnergyRadiationItem(ItemGroup itemGroup, SlimefunItemStack item, RecipeType recipeType, ItemStack[] recipe, Radioactivity radioactivity, float capacity, ScriptEval eval) {
+    public CustomEnergyRadiationItem(
+            ItemGroup itemGroup,
+            SlimefunItemStack item,
+            RecipeType recipeType,
+            ItemStack[] recipe,
+            Radioactivity radioactivity,
+            float capacity,
+            ScriptEval eval) {
         super(itemGroup, radioactivity, item, recipeType, recipe);
         this.radioactivity = radioactivity;
         this.capacity = capacity;
-        this.constructArgs = new Object[]{itemGroup, item, recipeType, recipe, radioactivity, capacity, eval};
+        this.constructArgs = new Object[] {itemGroup, item, recipeType, recipe, radioactivity, capacity, eval};
 
         if (eval != null) {
             eval.doInit();
@@ -72,8 +79,7 @@ public class CustomEnergyRadiationItem extends BaseRadiationItem implements NotP
         return Rechargeable.super.getItemCharge(item);
     }
 
-    @NotNull
-    @Override
+    @NotNull @Override
     public Radioactivity getRadioactivity() {
         return radioactivity;
     }

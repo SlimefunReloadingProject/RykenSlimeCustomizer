@@ -1,7 +1,5 @@
 package org.lins.mmmjjkx.rykenslimefuncustomizer.update;
 
-import org.lins.mmmjjkx.rykenslimefuncustomizer.RykenSlimefunCustomizer;
-
 import java.io.File;
 import java.io.FileOutputStream;
 import java.io.InputStream;
@@ -9,12 +7,14 @@ import java.net.HttpURLConnection;
 import java.net.URL;
 import java.net.URLConnection;
 import java.util.logging.Level;
+import org.lins.mmmjjkx.rykenslimefuncustomizer.RykenSlimefunCustomizer;
 
 public class ConcurrentDownloader {
     private static final int BUFFER_SIZE = 1024;
     private static final int TIMEOUT_MILLIS = 5 * 60 * 1000;
 
-    public static final File downloadFolder = new File(RykenSlimefunCustomizer.INSTANCE.getDataFolder(), "temp-downloads");
+    public static final File downloadFolder =
+            new File(RykenSlimefunCustomizer.INSTANCE.getDataFolder(), "temp-downloads");
 
     public static boolean downloadFile(String id, String fileUrl, String githubRel) {
         int numThreads = 2;
@@ -53,7 +53,7 @@ public class ConcurrentDownloader {
                 threads[i].start();
             }
 
-            //?
+            // ?
             boolean hasException = false;
             Exception e = new Exception();
 

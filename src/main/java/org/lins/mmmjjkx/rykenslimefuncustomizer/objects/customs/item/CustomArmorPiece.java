@@ -19,10 +19,18 @@ public class CustomArmorPiece extends SlimefunArmorPiece implements ProtectiveAr
     private final ProtectionType[] protectionTypes;
     private final String projectId;
 
-    public CustomArmorPiece(ItemGroup itemGroup, SlimefunItemStack item, RecipeType recipeType, ItemStack[] recipe,
-                            @Nullable PotionEffect[] effects, boolean fullSet, String armorKey, ProtectionType[] protectionTypes, String projectId) {
+    public CustomArmorPiece(
+            ItemGroup itemGroup,
+            SlimefunItemStack item,
+            RecipeType recipeType,
+            ItemStack[] recipe,
+            @Nullable PotionEffect[] effects,
+            boolean fullSet,
+            String armorKey,
+            ProtectionType[] protectionTypes,
+            String projectId) {
         super(itemGroup, item, recipeType, recipe, effects);
-        
+
         this.armorKey = armorKey;
         this.fullSet = fullSet;
         this.protectionTypes = protectionTypes;
@@ -41,8 +49,7 @@ public class CustomArmorPiece extends SlimefunArmorPiece implements ProtectiveAr
         return fullSet;
     }
 
-    @Nullable
-    @Override
+    @Nullable @Override
     public NamespacedKey getArmorSetId() {
         return new NamespacedKey(RykenSlimefunCustomizer.INSTANCE, projectId + "_" + armorKey);
     }

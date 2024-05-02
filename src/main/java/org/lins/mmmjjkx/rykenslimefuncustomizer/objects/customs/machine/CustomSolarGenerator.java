@@ -13,7 +13,15 @@ import org.lins.mmmjjkx.rykenslimefuncustomizer.RykenSlimefunCustomizer;
 public class CustomSolarGenerator extends SolarGenerator {
     private final int lightLevel;
 
-    public CustomSolarGenerator(ItemGroup itemGroup, int dayEnergy, int nightEnergy, SlimefunItemStack item, RecipeType recipeType, ItemStack[] recipe, int capacity, int lightLevel) {
+    public CustomSolarGenerator(
+            ItemGroup itemGroup,
+            int dayEnergy,
+            int nightEnergy,
+            SlimefunItemStack item,
+            RecipeType recipeType,
+            ItemStack[] recipe,
+            int capacity,
+            int lightLevel) {
         super(itemGroup, dayEnergy, nightEnergy, item, recipeType, recipe, capacity);
 
         if (lightLevel > 15 || lightLevel < 0) {

@@ -8,6 +8,7 @@ import io.github.thebusybiscuit.slimefun4.api.recipes.RecipeType;
 import io.github.thebusybiscuit.slimefun4.core.attributes.RecipeDisplayItem;
 import io.github.thebusybiscuit.slimefun4.core.machines.MachineProcessor;
 import io.github.thebusybiscuit.slimefun4.implementation.operations.CraftingOperation;
+import java.util.List;
 import lombok.Getter;
 import me.mrCookieSlime.Slimefun.Objects.handlers.BlockTicker;
 import me.mrCookieSlime.Slimefun.api.inventory.BlockMenu;
@@ -20,8 +21,6 @@ import org.lins.mmmjjkx.rykenslimefuncustomizer.objects.machine.MachineTemplate;
 import org.lins.mmmjjkx.rykenslimefuncustomizer.objects.machine.RecipeMachineRecipe;
 import org.lins.mmmjjkx.rykenslimefuncustomizer.utils.CommonUtils;
 
-import java.util.List;
-
 public class CustomTemplateMachine extends AbstractEmptyMachine<CraftingOperation> implements RecipeDisplayItem {
     private final MachineProcessor<CraftingOperation> processor;
 
@@ -33,9 +32,16 @@ public class CustomTemplateMachine extends AbstractEmptyMachine<CraftingOperatio
     private final int templateSlot;
     private final List<MachineTemplate> templates;
 
-    public CustomTemplateMachine(ItemGroup itemGroup, SlimefunItemStack item, RecipeType recipeType, ItemStack[] recipe,
-                                 @NotNull CustomMenu menu, List<Integer> inputSlots, List<Integer> outputSlots, int templateSlot,
-                                 List<MachineTemplate> templates) {
+    public CustomTemplateMachine(
+            ItemGroup itemGroup,
+            SlimefunItemStack item,
+            RecipeType recipeType,
+            ItemStack[] recipe,
+            @NotNull CustomMenu menu,
+            List<Integer> inputSlots,
+            List<Integer> outputSlots,
+            int templateSlot,
+            List<MachineTemplate> templates) {
         super(itemGroup, item, recipeType, recipe);
 
         this.processor = new MachineProcessor<>(this);
@@ -65,8 +71,7 @@ public class CustomTemplateMachine extends AbstractEmptyMachine<CraftingOperatio
         };
     }
 
-    @NotNull
-    @Override
+    @NotNull @Override
     public MachineProcessor<CraftingOperation> getMachineProcessor() {
         return processor;
     }
@@ -86,9 +91,7 @@ public class CustomTemplateMachine extends AbstractEmptyMachine<CraftingOperatio
         if (m != null) {
             ItemStack templateItem = m.getItemInSlot(templateSlot);
             MachineTemplate template = CommonUtils.getIf(templates, t -> t.isSimilar(templateItem));
-            if (template != null) {
-
-            }
+            if (template != null) {}
         }
     }
 
@@ -96,8 +99,7 @@ public class CustomTemplateMachine extends AbstractEmptyMachine<CraftingOperatio
         return null;
     }
 
-    @NotNull
-    @Override
+    @NotNull @Override
     public List<ItemStack> getDisplayRecipes() {
         return List.of();
     }

@@ -1,11 +1,10 @@
 package org.lins.mmmjjkx.rykenslimefuncustomizer.objects.global;
 
 import io.github.thebusybiscuit.slimefun4.api.recipes.RecipeType;
-import org.jetbrains.annotations.Nullable;
-
 import java.util.HashMap;
 import java.util.List;
 import java.util.Map;
+import org.jetbrains.annotations.Nullable;
 
 public class RecipeTypeMap {
     private static final Map<String, RecipeType> recipeTypes;
@@ -32,8 +31,7 @@ public class RecipeTypeMap {
         recipeTypes.clear();
     }
 
-    @Nullable
-    public static RecipeType getRecipeType(String s) {
+    @Nullable public static RecipeType getRecipeType(String s) {
         return recipeTypes.get(s);
     }
 }

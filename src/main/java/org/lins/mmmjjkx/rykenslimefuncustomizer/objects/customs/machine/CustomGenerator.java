@@ -15,6 +15,10 @@ import io.github.thebusybiscuit.slimefun4.implementation.operations.FuelOperatio
 import io.github.thebusybiscuit.slimefun4.libraries.dough.items.CustomItemStack;
 import io.github.thebusybiscuit.slimefun4.utils.SlimefunUtils;
 import io.github.thebusybiscuit.slimefun4.utils.itemstack.ItemStackWrapper;
+import java.util.HashMap;
+import java.util.List;
+import java.util.Map;
+import javax.annotation.Nonnull;
 import lombok.Getter;
 import me.mrCookieSlime.Slimefun.Objects.SlimefunItem.abstractItems.AGenerator;
 import me.mrCookieSlime.Slimefun.Objects.SlimefunItem.abstractItems.MachineFuel;
@@ -28,21 +32,27 @@ import org.jetbrains.annotations.Nullable;
 import org.lins.mmmjjkx.rykenslimefuncustomizer.RykenSlimefunCustomizer;
 import org.lins.mmmjjkx.rykenslimefuncustomizer.objects.customs.CustomMenu;
 
-import javax.annotation.Nonnull;
-import java.util.HashMap;
-import java.util.List;
-import java.util.Map;
-
 public class CustomGenerator extends AGenerator implements MachineProcessHolder<FuelOperation>, EnergyNetProvider {
     @Getter
     private final MachineProcessor<FuelOperation> processor = new MachineProcessor<>(this);
+
     private final int capacity;
     private final List<Integer> input;
     private final List<Integer> output;
     private final CustomMenu menu;
     private final int production;
 
-    public CustomGenerator(ItemGroup itemGroup, SlimefunItemStack item, RecipeType recipeType, ItemStack[] recipe, @Nullable CustomMenu menu, int capacity, List<Integer> input, List<Integer> output, int production, List<MachineFuel> machineFuels) {
+    public CustomGenerator(
+            ItemGroup itemGroup,
+            SlimefunItemStack item,
+            RecipeType recipeType,
+            ItemStack[] recipe,
+            @Nullable CustomMenu menu,
+            int capacity,
+            List<Integer> input,
+            List<Integer> output,
+            int production,
+            List<MachineFuel> machineFuels) {
         super(itemGroup, item, recipeType, recipe);
 
         if (menu != null) {
@@ -132,7 +142,9 @@ public class CustomGenerator extends AGenerator implements MachineProcessHolder<
         }
 
         ItemStackWrapper wrapper = ItemStackWrapper.wrap(item);
-        return item.getType() == Material.LAVA_BUCKET || SlimefunUtils.isItemSimilar(wrapper, SlimefunItems.FUEL_BUCKET, true) || SlimefunUtils.isItemSimilar(wrapper, SlimefunItems.OIL_BUCKET, true);
+        return item.getType() == Material.LAVA_BUCKET
+                || SlimefunUtils.isItemSimilar(wrapper, SlimefunItems.FUEL_BUCKET, true)
+                || SlimefunUtils.isItemSimilar(wrapper, SlimefunItems.OIL_BUCKET, true);
     }
 
     private MachineFuel findRecipe(BlockMenu menu, Map<Integer, Integer> found) {
@@ -163,15 +175,13 @@ public class CustomGenerator extends AGenerator implements MachineProcessHolder<
         };
     }
 
-    @NotNull
-    @Override
+    @NotNull @Override
     public String getInventoryTitle() {
         return "";
     }
 
-    @NotNull
-    @Override
-    //outside init
+    @NotNull @Override
+    // outside init
     public ItemStack getProgressBar() {
         return new ItemStack(Material.FLINT_AND_STEEL);
     }
@@ -196,7 +206,7 @@ public class CustomGenerator extends AGenerator implements MachineProcessHolder<
         if (this.input == null) return new int[0];
 
         int[] input = new int[this.input.size()];
-        for (int i = 0; i < this.input.size(); i ++) {
+        for (int i = 0; i < this.input.size(); i++) {
             input[i] = this.input.get(i);
         }
         return input;
@@ -207,7 +217,7 @@ public class CustomGenerator extends AGenerator implements MachineProcessHolder<
         if (this.output == null) return new int[0];
 
         int[] output = new int[this.output.size()];
-        for (int i = 0; i < this.output.size(); i ++) {
+        for (int i = 0; i < this.output.size(); i++) {
             output[i] = this.output.get(i);
         }
         return output;
