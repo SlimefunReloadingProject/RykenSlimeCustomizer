@@ -170,7 +170,7 @@ public class ProjectAddonLoader {
         MultiBlockMachineReader multiBlockMachineReader = new MultiBlockMachineReader(multiBlockMachines);
         addon.setMultiBlockMachines(multiBlockMachineReader.readAll(addon));
         //
-        YamlConfiguration supers = doFileLoad(file, Constants.MULTI_BLOCK_MACHINES_FILE);
+        YamlConfiguration supers = doFileLoad(file, Constants.SUPERS_FILE);
         SuperReader superReader = new SuperReader(supers);
         addon.setSupers(superReader.readAll(addon));
         //////////////////////////
