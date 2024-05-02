@@ -8,11 +8,16 @@ import io.github.thebusybiscuit.slimefun4.libraries.dough.collections.Pair;
 import java.lang.reflect.Constructor;
 import java.lang.reflect.InvocationTargetException;
 import java.lang.reflect.Method;
+import java.util.ArrayList;
 import java.util.Arrays;
 import java.util.List;
+import java.util.Objects;
+
+import org.bukkit.Material;
 import org.bukkit.configuration.ConfigurationSection;
 import org.bukkit.configuration.file.YamlConfiguration;
 import org.bukkit.inventory.ItemStack;
+import org.lins.mmmjjkx.rykenslimefuncustomizer.RykenSlimefunCustomizer;
 import org.lins.mmmjjkx.rykenslimefuncustomizer.objects.ProjectAddon;
 import org.lins.mmmjjkx.rykenslimefuncustomizer.objects.yaml.YamlReader;
 import org.lins.mmmjjkx.rykenslimefuncustomizer.utils.CommonUtils;
@@ -52,7 +57,7 @@ public class SuperReader extends YamlReader<SlimefunItem> {
             return null;
         }
 
-        if (!clazz.isAssignableFrom(SlimefunItem.class)) {
+        if (!SlimefunItem.class.isAssignableFrom(clazz)) {
             ExceptionHandler.handleError("基类不是粘液物品");
             return null;
         }
@@ -67,12 +72,20 @@ public class SuperReader extends YamlReader<SlimefunItem> {
         SlimefunItemStack slimefunItemStack = new SlimefunItemStack(s, stack);
         Object[] args =
                 section.getList("args") == null ? null : section.getList("args").toArray();
+        List<Object> argTemplate = (List<Object>) section.getList("arg_template", List.of("group", "item", "recipe_type", "recipe"));
+        Object[] originArgs = argTemplate.stream().map(x -> {
+            if (x.equals("group")) return group.getSecondValue();
+            if (x.equals("item")) return slimefunItemStack;
+            if (x.equals("recipe_type")) return rt.getSecondValue();
+            if (x.equals("recipe")) return recipe;
+            return x;
+        }).filter(Objects::nonNull).toArray();
         SlimefunItem instance;
         try {
             if (args == null)
-                instance = ctor.newInstance(group.getSecondValue(), slimefunItemStack, recipeType, recipe);
+                instance = ctor.newInstance(originArgs);
             else {
-                List<Object> newArgs = Arrays.asList(group.getSecondValue(), slimefunItemStack, recipeType, recipe);
+                List<Object> newArgs = new ArrayList<>(List.of(originArgs));
                 newArgs.addAll(List.of(args));
                 instance = ctor.newInstance(newArgs.toArray());
             }
@@ -103,6 +116,7 @@ public class SuperReader extends YamlReader<SlimefunItem> {
                 }
             }
         }
+        instance.register(RykenSlimefunCustomizer.INSTANCE);
 
         return instance;
     }
