@@ -8,8 +8,11 @@ import io.github.thebusybiscuit.slimefun4.libraries.dough.collections.Pair;
 import java.lang.reflect.Constructor;
 import java.lang.reflect.InvocationTargetException;
 import java.lang.reflect.Method;
+import java.util.ArrayList;
 import java.util.Arrays;
 import java.util.List;
+
+import org.bukkit.Material;
 import org.bukkit.configuration.ConfigurationSection;
 import org.bukkit.configuration.file.YamlConfiguration;
 import org.bukkit.inventory.ItemStack;
@@ -52,7 +55,7 @@ public class SuperReader extends YamlReader<SlimefunItem> {
             return null;
         }
 
-        if (!clazz.isAssignableFrom(SlimefunItem.class)) {
+        if (!SlimefunItem.class.isAssignableFrom(clazz)) {
             ExceptionHandler.handleError("基类不是粘液物品");
             return null;
         }
@@ -72,7 +75,7 @@ public class SuperReader extends YamlReader<SlimefunItem> {
             if (args == null)
                 instance = ctor.newInstance(group.getSecondValue(), slimefunItemStack, recipeType, recipe);
             else {
-                List<Object> newArgs = Arrays.asList(group.getSecondValue(), slimefunItemStack, recipeType, recipe);
+                List<Object> newArgs = new ArrayList<>(Arrays.asList(group.getSecondValue(), slimefunItemStack, recipeType, recipe));
                 newArgs.addAll(List.of(args));
                 instance = ctor.newInstance(newArgs.toArray());
             }
