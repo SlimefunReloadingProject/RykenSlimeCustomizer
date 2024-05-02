@@ -12,14 +12,12 @@ import io.github.thebusybiscuit.slimefun4.implementation.items.electric.machines
 import io.github.thebusybiscuit.slimefun4.libraries.dough.collections.Pair;
 import org.bukkit.configuration.ConfigurationSection;
 import org.bukkit.configuration.file.YamlConfiguration;
-import org.bukkit.entity.EntityType;
 import org.bukkit.inventory.ItemStack;
 import org.lins.mmmjjkx.rykenslimefuncustomizer.RykenSlimefunCustomizer;
 import org.lins.mmmjjkx.rykenslimefuncustomizer.objects.ProjectAddon;
 import org.lins.mmmjjkx.rykenslimefuncustomizer.objects.customs.machine.sf.AdvancedAnimalGrowthAccelerator;
 import org.lins.mmmjjkx.rykenslimefuncustomizer.objects.customs.machine.sf.AdvancedCropGrowthAccelerator;
 import org.lins.mmmjjkx.rykenslimefuncustomizer.objects.customs.machine.sf.AdvancedTreeGrowthAccelerator;
-import org.lins.mmmjjkx.rykenslimefuncustomizer.objects.customs.machine.sf.EntityAssembler;
 import org.lins.mmmjjkx.rykenslimefuncustomizer.objects.machine.SimpleMachineType;
 import org.lins.mmmjjkx.rykenslimefuncustomizer.objects.yaml.YamlReader;
 import org.lins.mmmjjkx.rykenslimefuncustomizer.utils.CommonUtils;
@@ -266,46 +264,9 @@ public class SimpleMachineReader extends YamlReader<SlimefunItem> {
                             .setCapacity(capacity)
                             .setEnergyConsumption(consumption)
                             .setProcessingSpeed(speed);
-                    case ENTITY_ASSEMBLER -> {
-                        String entityTypeStr = settings.getString("entity_type", "");
-                        Pair<ExceptionHandler.HandleResult, EntityType> type = ExceptionHandler.handleEnumValueOf(
-                                "错误的实体类型: " + entityTypeStr, EntityType.class, entityTypeStr);
-                        if (type.getFirstValue() == ExceptionHandler.HandleResult.FAILED
-                                || type.getSecondValue() == null) {
-                            yield null;
-                        }
-                        ItemStack head = CommonUtils.readItem(settings.getConfigurationSection("head"), true, addon);
-
-                        if (head == null) {
-                            ExceptionHandler.handleError(
-                                    "无法在附属" + addon.getAddonName() + "中加载简单机器" + s + ": 实体装配器的头部输入为空或格式错误导致无法加载");
-                            yield null;
-                        }
-
-                        ItemStack body = CommonUtils.readItem(settings.getConfigurationSection("body"), true, addon);
-
-                        if (body == null) {
-                            ExceptionHandler.handleError(
-                                    "无法在附属" + addon.getAddonName() + "中加载简单机器" + s + ": 实体装配器的身体输入为空或格式错误导致无法加载");
-                            yield null;
-                        }
-
-                        yield new EntityAssembler(
-                                group.getSecondValue(),
-                                slimefunItemStack,
-                                rt.getSecondValue(),
-                                recipe,
-                                type.getSecondValue(),
-                                capacity,
-                                consumption,
-                                head,
-                                body);
-                    }
                 };
 
-        if (instance != null) {
-            instance.register(RykenSlimefunCustomizer.INSTANCE);
-        }
+        instance.register(RykenSlimefunCustomizer.INSTANCE);
 
         return instance;
     }
