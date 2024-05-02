@@ -16,6 +16,7 @@ import org.bukkit.Material;
 import org.bukkit.configuration.ConfigurationSection;
 import org.bukkit.configuration.file.YamlConfiguration;
 import org.bukkit.inventory.ItemStack;
+import org.lins.mmmjjkx.rykenslimefuncustomizer.RykenSlimefunCustomizer;
 import org.lins.mmmjjkx.rykenslimefuncustomizer.objects.ProjectAddon;
 import org.lins.mmmjjkx.rykenslimefuncustomizer.objects.yaml.YamlReader;
 import org.lins.mmmjjkx.rykenslimefuncustomizer.utils.CommonUtils;
@@ -73,9 +74,9 @@ public class SuperReader extends YamlReader<SlimefunItem> {
         SlimefunItem instance;
         try {
             if (args == null)
-                instance = ctor.newInstance(group.getSecondValue(), slimefunItemStack, recipeType, recipe);
+                instance = ctor.newInstance(group.getSecondValue(), slimefunItemStack, rt.getSecondValue(), recipe);
             else {
-                List<Object> newArgs = new ArrayList<>(Arrays.asList(group.getSecondValue(), slimefunItemStack, recipeType, recipe));
+                List<Object> newArgs = new ArrayList<>(Arrays.asList(group.getSecondValue(), slimefunItemStack, rt.getSecondValue(), recipe));
                 newArgs.addAll(List.of(args));
                 instance = ctor.newInstance(newArgs.toArray());
             }
@@ -106,6 +107,7 @@ public class SuperReader extends YamlReader<SlimefunItem> {
                 }
             }
         }
+        instance.register(RykenSlimefunCustomizer.INSTANCE);
 
         return instance;
     }
