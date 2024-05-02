@@ -1,11 +1,13 @@
 package org.lins.mmmjjkx.rykenslimefuncustomizer.libraries.Colors;
 
+import org.bukkit.ChatColor;
+import org.bukkit.Color;
+import org.lins.mmmjjkx.rykenslimefuncustomizer.libraries.Version.Version;
+
 import java.util.*;
 import java.util.Map.Entry;
 import java.util.regex.Matcher;
 import java.util.regex.Pattern;
-import org.bukkit.ChatColor;
-import org.bukkit.Color;
 
 public class CMIChatColor {
 
@@ -17,17 +19,14 @@ public class CMIChatColor {
 
     static {
         for (CMICustomColors one : CMICustomColors.values()) {
-            CUSTOM_BY_NAME.put(
-                    one.name().toLowerCase().replace("_", ""), new CMIChatColor(one.toString(), one.getHex()));
+            CUSTOM_BY_NAME.put(one.name().toLowerCase().replace("_", ""), new CMIChatColor(one.toString(), one.getHex()));
             CUSTOM_BY_HEX.put(one.getHex().toLowerCase(), new CMIChatColor(one.toString(), one.getHex()));
         }
         for (float x = 0.0F; x <= 1; x += 0.1) {
             for (float z = 0.1F; z <= 1; z += 0.1) {
                 for (float y = 0; y <= 1; y += 0.03) {
                     java.awt.Color color = java.awt.Color.getHSBColor(y, x, z);
-                    StringBuilder hex = new StringBuilder()
-                            .append(Integer.toHexString(
-                                    (color.getRed() << 16) + (color.getGreen() << 8) + color.getBlue() & 0xffffff));
+                    StringBuilder hex = new StringBuilder().append(Integer.toHexString((color.getRed() << 16) + (color.getGreen() << 8) + color.getBlue() & 0xffffff));
                     while (hex.length() < 6) {
                         hex.append("0" + hex);
                     }
@@ -78,9 +77,7 @@ public class CMIChatColor {
                     sb.append("/");
                     break;
                 default:
-                    if ((ch >= '\u0000' && ch <= '\u001F')
-                            || (ch >= '\u007F' && ch <= '\u009F')
-                            || (ch >= '\u2000' && ch <= '\u20FF')) {
+                    if ((ch >= '\u0000' && ch <= '\u001F') || (ch >= '\u007F' && ch <= '\u009F') || (ch >= '\u2000' && ch <= '\u20FF')) {
                         String ss = Integer.toHexString(ch);
                         sb.append("\\u");
                         for (int k = 0; k < 4 - ss.length(); k++) {
@@ -99,11 +96,9 @@ public class CMIChatColor {
         return text.replace("#", "\\#").replace("{", "\\{").replace("}", "\\}");
     }
 
-    public static final String hexColorRegex =
-            "(\\" + colorCodePrefix + ")([0-9A-Fa-f]{6}|[0-9A-Fa-f]{3})(\\" + colorCodeSuffix + ")";
+    public static final String hexColorRegex = "(\\" + colorCodePrefix + ")([0-9A-Fa-f]{6}|[0-9A-Fa-f]{3})(\\" + colorCodeSuffix + ")";
 
-    public static final Pattern cleanOfficialColorRegexPattern =
-            Pattern.compile("(?<!\\{|:\"|" + colorReplacerPlaceholder + ")#([a-fA-F0-9]{6}|[a-fA-F0-9]{3})");
+    public static final Pattern cleanOfficialColorRegexPattern = Pattern.compile("(?<!\\{|:\"|" + colorReplacerPlaceholder + ")#([a-fA-F0-9]{6}|[a-fA-F0-9]{3})");
 
     public static final Pattern cleanQuirkyHexColorRegexPattern = Pattern.compile("&#([a-fA-F0-9]{6}|[a-fA-F0-9]{3})");
 
@@ -120,12 +115,9 @@ public class CMIChatColor {
 
     public static final String hexColorDecolRegex = "(&x)(&[0-9A-Fa-f]){6}";
 
-    public static final Pattern postGradientPattern = Pattern.compile("(" + hexColorRegex + "|" + ColorNameRegex + ")"
-            + "(.)" + "(" + hexColorRegex + "|" + ColorNameRegex + ")");
-    public static final Pattern post2GradientPattern = Pattern.compile("(" + hexColorRegex + "|" + ColorNameRegex + ")"
-            + "(.)" + "((" + hexColorRegex + "|" + ColorNameRegex + ")" + "(.))+");
-    public static final Pattern fullPattern = Pattern.compile(
-            "(&[0123456789abcdefklmnorABCDEFKLMNOR])|" + hexColorRegex + "|" + ColorNameRegex + "|" + ColorFontRegex);
+    public static final Pattern postGradientPattern = Pattern.compile("(" + hexColorRegex + "|" + ColorNameRegex + ")" + "(.)" + "(" + hexColorRegex + "|" + ColorNameRegex + ")");
+    public static final Pattern post2GradientPattern = Pattern.compile("(" + hexColorRegex + "|" + ColorNameRegex + ")" + "(.)" + "((" + hexColorRegex + "|" + ColorNameRegex + ")" + "(.))+");
+    public static final Pattern fullPattern = Pattern.compile("(&[0123456789abcdefklmnorABCDEFKLMNOR])|" + hexColorRegex + "|" + ColorNameRegex + "|" + ColorFontRegex);
 
     public static final Pattern formatPattern = Pattern.compile("(&[klmnorKLMNOR])");
 
@@ -214,15 +206,13 @@ public class CMIChatColor {
         this.greenChannel = green;
         this.blueChannel = blue;
 
+        if (Version.isCurrentLower(Version.v1_16_R1) && name.equalsIgnoreCase("Hex")) return;
         BY_CHAR.put(Character.valueOf(c), this);
         BY_NAME.put(this.getName().toLowerCase().replace("_", ""), this);
     }
 
     public boolean isValid() {
-        return this.c != 10
-                || getHex() != null
-                || this.name != null
-                || this.blueChannel > -1 && this.greenChannel > -1 && this.redChannel > -1;
+        return this.c != 10 || getHex() != null || this.name != null || this.blueChannel > -1 && this.greenChannel > -1 && this.redChannel > -1;
     }
 
     public static String processGradient(String text) {
@@ -304,13 +294,27 @@ public class CMIChatColor {
             Matcher match = hexColorRegexPattern.matcher(text);
             while (match.find()) {
                 String string = match.group();
-                StringBuilder magic = new StringBuilder("§x");
-                for (char c : string.substring(2, string.length() - 1).toCharArray()) {
-                    magic.append('§').append(c);
-                    if (string.substring(2, string.length() - 1).length() == 3)
+                if (Version.isCurrentLower(Version.v1_16_R1)) {
+
+                    String copy = string;
+                    copy = copy.substring(2, copy.length() - 1);
+                    if (copy.length() == 3) {
+                        StringBuilder sb = new StringBuilder();
+                        for (int i = 0; i < copy.length(); i++)
+                            sb.append(copy.charAt(i) + "" + copy.charAt(i));
+                        copy = sb.toString();
+                    }
+                    copy = getClosestVanilla(copy);
+                    text = text.replace(string, copy);
+
+                } else {
+                    StringBuilder magic = new StringBuilder("§x");
+                    for (char c : string.substring(2, string.length() - 1).toCharArray()) {
                         magic.append('§').append(c);
+                        if (string.substring(2, string.length() - 1).length() == 3) magic.append('§').append(c);
+                    }
+                    text = text.replace(string, magic.toString());
                 }
-                text = text.replace(string, magic.toString());
             }
 
             Matcher nameMatch = hexColorNamePattern.matcher(text);
@@ -331,13 +335,26 @@ public class CMIChatColor {
             Matcher match = cleanQuirkyHexColorRegexPattern.matcher(text);
             while (match.find()) {
                 String string = match.group();
-                StringBuilder magic = new StringBuilder("§x");
-                String shorten = string.substring(2, string.length());
-                for (char c : shorten.toCharArray()) {
-                    magic.append('§').append(c);
-                    if (shorten.length() == 3) magic.append('§').append(c);
+                if (Version.isCurrentLower(Version.v1_16_R1)) {
+                    String copy = string;
+                    copy = copy.substring(2, copy.length());
+                    if (copy.length() == 3) {
+                        StringBuilder sb = new StringBuilder();
+                        for (int i = 0; i < copy.length(); i++)
+                            sb.append(copy.charAt(i) + "" + copy.charAt(i));
+                        copy = sb.toString();
+                    }
+                    copy = getClosestVanilla(copy);
+                    text = text.replace(string, copy);
+                } else {
+                    StringBuilder magic = new StringBuilder("§x");
+                    String shorten = string.substring(2, string.length());
+                    for (char c : shorten.toCharArray()) {
+                        magic.append('§').append(c);
+                        if (shorten.length() == 3) magic.append('§').append(c);
+                    }
+                    text = text.replace(string, magic.toString());
                 }
-                text = text.replace(string, magic.toString());
             }
         }
 
@@ -345,13 +362,26 @@ public class CMIChatColor {
             Matcher match = cleanOfficialColorRegexPattern.matcher(text);
             while (match.find()) {
                 String string = match.group();
-                StringBuilder magic = new StringBuilder("§x");
-                String shorten = string.substring(1, string.length());
-                for (char c : shorten.toCharArray()) {
-                    magic.append('§').append(c);
-                    if (shorten.length() == 3) magic.append('§').append(c);
+                if (Version.isCurrentLower(Version.v1_16_R1)) {
+                    String copy = string;
+                    copy = copy.substring(1, copy.length());
+                    if (copy.length() == 3) {
+                        StringBuilder sb = new StringBuilder();
+                        for (int i = 0; i < copy.length(); i++)
+                            sb.append(copy.charAt(i) + "" + copy.charAt(i));
+                        copy = sb.toString();
+                    }
+                    copy = getClosestVanilla(copy);
+                    text = text.replace(string, copy);
+                } else {
+                    StringBuilder magic = new StringBuilder("§x");
+                    String shorten = string.substring(1, string.length());
+                    for (char c : shorten.toCharArray()) {
+                        magic.append('§').append(c);
+                        if (shorten.length() == 3) magic.append('§').append(c);
+                    }
+                    text = text.replace(string, magic.toString());
                 }
-                text = text.replace(string, magic.toString());
             }
         }
 
@@ -418,9 +448,7 @@ public class CMIChatColor {
     }
 
     public static String flaten(String text, boolean colorizeBefore) {
-        return deColorize(text, colorizeBefore)
-                .replace("&", colorReplacerPlaceholder)
-                .replace(colorCodePrefix, colorHexReplacerPlaceholder);
+        return deColorize(text, colorizeBefore).replace("&", colorReplacerPlaceholder).replace(colorCodePrefix, colorHexReplacerPlaceholder);
     }
 
     public static String deColorize(String text) {
@@ -438,9 +466,7 @@ public class CMIChatColor {
                 String reg = match.group(3).replace("&", "");
                 CMIChatColor custom = CUSTOM_BY_HEX.get(reg.toLowerCase());
                 if (custom != null) {
-                    text = text.replace(
-                            match.group(),
-                            colorCodePrefix + custom.getName().toLowerCase().replace("_", "") + colorCodeSuffix);
+                    text = text.replace(match.group(), colorCodePrefix + custom.getName().toLowerCase().replace("_", "") + colorCodeSuffix);
                 } else {
                     text = text.replace(match.group(), colorCodePrefix + reg + colorCodeSuffix);
                 }
@@ -497,6 +523,7 @@ public class CMIChatColor {
             if (split == null) return colorByHex;
             String last = getLastColors(split[1]);
             return last == null || last.isEmpty() ? colorByHex : last;
+
         }
 
         match = hexColorNamePatternLast.matcher(text);
@@ -716,8 +743,7 @@ public class CMIChatColor {
         int blue = (int) (255 - y * 255 * (1.0 + Math.sin(6.3 * x)) / 2);
         int green = (int) (255 - y * 255 * (1.0 + Math.cos(6.3 * x)) / 2);
         int red = (int) (255 - y * 255 * (1.0 - Math.sin(6.3 * x)) / 2);
-        StringBuilder hex =
-                new StringBuilder().append(Integer.toHexString((red << 16) + (green << 8) + blue & 0xffffff));
+        StringBuilder hex = new StringBuilder().append(Integer.toHexString((red << 16) + (green << 8) + blue & 0xffffff));
         while (hex.length() < 6) {
             hex.append("0" + hex);
         }
@@ -728,9 +754,7 @@ public class CMIChatColor {
         float percent = (percentage * 33F / 100F) / 100F;
 
         java.awt.Color color = java.awt.Color.getHSBColor(percent, 1, 1);
-        StringBuilder hex = new StringBuilder()
-                .append(Integer.toHexString(
-                        (color.getRed() << 16) + (color.getGreen() << 8) + color.getBlue() & 0xffffff));
+        StringBuilder hex = new StringBuilder().append(Integer.toHexString((color.getRed() << 16) + (color.getGreen() << 8) + color.getBlue() & 0xffffff));
         while (hex.length() < 6) {
             hex.append("0" + hex);
         }
@@ -757,20 +781,14 @@ public class CMIChatColor {
 
         java.awt.Color c2 = null;
         try {
-            c2 = new java.awt.Color(
-                    Integer.valueOf(hex.substring(0, 2), 16),
-                    Integer.valueOf(hex.substring(2, 4), 16),
-                    Integer.valueOf(hex.substring(4, 6), 16));
+            c2 = new java.awt.Color(Integer.valueOf(hex.substring(0, 2), 16), Integer.valueOf(hex.substring(2, 4), 16), Integer.valueOf(hex.substring(4, 6), 16));
         } catch (Throwable e) {
             return null;
         }
         double distance = Double.MAX_VALUE;
         for (Entry<String, CMIChatColor> one : CUSTOM_BY_HEX.entrySet()) {
 
-            java.awt.Color c1 = new java.awt.Color(
-                    Integer.valueOf(one.getValue().hexCode.substring(0, 2), 16),
-                    Integer.valueOf(one.getValue().hexCode.substring(2, 4), 16),
-                    Integer.valueOf(one.getValue().hexCode.substring(4, 6), 16));
+            java.awt.Color c1 = new java.awt.Color(Integer.valueOf(one.getValue().hexCode.substring(0, 2), 16), Integer.valueOf(one.getValue().hexCode.substring(2, 4), 16), Integer.valueOf(one.getValue().hexCode.substring(4, 6), 16));
 
             int red1 = c1.getRed();
             int red2 = c2.getRed();
@@ -805,10 +823,7 @@ public class CMIChatColor {
 
             java.awt.Color c2 = null;
             try {
-                c2 = new java.awt.Color(
-                        Integer.valueOf(hex.substring(0, 2), 16),
-                        Integer.valueOf(hex.substring(2, 4), 16),
-                        Integer.valueOf(hex.substring(4, 6), 16));
+                c2 = new java.awt.Color(Integer.valueOf(hex.substring(0, 2), 16), Integer.valueOf(hex.substring(2, 4), 16), Integer.valueOf(hex.substring(4, 6), 16));
             } catch (Throwable e) {
                 return null;
             }
@@ -818,10 +833,7 @@ public class CMIChatColor {
             for (Entry<Character, CMIChatColor> one : BY_CHAR.entrySet()) {
 
                 if (!one.getValue().isColor()) continue;
-                java.awt.Color c1 = new java.awt.Color(
-                        one.getValue().getRed(),
-                        one.getValue().getGreen(),
-                        one.getValue().getBlue());
+                java.awt.Color c1 = new java.awt.Color(one.getValue().getRed(), one.getValue().getGreen(), one.getValue().getBlue());
 
                 int red1 = c1.getRed();
                 int red2 = c2.getRed();
