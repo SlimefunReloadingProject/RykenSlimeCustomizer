@@ -5,9 +5,8 @@ import io.github.thebusybiscuit.slimefun4.api.items.SlimefunItem;
 import io.github.thebusybiscuit.slimefun4.api.items.SlimefunItemStack;
 import io.github.thebusybiscuit.slimefun4.api.recipes.RecipeType;
 import io.github.thebusybiscuit.slimefun4.libraries.dough.collections.Pair;
-import java.lang.reflect.Constructor;
-import java.lang.reflect.InvocationTargetException;
-import java.lang.reflect.Method;
+
+import java.lang.reflect.*;
 import java.util.ArrayList;
 import java.util.Arrays;
 import java.util.List;
@@ -20,6 +19,7 @@ import org.lins.mmmjjkx.rykenslimefuncustomizer.objects.ProjectAddon;
 import org.lins.mmmjjkx.rykenslimefuncustomizer.objects.yaml.YamlReader;
 import org.lins.mmmjjkx.rykenslimefuncustomizer.utils.CommonUtils;
 import org.lins.mmmjjkx.rykenslimefuncustomizer.utils.ExceptionHandler;
+import org.lins.mmmjjkx.rykenslimefuncustomizer.utils.ReflectionUtils;
 
 public class SuperReader extends YamlReader<SlimefunItem> {
     public SuperReader(YamlConfiguration config) {
@@ -114,6 +114,29 @@ public class SuperReader extends YamlReader<SlimefunItem> {
                     } catch (IllegalAccessException | InvocationTargetException e) {
                         ExceptionHandler.handleError("方法调用异常", e);
                     }
+                }
+            }
+        }
+
+        if (section.contains("field")) {
+            ConfigurationSection fieldArray = section.getConfigurationSection("field");
+            for (String fieldName : fieldArray.getKeys(false)) {
+                try {
+                    Field[] fields = ReflectionUtils.getAllFields(instance);
+                    Field field = null;
+                    for (Field f : fields) {
+                        if (f.getName().equals(fieldName)) {
+                            field = f;
+                            break;
+                        }
+                    }
+                    if (field == null) throw new NoSuchFieldException(fieldName);
+                    if (Modifier.isStatic(field.getModifiers())) throw new IllegalAccessException(fieldName + "为static");
+                    field.setAccessible(true);
+                    Object object = fieldArray.getObject(fieldName, field.getType());
+                    field.set(instance, object);
+                } catch (Exception e) {
+                    ExceptionHandler.handleError("属性修改异常", e);
                 }
             }
         }
