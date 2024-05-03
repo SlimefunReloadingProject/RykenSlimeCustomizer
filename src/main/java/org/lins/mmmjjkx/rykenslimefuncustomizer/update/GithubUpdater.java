@@ -15,7 +15,7 @@ import org.bukkit.configuration.file.YamlConfiguration;
 import org.jetbrains.annotations.NotNull;
 import org.lins.mmmjjkx.rykenslimefuncustomizer.ProjectAddonManager;
 import org.lins.mmmjjkx.rykenslimefuncustomizer.RykenSlimefunCustomizer;
-import org.lins.mmmjjkx.rykenslimefuncustomizer.utils.CommonUtils;
+import org.lins.mmmjjkx.rykenslimefuncustomizer.utils.ExceptionHandler;
 
 public class GithubUpdater {
     public static boolean checkAndUpdate(
@@ -77,19 +77,14 @@ public class GithubUpdater {
                     String id = infoYml.getString("id", "");
 
                     if (!id.equals(prjId)) {
-                        RykenSlimefunCustomizer.INSTANCE
-                                .getComponentLogger()
-                                .info(CommonUtils.parseToComponent("&a成功更新附属 " + prjId + "!" + "\n" + "&b注意：原先的附属ID为 &e"
-                                        + prjId + " &b现在已变更为 &d" + id));
+                        ExceptionHandler.info(
+                                "&a成功更新附属 " + prjId + "!" + "\n" + "&b注意：原先的附属ID为 &e" + prjId + " &b现在已变更为 &d" + id);
                     } else {
-                        RykenSlimefunCustomizer.INSTANCE
-                                .getComponentLogger()
-                                .info(CommonUtils.parseToComponent("&a成功更新附属 " + prjId + "!"));
+                        ExceptionHandler.info("&a成功更新附属 " + prjId + "!");
                     }
 
                     return true;
                 }
-
                 return false;
             }
             return true;

@@ -2,7 +2,6 @@ package org.lins.mmmjjkx.rykenslimefuncustomizer.libraries.Colors;
 
 import java.awt.*;
 import lombok.Getter;
-import lombok.Setter;
 import org.bukkit.Material;
 
 @Getter
@@ -24,12 +23,9 @@ public enum CMIColors {
     Red(14, "Red", Material.RED_DYE, new Color(176, 46, 38)),
     Black(15, "Black", Material.BLACK_DYE, new Color(29, 29, 33));
 
-    private int id;
-
-    private String name;
-
-    @Setter
-    private Material material;
+    private final int id;
+    private final String name;
+    private final Material material;
 
     private Color color;
 

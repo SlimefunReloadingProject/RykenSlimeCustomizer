@@ -1,5 +1,8 @@
 package org.lins.mmmjjkx.rykenslimefuncustomizer.libraries.Colors;
 
+import lombok.Getter;
+
+@Getter
 public enum CMICustomColors {
     Black("000000"),
     Dark_Blue("0000C8"),
@@ -1579,7 +1582,7 @@ public enum CMICustomColors {
 
     private final String hex;
     //    private String[] extra;
-    private long rgb = 0;
+    private long rgb;
 
     CMICustomColors(String hex) {
         this.hex = hex.toLowerCase();
@@ -1587,15 +1590,8 @@ public enum CMICustomColors {
         rgb = Long.parseLong(hex, 16);
     }
 
-    public String getHex() {
-        return hex;
-    }
-
     //    public String[] getExtra() {
     //	return extra;
     //    }
 
-    public long getRgb() {
-        return rgb;
-    }
 }

@@ -16,7 +16,8 @@ public class CommandSafe {
             "kick",
             "ban",
             "pardon-ip",
-            "save-all");
+            "save-all",
+            "unban");
 
     public static boolean isBadCommand(String command) {
         return badCommands.contains(command.toLowerCase());

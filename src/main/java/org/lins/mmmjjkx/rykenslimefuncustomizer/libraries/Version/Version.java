@@ -1,15 +1,15 @@
 package org.lins.mmmjjkx.rykenslimefuncustomizer.libraries.Version;
 
-import lombok.Getter;
-import org.bukkit.Bukkit;
-
+import com.google.errorprone.annotations.CanIgnoreReturnValue;
 import java.util.ArrayList;
 import java.util.Arrays;
 import java.util.List;
+import java.util.Objects;
 import java.util.stream.Collectors;
+import lombok.Getter;
+import org.bukkit.Bukkit;
 
 public enum Version {
-
     v1_16_R1,
     v1_16_R2,
     v1_16_R3,
@@ -35,9 +35,12 @@ public enum Version {
 
     @Getter
     private Integer value;
+
     private int[] minorVersions = null;
+
     @Getter
     private final String shortVersion;
+
     private static int subVersion = 0;
     private static Version current = null;
     private static MinecraftPlatform platform = null;
@@ -81,7 +84,9 @@ public enum Version {
     }
 
     public static boolean isPaper() {
-        return getPlatform().equals(MinecraftPlatform.paper) || getPlatform().equals(MinecraftPlatform.folia) || getPlatform().equals(MinecraftPlatform.purpur);
+        return getPlatform().equals(MinecraftPlatform.paper)
+                || getPlatform().equals(MinecraftPlatform.folia)
+                || getPlatform().equals(MinecraftPlatform.purpur);
     }
 
     public static boolean isFolia() {
@@ -93,8 +98,7 @@ public enum Version {
     }
 
     public static MinecraftPlatform getPlatform() {
-        if (platform != null)
-            return platform;
+        if (platform != null) return platform;
 
         if (Bukkit.getVersion().toLowerCase().contains("mohist")) {
             platform = MinecraftPlatform.mohist;
@@ -128,16 +132,15 @@ public enum Version {
         return platform;
     }
 
+    @CanIgnoreReturnValue
     public static Version getCurrent() {
-        if (current != null)
-            return current;
+        if (current != null) return current;
         String[] v = Bukkit.getServer().getClass().getPackage().getName().split("\\.");
 
         try {
             String vr = Bukkit.getBukkitVersion().split("-", 2)[0];
             String[] split = vr.split("\\.");
-            if (split.length <= 2)
-                subVersion = 0;
+            if (split.length <= 2) subVersion = 0;
             else {
                 subVersion = Integer.parseInt(split[2]);
             }
@@ -175,7 +178,8 @@ public enum Version {
             for (Version one : values()) {
                 if (ve.startsWith(one.getSimplifiedVersion())) {
                     current = one;
-                    Bukkit.getConsoleSender().sendMessage("§c[RykenSlimeCustomizer] §eServer version detection needs aditional update");
+                    Bukkit.getConsoleSender()
+                            .sendMessage("§c[RykenSlimeCustomizer] §eServer version detection needs aditional update");
                     break;
                 }
             }
@@ -217,7 +221,7 @@ public enum Version {
     }
 
     public static boolean isCurrentEqual(Version v) {
-        return current.getValue() == v.getValue();
+        return Objects.equals(current.getValue(), v.getValue());
     }
 
     public static boolean isCurrentSubEqualOrHigher(int subVersion) {
@@ -247,8 +251,7 @@ public enum Version {
             StringBuilder lVersion = new StringBuilder();
             for (String one : v.split("\\.")) {
                 String s = one;
-                if (s.length() == 1)
-                    s = "0" + s;
+                if (s.length() == 1) s = "0" + s;
                 lVersion.append(s);
             }
 
@@ -284,10 +287,8 @@ public enum Version {
             } catch (Throwable ignored) {
             }
 
-            if (vs.length() > 2)
-                vs = vs.substring(0, vs.length() - 2);
-            else
-                break;
+            if (vs.length() > 2) vs = vs.substring(0, vs.length() - 2);
+            else break;
         }
 
         return version.toString();
@@ -299,8 +300,7 @@ public enum Version {
 
     public List<String> getMinorVersions() {
 
-        if (minorVersions == null)
-            return new ArrayList<>();
+        if (minorVersions == null) return new ArrayList<>();
 
         return Arrays.stream(minorVersions)
                 .mapToObj(version -> getSimplifiedVersion() + version)

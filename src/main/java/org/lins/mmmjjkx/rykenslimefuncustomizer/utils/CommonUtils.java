@@ -11,7 +11,6 @@ import java.io.InputStreamReader;
 import java.nio.charset.StandardCharsets;
 import java.nio.file.Files;
 import java.nio.file.StandardOpenOption;
-import java.util.ArrayList;
 import java.util.Arrays;
 import java.util.List;
 import java.util.Optional;
@@ -49,7 +48,7 @@ public class CommonUtils {
             LegacyComponentSerializer.legacyAmpersand().toBuilder().hexColors().build();
 
     public static <T extends ItemStack> T doGlow(T item) {
-        item.addUnsafeEnchantment(Enchantment.ARROW_INFINITE, 1);
+        item.addUnsafeEnchantment(Enchantment.LUCK, 1);
         item.addItemFlags(ItemFlag.HIDE_ENCHANTS);
 
         return item;
@@ -61,38 +60,6 @@ public class CommonUtils {
         text = text.replaceAll("§", "&");
 
         return MineDown.parse(text).decoration(TextDecoration.ITALIC, false);
-    }
-
-    public static List<Component> toComponents(String... texts) {
-        List<Component> components = new ArrayList<>();
-
-        if (texts == null) return components;
-
-        for (String s : texts) {
-            if (s != null) {
-                components.add(parseToComponent(s));
-            } else {
-                components.add(Component.empty());
-            }
-        }
-
-        return components;
-    }
-
-    public static List<Component> toComponents(List<String> texts) {
-        List<Component> components = new ArrayList<>();
-
-        if (texts == null) return components;
-
-        for (String s : texts) {
-            if (s != null && !s.isBlank()) {
-                components.add(parseToComponent(s));
-            } else {
-                components.add(Component.empty());
-            }
-        }
-
-        return components;
     }
 
     @Nullable public static <T> T getIf(Iterable<T> iterable, Predicate<T> filter) {

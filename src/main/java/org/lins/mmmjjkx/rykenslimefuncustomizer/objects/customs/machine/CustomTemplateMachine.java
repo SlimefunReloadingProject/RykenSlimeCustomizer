@@ -8,7 +8,9 @@ import io.github.thebusybiscuit.slimefun4.api.recipes.RecipeType;
 import io.github.thebusybiscuit.slimefun4.core.attributes.RecipeDisplayItem;
 import io.github.thebusybiscuit.slimefun4.core.machines.MachineProcessor;
 import io.github.thebusybiscuit.slimefun4.implementation.operations.CraftingOperation;
+import io.github.thebusybiscuit.slimefun4.libraries.dough.collections.Pair;
 import java.util.List;
+import java.util.Objects;
 import lombok.Getter;
 import me.mrCookieSlime.Slimefun.Objects.handlers.BlockTicker;
 import me.mrCookieSlime.Slimefun.api.inventory.BlockMenu;
@@ -91,16 +93,36 @@ public class CustomTemplateMachine extends AbstractEmptyMachine<CraftingOperatio
         if (m != null) {
             ItemStack templateItem = m.getItemInSlot(templateSlot);
             MachineTemplate template = CommonUtils.getIf(templates, t -> t.isSimilar(templateItem));
-            if (template != null) {}
+            if (template != null) {
+                RecipeMachineRecipe recipe = findRecipe(template, m);
+            }
         }
     }
 
     private RecipeMachineRecipe findRecipe(MachineTemplate currentTemplate, BlockMenu menu) {
-        return null;
+        // TODO: Implement recipe finding
+        // 需要等待 https://github.com/Slimefun/Slimefun4/pull/4177 被合并
+
+        RecipeMachineRecipe recipe = currentTemplate.getRecipes().get(0).getFirstValue();
+
+        int cost = currentTemplate.getRecipes().stream()
+                .filter(k -> Objects.equals(k.getFirstValue(), recipe))
+                .mapToInt(Pair::getSecondValue)
+                .findFirst()
+                .orElse(0);
+
+        int templateAmount = menu.getItemInSlot(templateSlot).getAmount();
+        if (templateAmount < cost) {
+            return null;
+        } else {
+            int take = templateAmount - cost;
+            menu.consumeItem(templateSlot, take);
+            return recipe;
+        }
     }
 
     @NotNull @Override
     public List<ItemStack> getDisplayRecipes() {
-        return List.of();
+        return List.of(); // TODO: Implement recipe display
     }
 }

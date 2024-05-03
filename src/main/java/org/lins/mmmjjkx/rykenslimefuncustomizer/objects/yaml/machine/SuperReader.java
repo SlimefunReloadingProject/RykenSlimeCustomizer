@@ -12,8 +12,6 @@ import java.util.ArrayList;
 import java.util.Arrays;
 import java.util.List;
 import java.util.Objects;
-
-import org.bukkit.Material;
 import org.bukkit.configuration.ConfigurationSection;
 import org.bukkit.configuration.file.YamlConfiguration;
 import org.bukkit.inventory.ItemStack;
@@ -72,18 +70,21 @@ public class SuperReader extends YamlReader<SlimefunItem> {
         SlimefunItemStack slimefunItemStack = new SlimefunItemStack(s, stack);
         Object[] args =
                 section.getList("args") == null ? null : section.getList("args").toArray();
-        List<Object> argTemplate = (List<Object>) section.getList("arg_template", List.of("group", "item", "recipe_type", "recipe"));
-        Object[] originArgs = argTemplate.stream().map(x -> {
-            if (x.equals("group")) return group.getSecondValue();
-            if (x.equals("item")) return slimefunItemStack;
-            if (x.equals("recipe_type")) return rt.getSecondValue();
-            if (x.equals("recipe")) return recipe;
-            return x;
-        }).filter(Objects::nonNull).toArray();
+        List<Object> argTemplate =
+                (List<Object>) section.getList("arg_template", List.of("group", "item", "recipe_type", "recipe"));
+        Object[] originArgs = argTemplate.stream()
+                .map(x -> {
+                    if (x.equals("group")) return group.getSecondValue();
+                    if (x.equals("item")) return slimefunItemStack;
+                    if (x.equals("recipe_type")) return rt.getSecondValue();
+                    if (x.equals("recipe")) return recipe;
+                    return x;
+                })
+                .filter(Objects::nonNull)
+                .toArray();
         SlimefunItem instance;
         try {
-            if (args == null)
-                instance = ctor.newInstance(originArgs);
+            if (args == null) instance = ctor.newInstance(originArgs);
             else {
                 List<Object> newArgs = new ArrayList<>(List.of(originArgs));
                 newArgs.addAll(List.of(args));
