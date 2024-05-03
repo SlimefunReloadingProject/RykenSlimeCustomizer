@@ -1,6 +1,5 @@
 package org.lins.mmmjjkx.rykenslimefuncustomizer.utils;
 
-import de.themoep.minedown.adventure.MineDown;
 import io.github.thebusybiscuit.slimefun4.api.items.SlimefunItem;
 import io.github.thebusybiscuit.slimefun4.libraries.dough.skins.PlayerHead;
 import io.github.thebusybiscuit.slimefun4.libraries.dough.skins.PlayerSkin;
@@ -19,7 +18,6 @@ import java.util.regex.Matcher;
 import java.util.regex.Pattern;
 import lombok.SneakyThrows;
 import net.kyori.adventure.text.Component;
-import net.kyori.adventure.text.format.TextDecoration;
 import net.kyori.adventure.text.minimessage.MiniMessage;
 import net.kyori.adventure.text.serializer.legacy.LegacyComponentSerializer;
 import org.bukkit.Bukkit;
@@ -57,9 +55,7 @@ public class CommonUtils {
     public static Component parseToComponent(String text) {
         if (text == null) return Component.empty();
 
-        text = text.replaceAll("§", "&");
-
-        return MineDown.parse(text).decoration(TextDecoration.ITALIC, false);
+        return LEGACY_COMPONENT_SERIALIZER.deserialize(CMIChatColor.colorize(text));
     }
 
     @Nullable public static <T> T getIf(Iterable<T> iterable, Predicate<T> filter) {

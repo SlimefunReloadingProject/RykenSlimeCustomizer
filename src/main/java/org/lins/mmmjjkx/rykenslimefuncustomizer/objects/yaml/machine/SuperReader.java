@@ -69,7 +69,7 @@ public class SuperReader extends YamlReader<SlimefunItem> {
                 (Constructor<? extends SlimefunItem>) clazz.getConstructors()[ctorIndex];
         SlimefunItemStack slimefunItemStack = new SlimefunItemStack(s, stack);
         Object[] args =
-                section.getList("args") == null ? null : section.getList("args").toArray();
+                section.getList("args") == null ? null : section.getList("args", new ArrayList<>()).toArray();
         List<Object> argTemplate =
                 (List<Object>) section.getList("arg_template", List.of("group", "item", "recipe_type", "recipe"));
         Object[] originArgs = argTemplate.stream()
@@ -103,7 +103,7 @@ public class SuperReader extends YamlReader<SlimefunItem> {
                 try {
                     method = clazz.getDeclaredMethod(
                             methodName,
-                            Arrays.stream(args1).map(x -> x.getClass()).toArray(Class<?>[]::new));
+                            Arrays.stream(args1).map(Object::getClass).toArray(Class<?>[]::new));
                 } catch (NoSuchMethodException e) {
                     ExceptionHandler.handleError("没有找到方法", e);
                 }
@@ -140,6 +140,11 @@ public class SuperReader extends YamlReader<SlimefunItem> {
                 }
             }
         }
+
+        if (group.getSecondValue() != null) {
+            instance.setItemGroup(group.getSecondValue());
+        }
+
         instance.register(RykenSlimefunCustomizer.INSTANCE);
 
         return instance;
