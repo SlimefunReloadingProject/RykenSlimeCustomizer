@@ -6,6 +6,7 @@ import io.github.thebusybiscuit.slimefun4.api.items.SlimefunItemStack;
 import io.github.thebusybiscuit.slimefun4.api.recipes.RecipeType;
 import io.github.thebusybiscuit.slimefun4.libraries.dough.collections.Pair;
 import java.lang.reflect.Constructor;
+import java.lang.reflect.Field;
 import java.lang.reflect.InvocationTargetException;
 import java.lang.reflect.Method;
 import java.util.ArrayList;
@@ -22,6 +23,7 @@ import org.lins.mmmjjkx.rykenslimefuncustomizer.objects.ProjectAddon;
 import org.lins.mmmjjkx.rykenslimefuncustomizer.objects.yaml.YamlReader;
 import org.lins.mmmjjkx.rykenslimefuncustomizer.utils.CommonUtils;
 import org.lins.mmmjjkx.rykenslimefuncustomizer.utils.ExceptionHandler;
+import org.lins.mmmjjkx.rykenslimefuncustomizer.utils.ReflectionUtils;
 
 public class SuperReader extends YamlReader<SlimefunItem> {
     public SuperReader(YamlConfiguration config) {
@@ -113,6 +115,18 @@ public class SuperReader extends YamlReader<SlimefunItem> {
                     } catch (IllegalAccessException | InvocationTargetException e) {
                         ExceptionHandler.handleError("方法调用异常", e);
                     }
+                }
+            }
+        }
+
+        if (section.contains("field")) {
+            ConfigurationSection fieldArray = section.getConfigurationSection("field");
+            for (String fieldName : fieldArray.getKeys(false)) {
+                Object object = section.get(fieldName);
+                try {
+                    ReflectionUtils.setField(instance, fieldName, object);
+                } catch (NoSuchFieldException | IllegalAccessException e) {
+                    ExceptionHandler.handleError("属性修改异常", e);
                 }
             }
         }
