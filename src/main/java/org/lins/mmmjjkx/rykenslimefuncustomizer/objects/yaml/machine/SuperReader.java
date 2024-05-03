@@ -5,10 +5,8 @@ import io.github.thebusybiscuit.slimefun4.api.items.SlimefunItem;
 import io.github.thebusybiscuit.slimefun4.api.items.SlimefunItemStack;
 import io.github.thebusybiscuit.slimefun4.api.recipes.RecipeType;
 import io.github.thebusybiscuit.slimefun4.libraries.dough.collections.Pair;
-import java.lang.reflect.Constructor;
-import java.lang.reflect.Field;
-import java.lang.reflect.InvocationTargetException;
-import java.lang.reflect.Method;
+
+import java.lang.reflect.*;
 import java.util.ArrayList;
 import java.util.Arrays;
 import java.util.List;
@@ -122,10 +120,21 @@ public class SuperReader extends YamlReader<SlimefunItem> {
         if (section.contains("field")) {
             ConfigurationSection fieldArray = section.getConfigurationSection("field");
             for (String fieldName : fieldArray.getKeys(false)) {
-                Object object = section.get(fieldName);
                 try {
-                    ReflectionUtils.setField(instance, fieldName, object);
-                } catch (NoSuchFieldException | IllegalAccessException e) {
+                    Field[] fields = ReflectionUtils.getAllFields(instance);
+                    Field field = null;
+                    for (Field f : fields) {
+                        if (f.getName().equals(fieldName)) {
+                            field = f;
+                            break;
+                        }
+                    }
+                    if (field == null) throw new NoSuchFieldException(fieldName);
+                    if (Modifier.isStatic(field.getModifiers())) throw new IllegalAccessException(fieldName + "为static");
+                    field.setAccessible(true);
+                    Object object = fieldArray.getObject(fieldName, field.getType());
+                    field.set(instance, object);
+                } catch (Exception e) {
                     ExceptionHandler.handleError("属性修改异常", e);
                 }
             }
