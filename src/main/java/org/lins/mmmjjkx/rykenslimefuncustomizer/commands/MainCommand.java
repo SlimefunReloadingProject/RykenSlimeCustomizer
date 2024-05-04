@@ -11,7 +11,7 @@ import net.kyori.adventure.text.Component;
 import org.bukkit.Material;
 import org.bukkit.command.Command;
 import org.bukkit.command.CommandSender;
-import org.bukkit.command.TabCompleter;
+import org.bukkit.command.TabExecutor;
 import org.bukkit.configuration.file.YamlConfiguration;
 import org.bukkit.entity.Player;
 import org.bukkit.inventory.ItemStack;
@@ -24,21 +24,10 @@ import org.lins.mmmjjkx.rykenslimefuncustomizer.objects.ProjectAddon;
 import org.lins.mmmjjkx.rykenslimefuncustomizer.objects.ProjectAddonLoader;
 import org.lins.mmmjjkx.rykenslimefuncustomizer.utils.CommonUtils;
 
-public class MainCommand extends Command implements TabCompleter {
-    public MainCommand(@NotNull String name) {
-        super(name);
-    }
-
-    protected MainCommand(
-            @NotNull String name,
-            @NotNull String description,
-            @NotNull String usageMessage,
-            @NotNull List<String> aliases) {
-        super(name, description, usageMessage, aliases);
-    }
-
+public class MainCommand implements TabExecutor {
     @Override
-    public boolean execute(@NotNull CommandSender sender, @NotNull String label, @NotNull String[] args) {
+    public boolean onCommand(
+            @NotNull CommandSender sender, @NotNull Command command, @NotNull String label, @NotNull String[] args) {
         if (args.length == 0) {
             sendHelp(sender);
             return true;

@@ -94,7 +94,9 @@ public class ArmorReader extends YamlReader<List<CustomArmorPiece>> {
                 }
 
                 potionEffects.add(new PotionEffect(
-                        type, Slimefun.getCfg().getInt("options.armor-update-interval") * 2, amplifier));
+                        type,
+                        Slimefun.getCfg().getInt("options.armor-update-interval") * 2,
+                        amplifier));
             }
 
             SlimefunItemStack slimefunStack = new SlimefunItemStack(id, stack);

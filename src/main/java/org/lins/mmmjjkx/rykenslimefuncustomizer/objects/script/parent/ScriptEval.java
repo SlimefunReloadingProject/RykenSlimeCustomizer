@@ -1,6 +1,8 @@
 package org.lins.mmmjjkx.rykenslimefuncustomizer.objects.script.parent;
 
 import com.google.errorprone.annotations.CanIgnoreReturnValue;
+import com.oracle.truffle.api.strings.TruffleString;
+import com.oracle.truffle.js.runtime.Strings;
 import com.xzavier0722.mc.plugin.slimefun4.storage.controller.SlimefunBlockData;
 import com.xzavier0722.mc.plugin.slimefun4.storage.util.StorageCacheUtils;
 import io.github.thebusybiscuit.slimefun4.api.items.SlimefunItem;
@@ -10,6 +12,8 @@ import java.io.FileNotFoundException;
 import java.io.IOException;
 import java.nio.charset.StandardCharsets;
 import java.nio.file.Files;
+import java.security.Permission;
+import java.security.Permissions;
 import java.util.Random;
 import java.util.function.BiConsumer;
 import java.util.function.BiFunction;
@@ -24,6 +28,7 @@ import org.bukkit.Bukkit;
 import org.bukkit.Location;
 import org.bukkit.entity.Player;
 import org.bukkit.inventory.ItemStack;
+import org.graalvm.polyglot.HostAccess;
 import org.jetbrains.annotations.Nullable;
 import org.lins.mmmjjkx.rykenslimefuncustomizer.objects.ProjectAddon;
 import org.lins.mmmjjkx.rykenslimefuncustomizer.objects.script.ban.CommandSafe;
@@ -36,6 +41,40 @@ import org.lins.mmmjjkx.rykenslimefuncustomizer.utils.ExceptionHandler;
 
 @Getter(AccessLevel.PROTECTED)
 public abstract class ScriptEval {
+    // 虽然引擎不让我们开放这两个包，但是我们还是把它留在这
+    protected final TruffleString[] EXTERNAL_PACKAGES =
+            new TruffleString[] {Strings.constant("io"), Strings.constant("net")};
+
+    protected final HostAccess UNIVERSAL_HOST_ACCESS = HostAccess.newBuilder()
+            .allowPublicAccess(true)
+            .allowAllImplementations(true)
+            .allowAllClassImplementations(true)
+            .allowArrayAccess(true)
+            .allowListAccess(true)
+            .allowBufferAccess(false)
+            .allowIterableAccess(true)
+            .allowIteratorAccess(true)
+            .allowMapAccess(true)
+            .allowAccessInheritance(true)
+            .targetTypeMapping(Double.class, Float.class, null, Double::floatValue)
+            .targetTypeMapping(Integer.class, Float.class, null, Integer::floatValue)
+            .targetTypeMapping(Boolean.class, String.class, null, String::valueOf)
+            .targetTypeMapping(Integer.class, String.class, null, String::valueOf)
+            .targetTypeMapping(Character.class, String.class, null, String::valueOf)
+            .targetTypeMapping(Long.class, String.class, null, String::valueOf)
+            .targetTypeMapping(Float.class, String.class, null, String::valueOf)
+            .targetTypeMapping(Double.class, String.class, null, String::valueOf)
+            .targetTypeMapping(Object.class, String.class, null, String::valueOf)
+            .denyAccess(System.class)
+            .denyAccess(Process.class)
+            .denyAccess(Runtime.class)
+            .denyAccess(ProcessBuilder.class)
+            .denyAccess(Class.class)
+            .denyAccess(ClassLoader.class)
+            .denyAccess(Permission.class)
+            .denyAccess(Permissions.class)
+            .build();
+
     private final File file;
     private String fileContext;
 

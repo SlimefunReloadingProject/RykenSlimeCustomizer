@@ -13,8 +13,10 @@ import java.util.Set;
 import java.util.TreeMap;
 import java.util.regex.Matcher;
 import java.util.regex.Pattern;
+
 import org.bukkit.ChatColor;
 import org.bukkit.Color;
+
 import org.lins.mmmjjkx.rykenslimefuncustomizer.libraries.Version.Version;
 
 public class CMIChatColor {
@@ -26,23 +28,19 @@ public class CMIChatColor {
 
     static {
         for (CMICustomColors one : CMICustomColors.values()) {
-            CUSTOM_BY_NAME.put(
-                    one.name().toLowerCase().replace("_", ""), new CMIChatColor(one.toString(), one.getHex()));
+            CUSTOM_BY_NAME.put(one.name().toLowerCase().replace("_", ""), new CMIChatColor(one.toString(), one.getHex()));
             CUSTOM_BY_HEX.put(one.getHex().toLowerCase(), new CMIChatColor(one.toString(), one.getHex()));
-            //	    if (one.getExtra() != null) {
-            //		for (String extra : one.getExtra()) {
-            //		    CUSTOM_BY_NAME.put(extra.toLowerCase().replace("_", ""), new CMIChatColor(extra.replace(" ", "_"),
-            // one.getHex()));
-            //		}
-            //	    }
+//	    if (one.getExtra() != null) {
+//		for (String extra : one.getExtra()) {
+//		    CUSTOM_BY_NAME.put(extra.toLowerCase().replace("_", ""), new CMIChatColor(extra.replace(" ", "_"), one.getHex()));
+//		}
+//	    }
         }
         for (float x = 0.0F; x <= 1; x += 0.1F) {
             for (float z = 0.1F; z <= 1; z += 0.1F) {
                 for (float y = 0; y <= 1; y += 0.03F) {
                     java.awt.Color color = java.awt.Color.getHSBColor(y, x, z);
-                    StringBuilder hex = new StringBuilder()
-                            .append(Integer.toHexString(
-                                    (color.getRed() << 16) + (color.getGreen() << 8) + color.getBlue() & 0xffffff));
+                    StringBuilder hex = new StringBuilder().append(Integer.toHexString((color.getRed() << 16) + (color.getGreen() << 8) + color.getBlue() & 0xffffff));
                     while (hex.length() < 6) {
                         hex.append("0").append(hex);
                     }
@@ -93,9 +91,7 @@ public class CMIChatColor {
                     sb.append("/");
                     break;
                 default:
-                    if ((ch >= '\u0000' && ch <= '\u001F')
-                            || (ch >= '\u007F' && ch <= '\u009F')
-                            || (ch >= '\u2000' && ch <= '\u20FF')) {
+                    if ((ch >= '\u0000' && ch <= '\u001F') || (ch >= '\u007F' && ch <= '\u009F') || (ch >= '\u2000' && ch <= '\u20FF')) {
                         String ss = Integer.toHexString(ch);
                         sb.append("\\u");
                         sb.append("0".repeat(4 - ss.length()));
@@ -112,11 +108,9 @@ public class CMIChatColor {
         return text.replace("#", "\\#").replace("{", "\\{").replace("}", "\\}");
     }
 
-    public static final String hexColorRegex =
-            "(\\" + colorCodePrefix + ")([0-9A-Fa-f]{6}|[0-9A-Fa-f]{3})(\\" + colorCodeSuffix + ")";
+    public static final String hexColorRegex = "(\\" + colorCodePrefix + ")([0-9A-Fa-f]{6}|[0-9A-Fa-f]{3})(\\" + colorCodeSuffix + ")";
 
-    public static final Pattern cleanOfficialColorRegexPattern =
-            Pattern.compile("(?<!\\{|:\"|" + colorReplacerPlaceholder + ")#([a-fA-F0-9]{6}|[a-fA-F0-9]{3})");
+    public static final Pattern cleanOfficialColorRegexPattern = Pattern.compile("(?<!\\{|:\"|" + colorReplacerPlaceholder + ")#([a-fA-F0-9]{6}|[a-fA-F0-9]{3})");
 
     public static final Pattern cleanQuirkyHexColorRegexPattern = Pattern.compile("&#([a-fA-F0-9]{6}|[a-fA-F0-9]{3})");
 
@@ -133,12 +127,9 @@ public class CMIChatColor {
 
     public static final String hexColorDecolRegex = "(&x)(&[0-9A-Fa-f]){6}";
 
-    public static final Pattern postGradientPattern = Pattern.compile("(" + hexColorRegex + "|" + ColorNameRegex + ")"
-            + "(.)" + "(" + hexColorRegex + "|" + ColorNameRegex + ")");
-    public static final Pattern post2GradientPattern = Pattern.compile("(" + hexColorRegex + "|" + ColorNameRegex + ")"
-            + "(.)" + "((" + hexColorRegex + "|" + ColorNameRegex + ")" + "(.))+");
-    public static final Pattern fullPattern = Pattern.compile(
-            "(&[0123456789abcdefklmnorABCDEFKLMNOR])|" + hexColorRegex + "|" + ColorNameRegex + "|" + ColorFontRegex);
+    public static final Pattern postGradientPattern = Pattern.compile("(" + hexColorRegex + "|" + ColorNameRegex + ")" + "(.)" + "(" + hexColorRegex + "|" + ColorNameRegex + ")");
+    public static final Pattern post2GradientPattern = Pattern.compile("(" + hexColorRegex + "|" + ColorNameRegex + ")" + "(.)" + "((" + hexColorRegex + "|" + ColorNameRegex + ")" + "(.))+");
+    public static final Pattern fullPattern = Pattern.compile("(&[0123456789abcdefklmnorABCDEFKLMNOR])|" + hexColorRegex + "|" + ColorNameRegex + "|" + ColorFontRegex);
 
     public static final Pattern formatPattern = Pattern.compile("(&[klmnorKLMNOR])");
 
@@ -186,13 +177,18 @@ public class CMIChatColor {
     }
 
     public CMIChatColor(String name, String hex) {
-        if (hex == null) return;
+        if (hex == null)
+            return;
 
-        if (hex.startsWith(colorCodePrefix)) hex = hex.substring(colorCodePrefix.length());
-        if (hex.endsWith(colorCodeSuffix)) hex = hex.substring(0, hex.length() - colorCodeSuffix.length());
-        if (hex.startsWith("#")) hex = hex.substring(1);
+        if (hex.startsWith(colorCodePrefix))
+            hex = hex.substring(colorCodePrefix.length());
+        if (hex.endsWith(colorCodeSuffix))
+            hex = hex.substring(0, hex.length() - colorCodeSuffix.length());
+        if (hex.startsWith("#"))
+            hex = hex.substring(1);
 
-        if (hex.length() == 3 || hex.length() == 6) this.hexCode = hex;
+        if (hex.length() == 3 || hex.length() == 6)
+            this.hexCode = hex;
         this.name = name;
 
         try {
@@ -227,16 +223,14 @@ public class CMIChatColor {
         this.greenChannel = green;
         this.blueChannel = blue;
 
-        if (Version.isCurrentLower(Version.v1_16_R1) && name.equalsIgnoreCase("Hex")) return;
+        if (Version.isCurrentLower(Version.v1_16_R1) && name.equalsIgnoreCase("Hex"))
+            return;
         BY_CHAR.put(c, this);
         BY_NAME.put(this.getName().toLowerCase().replace("_", ""), this);
     }
 
     public boolean isValid() {
-        return this.c != 10
-                || getHex() != null
-                || this.name != null
-                || this.blueChannel > -1 && this.greenChannel > -1 && this.redChannel > -1;
+        return this.c != 10 || getHex() != null || this.name != null || this.blueChannel > -1 && this.greenChannel > -1 && this.redChannel > -1;
     }
 
     public static String processGradient(String text) {
@@ -288,10 +282,7 @@ public class CMIChatColor {
             }
 
             if (continuous) {
-                updated.append(colorCodePrefix)
-                        .append(gradientMatch.group(5).replace("#", ""))
-                        .append(">")
-                        .append(colorCodeSuffix);
+                updated.append(colorCodePrefix).append(gradientMatch.group(5).replace("#", "")).append(">").append(colorCodeSuffix);
             }
 
             text = text.replace(fullmatch, updated.toString());
@@ -311,7 +302,8 @@ public class CMIChatColor {
 
     public static String translate(String text) {
 
-        if (text == null) return null;
+        if (text == null)
+            return null;
 
         text = processGradient(text);
 
@@ -347,7 +339,8 @@ public class CMIChatColor {
             while (nameMatch.find()) {
                 String string = nameMatch.group(2);
                 CMIChatColor cn = getByCustomName(string.toLowerCase().replace("_", ""));
-                if (cn == null) continue;
+                if (cn == null)
+                    continue;
                 String gex = cn.getHex();
                 StringBuilder magic = new StringBuilder("§x");
                 for (char c : gex.toCharArray()) {
@@ -377,7 +370,8 @@ public class CMIChatColor {
                     String shorten = string.substring(2);
                     for (char c : shorten.toCharArray()) {
                         magic.append('§').append(c);
-                        if (shorten.length() == 3) magic.append('§').append(c);
+                        if (shorten.length() == 3)
+                            magic.append('§').append(c);
                     }
                     text = text.replace(string, magic.toString());
                 }
@@ -393,7 +387,8 @@ public class CMIChatColor {
                     copy = copy.substring(1, copy.length());
                     if (copy.length() == 3) {
                         StringBuilder sb = new StringBuilder();
-                        for (int i = 0; i < copy.length(); i++) sb.append(copy.charAt(i) + "" + copy.charAt(i));
+                        for (int i = 0; i < copy.length(); i++)
+                            sb.append(copy.charAt(i) + "" + copy.charAt(i));
                         copy = sb.toString();
                     }
                     copy = getClosestVanilla(copy);
@@ -403,7 +398,8 @@ public class CMIChatColor {
                     String shorten = string.substring(1, string.length());
                     for (char c : shorten.toCharArray()) {
                         magic.append('§').append(c);
-                        if (shorten.length() == 3) magic.append('§').append(c);
+                        if (shorten.length() == 3)
+                            magic.append('§').append(c);
                     }
                     text = text.replace(string, magic.toString());
                 }
@@ -415,7 +411,8 @@ public class CMIChatColor {
 
     public static String convertNamedHex(String text) {
 
-        if (text == null) return null;
+        if (text == null)
+            return null;
 
         text = processGradient(text);
 
@@ -424,7 +421,8 @@ public class CMIChatColor {
             while (nameMatch.find()) {
                 String string = nameMatch.group(2);
                 CMIChatColor cn = getByCustomName(string.toLowerCase().replace("_", ""));
-                if (cn == null) continue;
+                if (cn == null)
+                    continue;
                 String gex = cn.getHex();
                 StringBuilder magic = new StringBuilder(colorCodePrefix);
                 for (char c : gex.toCharArray()) {
@@ -439,12 +437,14 @@ public class CMIChatColor {
     }
 
     public static String applyEqualGradient(String text, List<CMIChatColor> gradients) {
-        if (gradients == null || gradients.isEmpty()) return text;
+        if (gradients == null || gradients.isEmpty())
+            return text;
         int size = text.length() / gradients.size();
         StringBuilder messageWithGradient = new StringBuilder();
         messageWithGradient.append(gradients.get(0).getFormatedHex(">"));
         for (int y = 0; y <= gradients.size() - 1; y++) {
-            if (y > 0 && size > 0) messageWithGradient.append(gradients.get(y).getFormatedHex("<>"));
+            if (y > 0 && size > 0)
+                messageWithGradient.append(gradients.get(y).getFormatedHex("<>"));
             for (int i = 0; i < size; i++) {
                 messageWithGradient.append(text.charAt(0));
                 text = text.substring(1);
@@ -460,7 +460,8 @@ public class CMIChatColor {
     }
 
     public static String colorize(String text) {
-        if (text == null) return null;
+        if (text == null)
+            return null;
         return translate(text);
     }
 
@@ -473,9 +474,7 @@ public class CMIChatColor {
     }
 
     public static String flaten(String text, boolean colorizeBefore) {
-        return deColorize(text, colorizeBefore)
-                .replace("&", colorReplacerPlaceholder)
-                .replace(colorCodePrefix, colorHexReplacerPlaceholder);
+        return deColorize(text, colorizeBefore).replace("&", colorReplacerPlaceholder).replace(colorCodePrefix, colorHexReplacerPlaceholder);
     }
 
     public static String deColorize(String text) {
@@ -483,8 +482,10 @@ public class CMIChatColor {
     }
 
     public static String deColorize(String text, boolean colorizeBeforeDe) {
-        if (text == null) return null;
-        if (colorizeBeforeDe) text = translate(text);
+        if (text == null)
+            return null;
+        if (colorizeBeforeDe)
+            text = translate(text);
         text = text.replace("§", "&");
 
         if (text.contains("&x")) {
@@ -493,211 +494,208 @@ public class CMIChatColor {
                 String reg = match.group(3).replace("&", "");
                 CMIChatColor custom = CUSTOM_BY_HEX.get(reg.toLowerCase());
                 if (custom != null) {
-                    text = text.replace(
-                            match.group(),
-                            colorCodePrefix + custom.getName().toLowerCase().replace("_", "") + colorCodeSuffix);
+                    text = text.replace(match.group(), colorCodePrefix + custom.getName().toLowerCase().replace("_", "") + colorCodeSuffix);
                 } else {
                     text = text.replace(match.group(), colorCodePrefix + reg + colorCodeSuffix);
                 }
             }
         }
 
-        //	Bukkit.getConsoleSender().sendMessage(text);
-        //
-        //	if (text.contains(colorCodePrefix)) {
-        //	    String t = text;
-        //
-        //	    Matcher match = post2GradientPattern.matcher(t);
-        //	    StringBuilder endTest = new StringBuilder();
-        //
-        //	    Pattern pat =
-        // Pattern.compile("((\\{#)([0-9A-Fa-f]{6}|[0-9A-Fa-f]{3})(\\})|(\\{#)([a-zA-Z_]{3,})(\\}))(.)");
-        //
-        //	    while (match.find()) {
-        //		String fullMatch = match.group();
-        //
-        //		CMIChatColor prevColor = null;
-        //		String prevColorS = null;
-        //		String prevChar = "";
-        //		double prevDist = Double.MAX_VALUE;
-        //		double prevDeltaDist = Double.MAX_VALUE;
-        //
-        //		Matcher subMatch = pat.matcher(fullMatch);
-        //
-        //		StringBuilder subEndTest = new StringBuilder();
-        //
-        //		while (subMatch.find()) {
-        //
-        //		    String color = subMatch.group(1);
-        //		    CMIChatColor h1 = getColor(color);
-        //		    String group8 = subMatch.group(8);
-        //
-        //		    if (prevColorS != null && prevColor != null) {
-        //
-        //			java.awt.Color c1 = null;
-        //			try {
-        //			    c1 = new java.awt.Color(
-        //				Integer.valueOf(h1.getHex().substring(0, 2), 16),
-        //				Integer.valueOf(h1.getHex().substring(2, 4), 16),
-        //				Integer.valueOf(h1.getHex().substring(4, 6), 16));
-        //			} catch (Throwable e) {
-        //			    break;
-        //			}
-        //
-        //			java.awt.Color c2 = null;
-        //			try {
-        //			    c2 = new java.awt.Color(
-        //				Integer.valueOf(prevColor.getHex().substring(0, 2), 16),
-        //				Integer.valueOf(prevColor.getHex().substring(2, 4), 16),
-        //				Integer.valueOf(prevColor.getHex().substring(4, 6), 16));
-        //			} catch (Throwable e) {
-        //			    break;
-        //			}
-        //
-        //			int red1 = c1.getRed();
-        //			int red2 = c2.getRed();
-        //			int rmean = (red1 + red2) >> 1;
-        //			int r = red1 - red2;
-        //			int g = c1.getGreen() - c2.getGreen();
-        //			int b = c1.getBlue() - c2.getBlue();
-        //			double dist = Math.sqrt((((512 + rmean) * r * r) >> 8) + 4 * g * g + (((767 - rmean) * b * b) >> 8));
-        //
-        //
-        //			double cdist = prevDist - dist;
-        //			cdist = cdist < 0 ? -cdist : cdist;
-        //
-        //			if (prevDist == 0) {
-        //
-        //			    subEndTest.append(prevChar);
-        //			} else if (dist == 0) {
-        //			    String converted = prevColorS.substring(0, prevColorS.length() - 1) + "<>}";
-        //			    subEndTest.append(prevChar + converted);
-        //			} else if (prevDist == Double.MAX_VALUE) {
-        //			    String converted = prevColorS.substring(0, prevColorS.length() - 1) + ">}";
-        //			    subEndTest.append(converted + prevChar);
-        //			} else {
-        //			    if (prevDist - dist <= 3 && prevDist - dist >= -3) {
-        //				subEndTest.append(prevChar);
-        //			    } else {
-        //				subEndTest.append(prevColorS + prevChar);
-        //			    }
-        //			}
-        //			prevDeltaDist = prevDist - dist;
-        //			prevDist = dist;
-        //		    }
-        //		    prevColor = h1;
-        //		    prevColorS = color;
-        //		    prevChar = group8;
-        //		}
-        //		if (prevColorS != null) {
-        //		    if (prevDeltaDist <= 3 && prevDeltaDist >= -3)
-        //			subEndTest.append(prevChar + prevColorS.substring(0, prevColorS.length() - 1) + "<}");
-        //		    else
-        //			subEndTest.append(prevColorS.substring(0, prevColorS.length() - 1) + "}" + prevChar);
-        //		}
-        //
-        //		Bukkit.getConsoleSender().sendMessage("Into:" + fullMatch + "  " + subEndTest.toString());
-        //
-        //		t = t.replace(fullMatch, subEndTest.toString());
-        //
-        //	    }
-        //	}
+//	Bukkit.getConsoleSender().sendMessage(text);
+//
+//	if (text.contains(colorCodePrefix)) {
+//	    String t = text;
+//
+//	    Matcher match = post2GradientPattern.matcher(t);
+//	    StringBuilder endTest = new StringBuilder();
+//
+//	    Pattern pat = Pattern.compile("((\\{#)([0-9A-Fa-f]{6}|[0-9A-Fa-f]{3})(\\})|(\\{#)([a-zA-Z_]{3,})(\\}))(.)");
+//
+//	    while (match.find()) {
+//		String fullMatch = match.group();
+//
+//		CMIChatColor prevColor = null;
+//		String prevColorS = null;
+//		String prevChar = "";
+//		double prevDist = Double.MAX_VALUE;
+//		double prevDeltaDist = Double.MAX_VALUE;
+//
+//		Matcher subMatch = pat.matcher(fullMatch);
+//
+//		StringBuilder subEndTest = new StringBuilder();
+//
+//		while (subMatch.find()) {
+//
+//		    String color = subMatch.group(1);
+//		    CMIChatColor h1 = getColor(color);
+//		    String group8 = subMatch.group(8);
+//
+//		    if (prevColorS != null && prevColor != null) {
+//
+//			java.awt.Color c1 = null;
+//			try {
+//			    c1 = new java.awt.Color(
+//				Integer.valueOf(h1.getHex().substring(0, 2), 16),
+//				Integer.valueOf(h1.getHex().substring(2, 4), 16),
+//				Integer.valueOf(h1.getHex().substring(4, 6), 16));
+//			} catch (Throwable e) {
+//			    break;
+//			}
+//
+//			java.awt.Color c2 = null;
+//			try {
+//			    c2 = new java.awt.Color(
+//				Integer.valueOf(prevColor.getHex().substring(0, 2), 16),
+//				Integer.valueOf(prevColor.getHex().substring(2, 4), 16),
+//				Integer.valueOf(prevColor.getHex().substring(4, 6), 16));
+//			} catch (Throwable e) {
+//			    break;
+//			}
+//
+//			int red1 = c1.getRed();
+//			int red2 = c2.getRed();
+//			int rmean = (red1 + red2) >> 1;
+//			int r = red1 - red2;
+//			int g = c1.getGreen() - c2.getGreen();
+//			int b = c1.getBlue() - c2.getBlue();
+//			double dist = Math.sqrt((((512 + rmean) * r * r) >> 8) + 4 * g * g + (((767 - rmean) * b * b) >> 8));
+//
+//
+//			double cdist = prevDist - dist;
+//			cdist = cdist < 0 ? -cdist : cdist;
+//
+//			if (prevDist == 0) {
+//
+//			    subEndTest.append(prevChar);
+//			} else if (dist == 0) {
+//			    String converted = prevColorS.substring(0, prevColorS.length() - 1) + "<>}";
+//			    subEndTest.append(prevChar + converted);
+//			} else if (prevDist == Double.MAX_VALUE) {
+//			    String converted = prevColorS.substring(0, prevColorS.length() - 1) + ">}";
+//			    subEndTest.append(converted + prevChar);
+//			} else {
+//			    if (prevDist - dist <= 3 && prevDist - dist >= -3) {
+//				subEndTest.append(prevChar);
+//			    } else {
+//				subEndTest.append(prevColorS + prevChar);
+//			    }
+//			}
+//			prevDeltaDist = prevDist - dist;
+//			prevDist = dist;
+//		    }
+//		    prevColor = h1;
+//		    prevColorS = color;
+//		    prevChar = group8;
+//		}
+//		if (prevColorS != null) {
+//		    if (prevDeltaDist <= 3 && prevDeltaDist >= -3)
+//			subEndTest.append(prevChar + prevColorS.substring(0, prevColorS.length() - 1) + "<}");
+//		    else
+//			subEndTest.append(prevColorS.substring(0, prevColorS.length() - 1) + "}" + prevChar);
+//		}
+//
+//		Bukkit.getConsoleSender().sendMessage("Into:" + fullMatch + "  " + subEndTest.toString());
+//
+//		t = t.replace(fullMatch, subEndTest.toString());
+//
+//	    }
+//	}
 
-        //	if (text.contains(colorCodePrefix)) {
-        //	    String t = text;
-        //	    Matcher match = postGradientPattern.matcher(t);
-        //	    double prevDist = Double.MAX_VALUE;
-        //	    StringBuilder endTest = new StringBuilder();
-        //	    String prevG9 = "";
-        //	    while (match.find()) {
-        //		String g1 = match.group(1);
-        //
-        //		if (!t.startsWith(g1)) {
-        //
-        //		    endTest.append(t.split(escape(g1), 2)[0]);
-        //		    String oneC = "";
-        //		    if (!prevG9.isEmpty()) {
-        //			oneC = String.valueOf(t.split(escape(g1), 2)[1].charAt(0));
-        //			t = t.substring(1);
-        //		    }
-        //
-        ////		    if (!prevG9.isEmpty()) {
-        ////			String colorHex = g1.substring(0, g1.length() - 1) + ">}";
-        ////			t = colorHex + oneC + t.split(escape(g1), 2)[1];
-        ////		    } else
-        //			t = g1 + oneC + t.split(escape(g1), 2)[1];
-        //		    match = postGradientPattern.matcher(t);
-        ////		    prevDist = Double.MAX_VALUE;
-        //		    prevG9 = "";
-        ////		    prevDist = Double.MAX_VALUE;
-        //		    continue;
-        //		}
-        //
-        //		String g9 = match.group(9);
-        //		String g8 = match.group(8);
-        //		CMIChatColor h1 = getColor(g1);
-        //		CMIChatColor h2 = getColor(g9);
-        //
-        //		if (h1.getHex() == null || h2.getHex() == null)
-        //		    continue;
-        //
-        //		java.awt.Color c1 = null;
-        //		try {
-        //		    c1 = new java.awt.Color(
-        //			Integer.valueOf(h1.getHex().substring(0, 2), 16),
-        //			Integer.valueOf(h1.getHex().substring(2, 4), 16),
-        //			Integer.valueOf(h1.getHex().substring(4, 6), 16));
-        //		} catch (Throwable e) {
-        //		    break;
-        //		}
-        //
-        //		java.awt.Color c2 = null;
-        //		try {
-        //		    c2 = new java.awt.Color(
-        //			Integer.valueOf(h2.getHex().substring(0, 2), 16),
-        //			Integer.valueOf(h2.getHex().substring(2, 4), 16),
-        //			Integer.valueOf(h2.getHex().substring(4, 6), 16));
-        //		} catch (Throwable e) {
-        //		    break;
-        //		}
-        //
-        //		int red1 = c1.getRed();
-        //		int red2 = c2.getRed();
-        //		int rmean = (red1 + red2) >> 1;
-        //		int r = red1 - red2;
-        //		int g = c1.getGreen() - c2.getGreen();
-        //		int b = c1.getBlue() - c2.getBlue();
-        //		double dist = Math.sqrt((((512 + rmean) * r * r) >> 8) + 4 * g * g + (((767 - rmean) * b * b) >> 8));
-        //
-        //		String[] split = t.split(escape(g1) + match.group(8).replace("|", "\\|"), 2);
-        //		t = split[1];
-        //
-        //		endTest.append(split[0]);
-        //		if (prevDist == Double.MAX_VALUE) {
-        //		    String converted = g1.substring(0, g1.length() - 1) + ">}";
-        //		    endTest.append(converted + match.group(8));
-        //		} else {
-        //		    if (prevDist - dist <= 3) {
-        //			endTest.append(match.group(8));
-        //		    } else {
-        //			endTest.append(g1 + match.group(8));
-        //		    }
-        //		}
-        //		prevG9 = g9;
-        //
-        //		prevDist = dist;
-        //
-        //		match = postGradientPattern.matcher(t);
-        //
-        //	    }
-        //
-        //	    if (!prevG9.isEmpty()) {
-        //		prevG9 = prevG9.substring(0, prevG9.length() - 1) + "<}";
-        //	    }
-        //	    endTest.append(prevG9);
-        //	    endTest.append(t);
-        //	}
-        //
+//	if (text.contains(colorCodePrefix)) {
+//	    String t = text;
+//	    Matcher match = postGradientPattern.matcher(t);
+//	    double prevDist = Double.MAX_VALUE;
+//	    StringBuilder endTest = new StringBuilder();
+//	    String prevG9 = "";
+//	    while (match.find()) {
+//		String g1 = match.group(1);
+//
+//		if (!t.startsWith(g1)) {
+//
+//		    endTest.append(t.split(escape(g1), 2)[0]);
+//		    String oneC = "";
+//		    if (!prevG9.isEmpty()) {
+//			oneC = String.valueOf(t.split(escape(g1), 2)[1].charAt(0));
+//			t = t.substring(1);
+//		    }
+//
+////		    if (!prevG9.isEmpty()) {
+////			String colorHex = g1.substring(0, g1.length() - 1) + ">}";
+////			t = colorHex + oneC + t.split(escape(g1), 2)[1];
+////		    } else
+//			t = g1 + oneC + t.split(escape(g1), 2)[1];
+//		    match = postGradientPattern.matcher(t);
+////		    prevDist = Double.MAX_VALUE;
+//		    prevG9 = "";
+////		    prevDist = Double.MAX_VALUE;
+//		    continue;
+//		}
+//
+//		String g9 = match.group(9);
+//		String g8 = match.group(8);
+//		CMIChatColor h1 = getColor(g1);
+//		CMIChatColor h2 = getColor(g9);
+//
+//		if (h1.getHex() == null || h2.getHex() == null)
+//		    continue;
+//
+//		java.awt.Color c1 = null;
+//		try {
+//		    c1 = new java.awt.Color(
+//			Integer.valueOf(h1.getHex().substring(0, 2), 16),
+//			Integer.valueOf(h1.getHex().substring(2, 4), 16),
+//			Integer.valueOf(h1.getHex().substring(4, 6), 16));
+//		} catch (Throwable e) {
+//		    break;
+//		}
+//
+//		java.awt.Color c2 = null;
+//		try {
+//		    c2 = new java.awt.Color(
+//			Integer.valueOf(h2.getHex().substring(0, 2), 16),
+//			Integer.valueOf(h2.getHex().substring(2, 4), 16),
+//			Integer.valueOf(h2.getHex().substring(4, 6), 16));
+//		} catch (Throwable e) {
+//		    break;
+//		}
+//
+//		int red1 = c1.getRed();
+//		int red2 = c2.getRed();
+//		int rmean = (red1 + red2) >> 1;
+//		int r = red1 - red2;
+//		int g = c1.getGreen() - c2.getGreen();
+//		int b = c1.getBlue() - c2.getBlue();
+//		double dist = Math.sqrt((((512 + rmean) * r * r) >> 8) + 4 * g * g + (((767 - rmean) * b * b) >> 8));
+//
+//		String[] split = t.split(escape(g1) + match.group(8).replace("|", "\\|"), 2);
+//		t = split[1];
+//
+//		endTest.append(split[0]);
+//		if (prevDist == Double.MAX_VALUE) {
+//		    String converted = g1.substring(0, g1.length() - 1) + ">}";
+//		    endTest.append(converted + match.group(8));
+//		} else {
+//		    if (prevDist - dist <= 3) {
+//			endTest.append(match.group(8));
+//		    } else {
+//			endTest.append(g1 + match.group(8));
+//		    }
+//		}
+//		prevG9 = g9;
+//
+//		prevDist = dist;
+//
+//		match = postGradientPattern.matcher(t);
+//
+//	    }
+//
+//	    if (!prevG9.isEmpty()) {
+//		prevG9 = prevG9.substring(0, prevG9.length() - 1) + "<}";
+//	    }
+//	    endTest.append(prevG9);
+//	    endTest.append(t);
+//	}
+//
         return text;
     }
 
@@ -709,7 +707,8 @@ public class CMIChatColor {
     }
 
     public static String stripColor(String text) {
-        if (text == null) return null;
+        if (text == null)
+            return null;
         text = CMIChatColor.translate(text);
         return ChatColor.stripColor(text);
     }
@@ -737,25 +736,31 @@ public class CMIChatColor {
     }
 
     public static String getLastColors(String text) {
-        if (text == null) return null;
+        if (text == null)
+            return null;
 
         text = deColorize(text);
         Matcher match = hexColorRegexPatternLast.matcher(text);
         if (match.find()) {
             String colorByHex = match.group(0);
-            if (text.endsWith(colorByHex)) return colorByHex;
+            if (text.endsWith(colorByHex))
+                return colorByHex;
             String[] split = text.split(escape(colorByHex), 2);
-            if (split == null) return colorByHex;
+            if (split == null)
+                return colorByHex;
             String last = getLastColors(split[1]);
             return last == null || last.isEmpty() ? colorByHex : last;
+
         }
 
         match = hexColorNamePatternLast.matcher(text);
         if (match.find()) {
             String colorByName = match.group();
-            if (text.endsWith(colorByName)) return colorByName;
+            if (text.endsWith(colorByName))
+                return colorByName;
             String[] split = text.split(escape(colorByName), 2);
-            if (split == null) return colorByName;
+            if (split == null)
+                return colorByName;
             String last = getLastColors(split[1]);
             return last == null || last.isEmpty() ? colorByName : last;
         }
@@ -764,12 +769,14 @@ public class CMIChatColor {
     }
 
     public String getColorCode() {
-        if (hexCode != null) return colorCodePrefix + hexCode + colorCodeSuffix;
+        if (hexCode != null)
+            return colorCodePrefix + hexCode + colorCodeSuffix;
         return "&" + c;
     }
 
     public String getBukkitColorCode() {
-        if (hexCode != null) return translate(colorCodePrefix + hexCode + colorCodeSuffix);
+        if (hexCode != null)
+            return translate(colorCodePrefix + hexCode + colorCodeSuffix);
         return "§" + c;
     }
 
@@ -818,7 +825,8 @@ public class CMIChatColor {
 
     public static CMIChatColor getFormat(String text) {
 
-        if (text == null) return null;
+        if (text == null)
+            return null;
 
         String or = deColorize(text);
         text = text.replace("§", "&");
@@ -826,9 +834,11 @@ public class CMIChatColor {
         if (text.length() > 1) {
             String formated = text.toLowerCase().replace("_", "");
             CMIChatColor got = BY_NAME.get(formated);
-            if (got != null) return got;
+            if (got != null)
+                return got;
             got = CUSTOM_BY_NAME.get(formated);
-            if (got != null) return got;
+            if (got != null)
+                return got;
         }
 
         if (or.length() > 1 && String.valueOf(or.charAt(or.length() - 2)).equalsIgnoreCase("&")) {
@@ -845,7 +855,8 @@ public class CMIChatColor {
 
     public static CMIChatColor getColor(String text) {
 
-        if (text == null) return null;
+        if (text == null)
+            return null;
 
         String or = deColorize(text);
 
@@ -866,10 +877,12 @@ public class CMIChatColor {
         if (text.length() > 1) {
             String formated = text.toLowerCase().replace("_", "");
             CMIChatColor got = BY_NAME.get(formated);
-            if (got != null) return got;
+            if (got != null)
+                return got;
 
             got = CUSTOM_BY_NAME.get(formated);
-            if (got != null) return got;
+            if (got != null)
+                return got;
         }
 
         if (or.length() > 1 && String.valueOf(or.charAt(or.length() - 2)).equalsIgnoreCase("&")) {
@@ -883,7 +896,8 @@ public class CMIChatColor {
         }
 
         CMIChatColor hexColor = new CMIChatColor(text);
-        if (hexColor.getHex() != null) return hexColor;
+        if (hexColor.getHex() != null)
+            return hexColor;
 
         return null;
     }
@@ -891,7 +905,8 @@ public class CMIChatColor {
     public static CMIChatColor getRandomColor() {
         List<CMIChatColor> ls = new ArrayList<CMIChatColor>();
         for (Entry<String, CMIChatColor> one : BY_NAME.entrySet()) {
-            if (!one.getValue().isColor()) continue;
+            if (!one.getValue().isColor())
+                continue;
             ls.add(one.getValue());
         }
         Collections.shuffle(ls);
@@ -903,12 +918,14 @@ public class CMIChatColor {
     }
 
     public Color getRGBColor() {
-        if (blueChannel < 0) return null;
+        if (blueChannel < 0)
+            return null;
         return Color.fromRGB(redChannel, greenChannel, blueChannel);
     }
 
     public java.awt.Color getJavaColor() {
-        if (blueChannel < 0) return null;
+        if (blueChannel < 0)
+            return null;
         return new java.awt.Color(redChannel, greenChannel, blueChannel);
     }
 
@@ -934,8 +951,10 @@ public class CMIChatColor {
 
     public static CMIChatColor getByCustomName(String name) {
 
-        if (name.startsWith(colorCodePrefix)) name = name.substring(colorCodePrefix.length());
-        if (name.endsWith(colorCodeSuffix)) name = name.substring(0, name.length() - colorCodeSuffix.length());
+        if (name.startsWith(colorCodePrefix))
+            name = name.substring(colorCodePrefix.length());
+        if (name.endsWith(colorCodeSuffix))
+            name = name.substring(0, name.length() - colorCodeSuffix.length());
 
         if (name.equalsIgnoreCase("random")) {
             List<CMIChatColor> valuesList = new ArrayList<CMIChatColor>(CUSTOM_BY_NAME.values());
@@ -947,8 +966,10 @@ public class CMIChatColor {
     }
 
     public static CMIChatColor getByHex(String hex) {
-        if (hex.startsWith(colorCodePrefix)) hex = hex.substring(colorCodePrefix.length());
-        if (hex.endsWith(colorCodeSuffix)) hex = hex.substring(0, hex.length() - colorCodeSuffix.length());
+        if (hex.startsWith(colorCodePrefix))
+            hex = hex.substring(colorCodePrefix.length());
+        if (hex.endsWith(colorCodeSuffix))
+            hex = hex.substring(0, hex.length() - colorCodeSuffix.length());
         return CUSTOM_BY_HEX.get(hex.toLowerCase().replace("_", ""));
     }
 
@@ -967,8 +988,7 @@ public class CMIChatColor {
         int blue = (int) (255 - y * 255 * (1.0 + Math.sin(6.3 * x)) / 2);
         int green = (int) (255 - y * 255 * (1.0 + Math.cos(6.3 * x)) / 2);
         int red = (int) (255 - y * 255 * (1.0 - Math.sin(6.3 * x)) / 2);
-        StringBuilder hex =
-                new StringBuilder().append(Integer.toHexString((red << 16) + (green << 8) + blue & 0xffffff));
+        StringBuilder hex = new StringBuilder().append(Integer.toHexString((red << 16) + (green << 8) + blue & 0xffffff));
         while (hex.length() < 6) {
             hex.append("0" + hex);
         }
@@ -979,9 +999,7 @@ public class CMIChatColor {
         float percent = (percentage * 33F / 100F) / 100F;
 
         java.awt.Color color = java.awt.Color.getHSBColor(percent, 1, 1);
-        StringBuilder hex = new StringBuilder()
-                .append(Integer.toHexString(
-                        (color.getRed() << 16) + (color.getGreen() << 8) + color.getBlue() & 0xffffff));
+        StringBuilder hex = new StringBuilder().append(Integer.toHexString((color.getRed() << 16) + (color.getGreen() << 8) + color.getBlue() & 0xffffff));
         while (hex.length() < 6) {
             hex.append("0" + hex);
         }
@@ -1001,10 +1019,12 @@ public class CMIChatColor {
     }
 
     public static CMIChatColor getClosest(String hex) {
-        if (hex.startsWith("#")) hex = hex.substring(1);
+        if (hex.startsWith("#"))
+            hex = hex.substring(1);
 
         CMIChatColor closest = CUSTOM_BY_RGB.get(hex);
-        if (closest != null) return closest;
+        if (closest != null)
+            return closest;
 
         java.awt.Color c2 = null;
         try {
@@ -1047,7 +1067,8 @@ public class CMIChatColor {
 
     public static String getClosestVanilla(String hex) {
         try {
-            if (hex.startsWith("#")) hex = hex.substring(1);
+            if (hex.startsWith("#"))
+                hex = hex.substring(1);
 
             CMIChatColor old = CUSTOM_BY_HEX.get(hex);
             if (old != null && old.getChar() != 10) {
@@ -1068,7 +1089,8 @@ public class CMIChatColor {
             CMIChatColor closest = null;
             for (Entry<Character, CMIChatColor> one : BY_CHAR.entrySet()) {
 
-                if (!one.getValue().isColor()) continue;
+                if (!one.getValue().isColor())
+                    continue;
                 java.awt.Color c1 = new java.awt.Color(
                         one.getValue().getRed(),
                         one.getValue().getGreen(),
@@ -1115,4 +1137,5 @@ public class CMIChatColor {
         String hexCode = String.format("#%02x%02x%02x", redPart, greenPart, bluePart);
         return new CMIChatColor(hexCode);
     }
+
 }

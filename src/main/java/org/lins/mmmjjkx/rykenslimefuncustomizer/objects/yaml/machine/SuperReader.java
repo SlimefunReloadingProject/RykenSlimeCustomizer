@@ -5,11 +5,14 @@ import io.github.thebusybiscuit.slimefun4.api.items.SlimefunItem;
 import io.github.thebusybiscuit.slimefun4.api.items.SlimefunItemStack;
 import io.github.thebusybiscuit.slimefun4.api.recipes.RecipeType;
 import io.github.thebusybiscuit.slimefun4.libraries.dough.collections.Pair;
+
 import java.lang.reflect.*;
 import java.util.ArrayList;
 import java.util.Arrays;
 import java.util.List;
 import java.util.Objects;
+
+import io.github.thebusybiscuit.slimefun4.utils.ChestMenuUtils;
 import org.bukkit.configuration.ConfigurationSection;
 import org.bukkit.configuration.file.YamlConfiguration;
 import org.bukkit.inventory.ItemStack;
@@ -67,9 +70,8 @@ public class SuperReader extends YamlReader<SlimefunItem> {
         Constructor<? extends SlimefunItem> ctor =
                 (Constructor<? extends SlimefunItem>) clazz.getConstructors()[ctorIndex];
         SlimefunItemStack slimefunItemStack = new SlimefunItemStack(s, stack);
-        Object[] args = section.getList("args") == null
-                ? null
-                : section.getList("args", new ArrayList<>()).toArray();
+        Object[] args =
+                section.getList("args") == null ? null : section.getList("args", new ArrayList<>()).toArray();
         List<Object> argTemplate =
                 (List<Object>) section.getList("arg_template", List.of("group", "item", "recipe_type", "recipe"));
         Object[] originArgs = argTemplate.stream()
@@ -131,8 +133,7 @@ public class SuperReader extends YamlReader<SlimefunItem> {
                         }
                     }
                     if (field == null) throw new NoSuchFieldException(fieldName);
-                    if (Modifier.isStatic(field.getModifiers()))
-                        throw new IllegalAccessException(fieldName + "为static");
+                    if (Modifier.isStatic(field.getModifiers())) throw new IllegalAccessException(fieldName + "为static");
                     field.setAccessible(true);
                     Object object = fieldArray.getObject(fieldName, field.getType());
                     field.set(instance, object);
@@ -142,11 +143,11 @@ public class SuperReader extends YamlReader<SlimefunItem> {
             }
         }
 
-        instance.register(RykenSlimefunCustomizer.INSTANCE);
-
         if (group.getSecondValue() != null) {
             instance.setItemGroup(group.getSecondValue());
         }
+
+        instance.register(RykenSlimefunCustomizer.INSTANCE);
 
         return instance;
     }
