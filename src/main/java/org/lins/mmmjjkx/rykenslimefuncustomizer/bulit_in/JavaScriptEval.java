@@ -1,26 +1,28 @@
 package org.lins.mmmjjkx.rykenslimefuncustomizer.bulit_in;
 
 import com.google.errorprone.annotations.CanIgnoreReturnValue;
-import com.oracle.truffle.js.scriptengine.GraalJSScriptEngine;
-import java.io.File;
-import java.io.IOException;
-import java.util.Arrays;
-import java.util.logging.FileHandler;
-import javax.script.ScriptException;
 import org.bukkit.entity.Player;
 import org.bukkit.event.Event;
-import org.graalvm.polyglot.Context;
-import org.graalvm.polyglot.PolyglotAccess;
-import org.graalvm.polyglot.io.IOAccess;
 import org.jetbrains.annotations.NotNull;
 import org.jetbrains.annotations.Nullable;
 import org.lins.mmmjjkx.rykenslimefuncustomizer.objects.ProjectAddon;
 import org.lins.mmmjjkx.rykenslimefuncustomizer.objects.script.ban.Delegations;
 import org.lins.mmmjjkx.rykenslimefuncustomizer.objects.script.parent.ScriptEval;
 import org.lins.mmmjjkx.rykenslimefuncustomizer.utils.ExceptionHandler;
+import org.openjdk.nashorn.api.scripting.NashornScriptEngine;
+import org.openjdk.nashorn.api.scripting.NashornScriptEngineFactory;
+
+import javax.script.Invocable;
+import javax.script.ScriptEngine;
+import javax.script.ScriptEngineManager;
+import javax.script.ScriptException;
+import java.io.File;
+import java.io.IOException;
+import java.util.Arrays;
+import java.util.logging.FileHandler;
 
 public class JavaScriptEval extends ScriptEval {
-    private GraalJSScriptEngine jsEngine;
+    private ScriptEngine jsEngine;
     private FileHandler log;
     private final ProjectAddon addon;
 
@@ -30,25 +32,12 @@ public class JavaScriptEval extends ScriptEval {
 
         log = createLogFileHandler(addon);
 
-        jsEngine = GraalJSScriptEngine.create(
-                null,
-                Context.newBuilder("js")
-                        .allowAllAccess(true)
-                        .allowHostAccess(UNIVERSAL_HOST_ACCESS)
-                        .allowNativeAccess(false)
-                        .allowExperimentalOptions(true)
-                        .allowPolyglotAccess(PolyglotAccess.ALL)
-                        .allowCreateProcess(true)
-                        .allowIO(IOAccess.newBuilder().allowHostFileAccess(true).build())
-                        .allowHostClassLookup(s -> {
-                            if (s.equalsIgnoreCase("org.bukkit.Bukkit")) {
-                                return false;
-                            } else if (s.contains("org.bukkit.craftbukkit") && s.endsWith("CraftServer")) {
-                                return false;
-                            }
-                            return !s.equalsIgnoreCase("net.minecraft.server.MinecraftServer");
-                        })
-                        .logHandler(log));
+        jsEngine = new NashornScriptEngineFactory().getScriptEngine();
+        try {
+            jsEngine.eval(getFileContext());
+        } catch (ScriptException e) {
+            ExceptionHandler.handleError("脚本运行异常", e);
+        }
 
         setup();
         contextInit();
@@ -74,7 +63,7 @@ public class JavaScriptEval extends ScriptEval {
     @Override
     public void close() {
         try {
-            jsEngine.close();
+            jsEngine = null;
             log.close();
         } catch (IllegalStateException ignored) {
         }
@@ -85,25 +74,7 @@ public class JavaScriptEval extends ScriptEval {
         close();
         log = createLogFileHandler(addon);
 
-        jsEngine = GraalJSScriptEngine.create(
-                null,
-                Context.newBuilder("js")
-                        .allowAllAccess(true)
-                        .allowHostAccess(UNIVERSAL_HOST_ACCESS)
-                        .allowNativeAccess(false)
-                        .allowExperimentalOptions(true)
-                        .allowPolyglotAccess(PolyglotAccess.ALL)
-                        .allowCreateProcess(true)
-                        .allowIO(IOAccess.newBuilder().allowHostFileAccess(true).build())
-                        .allowHostClassLookup(s -> {
-                            if (s.equalsIgnoreCase("org.bukkit.Bukkit")) {
-                                return false;
-                            } else if (s.contains("org.bukkit.craftbukkit") && s.endsWith("CraftServer")) {
-                                return false;
-                            }
-                            return !s.equalsIgnoreCase("net.minecraft.server.MinecraftServer");
-                        })
-                        .logHandler(log));
+        jsEngine = new NashornScriptEngineFactory().getScriptEngine();
 
         setup();
         contextInit();
@@ -152,7 +123,7 @@ public class JavaScriptEval extends ScriptEval {
                 .toArray();
 
         try {
-            return jsEngine.invokeFunction(funName, args);
+            return ((Invocable)jsEngine).invokeFunction(funName, args);
         } catch (ScriptException e) {
             ExceptionHandler.handleError("在运行" + getFile().getName() + "时发生错误");
             e.printStackTrace();

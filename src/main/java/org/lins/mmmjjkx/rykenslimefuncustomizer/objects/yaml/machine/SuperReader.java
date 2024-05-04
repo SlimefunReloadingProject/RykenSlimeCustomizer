@@ -143,11 +143,11 @@ public class SuperReader extends YamlReader<SlimefunItem> {
             }
         }
 
+        instance.register(RykenSlimefunCustomizer.INSTANCE);
+
         if (group.getSecondValue() != null) {
             instance.setItemGroup(group.getSecondValue());
         }
-
-        instance.register(RykenSlimefunCustomizer.INSTANCE);
 
         return instance;
     }
