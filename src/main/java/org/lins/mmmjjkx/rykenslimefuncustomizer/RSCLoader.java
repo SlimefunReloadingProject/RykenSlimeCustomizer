@@ -15,19 +15,17 @@ public class RSCLoader implements PluginLoader {
     public void classloader(@NotNull PluginClasspathBuilder pluginClasspathBuilder) {
         MavenLibraryResolver resolver = new MavenLibraryResolver();
 
-        RemoteRepository repository = new RemoteRepository.Builder("maven", "default", "https://repo1.maven.org/maven2/").build();
+        RemoteRepository repository =
+                new RemoteRepository.Builder("maven", "default", "https://repo1.maven.org/maven2/").build();
 
         resolver.addRepository(repository);
 
-        Dependency jsEngineDependency = new Dependency(new DefaultArtifact("org.graalvm.js:js-scriptengine:24.0.1"), "");
-        Dependency jsCommunity = new Dependency(new DefaultArtifact("org.graalvm.js:js-community:24.0.1"), "");
+        Dependency jsEngineDependency =
+                new Dependency(new DefaultArtifact("org.openjdk.nashorn:nashorn-core:15.4"), "");
         Dependency byteBuddyDependency = new Dependency(new DefaultArtifact("net.bytebuddy:byte-buddy:1.12.6"), "");
-        Dependency truffleApiDependency = new Dependency(new DefaultArtifact("org.graalvm.truffle:truffle-api:24.0.1"), "");
 
         resolver.addDependency(jsEngineDependency);
-        resolver.addDependency(jsCommunity);
         resolver.addDependency(byteBuddyDependency);
-        resolver.addDependency(truffleApiDependency);
 
         pluginClasspathBuilder.addLibrary(resolver);
     }

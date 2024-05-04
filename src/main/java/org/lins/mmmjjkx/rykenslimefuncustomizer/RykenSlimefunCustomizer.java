@@ -5,7 +5,7 @@ import java.io.File;
 import java.nio.file.Files;
 import java.nio.file.Path;
 import java.nio.file.Paths;
-import java.util.Objects;
+import org.bukkit.Bukkit;
 import org.bukkit.plugin.java.JavaPlugin;
 import org.jetbrains.annotations.NotNull;
 import org.lins.mmmjjkx.rykenslimefuncustomizer.commands.MainCommand;
@@ -33,7 +33,7 @@ public final class RykenSlimefunCustomizer extends JavaPlugin implements Slimefu
             saveExample();
         }
 
-        Objects.requireNonNull(getCommand("rykenslimecustomizer")).setExecutor(new MainCommand());
+        Bukkit.getCommandMap().register("rykenslimecustomizer", new MainCommand("rykenslimecustomizer"));
 
         addonManager.setup(this);
 

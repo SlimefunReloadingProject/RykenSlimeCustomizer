@@ -197,7 +197,7 @@ public class ItemReader extends YamlReader<SlimefunItem> {
         if (section.contains("drop")) {
             int chance = section.getInt("drop_chance", 100);
             int amount = section.getInt("drop_amount", 1);
-            String dropMaterial = section.getString("drop","");
+            String dropMaterial = section.getString("drop", "");
 
             if (chance < 0 || chance > 100) {
                 ExceptionHandler.handleError(
@@ -216,8 +216,8 @@ public class ItemReader extends YamlReader<SlimefunItem> {
                     DropFromBlock.addDrop(material, new DropFromBlock.Drop(drop, chance, addon));
                 }
             } else {
-                ExceptionHandler.handleError("在附属" + addon.getAddonName() + "中加载物品" + s + "时发现问题: 指定掉落方块材料类型"
-                        + dropMaterial + "不存在!");
+                ExceptionHandler.handleError(
+                        "在附属" + addon.getAddonName() + "中加载物品" + s + "时发现问题: 指定掉落方块材料类型" + dropMaterial + "不存在!");
             }
         }
 

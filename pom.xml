@@ -117,18 +117,14 @@
 			<version>2.11.5</version>
 			<scope>provided</scope>
 		</dependency>
+		<!-- 执行js脚本 -->
 		<dependency>
-			<groupId>org.graalvm.js</groupId>
-			<artifactId>js-scriptengine</artifactId>
-			<version>23.0.2</version>
+			<groupId>org.openjdk.nashorn</groupId>
+			<artifactId>nashorn-core</artifactId>
+			<version>15.4</version>
 			<scope>provided</scope>
 		</dependency>
-		<dependency>
-			<groupId>org.graalvm.js</groupId>
-			<artifactId>js</artifactId>
-			<version>23.0.2</version>
-			<scope>provided</scope>
-		</dependency>
+
 		<dependency>
 			<groupId>net.bytebuddy</groupId>
 			<artifactId>byte-buddy</artifactId>
