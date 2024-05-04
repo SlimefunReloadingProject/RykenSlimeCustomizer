@@ -304,6 +304,7 @@ public class CMIChatColor {
     }
 
     public static String translate(String text) {
+
         if (text == null) return null;
 
         text = processGradient(text);

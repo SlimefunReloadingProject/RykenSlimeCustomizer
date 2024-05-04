@@ -159,5 +159,12 @@
 			<version>2.12.3</version>
 			<scope>provided</scope>
 		</dependency>
+
+		<dependency>
+			<groupId>de.themoep</groupId>
+			<artifactId>minedown-adventure</artifactId>
+			<version>1.7.1-SNAPSHOT</version>
+			<scope>compile</scope>
+		</dependency>
 	</dependencies>
 </project>

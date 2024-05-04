@@ -1,7 +1,7 @@
 name: RykenSlimefunCustomizer
 version: '${project.version}'
 main: org.lins.mmmjjkx.rykenslimefuncustomizer.RykenSlimefunCustomizer
-api-version: '1.18'
+api-version: '1.19'
 depend: [Slimefun]
 softdepend:
   - GuizhanLibPlugin
@@ -100,6 +100,7 @@ softdepend:
   - Quaptics
   - FastMachines
   - SlimeCustomizer
+  - SlimeAE
    #Other plugins
   - PlaceholderAPI
   - NBTAPI

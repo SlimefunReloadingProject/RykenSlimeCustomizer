@@ -21,6 +21,7 @@ public class ReflectionUtils {
         if (field == null) throw new NoSuchFieldException(fieldName);
         field.setAccessible(true);
         return (T) field.get(object);
+
     }
 
     public static <T> void setField(@Nonnull Object object, @Nonnull String fieldName, @Nullable T value) throws NoSuchFieldException, IllegalAccessException {
@@ -35,6 +36,7 @@ public class ReflectionUtils {
         if (field == null) throw new NoSuchFieldException(fieldName);
         field.setAccessible(true);
         field.set(object, value);
+
     }
 
     @Nonnull
