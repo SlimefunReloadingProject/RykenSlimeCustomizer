@@ -40,8 +40,6 @@ public class CustomNoEnergyMachine extends AbstractEmptyMachine<MachineOperation
     @Getter
     private final CustomMenu menu;
 
-    private boolean worked = false;
-
     public CustomNoEnergyMachine(
             ItemGroup itemGroup,
             SlimefunItemStack item,
@@ -76,8 +74,8 @@ public class CustomNoEnergyMachine extends AbstractEmptyMachine<MachineOperation
         if (eval != null) {
             eval.doInit();
 
-            this.eval.addThing("setWorking", (Consumer<Boolean>) b -> worked = b);
-            this.eval.addThing("working", worked);
+            this.eval.addThing("working", false);
+            this.eval.addThing("setWorking", (Consumer<Boolean>) b -> this.eval.addThing("working", b));
 
             addItemHandler(new BlockPlaceHandler(false) {
                 @Override
@@ -96,14 +94,16 @@ public class CustomNoEnergyMachine extends AbstractEmptyMachine<MachineOperation
                     menu.addMenuClickHandler(workSlot, new RSCClickHandler() {
                         @Override
                         public void mainFunction(Player player, int slot, ItemStack itemStack, ClickAction action) {
-                            if (mcl != null) {
-                                mcl.onClick(player, slot, itemStack, action);
+                            if (eval != null) {
+                                eval.addThing("working", true);
                             }
                         }
 
                         @Override
                         public void andThen(Player player, int slot, ItemStack itemStack, ClickAction action) {
-                            CustomNoEnergyMachine.this.worked = true;
+                            if (mcl != null) {
+                                mcl.onClick(player, slot, itemStack, action);
+                            }
                         }
                     });
                 }

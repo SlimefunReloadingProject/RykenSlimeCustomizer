@@ -1,0 +1,341 @@
+name: RykenSlimefunCustomizer
+version: '${project.version}'
+main: org.lins.mmmjjkx.rykenslimefuncustomizer.RykenSlimefunCustomizer
+api-version: '1.19'
+depend: [Slimefun]
+loader: org.lins.mmmjjkx.rykenslimefuncustomizer.RSCLoader
+authors:
+  - "mmmjjkx"
+contributors:
+  - "JWJUN233233"
+dependencies:
+  server:
+    Slimefun:
+      required: true
+      join-classpath: true
+      load: BEFORE
+    PlaceholderAPI:
+      required: false
+      join-classpath: true
+      load: BEFORE
+    NBTAPI:
+      required: false
+      join-classpath: true
+      load: BEFORE
+    #addons
+    GuizhanLibPlugin:
+      required: false
+      load: BEFORE
+    ColoredEnderChests:
+      required: false
+      load: BEFORE
+    DyedBackpacks:
+      required: false
+      load: BEFORE
+    EcoPower:
+      required: false
+      load: BEFORE
+    ElectricSpawners:
+      required: false
+      load: BEFORE
+    ExoticGarden:
+      required: false
+      load: BEFORE
+    ExtraGear:
+      required: false
+      load: BEFORE
+    ExtraHeads:
+      required: false
+      load: BEFORE
+    HotbarPets:
+      required: false
+      load: BEFORE
+    luckyblocks-sf:
+      required: false
+      load: BEFORE
+    PrivateStorage:
+      required: false
+      load: BEFORE
+    SlimefunOreChunks:
+      required: false
+      load: BEFORE
+    SlimyTreeTaps:
+      required: false
+      load: BEFORE
+    SoulJars:
+      required: false
+      load: BEFORE
+    CommandOverride:
+      required: false
+      load: BEFORE
+    EmeraldEnchants2:
+      required: false
+      load: BEFORE
+    QuickMarket:
+      required: false
+      load: BEFORE
+    QuickSell:
+      required: false
+      load: BEFORE
+    RankPrefixPlus:
+      required: false
+      load: BEFORE
+    LiteXpansion:
+      required: false
+      load: BEFORE
+    MobCapturer:
+      required: false
+      load: BEFORE
+    SoundMuffler:
+      required: false
+      load: BEFORE
+    ExtraTools:
+      required: false
+      load: BEFORE
+    TranscEndence:
+      required: false
+      load: BEFORE
+    Liquid:
+      required: false
+      load: BEFORE
+    SFCalc:
+      required: false
+      load: BEFORE
+    SlimefunWarfare:
+      required: false
+      load: BEFORE
+    Slimy-Power-Suits:
+      required: false
+      load: BEFORE
+    FluffyMachines:
+      required: false
+      load: BEFORE
+    SlimyRepair:
+      required: false
+      load: BEFORE
+    InfinityExpansion:
+      required: false
+      load: BEFORE
+    FoxyMachines:
+      required: false
+      load: BEFORE
+    GlobalWarming:
+      required: false
+      load: BEFORE
+    DynaTech:
+      required: false
+      load: BEFORE
+    GeneticChickengineering:
+      required: false
+      load: BEFORE
+    HeadLimiter:
+      required: false
+      load: BEFORE
+    SlimeXpansion:
+      required: false
+      load: BEFORE
+    Barrels:
+      required: false
+      load: BEFORE
+    FNAmplifications:
+      required: false
+      load: BEFORE
+    SimpleMaterialGenerators:
+      required: false
+      load: BEFORE
+    Networks:
+      required: false
+      load: BEFORE
+    EMC2:
+      required: false
+      load: BEFORE
+    Simple-Storage:
+      required: false
+      load: BEFORE
+    AlchimiaVitae:
+      required: false
+      load: BEFORE
+    SlimeTinker:
+      required: false
+      load: BEFORE
+    PotionExpansion:
+      required: false
+      load: BEFORE
+    FlowerPower:
+      required: false
+      load: BEFORE
+    Galactifun:
+      required: false
+      load: BEFORE
+    Element-Manipulation:
+      required: false
+      load: BEFORE
+    CrystamaeHistoria:
+      required: false
+      load: BEFORE
+    DankTech2:
+      required: false
+      load: BEFORE
+    VillagerUtil:
+      required: false
+      load: BEFORE
+    MissileWarfare:
+      required: false
+      load: BEFORE
+    SensibleToolbox:
+      required: false
+      load: BEFORE
+    Endrex:
+      required: false
+      load: BEFORE
+    Bump:
+      required: false
+      load: BEFORE
+    FinalTech:
+      required: false
+      load: BEFORE
+    FutureTech:
+      required: false
+      load: BEFORE
+    bedrocktechnology:
+      required: false
+      load: BEFORE
+    SlimefunItemExpansion:
+      required: false
+      load: BEFORE
+    SupplementalServiceableness:
+      required: false
+      load: BEFORE
+    GuizhanCraft:
+      required: false
+      load: BEFORE
+    UltimateGenerators-RC27:
+      required: false
+      load: BEFORE
+    CrispyMachine:
+      required: false
+      load: BEFORE
+    DimensionTraveler:
+      required: false
+      load: BEFORE
+    Chocohills:
+      required: false
+      load: BEFORE
+    draconic:
+      required: false
+      load: BEFORE
+    EzSFAddon:
+      required: false
+      load: BEFORE
+    RandomExpansion:
+      required: false
+      load: BEFORE
+    ExLimus:
+      required: false
+      load: BEFORE
+    MoneyAndThings:
+      required: false
+      load: BEFORE
+    VoidHarvesters:
+      required: false
+      load: BEFORE
+    SlimyBees:
+      required: false
+      load: BEFORE
+    GeneticManipulation:
+      required: false
+      load: BEFORE
+    ObsidianExpansion:
+      required: false
+      load: BEFORE
+    NotEnoughAddons:
+      required: false
+      load: BEFORE
+    SlimeSec:
+      required: false
+      load: BEFORE
+    EMCTech:
+      required: false
+      load: BEFORE
+    RelicsOfCthonia:
+      required: false
+      load: BEFORE
+    Supreme:
+      required: false
+      load: BEFORE
+    DyeBench:
+      required: false
+      load: BEFORE
+    MiniBlocks:
+      required: false
+      load: BEFORE
+    SlimeHUD:
+      required: false
+      load: BEFORE
+    SpiritsUnchained:
+      required: false
+      load: BEFORE
+    Cultivation:
+      required: false
+      load: BEFORE
+    Gastronomicon:
+      required: false
+      load: BEFORE
+    SmallSpace:
+      required: false
+      load: BEFORE
+    BetterGenerator:
+      required: false
+      load: BEFORE
+    VillagerTrade:
+      required: false
+      load: BEFORE
+    SlimeFrame:
+      required: false
+      load: BEFORE
+    AdvancedTech:
+      required: false
+      load: BEFORE
+    Quaptics:
+      required: false
+      load: BEFORE
+    FastMachines:
+      required: false
+      load: BEFORE
+    SlimeCustomizer:
+      required: false
+      load: BEFORE
+    SlimeAE:
+      required: false
+      load: BEFORE
+permissions:
+  rsc.command:
+    default: op
+    children:
+      rsc.command.help: true
+      rsc.command.reload: true
+      rsc.command.list: true
+      rsc.command.reloadPlugin: true
+      rsc.command.saveitem: true
+      rsc.command.enable: true
+      rsc.command.disable: true
+      rsc.command.menupreview: true
+      rsc.command.info: true
+  rsc.command.help:
+    default: op
+  rsc.command.reload:
+    default: op
+  rsc.command.list:
+    default: op
+  rsc.command.reloadPlugin:
+    default: op
+  rsc.command.saveitem:
+    default: op
+  rsc.command.enable:
+    default: op
+  rsc.command.disable:
+    default: op
+  rsc.command.menupreview:
+    default: op
+  rsc.command.info:
+    default: op

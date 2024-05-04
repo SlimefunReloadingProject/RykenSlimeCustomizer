@@ -197,6 +197,7 @@ public class ItemReader extends YamlReader<SlimefunItem> {
         if (section.contains("drop")) {
             int chance = section.getInt("drop_chance", 100);
             int amount = section.getInt("drop_amount", 1);
+            String dropMaterial = section.getString("drop","");
 
             if (chance < 0 || chance > 100) {
                 ExceptionHandler.handleError(
@@ -208,7 +209,7 @@ public class ItemReader extends YamlReader<SlimefunItem> {
             if (xm.isPresent()) {
                 Material material = xm.get().parseMaterial();
                 if (material == null) {
-                    ExceptionHandler.handleError("无法在附属" + addon.getAddonName() + "中读取材料" + material + "，已转为石头");
+                    ExceptionHandler.handleError("无法在附属" + addon.getAddonName() + "中读取材料" + dropMaterial + "，已转为石头");
                 } else {
                     ItemStack drop = sfis.clone();
                     drop.setAmount(amount);
@@ -216,7 +217,7 @@ public class ItemReader extends YamlReader<SlimefunItem> {
                 }
             } else {
                 ExceptionHandler.handleError("在附属" + addon.getAddonName() + "中加载物品" + s + "时发现问题: 指定掉落方块材料类型"
-                        + section.getString("drop") + "不存在!");
+                        + dropMaterial + "不存在!");
             }
         }
 

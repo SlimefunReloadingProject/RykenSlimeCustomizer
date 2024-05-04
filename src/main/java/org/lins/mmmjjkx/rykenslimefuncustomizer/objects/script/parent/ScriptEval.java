@@ -201,4 +201,6 @@ public abstract class ScriptEval {
     @Nullable public abstract Object evalFunction(String functionName, Object... args);
 
     public abstract void close();
+
+    public abstract void restart();
 }

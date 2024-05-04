@@ -20,11 +20,14 @@ import org.lins.mmmjjkx.rykenslimefuncustomizer.objects.script.parent.ScriptEval
 import org.lins.mmmjjkx.rykenslimefuncustomizer.utils.ExceptionHandler;
 
 public class JavaScriptEval extends ScriptEval {
-    private final GraalJSScriptEngine jsEngine;
-    private final FileHandler log;
+    private GraalJSScriptEngine jsEngine;
+    private FileHandler log;
+    private final ProjectAddon addon;
 
     public JavaScriptEval(@NotNull File js, ProjectAddon addon) {
         super(js, addon);
+        this.addon = addon;
+
         log = createLogFileHandler(addon);
 
         jsEngine = GraalJSScriptEngine.create(
@@ -78,6 +81,36 @@ public class JavaScriptEval extends ScriptEval {
     }
 
     @Override
+    public void restart() {
+        close();
+        log = createLogFileHandler(addon);
+
+        jsEngine = GraalJSScriptEngine.create(
+                null,
+                Context.newBuilder("js")
+                        .allowAllAccess(true)
+                        .allowHostAccess(UNIVERSAL_HOST_ACCESS)
+                        .allowNativeAccess(false)
+                        .allowExperimentalOptions(true)
+                        .allowPolyglotAccess(PolyglotAccess.ALL)
+                        .allowCreateProcess(true)
+                        .allowIO(IOAccess.newBuilder().allowHostFileAccess(true).build())
+                        .allowHostClassLookup(s -> {
+                            if (s.equalsIgnoreCase("org.bukkit.Bukkit")) {
+                                return false;
+                            } else if (s.contains("org.bukkit.craftbukkit") && s.endsWith("CraftServer")) {
+                                return false;
+                            }
+                            return !s.equalsIgnoreCase("net.minecraft.server.MinecraftServer");
+                        })
+                        .logHandler(log));
+
+        setup();
+        contextInit();
+    }
+
+
+    @Override
     public void addThing(String name, Object value) {
         jsEngine.put(name, value);
     }
@@ -123,6 +156,7 @@ public class JavaScriptEval extends ScriptEval {
         } catch (ScriptException e) {
             ExceptionHandler.handleError("在运行" + getFile().getName() + "时发生错误");
             e.printStackTrace();
+            return null;
         } catch (NoSuchMethodException ignored) {
         }
 

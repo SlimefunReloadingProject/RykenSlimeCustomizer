@@ -8,10 +8,8 @@ import java.nio.file.Paths;
 import java.util.Objects;
 import org.bukkit.plugin.java.JavaPlugin;
 import org.jetbrains.annotations.NotNull;
-import org.lins.mmmjjkx.rykenslimefuncustomizer.bulit_in.JavaScriptCreator;
 import org.lins.mmmjjkx.rykenslimefuncustomizer.commands.MainCommand;
 import org.lins.mmmjjkx.rykenslimefuncustomizer.listeners.BlockBreak;
-import org.lins.mmmjjkx.rykenslimefuncustomizer.objects.global.ScriptCreators;
 import org.lins.mmmjjkx.rykenslimefuncustomizer.utils.CommonUtils;
 import org.lins.mmmjjkx.rykenslimefuncustomizer.utils.ExceptionHandler;
 
@@ -20,11 +18,6 @@ public final class RykenSlimefunCustomizer extends JavaPlugin implements Slimefu
 
     public static RykenSlimefunCustomizer INSTANCE;
     public static ProjectAddonManager addonManager;
-
-    @Override
-    public void onLoad() {
-        ScriptCreators.pushScriptCreator(new JavaScriptCreator());
-    }
 
     @Override
     public void onEnable() {
