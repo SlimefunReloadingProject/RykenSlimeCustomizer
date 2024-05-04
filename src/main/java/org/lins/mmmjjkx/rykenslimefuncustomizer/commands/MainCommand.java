@@ -12,7 +12,6 @@ import org.bukkit.Material;
 import org.bukkit.command.Command;
 import org.bukkit.command.CommandSender;
 import org.bukkit.command.TabCompleter;
-import org.bukkit.command.TabExecutor;
 import org.bukkit.configuration.file.YamlConfiguration;
 import org.bukkit.entity.Player;
 import org.bukkit.inventory.ItemStack;
@@ -30,13 +29,16 @@ public class MainCommand extends Command implements TabCompleter {
         super(name);
     }
 
-    protected MainCommand(@NotNull String name, @NotNull String description, @NotNull String usageMessage, @NotNull List<String> aliases) {
+    protected MainCommand(
+            @NotNull String name,
+            @NotNull String description,
+            @NotNull String usageMessage,
+            @NotNull List<String> aliases) {
         super(name, description, usageMessage, aliases);
     }
 
     @Override
-    public boolean execute(
-            @NotNull CommandSender sender, @NotNull String label, @NotNull String[] args) {
+    public boolean execute(@NotNull CommandSender sender, @NotNull String label, @NotNull String[] args) {
         if (args.length == 0) {
             sendHelp(sender);
             return true;

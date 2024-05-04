@@ -1,6 +1,13 @@
 package org.lins.mmmjjkx.rykenslimefuncustomizer.bulit_in;
 
 import com.google.errorprone.annotations.CanIgnoreReturnValue;
+import java.io.File;
+import java.io.IOException;
+import java.util.Arrays;
+import java.util.logging.FileHandler;
+import javax.script.Invocable;
+import javax.script.ScriptEngine;
+import javax.script.ScriptException;
 import org.bukkit.entity.Player;
 import org.bukkit.event.Event;
 import org.jetbrains.annotations.NotNull;
@@ -9,17 +16,7 @@ import org.lins.mmmjjkx.rykenslimefuncustomizer.objects.ProjectAddon;
 import org.lins.mmmjjkx.rykenslimefuncustomizer.objects.script.ban.Delegations;
 import org.lins.mmmjjkx.rykenslimefuncustomizer.objects.script.parent.ScriptEval;
 import org.lins.mmmjjkx.rykenslimefuncustomizer.utils.ExceptionHandler;
-import org.openjdk.nashorn.api.scripting.NashornScriptEngine;
 import org.openjdk.nashorn.api.scripting.NashornScriptEngineFactory;
-
-import javax.script.Invocable;
-import javax.script.ScriptEngine;
-import javax.script.ScriptEngineManager;
-import javax.script.ScriptException;
-import java.io.File;
-import java.io.IOException;
-import java.util.Arrays;
-import java.util.logging.FileHandler;
 
 public class JavaScriptEval extends ScriptEval {
     private ScriptEngine jsEngine;
@@ -80,7 +77,6 @@ public class JavaScriptEval extends ScriptEval {
         contextInit();
     }
 
-
     @Override
     public void addThing(String name, Object value) {
         jsEngine.put(name, value);
@@ -123,7 +119,7 @@ public class JavaScriptEval extends ScriptEval {
                 .toArray();
 
         try {
-            return ((Invocable)jsEngine).invokeFunction(funName, args);
+            return ((Invocable) jsEngine).invokeFunction(funName, args);
         } catch (ScriptException e) {
             ExceptionHandler.handleError("在运行" + getFile().getName() + "时发生错误");
             e.printStackTrace();
