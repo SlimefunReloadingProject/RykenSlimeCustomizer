@@ -173,8 +173,8 @@ public class ItemReader extends YamlReader<SlimefunItem> {
             instance = (CustomItem) clazz.getDeclaredConstructors()[0].newInstance(constructorArgs);
         }
 
-        if (section.getBoolean("piglin_trade", false)) {
-            int chance = section.getInt("piglin_chance", 100);
+        if (section.contains("piglin_trade_chance")) {
+            int chance = section.getInt("piglin_trade_chance", 100);
             if (chance < 0 || chance > 100) {
                 ExceptionHandler.handleError("无法在附属" + addon.getAddonName() + "中加载物品" + s + "猪灵交易掉落几率必须在0-100之间");
                 return null;
@@ -204,11 +204,13 @@ public class ItemReader extends YamlReader<SlimefunItem> {
                 chance = 100;
             }
 
-            Optional<XMaterial> xm = XMaterial.matchXMaterial(section.getString("drop", ""));
+            String dropMaterial = section.getString("drop", "");
+
+            Optional<XMaterial> xm = XMaterial.matchXMaterial(dropMaterial);
             if (xm.isPresent()) {
                 Material material = xm.get().parseMaterial();
                 if (material == null) {
-                    ExceptionHandler.handleError("无法在附属" + addon.getAddonName() + "中读取材料" + material + "，已转为石头");
+                    ExceptionHandler.handleError("无法在附属" + addon.getAddonName() + "中读取材料" + dropMaterial + "，已转为石头");
                 } else {
                     ItemStack drop = sfis.clone();
                     drop.setAmount(amount);
@@ -291,7 +293,7 @@ public class ItemReader extends YamlReader<SlimefunItem> {
             instance = (BaseRadiationItem) clazz.getDeclaredConstructors()[0].newInstance(constructorArgs);
         }
 
-        boolean piglin = section.getBoolean("piglin_trade", false);
+        boolean piglin = section.contains("piglin_trade_chance");
 
         if (piglin) {
             int chance = section.getInt("piglin_trade_chance", 100);

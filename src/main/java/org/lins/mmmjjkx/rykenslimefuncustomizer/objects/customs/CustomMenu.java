@@ -116,17 +116,6 @@ public class CustomMenu extends BlockMenuPreset {
             }
         }
 
-        Inventory inventory = Bukkit.createInventory(this, size, CommonUtils.parseToComponent(title));
-
-        for (int i = 0; i < size; i++) {
-            ItemStack item = slotMap.get(i);
-            if (item != null) {
-                inventory.setItem(i, item);
-            }
-        }
-
-        this.inventory = inventory;
-
         if (eval != null) {
             addMenuOpeningHandler(p -> eval.evalFunction("onOpen", p));
             addMenuCloseHandler(p -> eval.evalFunction("onClose", p));

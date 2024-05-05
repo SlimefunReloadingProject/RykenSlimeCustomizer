@@ -74,10 +74,10 @@ public class CustomNoEnergyMachine extends AbstractEmptyMachine<MachineOperation
         this.menu = menu;
 
         if (eval != null) {
-            eval.doInit();
-
             this.eval.addThing("setWorking", (Consumer<Boolean>) b -> worked = b);
             this.eval.addThing("working", worked);
+
+            eval.doInit();
 
             addItemHandler(new BlockPlaceHandler(false) {
                 @Override
@@ -119,8 +119,8 @@ public class CustomNoEnergyMachine extends AbstractEmptyMachine<MachineOperation
     }
 
     protected void tick(Block b, SlimefunItem item, SlimefunBlockData data) {
+        BlockMenu blockMenu = StorageCacheUtils.getMenu(b.getLocation());
         if (eval != null) {
-            BlockMenu blockMenu = StorageCacheUtils.getMenu(b.getLocation());
             SmallerMachineInfo info = new SmallerMachineInfo(blockMenu, data, this, item, b, processor);
             eval.evalFunction("tick", info);
         }

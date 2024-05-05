@@ -1,6 +1,5 @@
 package org.lins.mmmjjkx.rykenslimefuncustomizer.utils;
 
-import de.themoep.minedown.adventure.MineDown;
 import io.github.thebusybiscuit.slimefun4.api.items.SlimefunItem;
 import io.github.thebusybiscuit.slimefun4.libraries.dough.skins.PlayerHead;
 import io.github.thebusybiscuit.slimefun4.libraries.dough.skins.PlayerSkin;
@@ -59,7 +58,7 @@ public class CommonUtils {
 
         text = text.replaceAll("§", "&");
 
-        return MineDown.parse(text).decoration(TextDecoration.ITALIC, false);
+        return LEGACY_COMPONENT_SERIALIZER.deserialize(text).decoration(TextDecoration.ITALIC, false);
     }
 
     @Nullable public static <T> T getIf(Iterable<T> iterable, Predicate<T> filter) {
