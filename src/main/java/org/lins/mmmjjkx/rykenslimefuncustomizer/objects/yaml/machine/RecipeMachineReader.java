@@ -92,7 +92,7 @@ public class RecipeMachineReader extends YamlReader<CustomRecipeMachine> {
 
         List<RecipeMachineRecipe> mr = readRecipes(input.size(), output.size(), recipes, addon);
 
-        CustomRecipeMachine crm = new CustomRecipeMachine(
+        return new CustomRecipeMachine(
                 group.getSecondValue(),
                 slimefunItemStack,
                 rt.getSecondValue(),
@@ -104,7 +104,6 @@ public class RecipeMachineReader extends YamlReader<CustomRecipeMachine> {
                 capacity,
                 menu,
                 speed);
-        return crm;
     }
 
     private List<RecipeMachineRecipe> readRecipes(

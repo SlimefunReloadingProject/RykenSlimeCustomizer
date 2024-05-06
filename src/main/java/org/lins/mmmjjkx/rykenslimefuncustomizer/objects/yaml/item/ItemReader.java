@@ -65,7 +65,7 @@ public class ItemReader extends YamlReader<SlimefunItem> {
         ItemStack[] itemStacks = CommonUtils.readRecipe(section.getConfigurationSection("recipe"), addon);
         String recipeType = section.getString("recipe_type", "NULL");
 
-        boolean piglin = section.getBoolean("piglin_trade", false);
+        boolean piglin = section.getBoolean("piglin_trade_chance", false);
         RecipeType rt;
         if (piglin) {
             rt = RecipeType.BARTER_DROP;

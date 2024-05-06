@@ -21,6 +21,7 @@ import org.bukkit.block.Block;
 import org.bukkit.inventory.ItemStack;
 import org.jetbrains.annotations.NotNull;
 import org.jetbrains.annotations.Nullable;
+import org.lins.mmmjjkx.rykenslimefuncustomizer.RykenSlimefunCustomizer;
 import org.lins.mmmjjkx.rykenslimefuncustomizer.objects.customs.CustomMenu;
 import org.lins.mmmjjkx.rykenslimefuncustomizer.objects.machine.RecipeMachineRecipe;
 import org.lins.mmmjjkx.rykenslimefuncustomizer.utils.CommonUtils;
@@ -82,6 +83,8 @@ public class CustomRecipeMachine extends AContainer implements RecipeDisplayItem
         setEnergyConsumption(energyPerCraft);
 
         registerDefaultRecipes();
+
+        register(RykenSlimefunCustomizer.INSTANCE);
     }
 
     @NotNull @Override
@@ -106,13 +109,6 @@ public class CustomRecipeMachine extends AContainer implements RecipeDisplayItem
         }
 
         recipes.forEach(super::registerRecipe);
-    }
-
-    @Override
-    public void registerRecipe(MachineRecipe recipe) {
-        super.registerRecipe(recipe);
-
-        this.recipes.add((RecipeMachineRecipe) recipe);
     }
 
     @Override
