@@ -103,7 +103,7 @@ public class SuperReader extends YamlReader<SlimefunItem> {
                 try {
                     method = clazz.getDeclaredMethod(
                             methodName,
-                            Arrays.stream(args1).map(x -> x.getClass()).toArray(Class<?>[]::new));
+                            Arrays.stream(args1).map(Object::getClass).toArray(Class<?>[]::new));
                 } catch (NoSuchMethodException e) {
                     ExceptionHandler.handleError("没有找到方法", e);
                 }

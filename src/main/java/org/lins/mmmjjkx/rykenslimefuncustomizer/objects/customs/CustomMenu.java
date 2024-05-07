@@ -22,6 +22,7 @@ import org.bukkit.inventory.ItemStack;
 import org.jetbrains.annotations.NotNull;
 import org.jetbrains.annotations.Nullable;
 import org.lins.mmmjjkx.rykenslimefuncustomizer.bulit_in.JavaScriptEval;
+import org.lins.mmmjjkx.rykenslimefuncustomizer.libraries.Colors.CMIChatColor;
 import org.lins.mmmjjkx.rykenslimefuncustomizer.objects.customs.machine.CustomMachine;
 import org.lins.mmmjjkx.rykenslimefuncustomizer.objects.customs.machine.CustomNoEnergyMachine;
 import org.lins.mmmjjkx.rykenslimefuncustomizer.objects.customs.machine.CustomRecipeMachine;
@@ -84,7 +85,7 @@ public class CustomMenu extends BlockMenuPreset {
             int progress,
             @Nullable ItemStack progressBar,
             @Nullable JavaScriptEval eval) {
-        super(id, title);
+        super(id, CMIChatColor.translate(title));
 
         this.title = title;
         this.slotMap = mi;

@@ -194,13 +194,13 @@ public class ItemReader extends YamlReader<SlimefunItem> {
         instance.setHidden(section.getBoolean("hidden", false));
         instance.setUseableInWorkbench(section.getBoolean("vanilla", false));
 
-        if (section.contains("drop")) {
+        if (section.contains("drop_from")) {
             int chance = section.getInt("drop_chance", 100);
-            int amount = section.getInt("drop_amount", 1);
+            int amount = section.isInt("drop_amount") ? section.getInt("drop_amount", 1) : -1;
 
             if (chance < 0 || chance > 100) {
                 ExceptionHandler.handleError(
-                        "在附属" + addon.getAddonName() + "中加载物品" + s + "时发现问题: 掉落几率" + chance + "不在0-100范围内!已转为100%");
+                        "在附属" + addon.getAddonName() + "中加载物品" + s + "时发现问题: 掉落几率" + chance + "不在0-100范围内! 已转为100%");
                 chance = 100;
             }
 
@@ -212,13 +212,26 @@ public class ItemReader extends YamlReader<SlimefunItem> {
                 if (material == null) {
                     ExceptionHandler.handleError("无法在附属" + addon.getAddonName() + "中读取材料" + dropMaterial + "，已转为石头");
                 } else {
-                    ItemStack drop = sfis.clone();
-                    drop.setAmount(amount);
-                    DropFromBlock.addDrop(material, new DropFromBlock.Drop(drop, chance, addon));
+                    if (amount == -1) {
+                        String between = section.getString("drop_amount","1");
+                        if (between.contains("-")) {
+                            String[] split = between.split("-");
+                            if (split.length == 2) {
+                                int min = Integer.parseInt(split[0]);
+                                int max = Integer.parseInt(split[1]);
+                                DropFromBlock.addDrop(material, new DropFromBlock.Drop(sfis, chance, addon, min, max));
+                            } else {
+                                ExceptionHandler.handleError("无法在附属" + addon.getAddonName() + "中读取掉落数量区间" + between + "，已把掉落数量转为1");
+                                DropFromBlock.addDrop(material, new DropFromBlock.Drop(sfis, chance, addon));
+                            }
+                        }
+                    } else {
+                        DropFromBlock.addDrop(material, new DropFromBlock.Drop(sfis, chance, addon, amount, amount));
+                    }
                 }
             } else {
                 ExceptionHandler.handleError("在附属" + addon.getAddonName() + "中加载物品" + s + "时发现问题: 指定掉落方块材料类型"
-                        + section.getString("drop") + "不存在!");
+                        + dropMaterial + "不存在!");
             }
         }
 
@@ -316,29 +329,44 @@ public class ItemReader extends YamlReader<SlimefunItem> {
         instance.setHidden(section.getBoolean("hidden", false));
         instance.setUseableInWorkbench(section.getBoolean("vanilla", false));
 
-        if (section.contains("drop")) {
+        if (section.contains("drop_from")) {
             int chance = section.getInt("drop_chance", 100);
-            int amount = section.getInt("drop_amount", 1);
+            int amount = section.isInt("drop_amount") ? section.getInt("drop_amount", 1) : -1;
 
             if (chance < 0 || chance > 100) {
                 ExceptionHandler.handleError(
-                        "在附属" + addon.getAddonName() + "中加载物品" + id + "时发现问题: 掉落几率" + chance + "不在0-100范围内!已转为100%");
+                        "在附属" + addon.getAddonName() + "中加载物品" + id + "时发现问题: 掉落几率" + chance + "不在0-100范围内! 已转为100%");
                 chance = 100;
             }
 
-            Optional<XMaterial> xm = XMaterial.matchXMaterial(section.getString("drop", ""));
+            String dropMaterial = section.getString("drop", "");
+
+            Optional<XMaterial> xm = XMaterial.matchXMaterial(dropMaterial);
             if (xm.isPresent()) {
                 Material material = xm.get().parseMaterial();
                 if (material == null) {
-                    ExceptionHandler.handleError("无法在附属" + addon.getAddonName() + "中读取材料" + material + "，已转为石头");
+                    ExceptionHandler.handleError("无法在附属" + addon.getAddonName() + "中读取材料" + dropMaterial + "，已转为石头");
                 } else {
-                    ItemStack drop = sfis.clone();
-                    drop.setAmount(amount);
-                    DropFromBlock.addDrop(material, new DropFromBlock.Drop(drop, chance, addon));
+                    if (amount == -1) {
+                        String between = section.getString("drop_amount","1");
+                        if (between.contains("-")) {
+                            String[] split = between.split("-");
+                            if (split.length == 2) {
+                                int min = Integer.parseInt(split[0]);
+                                int max = Integer.parseInt(split[1]);
+                                DropFromBlock.addDrop(material, new DropFromBlock.Drop(sfis, chance, addon, min, max));
+                            } else {
+                                ExceptionHandler.handleError("无法在附属" + addon.getAddonName() + "中读取掉落数量区间" + between + "，已把掉落数量转为1");
+                                DropFromBlock.addDrop(material, new DropFromBlock.Drop(sfis, chance, addon));
+                            }
+                        }
+                    } else {
+                        DropFromBlock.addDrop(material, new DropFromBlock.Drop(sfis, chance, addon, amount, amount));
+                    }
                 }
             } else {
                 ExceptionHandler.handleError("在附属" + addon.getAddonName() + "中加载物品" + id + "时发现问题: 指定掉落方块材料类型"
-                        + section.getString("drop") + "不存在!");
+                        + dropMaterial + "不存在!");
             }
         }
 

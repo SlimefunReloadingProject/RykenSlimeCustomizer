@@ -38,5 +38,23 @@ public class DropFromBlock {
         }
     }
 
-    public record Drop(ItemStack itemStack, int dropChance, ProjectAddon owner) {}
+    public record Drop(ItemStack itemStack, int dropChance, ProjectAddon owner, int minDropAmount, int maxDropAmount) {
+        public Drop(ItemStack itemStack, int dropChance, ProjectAddon owner) {
+            this(itemStack, dropChance, owner, itemStack.getAmount(), itemStack.getAmount());
+        }
+
+        @Override
+        public ItemStack itemStack() {
+            ItemStack itemStack = this.itemStack.clone();
+            itemStack.setAmount(randomDropAmount());
+            return itemStack;
+        }
+
+        private int randomDropAmount() {
+            Random random = new Random();
+            int min = Math.min(minDropAmount, maxDropAmount);
+            int max = Math.max(minDropAmount, maxDropAmount);
+            return random.nextInt(max - min + 1) + min;
+        }
+    }
 }
