@@ -173,7 +173,7 @@ public class CustomMaterialGenerator extends SlimefunItem
 
     @NotNull @Override
     public List<ItemStack> getDisplayRecipes() {
-        ItemStack speed = new RSCItemStack(
+        ItemStack speed = new CustomItemStack(
                 Material.KNOWLEDGE_BOOK,
                 "&a&l速度",
                 Collections.singletonList("&a&l每 &b&l" + tickRate + " &a&l个粘液刻生成一次"));

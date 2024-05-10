@@ -22,6 +22,7 @@ import org.bukkit.inventory.ItemStack;
 import org.jetbrains.annotations.NotNull;
 import org.jetbrains.annotations.Nullable;
 import org.lins.mmmjjkx.rykenslimefuncustomizer.RykenSlimefunCustomizer;
+import org.lins.mmmjjkx.rykenslimefuncustomizer.libraries.Colors.CMIChatColor;
 import org.lins.mmmjjkx.rykenslimefuncustomizer.objects.customs.CustomMenu;
 import org.lins.mmmjjkx.rykenslimefuncustomizer.objects.machine.RecipeMachineRecipe;
 import org.lins.mmmjjkx.rykenslimefuncustomizer.utils.CommonUtils;
@@ -151,7 +152,7 @@ public class CustomRecipeMachine extends AContainer implements RecipeDisplayItem
 
                         if (chance < 100) {
                             CommonUtils.addLore(
-                                    out, true, CommonUtils.parseToComponent("&a有&b " + chance + "% &a的概率产出"));
+                                    out, true, CMIChatColor.translate("&a有&b " + chance + "% &a的概率产出"));
                         }
 
                         displayRecipes.add(out);

@@ -90,7 +90,7 @@ public class GeoResourceReader extends YamlReader<CustomGeoResource> {
                     chance = 100;
                 }
 
-                String dropMaterial = section.getString("drop", "");
+                String dropMaterial = section.getString("drop_from", "");
 
                 Optional<XMaterial> xm = XMaterial.matchXMaterial(dropMaterial);
                 if (xm.isPresent()) {

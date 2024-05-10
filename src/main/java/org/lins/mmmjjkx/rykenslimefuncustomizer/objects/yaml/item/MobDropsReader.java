@@ -4,14 +4,14 @@ import io.github.thebusybiscuit.slimefun4.api.items.ItemGroup;
 import io.github.thebusybiscuit.slimefun4.api.items.SlimefunItemStack;
 import io.github.thebusybiscuit.slimefun4.libraries.dough.collections.Pair;
 import io.github.thebusybiscuit.slimefun4.libraries.dough.items.CustomItemStack;
-import java.util.Collections;
 import net.kyori.adventure.text.Component;
-import net.kyori.adventure.text.format.TextDecoration;
+import net.kyori.adventure.text.serializer.plain.PlainTextComponentSerializer;
 import org.bukkit.Material;
 import org.bukkit.configuration.ConfigurationSection;
 import org.bukkit.configuration.file.YamlConfiguration;
 import org.bukkit.entity.EntityType;
 import org.bukkit.inventory.ItemStack;
+import org.lins.mmmjjkx.rykenslimefuncustomizer.libraries.Colors.CMIChatColor;
 import org.lins.mmmjjkx.rykenslimefuncustomizer.objects.ProjectAddon;
 import org.lins.mmmjjkx.rykenslimefuncustomizer.objects.customs.item.exts.CustomMobDrop;
 import org.lins.mmmjjkx.rykenslimefuncustomizer.objects.yaml.YamlReader;
@@ -71,19 +71,15 @@ public class MobDropsReader extends YamlReader<CustomMobDrop> {
                 chance = chance >= 100 ? 100 : 1;
             }
 
-            Component translate = Component.translatable(entityType.translationKey());
-            Component lore = CommonUtils.parseToComponent("&a击杀 ")
-                    .append(translate)
-                    .append(Component.space())
-                    .append(CommonUtils.parseToComponent("&a时会有"))
-                    .append(CommonUtils.parseToComponent("&b" + chance + "%"))
-                    .append(CommonUtils.parseToComponent("的概率掉落"))
-                    .decoration(TextDecoration.ITALIC, false);
+            String translate = PlainTextComponentSerializer.plainText().serialize(Component.translatable(entityType.translationKey()));
+            String lore = CMIChatColor.translate("&a击杀 ")
+                    .concat(translate)
+                    .concat(" ")
+                    .concat(CMIChatColor.translate("&a时会有"))
+                    .concat(CMIChatColor.translate("&b" + chance + "%"))
+                    .concat(CMIChatColor.translate("的概率掉落"));
 
-            ItemStack itemStack = new CustomItemStack(eggMaterial, meta -> {
-                meta.displayName(Component.text(entityType.toString()));
-                meta.lore(Collections.singletonList(lore));
-            });
+            ItemStack itemStack = new CustomItemStack(eggMaterial, entityType.toString(), lore);
             ItemStack[] recipe = new ItemStack[] {null, null, null, null, itemStack};
 
             return new CustomMobDrop(group.getSecondValue(), sfis, recipe, chance, entityType);

@@ -28,7 +28,7 @@ public abstract class YamlReader<T> {
             ExceptionHandler.debugLog("开始读取项: " + key);
 
             ConfigurationSection register = section.getConfigurationSection("register");
-            if (!checkForRegistration(register)) return objects;
+            if (!checkForRegistration(register)) continue;
 
             ExceptionHandler.debugLog("检查延迟加载...");
 

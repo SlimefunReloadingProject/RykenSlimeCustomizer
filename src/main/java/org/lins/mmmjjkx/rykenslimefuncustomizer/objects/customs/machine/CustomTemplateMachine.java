@@ -109,7 +109,11 @@ public class CustomTemplateMachine extends AbstractEmptyMachine<CraftingOperatio
                 .filter(k -> Objects.equals(k.getFirstValue(), recipe))
                 .mapToInt(Pair::getSecondValue)
                 .findFirst()
-                .orElse(0);
+                .orElse(-1);
+
+        if (cost == -1) {
+            return null;
+        }
 
         int templateAmount = menu.getItemInSlot(templateSlot).getAmount();
         if (templateAmount < cost) {

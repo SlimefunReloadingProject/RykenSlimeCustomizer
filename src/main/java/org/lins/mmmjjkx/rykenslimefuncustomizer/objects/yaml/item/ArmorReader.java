@@ -49,18 +49,19 @@ public class ArmorReader extends YamlReader<List<CustomArmorPiece>> {
         for (String check : CHECKS) {
             ConfigurationSection pieceSection = section.getConfigurationSection(check);
             if (pieceSection == null) continue;
+
             String id = pieceSection.getString("id", "");
 
             ExceptionHandler.HandleResult result = ExceptionHandler.handleIdConflict(s);
             if (result == ExceptionHandler.HandleResult.FAILED) return null;
 
-            String recipeType = section.getString("recipe_type", "NULL");
+            String recipeType = pieceSection.getString("recipe_type", "NULL");
 
             Pair<ExceptionHandler.HandleResult, RecipeType> rt =
                     ExceptionHandler.getRecipeType("错误的配方类型" + recipeType + "!", recipeType);
             if (rt.getFirstValue() == ExceptionHandler.HandleResult.FAILED) return null;
 
-            ConfigurationSection recipeSection = section.getConfigurationSection("recipe");
+            ConfigurationSection recipeSection = pieceSection.getConfigurationSection("recipe");
             ItemStack[] recipe = CommonUtils.readRecipe(recipeSection, addon);
 
             ItemStack stack = CommonUtils.readItem(pieceSection, false, addon);

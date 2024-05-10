@@ -4,7 +4,6 @@ import java.util.List;
 
 public class CommandSafe {
     private static final List<String> badCommands = List.of(
-            "sudo",
             "stop",
             "restart",
             "op",

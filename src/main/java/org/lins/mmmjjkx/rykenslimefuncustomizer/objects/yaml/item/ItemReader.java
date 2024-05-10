@@ -23,6 +23,7 @@ import org.bukkit.configuration.file.YamlConfiguration;
 import org.bukkit.inventory.ItemStack;
 import org.lins.mmmjjkx.rykenslimefuncustomizer.RykenSlimefunCustomizer;
 import org.lins.mmmjjkx.rykenslimefuncustomizer.bulit_in.JavaScriptEval;
+import org.lins.mmmjjkx.rykenslimefuncustomizer.libraries.Colors.CMIChatColor;
 import org.lins.mmmjjkx.rykenslimefuncustomizer.objects.ProjectAddon;
 import org.lins.mmmjjkx.rykenslimefuncustomizer.objects.customs.item.CustomDefaultItem;
 import org.lins.mmmjjkx.rykenslimefuncustomizer.objects.customs.item.CustomUnplaceableItem;
@@ -107,7 +108,7 @@ public class ItemReader extends YamlReader<SlimefunItem> {
                 return null;
             }
 
-            CommonUtils.addLore(stack, true, CommonUtils.parseToComponent("&8⇨ &e⚡ &70 / " + energyCapacity + " J"));
+            CommonUtils.addLore(stack, true, CMIChatColor.translate("&8⇨ &e⚡ &70 / " + energyCapacity + " J"));
 
             instance = new CustomEnergyItem(group.getSecondValue(), sfis, rt, itemStacks, (float) energyCapacity, eval);
         } else if (section.getBoolean("placeable", false)) {
@@ -204,7 +205,7 @@ public class ItemReader extends YamlReader<SlimefunItem> {
                 chance = 100;
             }
 
-            String dropMaterial = section.getString("drop", "");
+            String dropMaterial = section.getString("drop_from", "");
 
             Optional<XMaterial> xm = XMaterial.matchXMaterial(dropMaterial);
             if (xm.isPresent()) {
@@ -261,7 +262,7 @@ public class ItemReader extends YamlReader<SlimefunItem> {
 
         boolean energy = section.contains("energy_capacity");
 
-        CommonUtils.addLore(original, true, CommonUtils.parseToComponent(radioactivity.getLore()));
+        CommonUtils.addLore(original, true, CMIChatColor.translate(radioactivity.getLore()));
 
         BaseRadiationItem instance;
 
@@ -339,7 +340,7 @@ public class ItemReader extends YamlReader<SlimefunItem> {
                 chance = 100;
             }
 
-            String dropMaterial = section.getString("drop", "");
+            String dropMaterial = section.getString("drop_from", "");
 
             Optional<XMaterial> xm = XMaterial.matchXMaterial(dropMaterial);
             if (xm.isPresent()) {

@@ -98,7 +98,14 @@ public class SuperReader extends YamlReader<SlimefunItem> {
         if (section.contains("method")) {
             ConfigurationSection methodArray = section.getConfigurationSection("method");
             for (String methodName : methodArray.getKeys(false)) {
-                Object[] args1 = methodArray.getList(methodName).toArray();
+                Object[] args1;
+
+                if (methodArray.isList(methodName)) {
+                    args1 = methodArray.getList(methodName, new ArrayList<>()).toArray();
+                } else {
+                    args1 = new Object[] { methodArray.get(methodName) };
+                }
+
                 Method method = null;
                 try {
                     method = clazz.getDeclaredMethod(
@@ -107,6 +114,7 @@ public class SuperReader extends YamlReader<SlimefunItem> {
                 } catch (NoSuchMethodException e) {
                     ExceptionHandler.handleError("没有找到方法", e);
                 }
+
                 if (method != null) {
                     try {
                         method.setAccessible(true);
@@ -124,19 +132,23 @@ public class SuperReader extends YamlReader<SlimefunItem> {
                 try {
                     Field[] fields = ReflectionUtils.getAllFields(instance);
                     Field field = null;
+                    
                     for (Field f : fields) {
                         if (f.getName().equals(fieldName)) {
                             field = f;
                             break;
                         }
                     }
+
                     if (field == null) throw new NoSuchFieldException(fieldName);
-                    if (Modifier.isStatic(field.getModifiers())) throw new IllegalAccessException(fieldName + "为static");
+                    if (Modifier.isStatic(field.getModifiers())) throw new IllegalAccessException("字段" + fieldName + "为static");
+                    if (Modifier.isFinal(field.getModifiers())) throw new IllegalAccessException("字段" + fieldName + "为final");
+
                     field.setAccessible(true);
                     Object object = fieldArray.getObject(fieldName, field.getType());
                     field.set(instance, object);
                 } catch (Exception e) {
-                    ExceptionHandler.handleError("属性修改异常", e);
+                    ExceptionHandler.handleError("字段修改异常", e);
                 }
             }
         }

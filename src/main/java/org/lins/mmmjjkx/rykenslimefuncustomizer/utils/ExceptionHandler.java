@@ -6,22 +6,24 @@ import io.github.thebusybiscuit.slimefun4.api.recipes.RecipeType;
 import io.github.thebusybiscuit.slimefun4.implementation.Slimefun;
 import io.github.thebusybiscuit.slimefun4.libraries.dough.collections.Pair;
 import java.lang.reflect.Field;
-import net.kyori.adventure.text.logger.slf4j.ComponentLogger;
 import net.kyori.adventure.text.serializer.legacy.LegacyComponentSerializer;
+import org.bukkit.Bukkit;
+import org.bukkit.command.ConsoleCommandSender;
 import org.jetbrains.annotations.NotNull;
 import org.lins.mmmjjkx.rykenslimefuncustomizer.RykenSlimefunCustomizer;
+import org.lins.mmmjjkx.rykenslimefuncustomizer.libraries.Colors.CMIChatColor;
 import org.lins.mmmjjkx.rykenslimefuncustomizer.objects.ProjectAddon;
 import org.lins.mmmjjkx.rykenslimefuncustomizer.objects.customs.CustomMenu;
 import org.lins.mmmjjkx.rykenslimefuncustomizer.objects.global.RecipeTypeMap;
 
 public class ExceptionHandler {
     private static final LegacyComponentSerializer serializer = LegacyComponentSerializer.legacyAmpersand();
-    private static final @NotNull ComponentLogger logger = RykenSlimefunCustomizer.INSTANCE.getComponentLogger();
+    private static final @NotNull ConsoleCommandSender console = Bukkit.getConsoleSender();
 
     public static HandleResult handleIdConflict(String id) {
         SlimefunItem i = SlimefunItem.getById(id);
         if (i != null) {
-            logger.error(serializer.deserialize(
+            console.sendMessage(CMIChatColor.translate(
                     "&4ERROR | ID冲突：" + id + "与" + i.getAddon().getName() + "中的物品ID冲突"));
             return HandleResult.FAILED;
         }
@@ -31,7 +33,7 @@ public class ExceptionHandler {
     public static HandleResult handleMenuConflict(String id, ProjectAddon addon) {
         CustomMenu menu = CommonUtils.getIf(addon.getMenus(), m -> m.getID().equalsIgnoreCase(id));
         if (menu != null) {
-            logger.error(serializer.deserialize("&4ERROR | 菜单ID冲突：已存在菜单ID为" + id + "的菜单"));
+            console.sendMessage(CMIChatColor.translate("&4ERROR | 菜单ID冲突：已存在菜单ID为" + id + "的菜单"));
             return HandleResult.FAILED;
         }
         return HandleResult.SUCCESS;
@@ -43,11 +45,11 @@ public class ExceptionHandler {
                 i -> i.getKey().getKey().equalsIgnoreCase(id));
         if (ig != null) {
             if (ig.getAddon() != null) {
-                logger.error(serializer.deserialize("&4ERROR | ID冲突：" + id + "与物品组 "
+                console.sendMessage(CMIChatColor.translate("&4ERROR | ID冲突：" + id + "与物品组 "
                         + ig.getKey().getKey() + "(来自" + ig.getAddon().getName() + ")冲突"));
                 return HandleResult.FAILED;
             }
-            logger.error(serializer.deserialize(
+            console.sendMessage(CMIChatColor.translate(
                     "&4ERROR | ID冲突：" + id + "与物品组 " + ig.getKey().getKey() + "冲突"));
             return HandleResult.FAILED;
         }
@@ -57,20 +59,21 @@ public class ExceptionHandler {
     public static void handleWarning(String message) {
         if (message == null || message.isBlank()) return;
 
-        logger.warn(serializer.deserialize("&eWARNING | " + message));
+        console.sendMessage(CMIChatColor.translate("&eWARNING | " + message));
     }
 
     public static void handleError(String message) {
         if (message == null || message.isBlank()) return;
 
-        logger.error(serializer.deserialize("&4ERROR | " + message));
+        console.sendMessage(CMIChatColor.translate("&4ERROR | " + message));
     }
 
     public static void handleError(String message, Throwable e) {
         if (message == null || message.isBlank()) return;
 
         if (e != null) {
-            logger.error(serializer.deserialize("&4ERROR | " + message), e);
+            console.sendMessage(CMIChatColor.translate("&4ERROR | " + message));
+            e.printStackTrace();
         } else {
             handleError(message);
         }
@@ -80,7 +83,7 @@ public class ExceptionHandler {
         if (RykenSlimefunCustomizer.INSTANCE.getConfig().getBoolean("debug")) {
             if (message == null || message.isBlank()) return;
 
-            logger.info(serializer.deserialize("&6DEBUG | " + message));
+            console.sendMessage(CMIChatColor.translate("&6DEBUG | " + message));
         }
     }
 
@@ -91,13 +94,13 @@ public class ExceptionHandler {
     public static void handleDanger(String message) {
         if (message == null || message.isBlank()) return;
 
-        logger.error(serializer.deserialize("&c&u&l&bD&4&lA&c&lN&b&lG&4&lE&c&lR | " + message));
+        console.sendMessage(CMIChatColor.translate("&c&u&l&bD&4&lA&c&lN&b&lG&4&lE&c&lR | " + message));
     }
 
     public static void info(String message) {
         if (message == null || message.isBlank()) return;
 
-        logger.info(serializer.deserialize("&aINFO | " + message));
+        console.sendMessage(CMIChatColor.translate("&aINFO | " + message));
     }
 
     public static <T extends Enum<T>> Pair<HandleResult, T> handleEnumValueOf(

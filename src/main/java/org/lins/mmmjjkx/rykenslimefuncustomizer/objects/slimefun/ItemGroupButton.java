@@ -3,15 +3,17 @@ package org.lins.mmmjjkx.rykenslimefuncustomizer.objects.slimefun;
 import io.github.thebusybiscuit.slimefun4.api.items.groups.NestedItemGroup;
 import io.github.thebusybiscuit.slimefun4.api.items.groups.SubItemGroup;
 import java.util.List;
-import net.kyori.adventure.text.Component;
-import net.kyori.adventure.text.event.ClickEvent;
+
+import net.md_5.bungee.api.ChatColor;
+import net.md_5.bungee.api.chat.ClickEvent;
+import net.md_5.bungee.api.chat.TextComponent;
 import org.bukkit.Bukkit;
 import org.bukkit.NamespacedKey;
 import org.bukkit.entity.Player;
 import org.bukkit.inventory.ItemStack;
 import org.jetbrains.annotations.Nullable;
+import org.lins.mmmjjkx.rykenslimefuncustomizer.libraries.Colors.CMIChatColor;
 import org.lins.mmmjjkx.rykenslimefuncustomizer.objects.script.ban.CommandSafe;
-import org.lins.mmmjjkx.rykenslimefuncustomizer.utils.CommonUtils;
 import org.lins.mmmjjkx.rykenslimefuncustomizer.utils.ExceptionHandler;
 
 public class ItemGroupButton extends SubItemGroup {
@@ -27,13 +29,22 @@ public class ItemGroupButton extends SubItemGroup {
     public void run(Player p) {
         if (actions != null) {
             for (String action : actions) {
+                if (action.split(" ").length >= 2) {
+                    ExceptionHandler.handleWarning("在" + getKey().getKey() + "物品组按钮中发现未知的操作格式: " + action);
+                    continue;
+                }
+
+                String type = action.split(" ")[0];
                 String content = action.split(" ")[1];
-                switch (action) {
+                switch (type) {
                     case "link" -> {
-                        p.sendMessage(CommonUtils.parseToComponent("&e单击此处: "));
-                        Component link = CommonUtils.parseToComponent("&7" + content);
-                        ClickEvent event = ClickEvent.openUrl(content);
-                        link = link.clickEvent(event);
+                        p.sendMessage(CMIChatColor.translate("&e单击此处: "));
+                        TextComponent link = new TextComponent(content);
+                        link.setColor(ChatColor.GRAY);
+
+                        ClickEvent spigotClickEvent = new ClickEvent(ClickEvent.Action.OPEN_URL, content);
+                        link.setClickEvent(spigotClickEvent);
+
                         p.sendMessage(link);
                     }
                     case "console" -> {

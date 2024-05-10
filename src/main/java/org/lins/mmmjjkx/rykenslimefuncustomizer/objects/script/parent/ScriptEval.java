@@ -30,6 +30,7 @@ import org.bukkit.entity.Player;
 import org.bukkit.inventory.ItemStack;
 import org.graalvm.polyglot.HostAccess;
 import org.jetbrains.annotations.Nullable;
+import org.lins.mmmjjkx.rykenslimefuncustomizer.libraries.Colors.CMIChatColor;
 import org.lins.mmmjjkx.rykenslimefuncustomizer.objects.ProjectAddon;
 import org.lins.mmmjjkx.rykenslimefuncustomizer.objects.script.ban.CommandSafe;
 import org.lins.mmmjjkx.rykenslimefuncustomizer.objects.script.ban.Delegations;
@@ -133,7 +134,7 @@ public abstract class ScriptEval {
         });
 
         addThing("sendMessage", (BiConsumer<Player, String>)
-                (p, s) -> p.sendMessage(CommonUtils.parseToComponent(parsePlaceholder(p, s))));
+                (p, s) -> p.sendMessage(CMIChatColor.translate(parsePlaceholder(p, s))));
 
         // get slimefun item
         addThing("getSfItemById", (Function<String, SlimefunItem>) SlimefunItem::getById);

@@ -3,9 +3,8 @@ package org.lins.mmmjjkx.rykenslimefuncustomizer.objects.customs;
 import io.github.thebusybiscuit.slimefun4.api.items.SlimefunItem;
 import io.github.thebusybiscuit.slimefun4.implementation.Slimefun;
 import io.github.thebusybiscuit.slimefun4.libraries.dough.protection.Interaction;
-import java.util.ArrayList;
+
 import java.util.HashMap;
-import java.util.List;
 import java.util.Map;
 import lombok.Getter;
 import lombok.Setter;
@@ -42,8 +41,6 @@ public class CustomMenu extends BlockMenuPreset {
 
     @Setter
     private InventoryBlock invb;
-
-    private final List<ItemStack> items;
 
     private final String title;
 
@@ -98,13 +95,10 @@ public class CustomMenu extends BlockMenuPreset {
             eval.doInit();
         }
 
-        items = new ArrayList<>();
-
         outSideInit();
     }
 
     public void outSideInit() {
-        int size = 9;
         for (int i = 0; i < 54; i++) {
             ItemStack item = slotMap.get(i);
             if (item != null) {
@@ -113,7 +107,6 @@ public class CustomMenu extends BlockMenuPreset {
                         eval.evalFunction("onClick", p, slot, is, ca);
                     }
                 });
-                size = calcSize(i, item);
             }
         }
 
@@ -151,7 +144,7 @@ public class CustomMenu extends BlockMenuPreset {
     private void cloneOriginalInventory(BlockMenuPreset preset) {
         preset.getContents();
         Inventory inventory =
-                Bukkit.createInventory(this, preset.toInventory().getSize(), CommonUtils.parseToComponent(title));
+                Bukkit.createInventory(this, preset.toInventory().getSize(), CMIChatColor.translate(title));
 
         for (int i = 0; i < preset.getInventory().getSize(); i++) {
             ItemStack item = preset.getItemInSlot(i);
@@ -180,20 +173,5 @@ public class CustomMenu extends BlockMenuPreset {
         }
 
         this.inventory = inventory;
-    }
-
-    private int calcSize(int slot, ItemStack item) {
-        int size = this.items.size();
-        if (size > slot) {
-            this.items.set(slot, item);
-        } else {
-            for (int i = 0; i < slot - size; ++i) {
-                this.items.add(null);
-            }
-
-            this.items.add(item);
-        }
-
-        return items.size();
     }
 }

@@ -1,6 +1,7 @@
 package org.lins.mmmjjkx.rykenslimefuncustomizer.utils;
 
 import io.github.thebusybiscuit.slimefun4.api.items.SlimefunItem;
+import io.github.thebusybiscuit.slimefun4.libraries.dough.items.CustomItemStack;
 import io.github.thebusybiscuit.slimefun4.libraries.dough.skins.PlayerHead;
 import io.github.thebusybiscuit.slimefun4.libraries.dough.skins.PlayerSkin;
 import java.io.File;
@@ -17,16 +18,12 @@ import java.util.function.Predicate;
 import java.util.regex.Matcher;
 import java.util.regex.Pattern;
 import lombok.SneakyThrows;
-import net.kyori.adventure.text.Component;
-import net.kyori.adventure.text.format.TextDecoration;
-import net.kyori.adventure.text.minimessage.MiniMessage;
 import net.kyori.adventure.text.serializer.legacy.LegacyComponentSerializer;
 import org.bukkit.Bukkit;
 import org.bukkit.Material;
 import org.bukkit.NamespacedKey;
 import org.bukkit.configuration.ConfigurationSection;
 import org.bukkit.configuration.file.YamlConfiguration;
-import org.bukkit.configuration.file.YamlConfigurationOptions;
 import org.bukkit.enchantments.Enchantment;
 import org.bukkit.inventory.ItemFlag;
 import org.bukkit.inventory.ItemStack;
@@ -42,7 +39,6 @@ import org.lins.mmmjjkx.rykenslimefuncustomizer.objects.customs.item.RSCItemStac
 import org.lins.mmmjjkx.rykenslimefuncustomizer.objects.global.XMaterial;
 
 public class CommonUtils {
-    private static final MiniMessage MINI_MESSAGE = MiniMessage.miniMessage();
     private static final LegacyComponentSerializer LEGACY_COMPONENT_SERIALIZER =
             LegacyComponentSerializer.legacyAmpersand().toBuilder().hexColors().build();
 
@@ -51,14 +47,6 @@ public class CommonUtils {
         item.addItemFlags(ItemFlag.HIDE_ENCHANTS);
 
         return item;
-    }
-
-    public static Component parseToComponent(String text) {
-        if (text == null) return Component.empty();
-
-        text = text.replaceAll("§", "&");
-
-        return LEGACY_COMPONENT_SERIALIZER.deserialize(text).decoration(TextDecoration.ITALIC, false);
     }
 
     @Nullable public static <T> T getIf(Iterable<T> iterable, Predicate<T> filter) {
@@ -114,7 +102,7 @@ public class CommonUtils {
         List<String> lore = CMIChatColor.translate(section.getStringList("lore"));
         String name = CMIChatColor.translate(section.getString("name", ""));
         boolean glow = section.getBoolean("glow", false);
-        boolean hasEnchantment = section.contains("enchantments") && section.isConfigurationSection("enchantments");
+        boolean hasEnchantment = section.contains("enchantments") && section.isList("enchantments");
         int modelId = section.getInt("modelId");
         int amount = section.getInt("amount", 1);
 
@@ -135,7 +123,7 @@ public class CommonUtils {
                     }
                 }
 
-                itemStack = new RSCItemStack(mat, name, lore);
+                itemStack = new CustomItemStack(mat, name, lore);
             }
             case "none" -> {
                 return new ItemStack(Material.AIR, 1);
@@ -166,14 +154,14 @@ public class CommonUtils {
                     itemStack = new RSCItemStack(is, name, lore);
                 } else {
                     ExceptionHandler.handleError("无法找到粘液物品" + material + "，已转为石头");
-                    itemStack = new RSCItemStack(Material.STONE, name, lore);
+                    itemStack = new CustomItemStack(Material.STONE, name, lore);
                 }
             }
             case "saveditem" -> {
                 File file = new File(addon.getSavedItemsFolder(), material + ".yml");
                 if (!file.exists()) {
                     ExceptionHandler.handleError("保存物品的文件" + material + "不存在，已转为石头");
-                    itemStack = new RSCItemStack(Material.STONE, name, lore);
+                    itemStack = new CustomItemStack(Material.STONE, name, lore);
                     break;
                 }
 
@@ -203,8 +191,7 @@ public class CommonUtils {
 
                 YamlConfiguration configuration = YamlConfiguration.loadConfiguration(file);
 
-                itemStack = new RSCItemStack(
-                        configuration.getItemStack("item", new RSCItemStack(Material.STONE, name, lore)), name, lore);
+                itemStack = new RSCItemStack(configuration.getItemStack("item", new CustomItemStack(Material.STONE, name, lore)), name, lore);
 
                 if (itemStack.getAmount() > 1 && !countable) {
                     itemStack.setAmount(1);
@@ -229,36 +216,44 @@ public class CommonUtils {
         }
 
         if (hasEnchantment) {
-            ConfigurationSection enchants = section.getConfigurationSection("enchantments");
-            if (enchants != null) {
-                for (String enchant : enchants.getKeys(false)) {
-                    Enchantment enchantment = Enchantment.getByKey(NamespacedKey.minecraft(enchant.toLowerCase()));
-                    if (enchantment == null) {
-                        ExceptionHandler.handleError(
-                                "无法在附属" + addon.getAddonName() + "中读取物品附魔" + enchant + ", 跳过添加此附魔");
-                        continue;
-                    }
-                    int lvl = enchants.getInt(enchant, 1);
-                    itemStack.addUnsafeEnchantment(enchantment, lvl);
+            List<String> enchants = section.getStringList("enchantments");
+            for (String enchant : enchants) {
+                String[] s2 = enchant.split(" ");
+                if (s2.length != 2) {
+                    ExceptionHandler.handleError(
+                            "无法在附属" + addon.getAddonName() + "中读取物品附魔" + enchant + ", 跳过添加此附魔");
+                    continue;
                 }
+
+                String enchantName = s2[0];
+                int lvl = Integer.parseInt(s2[1]);
+
+                Enchantment enchantment = Enchantment.getByKey(NamespacedKey.minecraft(enchantName.toLowerCase()));
+                if (enchantment == null) {
+                    ExceptionHandler.handleError(
+                            "无法在附属" + addon.getAddonName() + "中读取物品附魔" + enchant + ", 跳过添加此附魔");
+                    continue;
+                }
+
+                itemStack.addUnsafeEnchantment(enchantment, lvl);
             }
         }
 
         return glow ? doGlow(itemStack) : itemStack;
     }
 
-    public static void addLore(ItemStack stack, boolean emptyLine, Component... lore) {
+    public static void addLore(ItemStack stack, boolean emptyLine, String... lore) {
         ItemMeta im = stack.getItemMeta();
-        var lorel = im.lore();
+        var lorel = im.getLore();
         if (lorel != null) {
             if (emptyLine) {
-                lorel.add(Component.empty());
+                lorel.add("");
             }
             lorel.addAll(Arrays.asList(lore));
         } else {
             lorel = Arrays.asList(lore);
         }
-        im.lore(lorel);
+        im.setLore(lorel);
         stack.setItemMeta(im);
     }
 
@@ -331,15 +326,6 @@ public class CommonUtils {
 
                 if (!configuration2.contains(key)) {
                     configuration2.set(key, value);
-                }
-                if (!configuration.getComments(key).equals(configuration2.getComments(key))) {
-                    configuration2.setComments(key, configuration.getComments(key));
-                }
-                YamlConfigurationOptions options1 = configuration.options();
-                YamlConfigurationOptions options2 = configuration2.options();
-
-                if (!options2.getHeader().equals(options1.getHeader())) {
-                    options2.setHeader(options1.getHeader());
                 }
             }
 
