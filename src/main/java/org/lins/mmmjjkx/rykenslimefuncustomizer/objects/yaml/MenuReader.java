@@ -75,7 +75,7 @@ public class MenuReader extends YamlReader<CustomMenu> {
                     ExceptionHandler.handleWarning("在菜单" + s + "中有位于槽位大于53或小于0的物品，跳过对此物品的读取。");
                     continue;
                 }
-                ConfigurationSection item = slots.getConfigurationSection(String.valueOf(realSlot));
+                ConfigurationSection item = slots.getConfigurationSection(slot);
                 ItemStack itemStack = CommonUtils.readItem(item, true, addon);
                 if (itemStack == null) {
                     ExceptionHandler.handleWarning("在菜单" + s + "中有位于槽位" + realSlot + "的物品格式错误或输入了错误的数据无法读取，跳过对此物品的读取。");

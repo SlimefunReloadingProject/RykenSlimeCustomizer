@@ -8,6 +8,7 @@ import org.bukkit.NamespacedKey;
 import org.bukkit.configuration.ConfigurationSection;
 import org.bukkit.configuration.file.YamlConfiguration;
 import org.lins.mmmjjkx.rykenslimefuncustomizer.RykenSlimefunCustomizer;
+import org.lins.mmmjjkx.rykenslimefuncustomizer.libraries.Colors.CMIChatColor;
 import org.lins.mmmjjkx.rykenslimefuncustomizer.objects.ProjectAddon;
 import org.lins.mmmjjkx.rykenslimefuncustomizer.utils.ExceptionHandler;
 
@@ -41,10 +42,12 @@ public class ResearchReader extends YamlReader<Research> {
             ExceptionHandler.handleError("无法加载研究 " + s + ": 等级花费必须大于0!");
             return null;
         }
-        if (name == null) {
+        if (name == null || name.isBlank()) {
             ExceptionHandler.handleError("无法加载研究 " + s + ": 名称不能为空!");
             return null;
         }
+
+        name = CMIChatColor.translate(name);
 
         boolean hasCurrency = section.getBoolean("currencyCost");
         double currency = 0;

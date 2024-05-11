@@ -1,11 +1,10 @@
 package org.lins.mmmjjkx.rykenslimefuncustomizer.objects;
 
+import io.github.thebusybiscuit.slimefun4.api.items.SlimefunItemStack;
 import io.github.thebusybiscuit.slimefun4.libraries.commons.lang.Validate;
 import java.io.File;
-import java.util.ArrayList;
-import java.util.List;
-import java.util.Map;
-import java.util.Objects;
+import java.util.*;
+
 import org.bukkit.Bukkit;
 import org.bukkit.configuration.file.YamlConfiguration;
 import org.jetbrains.annotations.Nullable;
@@ -22,6 +21,7 @@ import org.lins.mmmjjkx.rykenslimefuncustomizer.utils.Constants;
 import org.lins.mmmjjkx.rykenslimefuncustomizer.utils.ExceptionHandler;
 
 public class ProjectAddonLoader {
+    private final Map<String, SlimefunItemStack> preloadedItems;
     private final Map<String, File> ids;
     private final File file;
 
@@ -31,6 +31,7 @@ public class ProjectAddonLoader {
 
         this.file = dir;
         this.ids = ids;
+        this.preloadedItems = new HashMap<>();
     }
 
     @Nullable public ProjectAddon load() {

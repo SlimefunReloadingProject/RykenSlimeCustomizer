@@ -26,7 +26,6 @@ import org.lins.mmmjjkx.rykenslimefuncustomizer.objects.customs.machine.CustomMa
 import org.lins.mmmjjkx.rykenslimefuncustomizer.objects.customs.machine.CustomNoEnergyMachine;
 import org.lins.mmmjjkx.rykenslimefuncustomizer.objects.customs.machine.CustomRecipeMachine;
 import org.lins.mmmjjkx.rykenslimefuncustomizer.objects.script.lambda.RSCClickHandler;
-import org.lins.mmmjjkx.rykenslimefuncustomizer.utils.CommonUtils;
 
 public class CustomMenu extends BlockMenuPreset {
     @Getter
@@ -46,6 +45,8 @@ public class CustomMenu extends BlockMenuPreset {
 
     public CustomMenu(String id, String title, CustomMenu menu) {
         this(id, title, menu, menu.getProgressBarItem(), menu.eval);
+
+        this.progressSlot = menu.progressSlot;
     }
 
     public CustomMenu(

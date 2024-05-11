@@ -53,10 +53,6 @@ public abstract class YamlReader<T> {
         lateInits.add(key);
     }
 
-    protected String getAttribute(ConfigurationSection section, String s) {
-        return section.getString(s);
-    }
-
     public List<T> loadLateInits(ProjectAddon addon) {
         List<T> objects = new ArrayList<>();
         lateInits.forEach(s -> objects.add(readEach(s, addon)));
