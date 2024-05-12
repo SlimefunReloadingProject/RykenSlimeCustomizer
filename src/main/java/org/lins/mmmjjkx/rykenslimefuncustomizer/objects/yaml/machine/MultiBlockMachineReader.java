@@ -24,7 +24,7 @@ public class MultiBlockMachineReader extends YamlReader<CustomMultiBlockMachine>
     }
 
     @Override
-    public CustomMultiBlockMachine readEach(String s, ProjectAddon addon) {
+    public CustomMultiBlockMachine readEach(String s) {
         ConfigurationSection section = configuration.getConfigurationSection(s);
         if (section == null) return null;
         ExceptionHandler.HandleResult result = ExceptionHandler.handleIdConflict(s);

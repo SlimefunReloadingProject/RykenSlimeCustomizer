@@ -2,6 +2,8 @@ package org.lins.mmmjjkx.rykenslimefuncustomizer.objects.yaml;
 
 import java.util.ArrayList;
 import java.util.List;
+
+import io.github.thebusybiscuit.slimefun4.api.items.SlimefunItemStack;
 import org.bukkit.Bukkit;
 import org.bukkit.configuration.ConfigurationSection;
 import org.bukkit.configuration.file.YamlConfiguration;
@@ -10,16 +12,34 @@ import org.lins.mmmjjkx.rykenslimefuncustomizer.utils.ExceptionHandler;
 
 public abstract class YamlReader<T> {
     private final List<String> lateInits;
-    protected YamlConfiguration configuration;
+    protected final ProjectAddon addon;
+    protected final YamlConfiguration configuration;
 
-    public YamlReader(YamlConfiguration config) {
-        configuration = config;
-        lateInits = new ArrayList<>();
+    public YamlReader(YamlConfiguration config, ProjectAddon addon) {
+        this.configuration = config;
+        this.lateInits = new ArrayList<>();
+        this.addon = addon;
     }
 
-    public abstract T readEach(String section, ProjectAddon addon);
+    public abstract T readEach(String section);
 
-    public final List<T> readAll(ProjectAddon addon) {
+    public final void preload() {
+        for (String key : configuration.getKeys(false)) {
+            List<SlimefunItemStack> items = preloadItems(key);
+
+            if (items == null || items.isEmpty()) continue;
+
+            for (SlimefunItemStack item : items) {
+                addon.getPreloadItems().put(item.getItemId(), item);
+            }
+        }
+    }
+
+    protected final SlimefunItemStack getPreloadItem(String itemId) {
+        return addon.getPreloadItems().get(itemId);
+    }
+
+    public final List<T> readAll() {
         List<T> objects = new ArrayList<>();
         for (String key : configuration.getKeys(false)) {
             ConfigurationSection section = configuration.getConfigurationSection(key);
@@ -39,7 +59,7 @@ public abstract class YamlReader<T> {
 
             ExceptionHandler.debugLog("开始读取...");
 
-            var object = readEach(key, addon);
+            var object = readEach(key);
             if (object != null) {
                 objects.add(object);
             }
@@ -53,14 +73,16 @@ public abstract class YamlReader<T> {
         lateInits.add(key);
     }
 
-    public List<T> loadLateInits(ProjectAddon addon) {
+    public List<T> loadLateInits() {
         List<T> objects = new ArrayList<>();
-        lateInits.forEach(s -> objects.add(readEach(s, addon)));
+        lateInits.forEach(s -> objects.add(readEach(s)));
 
         lateInits.clear();
 
         return objects;
     }
+
+    public abstract List<SlimefunItemStack> preloadItems(String s);
 
     private boolean checkForRegistration(ConfigurationSection section) {
         if (section == null) return true;

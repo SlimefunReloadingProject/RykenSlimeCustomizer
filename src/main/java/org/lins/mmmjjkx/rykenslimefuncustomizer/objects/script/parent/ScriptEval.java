@@ -37,15 +37,10 @@ import org.lins.mmmjjkx.rykenslimefuncustomizer.objects.script.ban.Delegations;
 import org.lins.mmmjjkx.rykenslimefuncustomizer.objects.script.enhanced.NBTAPIIntegration;
 import org.lins.mmmjjkx.rykenslimefuncustomizer.objects.script.lambda.CiConsumer;
 import org.lins.mmmjjkx.rykenslimefuncustomizer.objects.script.lambda.CiFunction;
-import org.lins.mmmjjkx.rykenslimefuncustomizer.utils.CommonUtils;
 import org.lins.mmmjjkx.rykenslimefuncustomizer.utils.ExceptionHandler;
 
 @Getter(AccessLevel.PROTECTED)
 public abstract class ScriptEval {
-    // 虽然引擎不让我们开放这两个包，但是我们还是把它留在这
-    protected final TruffleString[] EXTERNAL_PACKAGES =
-            new TruffleString[] {Strings.constant("io"), Strings.constant("net")};
-
     protected final HostAccess UNIVERSAL_HOST_ACCESS = HostAccess.newBuilder()
             .allowPublicAccess(true)
             .allowAllImplementations(true)

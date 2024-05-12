@@ -1,6 +1,7 @@
 package org.lins.mmmjjkx.rykenslimefuncustomizer.objects.yaml;
 
 import io.github.thebusybiscuit.slimefun4.api.items.SlimefunItem;
+import io.github.thebusybiscuit.slimefun4.api.items.SlimefunItemStack;
 import io.github.thebusybiscuit.slimefun4.api.researches.Research;
 import java.util.List;
 import java.util.regex.Pattern;
@@ -15,12 +16,12 @@ import org.lins.mmmjjkx.rykenslimefuncustomizer.utils.ExceptionHandler;
 public class ResearchReader extends YamlReader<Research> {
     private static final Pattern VALID_KEY = Pattern.compile("[a-z0-9/._-]+");
 
-    public ResearchReader(YamlConfiguration config) {
-        super(config);
+    public ResearchReader(YamlConfiguration config, ProjectAddon addon) {
+        super(config, addon);
     }
 
     @Override
-    public Research readEach(String s, ProjectAddon addon) {
+    public Research readEach(String s) {
         ConfigurationSection section = configuration.getConfigurationSection(s);
         if (section == null) return null;
 
@@ -79,5 +80,11 @@ public class ResearchReader extends YamlReader<Research> {
         research.register();
 
         return research;
+    }
+
+    // 研究不需要预加载物品
+    @Override
+    public List<SlimefunItemStack> preloadItems(String s) {
+        return List.of();
     }
 }

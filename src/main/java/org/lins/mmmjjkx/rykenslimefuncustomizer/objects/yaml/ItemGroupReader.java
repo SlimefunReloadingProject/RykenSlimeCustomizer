@@ -1,6 +1,7 @@
 package org.lins.mmmjjkx.rykenslimefuncustomizer.objects.yaml;
 
 import io.github.thebusybiscuit.slimefun4.api.items.ItemGroup;
+import io.github.thebusybiscuit.slimefun4.api.items.SlimefunItemStack;
 import io.github.thebusybiscuit.slimefun4.api.items.groups.LockedItemGroup;
 import io.github.thebusybiscuit.slimefun4.api.items.groups.NestedItemGroup;
 import io.github.thebusybiscuit.slimefun4.api.items.groups.SeasonalItemGroup;
@@ -21,12 +22,12 @@ import org.lins.mmmjjkx.rykenslimefuncustomizer.utils.CommonUtils;
 import org.lins.mmmjjkx.rykenslimefuncustomizer.utils.ExceptionHandler;
 
 public class ItemGroupReader extends YamlReader<ItemGroup> {
-    public ItemGroupReader(YamlConfiguration config) {
-        super(config);
+    public ItemGroupReader(YamlConfiguration config, ProjectAddon addon) {
+        super(config, addon);
     }
 
     @Override
-    public ItemGroup readEach(String s, ProjectAddon addon) {
+    public ItemGroup readEach(String s) {
         ConfigurationSection section = configuration.getConfigurationSection(s);
         if (section == null) return null;
         ExceptionHandler.HandleResult conflict = ExceptionHandler.handleGroupIdConflict(s);
@@ -120,5 +121,11 @@ public class ItemGroupReader extends YamlReader<ItemGroup> {
         }
 
         return group;
+    }
+
+    // 物品组不需要预加载物品
+    @Override
+    public List<SlimefunItemStack> preloadItems(String s) {
+        return List.of();
     }
 }

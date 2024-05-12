@@ -30,7 +30,7 @@ public class GeneratorReader extends YamlReader<CustomGenerator> {
 
     @SneakyThrows
     @Override
-    public CustomGenerator readEach(String s, ProjectAddon addon) {
+    public CustomGenerator readEach(String s) {
         ConfigurationSection section = configuration.getConfigurationSection(s);
         if (section == null) return null;
         ExceptionHandler.HandleResult result = ExceptionHandler.handleIdConflict(s);

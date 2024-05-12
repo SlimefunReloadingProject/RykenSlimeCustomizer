@@ -18,27 +18,24 @@ import org.lins.mmmjjkx.rykenslimefuncustomizer.objects.yaml.YamlReader;
 import org.lins.mmmjjkx.rykenslimefuncustomizer.utils.CommonUtils;
 import org.lins.mmmjjkx.rykenslimefuncustomizer.utils.ExceptionHandler;
 
+import java.util.List;
+
 public class MobDropsReader extends YamlReader<CustomMobDrop> {
-    public MobDropsReader(YamlConfiguration config) {
-        super(config);
+    public MobDropsReader(YamlConfiguration config, ProjectAddon addon) {
+        super(config, addon);
     }
 
     @Override
-    public CustomMobDrop readEach(String s, ProjectAddon addon) {
+    public CustomMobDrop readEach(String s) {
         ConfigurationSection section = configuration.getConfigurationSection(s);
         if (section != null) {
             ExceptionHandler.HandleResult result = ExceptionHandler.handleIdConflict(s);
             if (result == ExceptionHandler.HandleResult.FAILED) return null;
 
             String igId = section.getString("item_group");
-            ConfigurationSection item = section.getConfigurationSection("item");
-            ItemStack stack = CommonUtils.readItem(item, false, addon);
-            if (stack == null) {
-                ExceptionHandler.handleError("无法在附属" + addon.getAddonName() + "中加载生物掉落" + s + ": 物品为空或格式错误导致无法加载");
-                return null;
-            }
 
-            SlimefunItemStack sfis = new SlimefunItemStack(s, stack);
+            SlimefunItemStack sfis = getPreloadItem(s);
+            if (sfis == null) return null;
 
             Pair<ExceptionHandler.HandleResult, ItemGroup> group = ExceptionHandler.handleItemGroupGet(addon, igId);
             if (group.getFirstValue() == ExceptionHandler.HandleResult.FAILED) return null;
@@ -85,5 +82,23 @@ public class MobDropsReader extends YamlReader<CustomMobDrop> {
             return new CustomMobDrop(group.getSecondValue(), sfis, recipe, chance, entityType);
         }
         return null;
+    }
+
+    @Override
+    public List<SlimefunItemStack> preloadItems(String s) {
+        ConfigurationSection section = configuration.getConfigurationSection(s);
+
+        if (section == null) return null;
+
+        ConfigurationSection item = section.getConfigurationSection("item");
+        ItemStack stack = CommonUtils.readItem(item, false, addon);
+        if (stack == null) {
+            ExceptionHandler.handleError("无法在附属" + addon.getAddonName() + "中加载生物掉落" + s + ": 物品为空或格式错误导致无法加载");
+            return null;
+        }
+
+        SlimefunItemStack sfis = new SlimefunItemStack(s, stack);
+
+        return List.of(sfis);
     }
 }

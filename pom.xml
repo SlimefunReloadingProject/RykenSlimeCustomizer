@@ -31,14 +31,6 @@
 				<groupId>org.apache.maven.plugins</groupId>
 				<artifactId>maven-shade-plugin</artifactId>
 				<version>3.4.1</version>
-				<configuration>
-					<relocations>
-						<relocation>
-							<pattern>de.themoep.minedown</pattern>
-							<shadedPattern>org.lins.mmmjjkx.rykenslimefuncustomizer.libraries.minedown</shadedPattern>
-						</relocation>
-					</relocations>
-				</configuration>
 				<executions>
 					<execution>
 						<phase>package</phase>

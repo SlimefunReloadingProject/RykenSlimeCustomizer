@@ -1,8 +1,10 @@
 package org.lins.mmmjjkx.rykenslimefuncustomizer.objects.yaml;
 
+import io.github.thebusybiscuit.slimefun4.api.items.SlimefunItemStack;
 import io.github.thebusybiscuit.slimefun4.implementation.Slimefun;
 import java.io.File;
 import java.util.HashMap;
+import java.util.List;
 import java.util.Map;
 import java.util.stream.IntStream;
 import me.mrCookieSlime.Slimefun.api.inventory.BlockMenuPreset;
@@ -17,12 +19,12 @@ import org.lins.mmmjjkx.rykenslimefuncustomizer.utils.CommonUtils;
 import org.lins.mmmjjkx.rykenslimefuncustomizer.utils.ExceptionHandler;
 
 public class MenuReader extends YamlReader<CustomMenu> {
-    public MenuReader(YamlConfiguration config) {
-        super(config);
+    public MenuReader(YamlConfiguration config, ProjectAddon addon) {
+        super(config, addon);
     }
 
     @Override
-    public CustomMenu readEach(String s, ProjectAddon addon) {
+    public CustomMenu readEach(String s) {
         ConfigurationSection section = configuration.getConfigurationSection(s);
         if (section == null) return null;
 
@@ -115,5 +117,11 @@ public class MenuReader extends YamlReader<CustomMenu> {
         }
 
         return new CustomMenu(s, title, slotMap, playerInvClickable, progress, progressItem, eval);
+    }
+
+    // 菜单不需要预加载物品
+    @Override
+    public List<SlimefunItemStack> preloadItems(String s) {
+        return List.of();
     }
 }

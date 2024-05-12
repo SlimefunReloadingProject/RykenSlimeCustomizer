@@ -36,7 +36,7 @@ public class JavaScriptEval extends ScriptEval {
                         .allowExperimentalOptions(true)
                         .allowPolyglotAccess(PolyglotAccess.ALL)
                         .allowCreateProcess(true)
-                        .allowIO(IOAccess.newBuilder().allowHostFileAccess(true).build())
+                        .allowIO(IOAccess.NONE)
                         .allowHostClassLookup(s -> {
                             if (s.equalsIgnoreCase("org.bukkit.Bukkit")) {
                                 return false;

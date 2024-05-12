@@ -2,13 +2,17 @@ package org.lins.mmmjjkx.rykenslimefuncustomizer.objects;
 
 import io.github.thebusybiscuit.slimefun4.api.items.ItemGroup;
 import io.github.thebusybiscuit.slimefun4.api.items.SlimefunItem;
+import io.github.thebusybiscuit.slimefun4.api.items.SlimefunItemStack;
 import io.github.thebusybiscuit.slimefun4.api.recipes.RecipeType;
 import io.github.thebusybiscuit.slimefun4.api.researches.Research;
 import io.github.thebusybiscuit.slimefun4.implementation.Slimefun;
 import io.github.thebusybiscuit.slimefun4.implementation.items.electric.Capacitor;
 import java.io.File;
 import java.util.ArrayList;
+import java.util.HashMap;
 import java.util.List;
+import java.util.Map;
+
 import lombok.AccessLevel;
 import lombok.Getter;
 import lombok.RequiredArgsConstructor;
@@ -40,12 +44,12 @@ public final class ProjectAddon {
     private @NotNull final List<String> depends;
     private @NotNull final String description;
     private @NotNull final List<String> authors;
-    //
     private @NotNull final File folder;
+    //
+    private @NotNull final Map<String, SlimefunItemStack> preloadItems = new HashMap<>();
     //
     private @Nullable String githubRepo;
     //
-    // private Multimap<String, ScriptEval> scripts = HashMultimap.create(12, 10000000);
     private List<JavaScriptEval> scriptEvals = new ArrayList<>();
     //
     // groups.yml
@@ -147,6 +151,7 @@ public final class ProjectAddon {
         foods.clear();
         armors.clear();
         supers.clear();
+        preloadItems.clear();
 
         DropFromBlock.unregisterAddonDrops(this);
     }

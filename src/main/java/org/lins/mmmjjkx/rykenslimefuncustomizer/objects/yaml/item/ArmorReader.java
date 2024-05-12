@@ -21,12 +21,12 @@ import org.lins.mmmjjkx.rykenslimefuncustomizer.utils.ExceptionHandler;
 public class ArmorReader extends YamlReader<List<CustomArmorPiece>> {
     private final List<String> CHECKS = List.of("helmet", "chestplate", "leggings", "boots");
 
-    public ArmorReader(YamlConfiguration config) {
-        super(config);
+    public ArmorReader(YamlConfiguration config, ProjectAddon addon) {
+        super(config, addon);
     }
 
     @Override
-    public List<CustomArmorPiece> readEach(String s, ProjectAddon addon) {
+    public List<CustomArmorPiece> readEach(String s) {
         ConfigurationSection section = configuration.getConfigurationSection(s);
         if (section == null) return null;
 
@@ -64,11 +64,8 @@ public class ArmorReader extends YamlReader<List<CustomArmorPiece>> {
             ConfigurationSection recipeSection = pieceSection.getConfigurationSection("recipe");
             ItemStack[] recipe = CommonUtils.readRecipe(recipeSection, addon);
 
-            ItemStack stack = CommonUtils.readItem(pieceSection, false, addon);
-            if (stack == null) {
-                ExceptionHandler.handleError("无法在附属" + addon.getAddonName() + "中加载盔甲部分" + id + ": 物品为空或格式错误导致无法加载");
-                return null;
-            }
+            SlimefunItemStack sfis = getPreloadItem(id);
+            if (sfis == null) return null;
 
             List<PotionEffect> potionEffects = new ArrayList<>();
             List<String> effects = pieceSection.getStringList("potion_effects");
@@ -96,11 +93,9 @@ public class ArmorReader extends YamlReader<List<CustomArmorPiece>> {
                 potionEffects.add(new PotionEffect(type, Integer.MAX_VALUE, amplifier));
             }
 
-            SlimefunItemStack slimefunStack = new SlimefunItemStack(id, stack);
-
             pieces.add(new CustomArmorPiece(
                     group.getSecondValue(),
-                    slimefunStack,
+                    sfis,
                     rt.getSecondValue(),
                     recipe,
                     potionEffects.toArray(new PotionEffect[] {}),
@@ -116,5 +111,28 @@ public class ArmorReader extends YamlReader<List<CustomArmorPiece>> {
         }
 
         return pieces;
+    }
+
+    @Override
+    public List<SlimefunItemStack> preloadItems(String s) {
+        List<SlimefunItemStack> items = new ArrayList<>(4);
+        ConfigurationSection section = configuration.getConfigurationSection(s);
+        if (section == null) return null;
+
+        for (String check : CHECKS) {
+            ConfigurationSection pieceSection = section.getConfigurationSection(check);
+            if (pieceSection == null) continue;
+
+            ItemStack stack = CommonUtils.readItem(pieceSection, false, addon);
+            if (stack == null) {
+                ExceptionHandler.handleError("无法在附属" + addon.getAddonName() + "中加载盔甲部分" + s + "." + check + ": 物品为空或格式错误导致无法加载，已跳过");
+                continue;
+            }
+
+            SlimefunItemStack sfis = new SlimefunItemStack(pieceSection.getString("id", ""), stack);
+            items.add(sfis);
+        }
+
+        return items;
     }
 }

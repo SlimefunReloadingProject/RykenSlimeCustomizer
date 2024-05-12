@@ -1,6 +1,5 @@
 package org.lins.mmmjjkx.rykenslimefuncustomizer.objects;
 
-import io.github.thebusybiscuit.slimefun4.api.items.SlimefunItemStack;
 import io.github.thebusybiscuit.slimefun4.libraries.commons.lang.Validate;
 import java.io.File;
 import java.util.*;
@@ -21,7 +20,6 @@ import org.lins.mmmjjkx.rykenslimefuncustomizer.utils.Constants;
 import org.lins.mmmjjkx.rykenslimefuncustomizer.utils.ExceptionHandler;
 
 public class ProjectAddonLoader {
-    private final Map<String, SlimefunItemStack> preloadedItems;
     private final Map<String, File> ids;
     private final File file;
 
@@ -31,7 +29,6 @@ public class ProjectAddonLoader {
 
         this.file = dir;
         this.ids = ids;
-        this.preloadedItems = new HashMap<>();
     }
 
     @Nullable public ProjectAddon load() {
@@ -106,98 +103,103 @@ public class ProjectAddonLoader {
         ExceptionHandler.debugLog("读取完成，开始加载附属 " + addon.getAddonId() + " 中的内容...");
 
         YamlConfiguration groups = doFileLoad(file, Constants.GROUPS_FILE);
-        ItemGroupReader reader = new ItemGroupReader(groups);
-        addon.setItemGroups(reader.readAll(addon));
-        //
-        YamlConfiguration recipeTypes = doFileLoad(file, Constants.RECIPE_TYPES_FILE);
-        RecipeTypesReader recipeTypesReader = new RecipeTypesReader(recipeTypes);
-        addon.setRecipeTypes(recipeTypesReader.readAll(addon));
+        ItemGroupReader groupReader = new ItemGroupReader(groups, addon);
+        addon.setItemGroups(groupReader.readAll());
 
+        YamlConfiguration recipeTypes = doFileLoad(file, Constants.RECIPE_TYPES_FILE);
+        RecipeTypesReader recipeTypesReader = new RecipeTypesReader(recipeTypes, addon);
+        addon.setRecipeTypes(recipeTypesReader.readAll());
         RecipeTypeMap.pushRecipeType(addon.getRecipeTypes());
-        //
+
         YamlConfiguration mob_drops = doFileLoad(file, Constants.MOB_DROPS_FILE);
-        MobDropsReader mobDropsReader = new MobDropsReader(mob_drops);
-        addon.setMobDrops(mobDropsReader.readAll(addon));
-        //
         YamlConfiguration geo_resources = doFileLoad(file, Constants.GEO_RES_FILE);
-        GeoResourceReader resourceReader = new GeoResourceReader(geo_resources);
-        addon.setGeoResources(resourceReader.readAll(addon));
-        //
         YamlConfiguration items = doFileLoad(file, Constants.ITEMS_FILE);
-        ItemReader itemReader = new ItemReader(items);
-        addon.setItems(itemReader.readAll(addon));
-        //
         YamlConfiguration armors = doFileLoad(file, Constants.ARMORS_FILE);
-        ArmorReader armorReader = new ArmorReader(armors);
-        addon.setArmors(armorReader.readAll(addon));
-        //
         YamlConfiguration capacitors = doFileLoad(file, Constants.CAPACITORS_FILE);
-        CapacitorsReader capacitorsReader = new CapacitorsReader(capacitors);
-        addon.setCapacitors(capacitorsReader.readAll(addon));
-        //
         YamlConfiguration foods = doFileLoad(file, Constants.FOODS_FILE);
-        FoodReader foodReader = new FoodReader(foods);
-        addon.setFoods(foodReader.readAll(addon));
-        /////////////////
         YamlConfiguration menus = doFileLoad(file, Constants.MENUS_FILE);
-        MenuReader menuReader = new MenuReader(menus);
-        addon.setMenus(menuReader.readAll(addon));
-        /////////////////
         YamlConfiguration machines = doFileLoad(file, Constants.MACHINES_FILE);
-        MachineReader machineReader = new MachineReader(machines);
-        addon.setMachines(machineReader.readAll(addon));
-        //
         YamlConfiguration generators = doFileLoad(file, Constants.GENERATORS_FILE);
-        GeneratorReader generatorReader = new GeneratorReader(generators);
-        addon.setGenerators(generatorReader.readAll(addon));
-        //
         YamlConfiguration solarGenerators = doFileLoad(file, Constants.SOLAR_GENERATORS_FILE);
-        SolarGeneratorReader solarGeneratorReader = new SolarGeneratorReader(solarGenerators);
-        addon.setSolarGenerators(solarGeneratorReader.readAll(addon));
-        //
         YamlConfiguration materialGenerators = doFileLoad(file, Constants.MATERIAL_GENERATORS_FILE);
-        MaterialGeneratorReader materialGeneratorReader = new MaterialGeneratorReader(materialGenerators);
-        addon.setMaterialGenerators(materialGeneratorReader.readAll(addon));
-        //
         YamlConfiguration recipeMachines = doFileLoad(file, Constants.RECIPE_MACHINES_FILE);
-        RecipeMachineReader recipeMachineReader = new RecipeMachineReader(recipeMachines);
-        addon.setRecipeMachines(recipeMachineReader.readAll(addon));
-        //
         YamlConfiguration simpleMachines = doFileLoad(file, Constants.SIMPLE_MACHINES_FILE);
-        SimpleMachineReader simpleMachineReader = new SimpleMachineReader(simpleMachines);
-        addon.setSimpleMachines(simpleMachineReader.readAll(addon));
-        //
         YamlConfiguration multiBlockMachines = doFileLoad(file, Constants.MULTI_BLOCK_MACHINES_FILE);
-        MultiBlockMachineReader multiBlockMachineReader = new MultiBlockMachineReader(multiBlockMachines);
-        addon.setMultiBlockMachines(multiBlockMachineReader.readAll(addon));
-        //
         YamlConfiguration supers = doFileLoad(file, Constants.SUPERS_FILE);
+
+        MobDropsReader mobDropsReader = new MobDropsReader(mob_drops, addon);
+        GeoResourceReader resourceReader = new GeoResourceReader(geo_resources, addon);
+        ItemReader itemReader = new ItemReader(items, addon);
+        ArmorReader armorReader = new ArmorReader(armors, addon);
+        CapacitorsReader capacitorsReader = new CapacitorsReader(capacitors, addon);
+        FoodReader foodReader = new FoodReader(foods, addon);
+        MenuReader menuReader = new MenuReader(menus, addon);
+        MachineReader machineReader = new MachineReader(machines);
+        GeneratorReader generatorReader = new GeneratorReader(generators);
+        SolarGeneratorReader solarGeneratorReader = new SolarGeneratorReader(solarGenerators);
+        MaterialGeneratorReader materialGeneratorReader = new MaterialGeneratorReader(materialGenerators);
+        RecipeMachineReader recipeMachineReader = new RecipeMachineReader(recipeMachines);
+        SimpleMachineReader simpleMachineReader = new SimpleMachineReader(simpleMachines);
+        MultiBlockMachineReader multiBlockMachineReader = new MultiBlockMachineReader(multiBlockMachines);
         SuperReader superReader = new SuperReader(supers);
-        addon.setSupers(superReader.readAll(addon));
-        //////////////////////////
-        YamlConfiguration researches = doFileLoad(file, Constants.RESEARCHES_FILE);
-        ResearchReader researchReader = new ResearchReader(researches);
-        addon.setResearches(researchReader.readAll(addon));
+
+        ExceptionHandler.debugLog("开始加载 " + file.getName() + " 中的物品内容...");
+
+        mobDropsReader.preload();
+        resourceReader.preload();
+        itemReader.preload();
+        armorReader.preload();
+        capacitorsReader.preload();
+        foodReader.preload();
+        machineReader.preload();
+        generatorReader.preload();
+        solarGeneratorReader.preload();
+        materialGeneratorReader.preload();
+        recipeMachineReader.preload();
+        simpleMachineReader.preload();
+        multiBlockMachineReader.preload();
+        superReader.preload();
+
+        ExceptionHandler.debugLog("开始注册 " + file.getName() + " 存放的内容...");
+
+        addon.setMobDrops(mobDropsReader.readAll());
+        addon.setGeoResources(resourceReader.readAll());
+        addon.setItems(itemReader.readAll());
+        addon.setArmors(armorReader.readAll());
+        addon.setCapacitors(capacitorsReader.readAll());
+        addon.setFoods(foodReader.readAll());
+        addon.setMenus(menuReader.readAll());
+        addon.setMachines(machineReader.readAll());
+        addon.setGenerators(generatorReader.readAll());
+        addon.setSolarGenerators(solarGeneratorReader.readAll());
+        addon.setMaterialGenerators(materialGeneratorReader.readAll());
+        addon.setRecipeMachines(recipeMachineReader.readAll());
+        addon.setSimpleMachines(simpleMachineReader.readAll());
+        addon.setMultiBlockMachines(multiBlockMachineReader.readAll());
+        addon.setSupers(superReader.readAll());
 
         ExceptionHandler.debugLog("开始加载要求延迟加载的内容...");
 
         // late inits
-        addon.getMobDrops().addAll(mobDropsReader.loadLateInits(addon));
-        addon.getGeoResources().addAll(resourceReader.loadLateInits(addon));
-        addon.getItems().addAll(itemReader.loadLateInits(addon));
-        addon.getArmors().addAll(armorReader.loadLateInits(addon));
-        addon.getCapacitors().addAll(capacitorsReader.loadLateInits(addon));
-        addon.getFoods().addAll(foodReader.loadLateInits(addon));
-        addon.getMenus().addAll(menuReader.loadLateInits(addon));
-        addon.getMachines().addAll(machineReader.loadLateInits(addon));
-        addon.getGenerators().addAll(generatorReader.loadLateInits(addon));
-        addon.getSolarGenerators().addAll(solarGeneratorReader.loadLateInits(addon));
-        addon.getMaterialGenerators().addAll(materialGeneratorReader.loadLateInits(addon));
-        addon.getRecipeMachines().addAll(recipeMachineReader.loadLateInits(addon));
-        addon.getSimpleMachines().addAll(simpleMachineReader.loadLateInits(addon));
-        addon.getMultiBlockMachines().addAll(multiBlockMachineReader.loadLateInits(addon));
-        addon.getSupers().addAll(superReader.loadLateInits(addon));
-        addon.getResearches().addAll(researchReader.loadLateInits(addon));
+        addon.getMobDrops().addAll(mobDropsReader.loadLateInits());
+        addon.getGeoResources().addAll(resourceReader.loadLateInits());
+        addon.getItems().addAll(itemReader.loadLateInits());
+        addon.getArmors().addAll(armorReader.loadLateInits());
+        addon.getCapacitors().addAll(capacitorsReader.loadLateInits());
+        addon.getFoods().addAll(foodReader.loadLateInits());
+        addon.getMenus().addAll(menuReader.loadLateInits());
+        addon.getMachines().addAll(machineReader.loadLateInits());
+        addon.getGenerators().addAll(generatorReader.loadLateInits());
+        addon.getSolarGenerators().addAll(solarGeneratorReader.loadLateInits());
+        addon.getMaterialGenerators().addAll(materialGeneratorReader.loadLateInits());
+        addon.getRecipeMachines().addAll(recipeMachineReader.loadLateInits());
+        addon.getSimpleMachines().addAll(simpleMachineReader.loadLateInits());
+        addon.getMultiBlockMachines().addAll(multiBlockMachineReader.loadLateInits());
+        addon.getSupers().addAll(superReader.loadLateInits());
+
+        YamlConfiguration researches = doFileLoad(file, Constants.RESEARCHES_FILE);
+        ResearchReader researchReader = new ResearchReader(researches, addon);
+        addon.setResearches(researchReader.readAll());
 
         ExceptionHandler.debugLog("加载附属 " + addon.getAddonId() + " 成功!");
 

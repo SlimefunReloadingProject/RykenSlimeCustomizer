@@ -39,13 +39,13 @@ import org.lins.mmmjjkx.rykenslimefuncustomizer.utils.CommonUtils;
 import org.lins.mmmjjkx.rykenslimefuncustomizer.utils.ExceptionHandler;
 
 public class ItemReader extends YamlReader<SlimefunItem> {
-    public ItemReader(YamlConfiguration config) {
-        super(config);
+    public ItemReader(YamlConfiguration config, ProjectAddon addon) {
+        super(config, addon);
     }
 
     @SneakyThrows
     @Override
-    public SlimefunItem readEach(String s, ProjectAddon addon) {
+    public SlimefunItem readEach(String s) {
         ConfigurationSection section = configuration.getConfigurationSection(s);
         if (section == null) return null;
         ExceptionHandler.HandleResult result = ExceptionHandler.handleIdConflict(s);
@@ -53,13 +53,9 @@ public class ItemReader extends YamlReader<SlimefunItem> {
         if (result == ExceptionHandler.HandleResult.FAILED) return null;
 
         String igId = section.getString("item_group");
-        ConfigurationSection item = section.getConfigurationSection("item");
-        ItemStack stack = CommonUtils.readItem(item, false, addon);
 
-        if (stack == null) {
-            ExceptionHandler.handleError("无法在附属" + addon.getAddonName() + "中加载物品" + s + ": 物品为空或格式错误导致无法加载");
-            return null;
-        }
+        SlimefunItemStack sfis = getPreloadItem(s);
+        if (sfis == null) return null;
 
         Pair<ExceptionHandler.HandleResult, ItemGroup> group = ExceptionHandler.handleItemGroupGet(addon, igId);
         if (group.getFirstValue() == ExceptionHandler.HandleResult.FAILED) return null;
@@ -96,10 +92,8 @@ public class ItemReader extends YamlReader<SlimefunItem> {
         boolean hasRadiation = section.contains("radiation");
 
         if (hasRadiation) {
-            return setupRadiationItem(section, stack, group.getSecondValue(), s, rt, itemStacks, eval, addon);
+            return setupRadiationItem(section, sfis, group.getSecondValue(), s, rt, itemStacks, eval, addon);
         }
-
-        var sfis = new SlimefunItemStack(s, stack);
 
         if (energy) {
             double energyCapacity = section.getDouble("energy_capacity");
@@ -108,14 +102,14 @@ public class ItemReader extends YamlReader<SlimefunItem> {
                 return null;
             }
 
-            CommonUtils.addLore(stack, true, CMIChatColor.translate("&8⇨ &e⚡ &70 / " + energyCapacity + " J"));
+            CommonUtils.addLore(sfis, true, CMIChatColor.translate("&8⇨ &e⚡ &70 / " + energyCapacity + " J"));
 
             instance = new CustomEnergyItem(group.getSecondValue(), sfis, rt, itemStacks, (float) energyCapacity, eval);
         } else if (section.getBoolean("placeable", false)) {
             instance = new CustomDefaultItem(group.getSecondValue(), sfis, rt, itemStacks);
         } else if (section.contains("rainbow")) {
             String materialType = section.getString("rainbow", "");
-            if (!stack.getType().isBlock()) {
+            if (!sfis.getType().isBlock()) {
                 ExceptionHandler.handleError("无法在附属" + addon.getAddonName() + "中加载物品" + s + "非方块无法设置彩虹属性");
                 return null;
             }
@@ -156,7 +150,7 @@ public class ItemReader extends YamlReader<SlimefunItem> {
         Object[] constructorArgs = instance.constructorArgs();
 
         if (section.getBoolean("anti_wither", false)) {
-            if (!stack.getType().isBlock()) {
+            if (!sfis.getType().isBlock()) {
                 ExceptionHandler.handleError("无法在附属" + addon.getAddonName() + "中加载物品" + s + "非方块无法设置防凋零属性");
                 return null;
             }
@@ -241,16 +235,35 @@ public class ItemReader extends YamlReader<SlimefunItem> {
         return instance;
     }
 
+    @Override
+    public List<SlimefunItemStack> preloadItems(String s) {
+        ConfigurationSection section = configuration.getConfigurationSection(s);
+
+        if (section == null) return null;
+
+        ConfigurationSection item = section.getConfigurationSection("item");
+        ItemStack stack = CommonUtils.readItem(item, false, addon);
+        if (stack == null) {
+            ExceptionHandler.handleError("无法在附属" + addon.getAddonName() + "中加载生物掉落" + s + ": 物品为空或格式错误导致无法加载");
+            return null;
+        }
+
+        SlimefunItemStack sfis = new SlimefunItemStack(s, stack);
+
+        return List.of(sfis);
+    }
+
     @SneakyThrows
     private SlimefunItem setupRadiationItem(
             ConfigurationSection section,
-            ItemStack original,
+            SlimefunItemStack original,
             ItemGroup itemGroup,
             String id,
             RecipeType recipeType,
             ItemStack[] recipe,
             JavaScriptEval eval,
             ProjectAddon addon) {
+
         String radio = section.getString("radiation");
         Pair<ExceptionHandler.HandleResult, Radioactivity> radioactivityPair =
                 ExceptionHandler.handleEnumValueOf("错误的辐射等级级别: " + radio, Radioactivity.class, radio);
@@ -280,10 +293,10 @@ public class ItemReader extends YamlReader<SlimefunItem> {
                     eval);
         } else if (section.getBoolean("placeable", false)) {
             instance = new CustomDefaultRadiationItem(
-                    itemGroup, new SlimefunItemStack(id, original), recipeType, recipe, radioactivity);
+                    itemGroup, original, recipeType, recipe, radioactivity);
         } else {
             instance = new CustomRadiationItem(
-                    itemGroup, new SlimefunItemStack(id, original), recipeType, recipe, eval, radioactivity);
+                    itemGroup, original, recipeType, recipe, eval, radioactivity);
         }
 
         Object[] constructorArgs = instance.constructArgs();

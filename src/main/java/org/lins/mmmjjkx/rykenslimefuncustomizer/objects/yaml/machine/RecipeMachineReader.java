@@ -25,7 +25,7 @@ public class RecipeMachineReader extends YamlReader<CustomRecipeMachine> {
     }
 
     @Override
-    public CustomRecipeMachine readEach(String s, ProjectAddon addon) {
+    public CustomRecipeMachine readEach(String s) {
         ConfigurationSection section = configuration.getConfigurationSection(s);
         if (section == null) return null;
         ExceptionHandler.HandleResult result = ExceptionHandler.handleIdConflict(s);
