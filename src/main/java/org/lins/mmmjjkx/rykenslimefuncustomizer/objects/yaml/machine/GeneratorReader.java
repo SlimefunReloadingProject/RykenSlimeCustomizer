@@ -24,8 +24,8 @@ import org.lins.mmmjjkx.rykenslimefuncustomizer.utils.CommonUtils;
 import org.lins.mmmjjkx.rykenslimefuncustomizer.utils.ExceptionHandler;
 
 public class GeneratorReader extends YamlReader<CustomGenerator> {
-    public GeneratorReader(YamlConfiguration config) {
-        super(config);
+    public GeneratorReader(YamlConfiguration config, ProjectAddon addon) {
+        super(config, addon);
     }
 
     @SneakyThrows
@@ -38,13 +38,9 @@ public class GeneratorReader extends YamlReader<CustomGenerator> {
         if (result == ExceptionHandler.HandleResult.FAILED) return null;
 
         String igId = section.getString("item_group");
-        ConfigurationSection item = section.getConfigurationSection("item");
-        ItemStack stack = CommonUtils.readItem(item, false, addon);
 
-        if (stack == null) {
-            ExceptionHandler.handleError("无法在附属" + addon.getAddonName() + "中加载发电机" + s + ": 物品为空或格式错误导致无法加载");
-            return null;
-        }
+        SlimefunItemStack sfis = getPreloadItem(s);
+        if (sfis == null) return null;
 
         Pair<ExceptionHandler.HandleResult, ItemGroup> group = ExceptionHandler.handleItemGroupGet(addon, igId);
         if (group.getFirstValue() == ExceptionHandler.HandleResult.FAILED) return null;
@@ -55,7 +51,6 @@ public class GeneratorReader extends YamlReader<CustomGenerator> {
                 ExceptionHandler.getRecipeType("错误的配方类型" + recipeType + "!", recipeType);
 
         if (rt.getFirstValue() == ExceptionHandler.HandleResult.FAILED) return null;
-        SlimefunItemStack slimefunItemStack = new SlimefunItemStack(s, stack);
 
         CustomMenu menu = CommonUtils.getIf(addon.getMenus(), m -> m.getID().equalsIgnoreCase(s));
 
@@ -74,7 +69,7 @@ public class GeneratorReader extends YamlReader<CustomGenerator> {
 
         Object[] constructorArgs = {
             group.getSecondValue(),
-            slimefunItemStack,
+            sfis,
             rt.getSecondValue(),
             recipe,
             menu,
@@ -94,7 +89,7 @@ public class GeneratorReader extends YamlReader<CustomGenerator> {
         return switch (Objects.requireNonNull(rotationPair.getSecondValue())) {
             case NOT_ROTATABLE -> new CustomGenerator(
                     group.getSecondValue(),
-                    slimefunItemStack,
+                    sfis,
                     rt.getSecondValue(),
                     recipe,
                     menu,
@@ -122,6 +117,20 @@ public class GeneratorReader extends YamlReader<CustomGenerator> {
                 yield (CustomGenerator) clazz.getDeclaredConstructors()[0].newInstance(constructorArgs);
             }
         };
+    }
+
+    @Override
+    public List<SlimefunItemStack> preloadItems(String s) {
+        ConfigurationSection section = configuration.getConfigurationSection(s);
+        if (section == null) return null;
+        ConfigurationSection item = section.getConfigurationSection("item");
+        ItemStack stack = CommonUtils.readItem(item, false, addon);
+
+        if (stack == null) {
+            ExceptionHandler.handleError("无法在附属" + addon.getAddonName() + "中加载发电机" + s + ": 物品为空或格式错误导致无法加载");
+            return null;
+        }
+        return List.of(new SlimefunItemStack(s, stack));
     }
 
     private List<MachineFuel> readFuels(String id, ConfigurationSection section, ProjectAddon addon) {

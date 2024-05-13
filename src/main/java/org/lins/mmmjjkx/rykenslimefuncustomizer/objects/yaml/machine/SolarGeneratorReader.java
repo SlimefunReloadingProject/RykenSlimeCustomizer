@@ -4,18 +4,21 @@ import io.github.thebusybiscuit.slimefun4.api.items.ItemGroup;
 import io.github.thebusybiscuit.slimefun4.api.items.SlimefunItemStack;
 import io.github.thebusybiscuit.slimefun4.api.recipes.RecipeType;
 import io.github.thebusybiscuit.slimefun4.libraries.dough.collections.Pair;
+
+import java.util.List;
 import java.util.Objects;
 import org.bukkit.configuration.ConfigurationSection;
 import org.bukkit.configuration.file.YamlConfiguration;
 import org.bukkit.inventory.ItemStack;
+import org.lins.mmmjjkx.rykenslimefuncustomizer.objects.ProjectAddon;
 import org.lins.mmmjjkx.rykenslimefuncustomizer.objects.customs.machine.CustomSolarGenerator;
 import org.lins.mmmjjkx.rykenslimefuncustomizer.objects.yaml.YamlReader;
 import org.lins.mmmjjkx.rykenslimefuncustomizer.utils.CommonUtils;
 import org.lins.mmmjjkx.rykenslimefuncustomizer.utils.ExceptionHandler;
 
 public class SolarGeneratorReader extends YamlReader<CustomSolarGenerator> {
-    public SolarGeneratorReader(YamlConfiguration config) {
-        super(config);
+    public SolarGeneratorReader(YamlConfiguration config, ProjectAddon addon) {
+        super(config, addon);
     }
 
     @Override
@@ -27,16 +30,14 @@ public class SolarGeneratorReader extends YamlReader<CustomSolarGenerator> {
         if (result == ExceptionHandler.HandleResult.FAILED) return null;
 
         String igId = section.getString("item_group");
-        ConfigurationSection item = section.getConfigurationSection("item");
-        ItemStack stack = CommonUtils.readItem(item, false, addon);
 
-        if (stack == null) {
-            ExceptionHandler.handleError("无法在附属" + addon.getAddonName() + "中加载太阳能发电机" + s + ": 物品为空或格式错误导致无法加载");
-            return null;
-        }
 
         Pair<ExceptionHandler.HandleResult, ItemGroup> group = ExceptionHandler.handleItemGroupGet(addon, igId);
         if (group.getFirstValue() == ExceptionHandler.HandleResult.FAILED) return null;
+
+        SlimefunItemStack slimefunItemStack = getPreloadItem(s);
+        if (slimefunItemStack == null) return null;
+
         ItemStack[] recipe = CommonUtils.readRecipe(section.getConfigurationSection("recipe"), addon);
         String recipeType = section.getString("recipe_type", "NULL");
 
@@ -44,7 +45,7 @@ public class SolarGeneratorReader extends YamlReader<CustomSolarGenerator> {
                 ExceptionHandler.getRecipeType("错误的配方类型" + recipeType + "!", recipeType);
 
         if (rt.getFirstValue() == ExceptionHandler.HandleResult.FAILED) return null;
-        SlimefunItemStack slimefunItemStack = new SlimefunItemStack(s, stack);
+
 
         int dayEnergy = section.getInt("dayEnergy");
         int nightEnergy = section.getInt("nightEnergy");
@@ -78,5 +79,20 @@ public class SolarGeneratorReader extends YamlReader<CustomSolarGenerator> {
                 recipe,
                 capacity,
                 lightLevel);
+    }
+
+    @Override
+    public List<SlimefunItemStack> preloadItems(String s) {
+        ConfigurationSection section = configuration.getConfigurationSection(s);
+        if (section == null) return null;
+        ConfigurationSection item = section.getConfigurationSection("item");
+        ItemStack stack = CommonUtils.readItem(item, false, addon);
+
+        if (stack == null) {
+            ExceptionHandler.handleError("无法在附属" + addon.getAddonName() + "中加载太阳能发电机" + s + ": 物品为空或格式错误导致无法加载");
+            return null;
+        }
+
+        return List.of(new SlimefunItemStack(s, stack));
     }
 }

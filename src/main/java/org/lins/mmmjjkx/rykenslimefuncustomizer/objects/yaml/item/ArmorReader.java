@@ -61,11 +61,11 @@ public class ArmorReader extends YamlReader<List<CustomArmorPiece>> {
                     ExceptionHandler.getRecipeType("错误的配方类型" + recipeType + "!", recipeType);
             if (rt.getFirstValue() == ExceptionHandler.HandleResult.FAILED) return null;
 
-            ConfigurationSection recipeSection = pieceSection.getConfigurationSection("recipe");
-            ItemStack[] recipe = CommonUtils.readRecipe(recipeSection, addon);
-
             SlimefunItemStack sfis = getPreloadItem(id);
             if (sfis == null) return null;
+
+            ConfigurationSection recipeSection = pieceSection.getConfigurationSection("recipe");
+            ItemStack[] recipe = CommonUtils.readRecipe(recipeSection, addon);
 
             List<PotionEffect> potionEffects = new ArrayList<>();
             List<String> effects = pieceSection.getStringList("potion_effects");

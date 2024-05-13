@@ -7,6 +7,7 @@ import java.nio.file.Path;
 import java.nio.file.Paths;
 import java.util.Objects;
 
+import net.guizhanss.guizhanlibplugin.updater.GuizhanUpdater;
 import org.bukkit.plugin.java.JavaPlugin;
 import org.jetbrains.annotations.NotNull;
 import org.lins.mmmjjkx.rykenslimefuncustomizer.bulit_in.JavaScriptCreator;
@@ -45,9 +46,13 @@ public final class RykenSlimefunCustomizer extends JavaPlugin implements Slimefu
 
         addonManager.setup(this);
 
+        new BlockBreak(this);
+
         ExceptionHandler.info("RykenSlimeCustomizer加载成功！");
 
-        new BlockBreak(this);
+        if (getConfig().getBoolean("pluginUpdate") && getDescription().getVersion().startsWith("b")) {
+            GuizhanUpdater.start(this, getFile(), "SlimefunReloadingProject", "RykenSlimeCustomizer", "main");
+        }
 
         getServer().getScheduler().runTaskLater(this, () -> runtime = true, 1);
     }

@@ -57,8 +57,9 @@ public class CustomGenerator extends AGenerator implements MachineProcessHolder<
 
         if (menu != null) {
             menu.setInvb(this);
-            menu.reInit();
             this.processor.setProgressBar(menu.getProgressBarItem());
+
+            createPreset(this, menu::apply);
         }
 
         this.capacity = capacity;
@@ -143,6 +144,7 @@ public class CustomGenerator extends AGenerator implements MachineProcessHolder<
 
         ItemStackWrapper wrapper = ItemStackWrapper.wrap(item);
         return item.getType() == Material.LAVA_BUCKET
+                || item.getType() == Material.WATER_BUCKET
                 || SlimefunUtils.isItemSimilar(wrapper, SlimefunItems.FUEL_BUCKET, true)
                 || SlimefunUtils.isItemSimilar(wrapper, SlimefunItems.OIL_BUCKET, true);
     }

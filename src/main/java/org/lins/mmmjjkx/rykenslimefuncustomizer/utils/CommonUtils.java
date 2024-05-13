@@ -1,6 +1,7 @@
 package org.lins.mmmjjkx.rykenslimefuncustomizer.utils;
 
 import io.github.thebusybiscuit.slimefun4.api.items.SlimefunItem;
+import io.github.thebusybiscuit.slimefun4.api.items.SlimefunItemStack;
 import io.github.thebusybiscuit.slimefun4.libraries.dough.items.CustomItemStack;
 import io.github.thebusybiscuit.slimefun4.libraries.dough.skins.PlayerHead;
 import io.github.thebusybiscuit.slimefun4.libraries.dough.skins.PlayerSkin;
@@ -18,7 +19,6 @@ import java.util.function.Predicate;
 import java.util.regex.Matcher;
 import java.util.regex.Pattern;
 import lombok.SneakyThrows;
-import net.kyori.adventure.text.serializer.legacy.LegacyComponentSerializer;
 import org.bukkit.Bukkit;
 import org.bukkit.Material;
 import org.bukkit.NamespacedKey;
@@ -39,9 +39,6 @@ import org.lins.mmmjjkx.rykenslimefuncustomizer.objects.customs.item.RSCItemStac
 import org.lins.mmmjjkx.rykenslimefuncustomizer.objects.global.XMaterial;
 
 public class CommonUtils {
-    private static final LegacyComponentSerializer LEGACY_COMPONENT_SERIALIZER =
-            LegacyComponentSerializer.legacyAmpersand().toBuilder().hexColors().build();
-
     public static <T extends ItemStack> T doGlow(T item) {
         item.addUnsafeEnchantment(Enchantment.LUCK, 1);
         item.addItemFlags(ItemFlag.HIDE_ENCHANTS);
@@ -65,7 +62,7 @@ public class CommonUtils {
     }
 
     @NotNull @Contract("null,_,_ -> new")
-    public static ItemStack[] readRecipe(ConfigurationSection section, ProjectAddon addon, int size) {
+    public static ItemStack[] readRecipe(ConfigurationSection section, @NotNull ProjectAddon addon, int size) {
         if (section == null) return new ItemStack[] {};
         ItemStack[] itemStacks = new ItemStack[size];
         for (int i = 0; i < size; i++) {
@@ -147,14 +144,17 @@ public class CommonUtils {
                 itemStack = new RSCItemStack(head, name, lore);
             }
             case "slimefun" -> {
-                SlimefunItem sis = SlimefunItem.getById(material);
-                if (sis != null) {
-                    ItemStack is = sis.getItem();
-
-                    itemStack = new RSCItemStack(is, name, lore);
+                SlimefunItemStack sfis = addon.getPreloadItems().get(material);
+                if (sfis != null) {
+                    itemStack = new RSCItemStack(sfis, name, lore);
                 } else {
-                    ExceptionHandler.handleError("无法找到粘液物品" + material + "，已转为石头");
-                    itemStack = new CustomItemStack(Material.STONE, name, lore);
+                    SlimefunItem sfItem = SlimefunItem.getById(material);
+                    if (sfItem != null) {
+                        itemStack = new RSCItemStack(sfItem.getItem().clone(), name, lore);
+                    } else {
+                        ExceptionHandler.handleError("无法找到粘液物品" + material + "，已转为石头");
+                        itemStack = new CustomItemStack(Material.STONE, name, lore);
+                    }
                 }
             }
             case "saveditem" -> {
@@ -242,6 +242,7 @@ public class CommonUtils {
         return glow ? doGlow(itemStack) : itemStack;
     }
 
+    @SuppressWarnings("deprecation")
     public static void addLore(ItemStack stack, boolean emptyLine, String... lore) {
         ItemMeta im = stack.getItemMeta();
         var lorel = im.getLore();

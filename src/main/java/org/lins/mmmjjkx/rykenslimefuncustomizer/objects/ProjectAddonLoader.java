@@ -134,13 +134,13 @@ public class ProjectAddonLoader {
         CapacitorsReader capacitorsReader = new CapacitorsReader(capacitors, addon);
         FoodReader foodReader = new FoodReader(foods, addon);
         MenuReader menuReader = new MenuReader(menus, addon);
-        MachineReader machineReader = new MachineReader(machines);
-        GeneratorReader generatorReader = new GeneratorReader(generators);
-        SolarGeneratorReader solarGeneratorReader = new SolarGeneratorReader(solarGenerators);
-        MaterialGeneratorReader materialGeneratorReader = new MaterialGeneratorReader(materialGenerators);
-        RecipeMachineReader recipeMachineReader = new RecipeMachineReader(recipeMachines);
-        SimpleMachineReader simpleMachineReader = new SimpleMachineReader(simpleMachines);
-        MultiBlockMachineReader multiBlockMachineReader = new MultiBlockMachineReader(multiBlockMachines);
+        MachineReader machineReader = new MachineReader(machines, addon);
+        GeneratorReader generatorReader = new GeneratorReader(generators, addon);
+        SolarGeneratorReader solarGeneratorReader = new SolarGeneratorReader(solarGenerators, addon);
+        MaterialGeneratorReader materialGeneratorReader = new MaterialGeneratorReader(materialGenerators, addon);
+        RecipeMachineReader recipeMachineReader = new RecipeMachineReader(recipeMachines, addon);
+        SimpleMachineReader simpleMachineReader = new SimpleMachineReader(simpleMachines, addon);
+        MultiBlockMachineReader multiBlockMachineReader = new MultiBlockMachineReader(multiBlockMachines, addon);
         SuperReader superReader = new SuperReader(supers);
 
         ExceptionHandler.debugLog("开始加载 " + file.getName() + " 中的物品内容...");

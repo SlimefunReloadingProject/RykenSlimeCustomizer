@@ -52,11 +52,8 @@ public class MenuReader extends YamlReader<CustomMenu> {
                 ExceptionHandler.handleError("无法加载机器菜单" + s + ": 无法找到要导入的菜单");
                 return null;
             }
-            if (menuPreset instanceof CustomMenu cm) {
-                return new CustomMenu(s, title, cm);
-            } else {
-                return new CustomMenu(s, title, menuPreset, new ItemStack(Material.BLACK_STAINED_GLASS_PANE), eval);
-            }
+
+            return new CustomMenu(s, title, menuPreset, new ItemStack(Material.BLACK_STAINED_GLASS_PANE), eval);
         }
 
         int progress = 22;

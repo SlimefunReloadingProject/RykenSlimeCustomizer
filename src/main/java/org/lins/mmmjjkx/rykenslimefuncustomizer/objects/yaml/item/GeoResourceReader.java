@@ -36,11 +36,12 @@ public class GeoResourceReader extends YamlReader<CustomGeoResource> {
 
             String igId = section.getString("item_group");
 
+            Pair<ExceptionHandler.HandleResult, ItemGroup> group = ExceptionHandler.handleItemGroupGet(addon, igId);
+            if (group.getFirstValue() == ExceptionHandler.HandleResult.FAILED) return null;
+
             SlimefunItemStack sfis = getPreloadItem(s);
             if (sfis == null) return null;
 
-            Pair<ExceptionHandler.HandleResult, ItemGroup> group = ExceptionHandler.handleItemGroupGet(addon, igId);
-            if (group.getFirstValue() == ExceptionHandler.HandleResult.FAILED) return null;
             ItemStack[] recipe = CommonUtils.readRecipe(section.getConfigurationSection("recipe"), addon);
             String recipeType = section.getString("recipe_type", "NULL");
             int maxDeviation = section.getInt("max_deviation", 1);

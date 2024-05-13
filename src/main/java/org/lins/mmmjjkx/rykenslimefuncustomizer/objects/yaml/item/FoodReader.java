@@ -32,11 +32,12 @@ public class FoodReader extends YamlReader<CustomFood> {
 
         String igId = section.getString("item_group");
 
+        Pair<ExceptionHandler.HandleResult, ItemGroup> group = ExceptionHandler.handleItemGroupGet(addon, igId);
+        if (group.getFirstValue() == ExceptionHandler.HandleResult.FAILED) return null;
+
         SlimefunItemStack sfis = getPreloadItem(s);
         if (sfis == null) return null;
 
-        Pair<ExceptionHandler.HandleResult, ItemGroup> group = ExceptionHandler.handleItemGroupGet(addon, igId);
-        if (group.getFirstValue() == ExceptionHandler.HandleResult.FAILED) return null;
         ItemStack[] itemStacks = CommonUtils.readRecipe(section.getConfigurationSection("recipe"), addon);
         String recipeType = section.getString("recipe_type", "NULL");
 

@@ -1,8 +1,6 @@
 package org.lins.mmmjjkx.rykenslimefuncustomizer.objects.script.parent;
 
 import com.google.errorprone.annotations.CanIgnoreReturnValue;
-import com.oracle.truffle.api.strings.TruffleString;
-import com.oracle.truffle.js.runtime.Strings;
 import com.xzavier0722.mc.plugin.slimefun4.storage.controller.SlimefunBlockData;
 import com.xzavier0722.mc.plugin.slimefun4.storage.util.StorageCacheUtils;
 import io.github.thebusybiscuit.slimefun4.api.items.SlimefunItem;
@@ -166,9 +164,7 @@ public abstract class ScriptEval {
         addThing("isBlock", (BiFunction<Location, String, Boolean>) StorageCacheUtils::isBlock);
         addThing("getSfItemByBlock", (Function<Location, SlimefunItem>) StorageCacheUtils::getSfItem);
 
-        if (Bukkit.getPluginManager().isPluginEnabled("NBTAPI")) {
-            addThing("NBTAPI", new NBTAPIIntegration());
-        }
+        addThing("NBTAPI", new NBTAPIIntegration());
     }
 
     private String parsePlaceholder(@Nullable Player p, String text) {

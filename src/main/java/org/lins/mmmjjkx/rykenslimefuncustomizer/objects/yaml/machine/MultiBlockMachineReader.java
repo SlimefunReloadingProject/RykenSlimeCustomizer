@@ -6,6 +6,7 @@ import io.github.thebusybiscuit.slimefun4.core.services.sounds.SoundEffect;
 import io.github.thebusybiscuit.slimefun4.libraries.dough.collections.Pair;
 import java.io.File;
 import java.util.HashMap;
+import java.util.List;
 import java.util.Map;
 import org.bukkit.Material;
 import org.bukkit.configuration.ConfigurationSection;
@@ -19,8 +20,8 @@ import org.lins.mmmjjkx.rykenslimefuncustomizer.utils.CommonUtils;
 import org.lins.mmmjjkx.rykenslimefuncustomizer.utils.ExceptionHandler;
 
 public class MultiBlockMachineReader extends YamlReader<CustomMultiBlockMachine> {
-    public MultiBlockMachineReader(YamlConfiguration config) {
-        super(config);
+    public MultiBlockMachineReader(YamlConfiguration config, ProjectAddon addon) {
+        super(config, addon);
     }
 
     @Override
@@ -32,18 +33,14 @@ public class MultiBlockMachineReader extends YamlReader<CustomMultiBlockMachine>
         if (result == ExceptionHandler.HandleResult.FAILED) return null;
 
         String igId = section.getString("item_group");
-        ConfigurationSection item = section.getConfigurationSection("item");
-        ItemStack stack = CommonUtils.readItem(item, false, addon);
-
-        if (stack == null) {
-            ExceptionHandler.handleError("无法在附属" + addon.getAddonName() + "中加载多方块机器" + s + ": 物品为空或格式错误导致无法加载");
-            return null;
-        }
 
         Pair<ExceptionHandler.HandleResult, ItemGroup> group = ExceptionHandler.handleItemGroupGet(addon, igId);
         if (group.getFirstValue() == ExceptionHandler.HandleResult.FAILED) return null;
+
+        SlimefunItemStack slimefunItemStack = getPreloadItem(s);
+        if (slimefunItemStack == null) return null;
+
         ItemStack[] recipe = CommonUtils.readRecipe(section.getConfigurationSection("recipe"), addon);
-        SlimefunItemStack slimefunItemStack = new SlimefunItemStack(s, stack);
 
         ConfigurationSection recipesSection = section.getConfigurationSection("recipes");
 
@@ -104,6 +101,21 @@ public class MultiBlockMachineReader extends YamlReader<CustomMultiBlockMachine>
 
         return new CustomMultiBlockMachine(
                 group.getSecondValue(), slimefunItemStack, recipe, recipes, workSlot, sound, eval);
+    }
+
+    @Override
+    public List<SlimefunItemStack> preloadItems(String s) {
+        ConfigurationSection section = configuration.getConfigurationSection(s);
+        if (section == null) return null;
+        ConfigurationSection item = section.getConfigurationSection("item");
+        ItemStack stack = CommonUtils.readItem(item, false, addon);
+
+        if (stack == null) {
+            ExceptionHandler.handleError("无法在附属" + addon.getAddonName() + "中加载多方块机器" + s + ": 物品为空或格式错误导致无法加载");
+            return null;
+        }
+
+        return List.of(new SlimefunItemStack(s, stack));
     }
 
     private Map<ItemStack[], ItemStack> readRecipes(ConfigurationSection section, ProjectAddon addon) {

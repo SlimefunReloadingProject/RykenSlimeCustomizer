@@ -34,11 +34,11 @@ public class MobDropsReader extends YamlReader<CustomMobDrop> {
 
             String igId = section.getString("item_group");
 
-            SlimefunItemStack sfis = getPreloadItem(s);
-            if (sfis == null) return null;
-
             Pair<ExceptionHandler.HandleResult, ItemGroup> group = ExceptionHandler.handleItemGroupGet(addon, igId);
             if (group.getFirstValue() == ExceptionHandler.HandleResult.FAILED) return null;
+
+            SlimefunItemStack sfis = getPreloadItem(s);
+            if (sfis == null) return null;
 
             String type = section.getString("entity");
 

@@ -8,6 +8,7 @@ import java.util.HashMap;
 import java.util.Map;
 import lombok.Getter;
 import lombok.Setter;
+import me.mrCookieSlime.CSCoreLibPlugin.general.Inventory.ChestMenu;
 import me.mrCookieSlime.CSCoreLibPlugin.general.Inventory.ClickAction;
 import me.mrCookieSlime.Slimefun.Objects.SlimefunItem.abstractItems.AContainer;
 import me.mrCookieSlime.Slimefun.Objects.SlimefunItem.interfaces.InventoryBlock;
@@ -27,51 +28,76 @@ import org.lins.mmmjjkx.rykenslimefuncustomizer.objects.customs.machine.CustomNo
 import org.lins.mmmjjkx.rykenslimefuncustomizer.objects.customs.machine.CustomRecipeMachine;
 import org.lins.mmmjjkx.rykenslimefuncustomizer.objects.script.lambda.RSCClickHandler;
 
-public class CustomMenu extends BlockMenuPreset {
+@SuppressWarnings("deprecation")
+public class CustomMenu {
     @Getter
     private final Map<Integer, ItemStack> slotMap;
 
+    @Getter
     private final JavaScriptEval eval;
 
     @Getter
-    private int progressSlot;
+    private final String title;
+    @Getter
+    private final String id;
 
+    @Getter
+    private int progressSlot;
+    @Getter
     private ItemStack progress;
 
     @Setter
     private InventoryBlock invb;
+    @Setter
+    private boolean playerInvClickable;
+    @Setter
+    private ChestMenu.MenuOpeningHandler menuOpeningHandler;
+    @Setter
+    private ChestMenu.MenuCloseHandler menuCloseHandler;
 
-    private final String title;
+    private final Map<Integer, ItemStack> items;
+    private final Map<Integer, ChestMenu.MenuClickHandler> clickHandlers;
 
     public CustomMenu(String id, String title, CustomMenu menu) {
-        this(id, title, menu, menu.getProgressBarItem(), menu.eval);
-
+        this.slotMap = menu.slotMap;
+        this.eval = menu.eval;
+        this.title = CMIChatColor.translate(title);
+        this.id = id;
+        this.items = menu.items;
         this.progressSlot = menu.progressSlot;
+        this.clickHandlers = menu.clickHandlers;
+
+        if (eval != null) {
+            menuOpeningHandler = menu.menuOpeningHandler;
+            menuCloseHandler = menu.menuCloseHandler;
+        }
     }
 
     public CustomMenu(
             String id,
             String title,
-            BlockMenuPreset preset,
+            @Nullable BlockMenuPreset preset,
             @Nullable ItemStack progressBar,
             @Nullable JavaScriptEval eval) {
-        this(id, title, new HashMap<>(), preset.isPlayerInventoryClickable(), 22, progressBar, eval);
+        this(id, title, new HashMap<>(), preset == null || preset.isPlayerInventoryClickable(), 22, progressBar, eval);
 
-        cloneOriginalInventory(preset);
+        if (preset != null) {
+            cloneFromPresetInventory(preset);
 
-        SlimefunItem item = Slimefun.getRegistry().getSlimefunItemIds().get(preset.getID());
-        if (item instanceof CustomMachine cm) {
-            this.progressSlot = cm.getMenu().getProgressSlot();
-            this.progress = cm.getMenu().getProgressBarItem();
-        } else if (item instanceof CustomNoEnergyMachine cnem) {
-            this.progressSlot = cnem.getMenu().getProgressSlot();
-            this.progress = cnem.getMenu().getProgressBarItem();
-        } else if (item instanceof CustomRecipeMachine crm) {
-            this.progressSlot = crm.getMenu() != null ? crm.getMenu().getProgressSlot() : 22;
-            this.progress = crm.getProgressBar();
-        } else if (item instanceof AContainer container) {
-            this.progressSlot = 22;
-            this.progress = container.getProgressBar();
+            SlimefunItem item = Slimefun.getRegistry().getSlimefunItemIds().get(preset.getID());
+            if (item instanceof CustomMachine cm) {
+                this.progressSlot = cm.getMenu().getProgressSlot();
+                this.progress = cm.getMenu().getProgressBarItem();
+            } else if (item instanceof CustomNoEnergyMachine cnem) {
+                this.progressSlot = cnem.getMenu().getProgressSlot();
+                this.progress = cnem.getMenu().getProgressBarItem();
+            } else if (item instanceof CustomRecipeMachine crm) {
+                this.progressSlot = crm.getMenu() != null ? crm.getMenu().getProgressSlot() : 22;
+                this.progress = crm.getProgressBar();
+            } else if (item instanceof AContainer container) {
+                this.progressSlot = 22;
+                this.progress = container.getProgressBar();
+            }
         }
     }
 
@@ -83,23 +109,22 @@ public class CustomMenu extends BlockMenuPreset {
             int progress,
             @Nullable ItemStack progressBar,
             @Nullable JavaScriptEval eval) {
-        super(id, CMIChatColor.translate(title));
 
-        this.title = title;
+        this.id = id;
+        this.title = CMIChatColor.translate(title);
         this.slotMap = mi;
         this.eval = eval;
         this.progress = progressBar != null ? progressBar.clone() : mi.get(progress);
         this.progressSlot = progress;
-        setPlayerInventoryClickable(playerInvClickable);
+        this.playerInvClickable = playerInvClickable;
+
+        items = new HashMap<>();
+        clickHandlers = new HashMap<>();
 
         if (eval != null) {
             eval.doInit();
         }
 
-        outSideInit();
-    }
-
-    public void outSideInit() {
         for (int i = 0; i < 54; i++) {
             ItemStack item = slotMap.get(i);
             if (item != null) {
@@ -112,40 +137,43 @@ public class CustomMenu extends BlockMenuPreset {
         }
 
         if (eval != null) {
-            addMenuOpeningHandler(p -> eval.evalFunction("onOpen", p));
-            addMenuCloseHandler(p -> eval.evalFunction("onClose", p));
+            menuOpeningHandler = (p -> eval.evalFunction("onOpen", p));
+            menuCloseHandler = (p -> eval.evalFunction("onClose", p));
         }
     }
 
-    @Override
-    public void init() {}
+    private void addItem(int i, ItemStack item, ChestMenu.MenuClickHandler onClick) {
+        items.put(i, item);
+        clickHandlers.put(i, onClick);
+    }
 
-    @Override
-    public boolean canOpen(@NotNull Block b, @NotNull Player p) {
-        return Slimefun.getProtectionManager().hasPermission(p, b.getLocation(), Interaction.INTERACT_BLOCK);
+    private void addItem(int i, ItemStack item) {
+        items.put(i, item);
+    }
+
+    private ChestMenu.MenuClickHandler getClickHandler(int slot) {
+        return clickHandlers.getOrDefault(slot, ((player, i, itemStack, clickAction) -> true));
     }
 
     @Nullable public ItemStack getProgressBarItem() {
         return progress;
     }
 
-    @Override
-    public int[] getSlotsAccessedByItemTransport(ItemTransportFlow flow) {
-        if (invb != null) {
-            return flow == ItemTransportFlow.INSERT ? invb.getInputSlots() : invb.getOutputSlots();
-        }
-        return new int[0];
+    public String getID() {
+        return id;
     }
 
     public void reInit() {
-        Slimefun.getRegistry().getMenuPresets().remove(getID());
-        Slimefun.getRegistry().getMenuPresets().put(getID(), this);
+        Slimefun.getRegistry().getMenuPresets().remove(id);
+        BlockMenuPreset preset = createSimplePreset();
+        apply(preset);
+        Slimefun.getRegistry().getMenuPresets().put(id, preset);
     }
 
-    private void cloneOriginalInventory(BlockMenuPreset preset) {
+    private void cloneFromPresetInventory(BlockMenuPreset preset) {
         preset.getContents();
         Inventory inventory =
-                Bukkit.createInventory(this, preset.toInventory().getSize(), CMIChatColor.translate(title));
+                Bukkit.createInventory(null, preset.toInventory().getSize(), CMIChatColor.translate(title));
 
         for (int i = 0; i < preset.getInventory().getSize(); i++) {
             ItemStack item = preset.getItemInSlot(i);
@@ -154,7 +182,7 @@ public class CustomMenu extends BlockMenuPreset {
                 inventory.setItem(i, item.clone());
             }
 
-            MenuClickHandler handler = preset.getMenuClickHandler(i);
+            ChestMenu.MenuClickHandler handler = preset.getMenuClickHandler(i);
 
             if (handler != null) {
                 this.addMenuClickHandler(i, new RSCClickHandler() {
@@ -172,7 +200,44 @@ public class CustomMenu extends BlockMenuPreset {
                 });
             }
         }
+    }
 
-        this.inventory = inventory;
+    public void addMenuClickHandler(int i, ChestMenu.MenuClickHandler onClick) {
+        clickHandlers.put(i, onClick);
+    }
+
+    protected BlockMenuPreset createSimplePreset() {
+        return new BlockMenuPreset(id, title) {
+            @Override
+            public void init() {
+                apply(this);
+            }
+
+            @Override
+            public boolean canOpen(@NotNull Block b, @NotNull Player p) {
+                return Slimefun.getProtectionManager().hasPermission(p, b.getLocation(), Interaction.INTERACT_BLOCK);
+            }
+
+            @Override
+            public int[] getSlotsAccessedByItemTransport(ItemTransportFlow flow) {
+                return flow == ItemTransportFlow.INSERT ? invb.getInputSlots() : invb.getOutputSlots();
+            }
+        };
+    }
+
+    public void apply(BlockMenuPreset preset) {
+        preset.setPlayerInventoryClickable(playerInvClickable);
+
+        for (int slot : items.keySet()) {
+            preset.addItem(slot, items.get(slot), getClickHandler(slot));
+        }
+
+        preset.addMenuOpeningHandler(menuOpeningHandler);
+        preset.addMenuCloseHandler(menuCloseHandler);
+    }
+
+    @Nullable
+    public ChestMenu.MenuClickHandler getMenuClickHandler(int workSlot) {
+        return clickHandlers.get(workSlot);
     }
 }

@@ -74,8 +74,9 @@ public class CustomRecipeMachine extends AContainer implements RecipeDisplayItem
 
         if (menu != null) {
             menu.setInvb(this);
-            menu.reInit();
             this.processor.setProgressBar(menu.getProgressBarItem());
+
+            createPreset(this, menu::apply);
         }
 
         setProcessingSpeed(speed);

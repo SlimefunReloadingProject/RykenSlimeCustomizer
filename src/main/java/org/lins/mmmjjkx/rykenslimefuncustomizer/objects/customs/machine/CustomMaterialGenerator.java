@@ -25,7 +25,6 @@ import org.bukkit.inventory.ItemStack;
 import org.jetbrains.annotations.NotNull;
 import org.lins.mmmjjkx.rykenslimefuncustomizer.RykenSlimefunCustomizer;
 import org.lins.mmmjjkx.rykenslimefuncustomizer.objects.customs.CustomMenu;
-import org.lins.mmmjjkx.rykenslimefuncustomizer.objects.customs.item.RSCItemStack;
 
 @SuppressWarnings("deprecation")
 public class CustomMaterialGenerator extends SlimefunItem
@@ -70,6 +69,8 @@ public class CustomMaterialGenerator extends SlimefunItem
         });
 
         menu.addMenuClickHandler(statusSlot, ChestMenuUtils.getEmptyClickHandler());
+
+        createPreset(this, menu::apply);
 
         register(RykenSlimefunCustomizer.INSTANCE);
     }
