@@ -15,14 +15,15 @@ import org.bukkit.configuration.ConfigurationSection;
 import org.bukkit.configuration.file.YamlConfiguration;
 import org.bukkit.inventory.ItemStack;
 import org.lins.mmmjjkx.rykenslimefuncustomizer.RykenSlimefunCustomizer;
+import org.lins.mmmjjkx.rykenslimefuncustomizer.objects.ProjectAddon;
 import org.lins.mmmjjkx.rykenslimefuncustomizer.objects.yaml.YamlReader;
 import org.lins.mmmjjkx.rykenslimefuncustomizer.utils.CommonUtils;
 import org.lins.mmmjjkx.rykenslimefuncustomizer.utils.ExceptionHandler;
 import org.lins.mmmjjkx.rykenslimefuncustomizer.utils.ReflectionUtils;
 
 public class SuperReader extends YamlReader<SlimefunItem> {
-    public SuperReader(YamlConfiguration config) {
-        super(config);
+    public SuperReader(YamlConfiguration config, ProjectAddon addon) {
+        super(config, addon);
     }
 
     @Override
@@ -154,5 +155,19 @@ public class SuperReader extends YamlReader<SlimefunItem> {
         instance.register(RykenSlimefunCustomizer.INSTANCE);
 
         return instance;
+    }
+
+    @Override
+    public List<SlimefunItemStack> preloadItems(String s) {
+        ConfigurationSection section = configuration.getConfigurationSection(s);
+        if (section == null) return null;
+        ConfigurationSection item = section.getConfigurationSection("item");
+        ItemStack stack = CommonUtils.readItem(item, false, addon);
+
+        if (stack == null) {
+            ExceptionHandler.handleError("无法在附属" + addon.getAddonName() + "中加载发电机" + s + ": 物品为空或格式错误导致无法加载");
+            return null;
+        }
+        return List.of(new SlimefunItemStack(s, stack));
     }
 }

@@ -141,7 +141,7 @@ public class ProjectAddonLoader {
         RecipeMachineReader recipeMachineReader = new RecipeMachineReader(recipeMachines, addon);
         SimpleMachineReader simpleMachineReader = new SimpleMachineReader(simpleMachines, addon);
         MultiBlockMachineReader multiBlockMachineReader = new MultiBlockMachineReader(multiBlockMachines, addon);
-        SuperReader superReader = new SuperReader(supers);
+        SuperReader superReader = new SuperReader(supers, addon);
 
         ExceptionHandler.debugLog("开始加载 " + file.getName() + " 中的物品内容...");
 

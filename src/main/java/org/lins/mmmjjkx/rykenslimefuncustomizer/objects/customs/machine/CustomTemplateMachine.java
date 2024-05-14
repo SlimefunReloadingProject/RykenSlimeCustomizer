@@ -53,9 +53,12 @@ public class CustomTemplateMachine extends AbstractEmptyMachine<CraftingOperatio
         this.templateSlot = templateSlot;
         this.templates = templates;
 
-        if (menu.getMenuClickHandler(templateSlot) != null) {
-            menu.addItem(templateSlot, null, ((player, i, itemStack, clickAction) -> true));
-        }
+        createPreset(this, bmp -> {
+            menu.apply(bmp);
+            if (menu.getMenuClickHandler(templateSlot) != null) {
+                bmp.addItem(templateSlot, null, ((player, i, itemStack, clickAction) -> true));
+            }
+        });
     }
 
     @Override

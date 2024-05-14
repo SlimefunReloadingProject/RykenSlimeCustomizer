@@ -118,8 +118,8 @@ public class CustomMenu {
         this.progressSlot = progress;
         this.playerInvClickable = playerInvClickable;
 
-        items = new HashMap<>();
-        clickHandlers = new HashMap<>();
+        this.items = new HashMap<>();
+        this.clickHandlers = new HashMap<>();
 
         if (eval != null) {
             eval.doInit();
@@ -220,6 +220,9 @@ public class CustomMenu {
 
             @Override
             public int[] getSlotsAccessedByItemTransport(ItemTransportFlow flow) {
+                if (invb == null) {
+                    return new int[0];
+                }
                 return flow == ItemTransportFlow.INSERT ? invb.getInputSlots() : invb.getOutputSlots();
             }
         };
