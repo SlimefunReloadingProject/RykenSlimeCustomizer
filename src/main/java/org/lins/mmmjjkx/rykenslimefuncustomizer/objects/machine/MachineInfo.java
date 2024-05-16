@@ -6,6 +6,7 @@ import io.github.thebusybiscuit.slimefun4.core.machines.MachineOperation;
 import io.github.thebusybiscuit.slimefun4.core.machines.MachineProcessor;
 import me.mrCookieSlime.Slimefun.api.inventory.BlockMenu;
 import org.bukkit.block.Block;
+import org.bukkit.inventory.Inventory;
 import org.lins.mmmjjkx.rykenslimefuncustomizer.objects.customs.machine.CustomMachine;
 
 public record MachineInfo(
@@ -17,4 +18,9 @@ public record MachineInfo(
         int progress,
         MachineProcessor<?> processor,
         MachineOperation operation,
-        CustomMachine machine) {}
+        CustomMachine machine) {
+
+    public Inventory getInventory() {
+        return blockMenu.getInventory();
+    }
+}

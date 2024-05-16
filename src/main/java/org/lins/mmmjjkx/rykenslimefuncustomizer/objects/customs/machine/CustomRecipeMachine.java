@@ -22,10 +22,9 @@ import org.bukkit.inventory.ItemStack;
 import org.jetbrains.annotations.NotNull;
 import org.jetbrains.annotations.Nullable;
 import org.lins.mmmjjkx.rykenslimefuncustomizer.RykenSlimefunCustomizer;
-import org.lins.mmmjjkx.rykenslimefuncustomizer.libraries.Colors.CMIChatColor;
+import org.lins.mmmjjkx.rykenslimefuncustomizer.listeners.SingleItemRecipeGuide;
 import org.lins.mmmjjkx.rykenslimefuncustomizer.objects.customs.CustomMenu;
 import org.lins.mmmjjkx.rykenslimefuncustomizer.objects.machine.RecipeMachineRecipe;
-import org.lins.mmmjjkx.rykenslimefuncustomizer.utils.CommonUtils;
 
 public class CustomRecipeMachine extends AContainer implements RecipeDisplayItem {
     private final ItemStack RECIPE_SPLITTER =
@@ -38,6 +37,9 @@ public class CustomRecipeMachine extends AContainer implements RecipeDisplayItem
     private final List<RecipeMachineRecipe> recipes;
     private final int energyPerCraft;
     private final int capacity;
+
+    private final ItemStack RECIPE_INPUT = new CustomItemStack(Material.GREEN_STAINED_GLASS_PANE, "&a多物品输入", "", "&2> &a点击查看");
+    private final ItemStack RECIPE_OUTPUT = new CustomItemStack(Material.GREEN_STAINED_GLASS_PANE, "&a多物品输出", "", "&2> &a点击查看");
 
     @Getter
     @Nullable private final CustomMenu menu;
@@ -133,40 +135,26 @@ public class CustomRecipeMachine extends AContainer implements RecipeDisplayItem
     @NotNull public List<ItemStack> getDisplayRecipes() {
         List<ItemStack> displayRecipes = new ArrayList<>();
 
+        int i = 0;
         for (RecipeMachineRecipe recipe : raw_recipes) {
             ItemStack[] input = recipe.getInput();
             ItemStack[] output = recipe.getOutput();
-            int max = Math.max(input.length, output.length);
 
-            for (int i = 0; i < max; i++) {
-                try {
-                    ItemStack in = input[i].clone();
-                    displayRecipes.add(in);
-                } catch (IndexOutOfBoundsException | NullPointerException e) {
-                    displayRecipes.add(AIR);
-                }
-
-                try {
-                    Integer chance = recipe.getChances().get(i);
-                    if (chance != null) {
-                        ItemStack out = output[i].clone();
-
-                        if (chance < 100) {
-                            CommonUtils.addLore(
-                                    out, true, CMIChatColor.translate("&a有&b " + chance + "% &a的概率产出"));
-                        }
-
-                        displayRecipes.add(out);
-                    }
-                } catch (IndexOutOfBoundsException | NullPointerException e) {
-                    displayRecipes.add(AIR);
-                }
+            if (input.length == 1) {
+                displayRecipes.add(input[0]);
+            } else {
+                ItemStack in = SingleItemRecipeGuide.tagItemRecipe(RECIPE_INPUT, i);
+                displayRecipes.add(in);
             }
 
-            if (recipes.size() > 1 && recipes.indexOf(recipe) != (recipes.size() - 1)) {
-                displayRecipes.add(RECIPE_SPLITTER);
-                displayRecipes.add(RECIPE_SPLITTER);
+            if (output.length == 1) {
+                displayRecipes.add(output[0]);
+            } else {
+                ItemStack out = SingleItemRecipeGuide.tagItemRecipe(RECIPE_OUTPUT, i);
+                displayRecipes.add(out);
             }
+
+            i++;
         }
 
         return displayRecipes;
@@ -220,10 +208,12 @@ public class CustomRecipeMachine extends AContainer implements RecipeDisplayItem
                                     }
                                 }
                             } else {
-                                int index = new Random().nextInt(outputs.length);
-                                ItemStack is = outputs[index];
-                                if (is != null) {
-                                    inv.pushItem(is.clone(), this.getOutputSlots());
+                                if (outputs.length > 0) {
+                                    int index = new Random().nextInt(outputs.length);
+                                    ItemStack is = outputs[index];
+                                    if (is != null) {
+                                        inv.pushItem(is.clone(), this.getOutputSlots());
+                                    }
                                 }
                             }
                         }

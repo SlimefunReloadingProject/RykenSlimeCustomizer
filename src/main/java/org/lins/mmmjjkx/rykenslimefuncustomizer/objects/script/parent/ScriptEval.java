@@ -156,6 +156,7 @@ public abstract class ScriptEval {
         });
 
         // StorageCacheUtils functions
+        // removal
         addThing("setData", (CiConsumer<Location, String, String>) StorageCacheUtils::setData);
         addThing("getData", (BiFunction<Location, String, String>) StorageCacheUtils::getData);
         addThing("getBlockMenu", (Function<Location, BlockMenu>) StorageCacheUtils::getMenu);
@@ -164,7 +165,9 @@ public abstract class ScriptEval {
         addThing("isBlock", (BiFunction<Location, String, Boolean>) StorageCacheUtils::isBlock);
         addThing("getSfItemByBlock", (Function<Location, SlimefunItem>) StorageCacheUtils::getSfItem);
 
-        addThing("NBTAPI", new NBTAPIIntegration());
+        if (Bukkit.getPluginManager().isPluginEnabled("NBTAPI")) {
+            addThing("NBTAPI", new NBTAPIIntegration());
+        }
     }
 
     private String parsePlaceholder(@Nullable Player p, String text) {

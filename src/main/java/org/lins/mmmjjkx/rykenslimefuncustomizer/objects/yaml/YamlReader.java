@@ -25,6 +25,11 @@ public abstract class YamlReader<T> {
 
     public final void preload() {
         for (String key : configuration.getKeys(false)) {
+            ConfigurationSection section = configuration.getConfigurationSection(key);
+            if (section == null) continue;
+            ConfigurationSection register = section.getConfigurationSection("register");
+            if (!checkForRegistration(register)) continue;
+
             List<SlimefunItemStack> items = preloadItems(key);
 
             if (items == null || items.isEmpty()) continue;
@@ -43,7 +48,7 @@ public abstract class YamlReader<T> {
         List<T> objects = new ArrayList<>();
         for (String key : configuration.getKeys(false)) {
             ConfigurationSection section = configuration.getConfigurationSection(key);
-            if (section == null) return objects;
+            if (section == null) continue;
 
             ExceptionHandler.debugLog("开始读取项: " + key);
 
@@ -88,7 +93,7 @@ public abstract class YamlReader<T> {
         if (section == null) return true;
 
         List<String> conditions = section.getStringList("conditions");
-        boolean warn = section.getBoolean("warn");
+        boolean warn = section.getBoolean("warn", false);
         boolean unfinished = section.getBoolean("unfinished", false);
 
         if (unfinished) return false;
@@ -114,7 +119,7 @@ public abstract class YamlReader<T> {
                     continue;
                 }
                 boolean b = Bukkit.getPluginManager().isPluginEnabled(splits[1]);
-                if (!b) {
+                if (b) {
                     if (warn) {
                         ExceptionHandler.handleError(section.getName() + "需要卸载服务端插件" + splits[1] + "才能被注册(可能与其冲突？)");
                     }

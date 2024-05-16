@@ -29,6 +29,7 @@ import org.lins.mmmjjkx.rykenslimefuncustomizer.objects.machine.ScriptedEvalBrea
 import org.lins.mmmjjkx.rykenslimefuncustomizer.objects.machine.SmallerMachineInfo;
 import org.lins.mmmjjkx.rykenslimefuncustomizer.objects.script.lambda.RSCClickHandler;
 import org.lins.mmmjjkx.rykenslimefuncustomizer.objects.script.parent.ScriptEval;
+import org.lins.mmmjjkx.rykenslimefuncustomizer.utils.ExceptionHandler;
 
 @SuppressWarnings("deprecation")
 public class CustomNoEnergyMachine extends AbstractEmptyMachine<MachineOperation> {
@@ -96,19 +97,21 @@ public class CustomNoEnergyMachine extends AbstractEmptyMachine<MachineOperation
                     menu.addMenuClickHandler(workSlot, new RSCClickHandler() {
                         @Override
                         public void mainFunction(Player player, int slot, ItemStack itemStack, ClickAction action) {
-                            if (mcl != null) {
-                                mcl.onClick(player, slot, itemStack, action);
-                            }
+                            CustomNoEnergyMachine.this.worked = true;
                         }
 
                         @Override
                         public void andThen(Player player, int slot, ItemStack itemStack, ClickAction action) {
-                            CustomNoEnergyMachine.this.worked = true;
+                            if (mcl != null) {
+                                mcl.onClick(player, slot, itemStack, action);
+                            }
                         }
                     });
                 }
                 this.processor.setProgressBar(menu.getProgressBarItem());
             }
+
+            createPreset(this, menu::apply);
         }
     }
 
@@ -119,8 +122,8 @@ public class CustomNoEnergyMachine extends AbstractEmptyMachine<MachineOperation
     }
 
     protected void tick(Block b, SlimefunItem item, SlimefunBlockData data) {
-        BlockMenu blockMenu = StorageCacheUtils.getMenu(b.getLocation());
         if (eval != null) {
+            BlockMenu blockMenu = StorageCacheUtils.getMenu(b.getLocation());
             SmallerMachineInfo info = new SmallerMachineInfo(blockMenu, data, this, item, b, processor);
             eval.evalFunction("tick", info);
         }

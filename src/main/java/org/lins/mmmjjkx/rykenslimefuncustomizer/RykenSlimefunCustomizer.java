@@ -13,6 +13,7 @@ import org.jetbrains.annotations.NotNull;
 import org.lins.mmmjjkx.rykenslimefuncustomizer.bulit_in.JavaScriptCreator;
 import org.lins.mmmjjkx.rykenslimefuncustomizer.commands.MainCommand;
 import org.lins.mmmjjkx.rykenslimefuncustomizer.listeners.BlockBreak;
+import org.lins.mmmjjkx.rykenslimefuncustomizer.listeners.SingleItemRecipeGuide;
 import org.lins.mmmjjkx.rykenslimefuncustomizer.objects.global.ScriptCreators;
 import org.lins.mmmjjkx.rykenslimefuncustomizer.utils.CommonUtils;
 import org.lins.mmmjjkx.rykenslimefuncustomizer.utils.ExceptionHandler;
@@ -47,6 +48,7 @@ public final class RykenSlimefunCustomizer extends JavaPlugin implements Slimefu
         addonManager.setup(this);
 
         new BlockBreak(this);
+        new SingleItemRecipeGuide();
 
         ExceptionHandler.info("RykenSlimeCustomizer加载成功！");
 
@@ -55,10 +57,6 @@ public final class RykenSlimefunCustomizer extends JavaPlugin implements Slimefu
         }
 
         getServer().getScheduler().runTaskLater(this, () -> runtime = true, 1);
-    }
-
-    public static boolean updatePreReleaseVersions() {
-        return INSTANCE.getConfig().getBoolean("update.pre-releases", false);
     }
 
     @Override

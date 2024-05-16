@@ -2,6 +2,7 @@ package org.lins.mmmjjkx.rykenslimefuncustomizer.listeners;
 
 import io.github.thebusybiscuit.slimefun4.api.items.SlimefunItem;
 import io.github.thebusybiscuit.slimefun4.api.player.PlayerProfile;
+import io.github.thebusybiscuit.slimefun4.core.guide.GuideHistory;
 import io.github.thebusybiscuit.slimefun4.implementation.Slimefun;
 import io.github.thebusybiscuit.slimefun4.implementation.guide.SurvivalSlimefunGuide;
 import io.github.thebusybiscuit.slimefun4.utils.ChestMenuUtils;
@@ -41,14 +42,21 @@ public class SingleItemRecipeGuide implements Listener {
     public void onClick(InventoryClickEvent e) {
         Player p = (Player) e.getWhoClicked();
         InventoryView view = e.getView();
+        Inventory inv = view.getTopInventory();
 
         if (view.getTitle().equals(Slimefun.getLocalization().getMessage(p, "guide.title.main"))) {
+            e.setCancelled(true);
+
             ItemStack item = e.getCurrentItem();
             if (item != null && isTaggedItem(item)) {
                 PersistentDataContainer pdc = item.getItemMeta().getPersistentDataContainer();
                 Integer index = pdc.get(RECIPE_INDEX_KEY, PersistentDataType.INTEGER);
                 if (index != null && index >= 0) {
-
+                    ItemStack sfItem = inv.getItem(16);
+                    ChestMenu menu = createGUI(p, SlimefunItem.getByItem(sfItem), index);
+                    if (menu != null) {
+                        menu.open(p);
+                    }
                 }
             }
         }
@@ -58,7 +66,7 @@ public class SingleItemRecipeGuide implements Listener {
     public void onClose(InventoryCloseEvent e) {
         Player p = (Player) e.getPlayer();
         Inventory inv = e.getInventory();
-        if (inv.getHolder() instanceof RecipeMenu) {
+        if (inv.getHolder() instanceof RecipeMenu rm && !rm.defaultRecipeGUI) {
             PlayerProfile.find(p).ifPresent(profile -> profile.getGuideHistory().goBack(new SurvivalSlimefunGuide(false, false)));
         }
     }
@@ -71,6 +79,7 @@ public class SingleItemRecipeGuide implements Listener {
     }
 
     public static ItemStack tagItemRecipe(ItemStack item, int index) {
+        item = item.clone();
         ItemMeta meta = item.getItemMeta();
         PersistentDataContainer pdc = meta.getPersistentDataContainer();
         pdc.set(RECIPE_KEY, PersistentDataType.INTEGER, 1);
@@ -81,22 +90,24 @@ public class SingleItemRecipeGuide implements Listener {
 
     private ChestMenu createGUI(Player p, SlimefunItem machine, int index) {
         if (machine instanceof AContainer ac) {
-            RecipeMenu menu = new RecipeMenu(ac, p, index);
+            return new RecipeMenu(ac, p, index);
         }
         return null;
     }
 
     private static class RecipeMenu extends ChestMenu {
+        private final boolean defaultRecipeGUI;
 
         public RecipeMenu(AContainer item, Player p, int index) {
             super(Slimefun.getLocalization().getMessage(p, "guide.title.main"));
+            boolean b;
 
             Optional<PlayerProfile> profile = PlayerProfile.find(p);
 
             setEmptySlotsClickable(false);
             setPlayerInventoryClickable(false);
 
-            boolean defaultRecipeGUI = true;
+            b = true;
 
             int[] inputSlots = item.getInputSlots();
             int[] outputSlots = item.getOutputSlots();
@@ -104,13 +115,14 @@ public class SingleItemRecipeGuide implements Listener {
             if (item instanceof CustomRecipeMachine crm) {
                 CustomMenu menu = crm.getMenu();
                 if (menu != null) {
-                    defaultRecipeGUI = false;
+                    b = false;
                 }
             } else {
                 inputSlots = new int[]{28, 29};
                 outputSlots = new int[]{33, 34};
             }
 
+            defaultRecipeGUI = b;
             BlockMenuPreset preset = Slimefun.getRegistry().getMenuPresets().get(item.getId());
 
             if (preset == null) {
@@ -141,6 +153,17 @@ public class SingleItemRecipeGuide implements Listener {
                 for (int outputBackground : outputBorderSlots) {
                     addItem(outputBackground, ChestMenuUtils.getOutputSlotTexture(), (pl, s, is, action) -> false);
                 }
+
+                profile.ifPresent(prof -> addItem(0, ChestMenuUtils.getBackButton(p, "", "&f左键: &7返回上一页", "&fShift + 左键: &7返回主菜单"), (pl, s, is, action) -> {
+                    SurvivalSlimefunGuide guide = new SurvivalSlimefunGuide(false, false);
+                    GuideHistory history = prof.getGuideHistory();
+                    if (action.isShiftClicked()) {
+                        guide.openMainMenu(prof, history.getMainMenuPage());
+                    } else {
+                        history.goBack(guide);
+                    }
+                    return false;
+                }));
             }
 
             List<MachineRecipe> recipes = item.getMachineRecipes();
@@ -152,11 +175,12 @@ public class SingleItemRecipeGuide implements Listener {
                 }
             }
 
+            AsyncChanceRecipeTask task = new AsyncChanceRecipeTask();
+
             if (recipe instanceof RecipeMachineRecipe rmr) {
                 int outputSlot = outputSlots[0];
                 List<ItemStack> inputs = List.of(rmr.getInput());
                 if (rmr.isChooseOneIfHas()) {
-                    AsyncChanceRecipeTask task = new AsyncChanceRecipeTask();
                     task.add(outputSlot, inputs);
                 } else {
                     List<Integer> chances = rmr.getChances();
@@ -183,6 +207,12 @@ public class SingleItemRecipeGuide implements Listener {
                         addItem(outputSlots[i], output, (pl, s, is, action) -> false);
                     }
                 }
+            }
+
+            getContents();
+
+            if (!task.isEmpty()) {
+                task.start(getInventory());
             }
         }
     }

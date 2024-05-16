@@ -51,9 +51,9 @@ public class CustomMenu {
     @Setter
     private boolean playerInvClickable;
     @Setter
-    private ChestMenu.MenuOpeningHandler menuOpeningHandler;
+    private ChestMenu.MenuOpeningHandler menuOpeningHandler = p -> {};
     @Setter
-    private ChestMenu.MenuCloseHandler menuCloseHandler;
+    private ChestMenu.MenuCloseHandler menuCloseHandler = p -> {};
 
     private final Map<Integer, ItemStack> items;
     private final Map<Integer, ChestMenu.MenuClickHandler> clickHandlers;
