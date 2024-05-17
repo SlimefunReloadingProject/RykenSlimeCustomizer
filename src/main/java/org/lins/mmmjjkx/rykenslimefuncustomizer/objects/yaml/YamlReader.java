@@ -28,7 +28,7 @@ public abstract class YamlReader<T> {
             ConfigurationSection section = configuration.getConfigurationSection(key);
             if (section == null) continue;
             ConfigurationSection register = section.getConfigurationSection("register");
-            if (!checkForRegistration(register)) continue;
+            if (!checkForRegistration(key, register)) continue;
 
             List<SlimefunItemStack> items = preloadItems(key);
 
@@ -53,7 +53,7 @@ public abstract class YamlReader<T> {
             ExceptionHandler.debugLog("开始读取项: " + key);
 
             ConfigurationSection register = section.getConfigurationSection("register");
-            if (!checkForRegistration(register)) continue;
+            if (!checkForRegistration(key, register)) continue;
 
             ExceptionHandler.debugLog("检查延迟加载...");
 
@@ -89,9 +89,9 @@ public abstract class YamlReader<T> {
 
     public abstract List<SlimefunItemStack> preloadItems(String s);
 
-    private boolean checkForRegistration(ConfigurationSection section) {
+    private boolean checkForRegistration(String key, ConfigurationSection section) {
         if (section == null) return true;
-
+        
         List<String> conditions = section.getStringList("conditions");
         boolean warn = section.getBoolean("warn", false);
         boolean unfinished = section.getBoolean("unfinished", false);
@@ -103,31 +103,31 @@ public abstract class YamlReader<T> {
             String head = splits[0];
             if (head.equalsIgnoreCase("hasplugin")) {
                 if (splits.length != 2) {
-                    ExceptionHandler.handleError("读取" + section.getName() + "的注册条件时发现问题: hasplugin仅需要一个参数");
+                    ExceptionHandler.handleError("读取" + key + "的注册条件时发现问题: hasplugin仅需要一个参数");
                     continue;
                 }
                 boolean b = Bukkit.getPluginManager().isPluginEnabled(splits[1]);
                 if (!b) {
                     if (warn) {
-                        ExceptionHandler.handleError(section.getName() + "需要服务端插件" + splits[1] + "才能被注册");
+                        ExceptionHandler.handleError(key + "需要服务端插件" + splits[1] + "才能被注册");
                     }
                     return false;
                 }
             } else if (head.equalsIgnoreCase("!hasplugin")) {
                 if (splits.length != 2) {
-                    ExceptionHandler.handleError("读取" + section.getName() + "的注册条件时发现问题: !hasplugin仅需要一个参数");
+                    ExceptionHandler.handleError("读取" + key + "的注册条件时发现问题: !hasplugin仅需要一个参数");
                     continue;
                 }
                 boolean b = Bukkit.getPluginManager().isPluginEnabled(splits[1]);
                 if (b) {
                     if (warn) {
-                        ExceptionHandler.handleError(section.getName() + "需要卸载服务端插件" + splits[1] + "才能被注册(可能与其冲突？)");
+                        ExceptionHandler.handleError(key + "需要卸载服务端插件" + splits[1] + "才能被注册(可能与其冲突？)");
                     }
                     return false;
                 }
             } else if (head.equalsIgnoreCase("version")) {
                 if (splits.length != 3) {
-                    ExceptionHandler.handleError("读取" + section.getName() + "的注册条件时发现问题: version需要两个参数");
+                    ExceptionHandler.handleError("读取" + key + "的注册条件时发现问题: version需要两个参数");
                     continue;
                 }
 
@@ -154,14 +154,14 @@ public abstract class YamlReader<T> {
                         match = current <= destination;
                     }
                     default -> {
-                        ExceptionHandler.handleError("读取" + section.getName() + "的注册条件时发现问题: version需要合法的比较符！");
+                        ExceptionHandler.handleError("读取" + key + "的注册条件时发现问题: version需要合法的比较符！");
                         continue;
                     }
                 }
 
                 if (!match) {
                     if (warn) {
-                        ExceptionHandler.handleError(section.getName() + "需要版本" + operation + splits[1] + "才能被注册");
+                        ExceptionHandler.handleError(key + "需要版本" + operation + splits[1] + "才能被注册");
                     }
                     return false;
                 }

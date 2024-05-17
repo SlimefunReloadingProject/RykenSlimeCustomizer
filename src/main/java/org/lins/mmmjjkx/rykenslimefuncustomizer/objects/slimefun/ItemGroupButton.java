@@ -16,6 +16,7 @@ import org.lins.mmmjjkx.rykenslimefuncustomizer.libraries.Colors.CMIChatColor;
 import org.lins.mmmjjkx.rykenslimefuncustomizer.objects.script.ban.CommandSafe;
 import org.lins.mmmjjkx.rykenslimefuncustomizer.utils.ExceptionHandler;
 
+@SuppressWarnings("deprecation")
 public class ItemGroupButton extends SubItemGroup {
     private final List<String> actions;
 
@@ -29,7 +30,7 @@ public class ItemGroupButton extends SubItemGroup {
     public void run(Player p) {
         if (actions != null) {
             for (String action : actions) {
-                if (action.split(" ").length >= 2) {
+                if (action.split(" ").length < 2) {
                     ExceptionHandler.handleWarning("在" + getKey().getKey() + "物品组按钮中发现未知的操作格式: " + action);
                     continue;
                 }

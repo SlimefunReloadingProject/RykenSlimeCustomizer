@@ -2,6 +2,9 @@ package org.lins.mmmjjkx.rykenslimefuncustomizer.update;
 
 import com.google.gson.Gson;
 import java.io.*;
+import java.net.URL;
+import java.nio.file.Files;
+import java.nio.file.StandardCopyOption;
 import java.util.Objects;
 import java.util.logging.Level;
 import java.util.zip.ZipEntry;
@@ -18,6 +21,9 @@ import org.lins.mmmjjkx.rykenslimefuncustomizer.RykenSlimefunCustomizer;
 import org.lins.mmmjjkx.rykenslimefuncustomizer.utils.ExceptionHandler;
 
 public class GithubUpdater {
+    public static final File downloadFolder =
+            new File(RykenSlimefunCustomizer.INSTANCE.getDataFolder(), "temp-downloads");
+
     public static boolean checkAndUpdate(
             @NotNull String currentVer,
             @NotNull String author,
@@ -50,16 +56,15 @@ public class GithubUpdater {
                     return false;
                 }
 
-                File zip = new File(ConcurrentDownloader.downloadFolder, prjId + "-" + releaseName + ".zip");
-
-                if (zip.exists()) {
-                    zip.delete();
-                }
+                File zip = new File(downloadFolder, prjId + "-" + releaseName + ".zip");
 
                 String zipUrl = release.getZipball_url();
-                boolean result = ConcurrentDownloader.downloadFile(prjId, zipUrl, releaseName);
 
-                if (!result) {
+                URL urlObj = new URL(zipUrl);
+
+                long result = Files.copy(urlObj.openStream(), zip.toPath(), StandardCopyOption.REPLACE_EXISTING);
+
+                if (result < 1) {
                     return false;
                 }
 

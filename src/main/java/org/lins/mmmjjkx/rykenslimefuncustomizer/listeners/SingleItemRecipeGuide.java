@@ -1,6 +1,7 @@
 package org.lins.mmmjjkx.rykenslimefuncustomizer.listeners;
 
 import io.github.thebusybiscuit.slimefun4.api.items.SlimefunItem;
+import io.github.thebusybiscuit.slimefun4.api.items.SlimefunItemStack;
 import io.github.thebusybiscuit.slimefun4.api.player.PlayerProfile;
 import io.github.thebusybiscuit.slimefun4.core.guide.GuideHistory;
 import io.github.thebusybiscuit.slimefun4.implementation.Slimefun;
@@ -42,7 +43,7 @@ public class SingleItemRecipeGuide implements Listener {
     public void onClick(InventoryClickEvent e) {
         Player p = (Player) e.getWhoClicked();
         InventoryView view = e.getView();
-        Inventory inv = view.getTopInventory();
+        Inventory inv = e.getInventory();
 
         if (view.getTitle().equals(Slimefun.getLocalization().getMessage(p, "guide.title.main"))) {
             e.setCancelled(true);
@@ -53,9 +54,12 @@ public class SingleItemRecipeGuide implements Listener {
                 Integer index = pdc.get(RECIPE_INDEX_KEY, PersistentDataType.INTEGER);
                 if (index != null && index >= 0) {
                     ItemStack sfItem = inv.getItem(16);
-                    ChestMenu menu = createGUI(p, SlimefunItem.getByItem(sfItem), index);
-                    if (menu != null) {
-                        menu.open(p);
+                    SlimefunItem sfItemObj = SlimefunItem.getByItem(sfItem);
+                    if (sfItem instanceof SlimefunItemStack sfis || sfItemObj != null) {
+                        ChestMenu menu = createGUI(p, SlimefunItem.getByItem(sfItem), index);
+                        if (menu != null) {
+                            menu.open(p);
+                        }
                     }
                 }
             }

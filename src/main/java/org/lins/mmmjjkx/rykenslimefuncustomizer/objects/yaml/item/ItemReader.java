@@ -180,7 +180,7 @@ public class ItemReader extends YamlReader<SlimefunItem> {
                     instance.getClass(),
                     "PiglinTradeAble",
                     "Item",
-                    new Class[] {Radioactive.class},
+                    new Class[] {PiglinBarterDrop.class},
                     builder -> builder.method(ElementMatchers.isDeclaredBy(PiglinBarterDrop.class))
                             .intercept(FixedValue.value(chance)));
 
@@ -332,9 +332,9 @@ public class ItemReader extends YamlReader<SlimefunItem> {
 
             Class<? extends CustomItem> clazz = (Class<? extends CustomItem>) ClassUtils.generateClass(
                     instance.getClass(),
-                    "PiglinTrade",
+                    "PiglinTradeAble",
                     "Item",
-                    new Class[] {Radioactive.class},
+                    new Class[] {PiglinBarterDrop.class},
                     builder -> builder.method(ElementMatchers.isDeclaredBy(PiglinBarterDrop.class))
                             .intercept(FixedValue.value(chance)));
 
