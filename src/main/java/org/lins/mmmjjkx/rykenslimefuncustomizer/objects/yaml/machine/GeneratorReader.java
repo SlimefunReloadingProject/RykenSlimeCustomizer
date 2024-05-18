@@ -68,16 +68,7 @@ public class GeneratorReader extends YamlReader<CustomGenerator> {
         }
 
         Object[] constructorArgs = {
-            group.getSecondValue(),
-            sfis,
-            rt.getSecondValue(),
-            recipe,
-            menu,
-            capacity,
-            input,
-            output,
-            production,
-            fuels
+            group.getSecondValue(), sfis, rt.getSecondValue(), recipe, menu, capacity, input, output, production, fuels
         };
 
         String rotationStr = section.getString("rotation", "NOT_ROTATABLE");

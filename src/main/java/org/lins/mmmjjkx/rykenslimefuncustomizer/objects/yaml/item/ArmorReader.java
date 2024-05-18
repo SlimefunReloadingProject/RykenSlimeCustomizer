@@ -125,7 +125,8 @@ public class ArmorReader extends YamlReader<List<CustomArmorPiece>> {
 
             ItemStack stack = CommonUtils.readItem(pieceSection, false, addon);
             if (stack == null) {
-                ExceptionHandler.handleError("无法在附属" + addon.getAddonName() + "中加载盔甲部分" + s + "." + check + ": 物品为空或格式错误导致无法加载，已跳过");
+                ExceptionHandler.handleError(
+                        "无法在附属" + addon.getAddonName() + "中加载盔甲部分" + s + "." + check + ": 物品为空或格式错误导致无法加载，已跳过");
                 continue;
             }
 

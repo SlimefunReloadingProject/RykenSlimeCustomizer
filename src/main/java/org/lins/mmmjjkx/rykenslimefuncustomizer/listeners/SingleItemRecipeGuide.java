@@ -1,24 +1,25 @@
 package org.lins.mmmjjkx.rykenslimefuncustomizer.listeners;
 
 import io.github.thebusybiscuit.slimefun4.api.items.SlimefunItem;
-import io.github.thebusybiscuit.slimefun4.api.items.SlimefunItemStack;
 import io.github.thebusybiscuit.slimefun4.api.player.PlayerProfile;
 import io.github.thebusybiscuit.slimefun4.core.guide.GuideHistory;
 import io.github.thebusybiscuit.slimefun4.implementation.Slimefun;
 import io.github.thebusybiscuit.slimefun4.implementation.guide.SurvivalSlimefunGuide;
 import io.github.thebusybiscuit.slimefun4.utils.ChestMenuUtils;
+import java.util.ArrayList;
+import java.util.List;
+import java.util.Optional;
 import me.mrCookieSlime.CSCoreLibPlugin.general.Inventory.ChestMenu;
 import me.mrCookieSlime.Slimefun.Objects.SlimefunItem.abstractItems.AContainer;
 import me.mrCookieSlime.Slimefun.Objects.SlimefunItem.abstractItems.MachineRecipe;
 import me.mrCookieSlime.Slimefun.api.inventory.BlockMenuPreset;
+import org.bukkit.Bukkit;
 import org.bukkit.NamespacedKey;
 import org.bukkit.entity.Player;
 import org.bukkit.event.EventHandler;
 import org.bukkit.event.Listener;
 import org.bukkit.event.inventory.InventoryClickEvent;
-import org.bukkit.event.inventory.InventoryCloseEvent;
 import org.bukkit.inventory.Inventory;
-import org.bukkit.inventory.InventoryView;
 import org.bukkit.inventory.ItemStack;
 import org.bukkit.inventory.meta.ItemMeta;
 import org.bukkit.persistence.PersistentDataContainer;
@@ -31,32 +32,31 @@ import org.lins.mmmjjkx.rykenslimefuncustomizer.objects.machine.RecipeMachineRec
 import org.lins.mmmjjkx.rykenslimefuncustomizer.objects.slimefun.AsyncChanceRecipeTask;
 import org.lins.mmmjjkx.rykenslimefuncustomizer.utils.CommonUtils;
 
-import java.util.List;
-import java.util.Optional;
-
 @SuppressWarnings("deprecation")
 public class SingleItemRecipeGuide implements Listener {
     private static final NamespacedKey RECIPE_KEY = new NamespacedKey(RykenSlimefunCustomizer.INSTANCE, "rsc_recipe");
-    private static final NamespacedKey RECIPE_INDEX_KEY = new NamespacedKey(RykenSlimefunCustomizer.INSTANCE, "rsc_recipe_index");
+    private static final NamespacedKey RECIPE_INDEX_KEY =
+            new NamespacedKey(RykenSlimefunCustomizer.INSTANCE, "rsc_recipe_index");
+
+    public SingleItemRecipeGuide() {
+        Bukkit.getPluginManager().registerEvents(this, RykenSlimefunCustomizer.INSTANCE);
+    }
 
     @EventHandler
     public void onClick(InventoryClickEvent e) {
         Player p = (Player) e.getWhoClicked();
-        InventoryView view = e.getView();
         Inventory inv = e.getInventory();
 
-        if (view.getTitle().equals(Slimefun.getLocalization().getMessage(p, "guide.title.main"))) {
-            e.setCancelled(true);
-
-            ItemStack item = e.getCurrentItem();
-            if (item != null && isTaggedItem(item)) {
-                PersistentDataContainer pdc = item.getItemMeta().getPersistentDataContainer();
-                Integer index = pdc.get(RECIPE_INDEX_KEY, PersistentDataType.INTEGER);
-                if (index != null && index >= 0) {
-                    ItemStack sfItem = inv.getItem(16);
+        ItemStack item = e.getCurrentItem();
+        if (isTaggedItem(item)) {
+            PersistentDataContainer pdc = item.getItemMeta().getPersistentDataContainer();
+            Integer index = pdc.get(RECIPE_INDEX_KEY, PersistentDataType.INTEGER);
+            if (index != null && index >= 0) {
+                ItemStack sfItem = inv.getItem(16);
+                if (sfItem != null) {
                     SlimefunItem sfItemObj = SlimefunItem.getByItem(sfItem);
-                    if (sfItem instanceof SlimefunItemStack sfis || sfItemObj != null) {
-                        ChestMenu menu = createGUI(p, SlimefunItem.getByItem(sfItem), index);
+                    if (sfItemObj != null) {
+                        ChestMenu menu = createGUI(p, sfItemObj, index);
                         if (menu != null) {
                             menu.open(p);
                         }
@@ -66,20 +66,12 @@ public class SingleItemRecipeGuide implements Listener {
         }
     }
 
-    @EventHandler
-    public void onClose(InventoryCloseEvent e) {
-        Player p = (Player) e.getPlayer();
-        Inventory inv = e.getInventory();
-        if (inv.getHolder() instanceof RecipeMenu rm && !rm.defaultRecipeGUI) {
-            PlayerProfile.find(p).ifPresent(profile -> profile.getGuideHistory().goBack(new SurvivalSlimefunGuide(false, false)));
-        }
-    }
-
     private static boolean isTaggedItem(ItemStack item) {
+        if (item == null || item.getItemMeta() == null) {
+            return false;
+        }
         PersistentDataContainer pdc = item.getItemMeta().getPersistentDataContainer();
-        return pdc.getKeys().contains(RECIPE_KEY)
-                && pdc.getKeys().contains(RECIPE_INDEX_KEY)
-                && SlimefunItem.getByItem(item) != null;
+        return pdc.getKeys().contains(RECIPE_KEY) && pdc.getKeys().contains(RECIPE_INDEX_KEY);
     }
 
     public static ItemStack tagItemRecipe(ItemStack item, int index) {
@@ -100,18 +92,17 @@ public class SingleItemRecipeGuide implements Listener {
     }
 
     private static class RecipeMenu extends ChestMenu {
-        private final boolean defaultRecipeGUI;
+        private final AsyncChanceRecipeTask recipeTask = new AsyncChanceRecipeTask();
 
         public RecipeMenu(AContainer item, Player p, int index) {
             super(Slimefun.getLocalization().getMessage(p, "guide.title.main"));
-            boolean b;
 
             Optional<PlayerProfile> profile = PlayerProfile.find(p);
 
             setEmptySlotsClickable(false);
             setPlayerInventoryClickable(false);
 
-            b = true;
+            boolean defaultRecipeGUI = true;
 
             int[] inputSlots = item.getInputSlots();
             int[] outputSlots = item.getOutputSlots();
@@ -119,14 +110,13 @@ public class SingleItemRecipeGuide implements Listener {
             if (item instanceof CustomRecipeMachine crm) {
                 CustomMenu menu = crm.getMenu();
                 if (menu != null) {
-                    b = false;
+                    defaultRecipeGUI = false;
                 }
             } else {
-                inputSlots = new int[]{28, 29};
-                outputSlots = new int[]{33, 34};
+                inputSlots = new int[] {28, 29};
+                outputSlots = new int[] {33, 34};
             }
 
-            defaultRecipeGUI = b;
             BlockMenuPreset preset = Slimefun.getRegistry().getMenuPresets().get(item.getId());
 
             if (preset == null) {
@@ -134,16 +124,19 @@ public class SingleItemRecipeGuide implements Listener {
             }
 
             if (!defaultRecipeGUI) {
-                for (int i = 0; i < preset.getSize(); i++) {
-                    ItemStack itemStack = preset.getItemInSlot(i);
+                for (int slot : preset.getPresetSlots()) {
+                    ItemStack itemStack = preset.getItemInSlot(slot);
                     if (itemStack != null) {
-                        addItem(i, itemStack, (pl, s, is, action) -> false);
+                        addItem(slot, itemStack, (pl, s, is, action) -> false);
                     }
                 }
             }
 
             if (defaultRecipeGUI) {
-                int[] backgroundSlots = {1, 2, 3, 5, 6, 7, 8, 9, 10, 11, 12, 13, 14, 15, 16, 17, 22, 31, 40, 45, 46, 47, 48, 49, 50, 51, 52, 53};
+                int[] backgroundSlots = {
+                    1, 2, 3, 5, 6, 7, 8, 9, 10, 11, 12, 13, 14, 15, 16, 17, 22, 31, 40, 45, 46, 47, 48, 49, 50, 51, 52,
+                    53
+                };
                 for (int background : backgroundSlots) {
                     addItem(background, ChestMenuUtils.getBackground(), (pl, s, is, action) -> false);
                 }
@@ -158,39 +151,53 @@ public class SingleItemRecipeGuide implements Listener {
                     addItem(outputBackground, ChestMenuUtils.getOutputSlotTexture(), (pl, s, is, action) -> false);
                 }
 
-                profile.ifPresent(prof -> addItem(0, ChestMenuUtils.getBackButton(p, "", "&f左键: &7返回上一页", "&fShift + 左键: &7返回主菜单"), (pl, s, is, action) -> {
-                    SurvivalSlimefunGuide guide = new SurvivalSlimefunGuide(false, false);
-                    GuideHistory history = prof.getGuideHistory();
-                    if (action.isShiftClicked()) {
-                        guide.openMainMenu(prof, history.getMainMenuPage());
-                    } else {
-                        history.goBack(guide);
-                    }
-                    return false;
-                }));
+                profile.ifPresent(prof -> addItem(
+                        0,
+                        ChestMenuUtils.getBackButton(p, "", "&f左键: &7返回上一页", "&fShift + 左键: &7返回主菜单"),
+                        (pl, s, is, action) -> {
+                            SurvivalSlimefunGuide guide = new SurvivalSlimefunGuide(false, false);
+                            GuideHistory history = prof.getGuideHistory();
+                            if (action.isShiftClicked()) {
+                                guide.openMainMenu(prof, history.getMainMenuPage());
+                            } else {
+                                history.goBack(guide);
+                            }
+                            return false;
+                        }));
             }
 
             List<MachineRecipe> recipes = item.getMachineRecipes();
             MachineRecipe recipe = recipes.get(index);
-            for (int i = 0; i < inputSlots.length; i++) {
-                ItemStack input = recipe.getInput()[i];
-                if (input != null) {
-                    addItem(inputSlots[i], input, (pl, s, is, action) -> false);
+            ItemStack[] input = recipe.getInput();
+            for (int i = 0; i < input.length; i++) {
+                ItemStack inputItem = input[i];
+                if (inputItem != null) {
+                    addItem(inputSlots[i], inputItem, (pl, s, is, action) -> false);
                 }
             }
-
-            AsyncChanceRecipeTask task = new AsyncChanceRecipeTask();
 
             if (recipe instanceof RecipeMachineRecipe rmr) {
                 int outputSlot = outputSlots[0];
                 List<ItemStack> inputs = List.of(rmr.getInput());
+                ItemStack[] outputs = recipe.getOutput();
                 if (rmr.isChooseOneIfHas()) {
-                    task.add(outputSlot, inputs);
+                    List<ItemStack> taggedChanceOutputs = new ArrayList<>();
+                    for (int i = 0; i < outputs.length; i++) {
+                        Integer chance = rmr.getChances().get(i);
+                        ItemStack output = outputs[i];
+                        if (chance != null && chance > 0 && output != null) {
+                            taggedChanceOutputs.add(tagOutputChance(output, chance));
+                        }
+                    }
+
+                    recipeTask.add(outputSlot, taggedChanceOutputs);
+                    addMenuClickHandler(outputSlot, (pl, s, is, action) -> false);
                 } else {
                     List<Integer> chances = rmr.getChances();
-                    for (int i = 0; i < outputSlots.length; i++) {
+
+                    for (int i = 0; i < outputs.length; i++) {
                         int chance = chances.get(i);
-                        ItemStack originalOutput = recipe.getOutput()[i];
+                        ItemStack originalOutput = outputs[i];
                         if (originalOutput != null) {
                             ItemStack chanceOutput = originalOutput.clone();
                             if (chance < 100) {
@@ -212,12 +219,21 @@ public class SingleItemRecipeGuide implements Listener {
                     }
                 }
             }
+        }
 
-            getContents();
+        @Override
+        public void open(Player... players) {
+            super.open(players);
 
-            if (!task.isEmpty()) {
-                task.start(getInventory());
+            if (!recipeTask.isEmpty()) {
+                recipeTask.start(getInventory());
             }
+        }
+
+        private ItemStack tagOutputChance(ItemStack item, int chance) {
+            item = item.clone();
+            CommonUtils.addLore(item, true, CMIChatColor.translate("&a有&b " + chance + "% &a的概率产出"));
+            return item;
         }
     }
 }

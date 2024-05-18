@@ -5,6 +5,7 @@ import io.github.thebusybiscuit.slimefun4.api.items.SlimefunItem;
 import io.github.thebusybiscuit.slimefun4.api.items.SlimefunItemStack;
 import io.github.thebusybiscuit.slimefun4.api.recipes.RecipeType;
 import io.github.thebusybiscuit.slimefun4.api.researches.Research;
+import io.github.thebusybiscuit.slimefun4.core.attributes.Radioactive;
 import io.github.thebusybiscuit.slimefun4.implementation.Slimefun;
 import io.github.thebusybiscuit.slimefun4.implementation.items.electric.Capacitor;
 import java.io.File;
@@ -12,7 +13,6 @@ import java.util.ArrayList;
 import java.util.HashMap;
 import java.util.List;
 import java.util.Map;
-
 import lombok.AccessLevel;
 import lombok.Getter;
 import lombok.RequiredArgsConstructor;
@@ -157,7 +157,13 @@ public final class ProjectAddon {
     }
 
     private void unregisterItem(SlimefunItem item) {
-        item.disable();
+        if (item instanceof Radioactive) {
+            Slimefun.getRegistry().getRadioactiveItems().remove(item);
+        }
+
+        Slimefun.getRegistry().getTickerBlocks().remove(item.getId());
+        Slimefun.getRegistry().getEnabledSlimefunItems().remove(item);
+
         Slimefun.getRegistry().getSlimefunItemIds().remove(item.getId());
         Slimefun.getRegistry().getAllSlimefunItems().remove(item);
     }

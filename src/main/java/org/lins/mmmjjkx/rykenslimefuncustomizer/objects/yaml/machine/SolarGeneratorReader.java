@@ -4,7 +4,6 @@ import io.github.thebusybiscuit.slimefun4.api.items.ItemGroup;
 import io.github.thebusybiscuit.slimefun4.api.items.SlimefunItemStack;
 import io.github.thebusybiscuit.slimefun4.api.recipes.RecipeType;
 import io.github.thebusybiscuit.slimefun4.libraries.dough.collections.Pair;
-
 import java.util.List;
 import java.util.Objects;
 import org.bukkit.configuration.ConfigurationSection;
@@ -31,7 +30,6 @@ public class SolarGeneratorReader extends YamlReader<CustomSolarGenerator> {
 
         String igId = section.getString("item_group");
 
-
         Pair<ExceptionHandler.HandleResult, ItemGroup> group = ExceptionHandler.handleItemGroupGet(addon, igId);
         if (group.getFirstValue() == ExceptionHandler.HandleResult.FAILED) return null;
 
@@ -45,7 +43,6 @@ public class SolarGeneratorReader extends YamlReader<CustomSolarGenerator> {
                 ExceptionHandler.getRecipeType("错误的配方类型" + recipeType + "!", recipeType);
 
         if (rt.getFirstValue() == ExceptionHandler.HandleResult.FAILED) return null;
-
 
         int dayEnergy = section.getInt("dayEnergy");
         int nightEnergy = section.getInt("nightEnergy");

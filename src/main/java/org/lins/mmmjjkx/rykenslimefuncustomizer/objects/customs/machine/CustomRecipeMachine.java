@@ -38,8 +38,10 @@ public class CustomRecipeMachine extends AContainer implements RecipeDisplayItem
     private final int energyPerCraft;
     private final int capacity;
 
-    private final ItemStack RECIPE_INPUT = new CustomItemStack(Material.GREEN_STAINED_GLASS_PANE, "&a多物品输入", "", "&2> &a点击查看");
-    private final ItemStack RECIPE_OUTPUT = new CustomItemStack(Material.GREEN_STAINED_GLASS_PANE, "&a多物品输出", "", "&2> &a点击查看");
+    private final ItemStack RECIPE_INPUT =
+            new CustomItemStack(Material.GREEN_STAINED_GLASS_PANE, "&a多物品输入", "", "&2> &a点击查看");
+    private final ItemStack RECIPE_OUTPUT =
+            new CustomItemStack(Material.GREEN_STAINED_GLASS_PANE, "&a多物品输出", "", "&2> &a点击查看");
 
     @Getter
     @Nullable private final CustomMenu menu;

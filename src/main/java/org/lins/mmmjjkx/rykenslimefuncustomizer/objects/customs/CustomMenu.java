@@ -3,7 +3,6 @@ package org.lins.mmmjjkx.rykenslimefuncustomizer.objects.customs;
 import io.github.thebusybiscuit.slimefun4.api.items.SlimefunItem;
 import io.github.thebusybiscuit.slimefun4.implementation.Slimefun;
 import io.github.thebusybiscuit.slimefun4.libraries.dough.protection.Interaction;
-
 import java.util.HashMap;
 import java.util.Map;
 import lombok.Getter;
@@ -38,20 +37,25 @@ public class CustomMenu {
 
     @Getter
     private final String title;
+
     @Getter
     private final String id;
 
     @Getter
     private int progressSlot;
+
     @Getter
     private ItemStack progress;
 
     @Setter
     private InventoryBlock invb;
+
     @Setter
     private boolean playerInvClickable;
+
     @Setter
     private ChestMenu.MenuOpeningHandler menuOpeningHandler = p -> {};
+
     @Setter
     private ChestMenu.MenuCloseHandler menuCloseHandler = p -> {};
 
@@ -239,8 +243,7 @@ public class CustomMenu {
         preset.addMenuCloseHandler(menuCloseHandler);
     }
 
-    @Nullable
-    public ChestMenu.MenuClickHandler getMenuClickHandler(int workSlot) {
+    @Nullable public ChestMenu.MenuClickHandler getMenuClickHandler(int workSlot) {
         return clickHandlers.get(workSlot);
     }
 }

@@ -2,19 +2,16 @@ package org.lins.mmmjjkx.rykenslimefuncustomizer.objects.slimefun;
 
 import io.github.thebusybiscuit.slimefun4.libraries.commons.lang.Validate;
 import io.github.thebusybiscuit.slimefun4.libraries.dough.collections.LoopIterator;
-import org.bukkit.Bukkit;
-import org.bukkit.Material;
-import org.bukkit.inventory.Inventory;
-import org.bukkit.inventory.ItemStack;
-import org.lins.mmmjjkx.rykenslimefuncustomizer.RykenSlimefunCustomizer;
-
-import javax.annotation.Nonnull;
-import java.util.Collections;
 import java.util.HashMap;
 import java.util.List;
 import java.util.Map;
 import java.util.concurrent.locks.ReadWriteLock;
 import java.util.concurrent.locks.ReentrantReadWriteLock;
+import javax.annotation.Nonnull;
+import org.bukkit.Bukkit;
+import org.bukkit.inventory.Inventory;
+import org.bukkit.inventory.ItemStack;
+import org.lins.mmmjjkx.rykenslimefuncustomizer.RykenSlimefunCustomizer;
 
 public class AsyncChanceRecipeTask implements Runnable {
     private static final int UPDATE_INTERVAL = 15;
@@ -23,24 +20,14 @@ public class AsyncChanceRecipeTask implements Runnable {
     private Inventory inventory;
     private int id;
 
-    public AsyncChanceRecipeTask() {
-    }
+    public AsyncChanceRecipeTask() {}
 
     public void start(@Nonnull Inventory inv) {
         Validate.notNull(inv, "Inventory must not be null");
         this.inventory = inv;
-        this.id = Bukkit.getScheduler().runTaskTimerAsynchronously(RykenSlimefunCustomizer.INSTANCE, this, 0L, 14L).getTaskId();
-    }
-
-    public void add(int slot, @Nonnull ItemStack item) {
-        Validate.notNull(item, "Cannot add a null ItemStack");
-        this.lock.writeLock().lock();
-
-        try {
-            this.iterators.put(slot, new LoopIterator<>(Collections.singleton(item)));
-        } finally {
-            this.lock.writeLock().unlock();
-        }
+        this.id = Bukkit.getScheduler()
+                .runTaskTimerAsynchronously(RykenSlimefunCustomizer.INSTANCE, this, 0L, 14L)
+                .getTaskId();
     }
 
     public void add(int slot, @Nonnull List<ItemStack> item) {
@@ -75,7 +62,6 @@ public class AsyncChanceRecipeTask implements Runnable {
         } finally {
             this.lock.writeLock().unlock();
         }
-
     }
 
     public void run() {
@@ -86,7 +72,7 @@ public class AsyncChanceRecipeTask implements Runnable {
 
             try {
                 for (Map.Entry<Integer, LoopIterator<ItemStack>> entry : this.iterators.entrySet()) {
-                    this.inventory.setItem(entry.getKey(), new ItemStack((Material) ((LoopIterator<?>) entry.getValue()).next()));
+                    this.inventory.setItem(entry.getKey(), entry.getValue().next());
                 }
             } finally {
                 this.lock.readLock().unlock();

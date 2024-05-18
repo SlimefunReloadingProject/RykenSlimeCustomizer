@@ -4,7 +4,6 @@ import io.github.thebusybiscuit.slimefun4.api.items.ItemGroup;
 import io.github.thebusybiscuit.slimefun4.api.items.SlimefunItemStack;
 import io.github.thebusybiscuit.slimefun4.api.recipes.RecipeType;
 import io.github.thebusybiscuit.slimefun4.libraries.dough.collections.Pair;
-
 import java.util.List;
 import java.util.Optional;
 import java.util.function.BiFunction;
@@ -84,8 +83,8 @@ public class GeoResourceReader extends YamlReader<CustomGeoResource> {
                 int amount = section.isInt("drop_amount") ? section.getInt("drop_amount", 1) : -1;
 
                 if (chance < 0 || chance > 100) {
-                    ExceptionHandler.handleError(
-                            "在附属" + addon.getAddonName() + "中加载GEO资源" + s + "时发现问题: 掉落几率" + chance + "不在0-100范围内! 已转为100%");
+                    ExceptionHandler.handleError("在附属" + addon.getAddonName() + "中加载GEO资源" + s + "时发现问题: 掉落几率" + chance
+                            + "不在0-100范围内! 已转为100%");
                     chance = 100;
                 }
 
@@ -95,23 +94,27 @@ public class GeoResourceReader extends YamlReader<CustomGeoResource> {
                 if (xm.isPresent()) {
                     Material material = xm.get().parseMaterial();
                     if (material == null) {
-                        ExceptionHandler.handleError("无法在附属" + addon.getAddonName() + "中读取材料" + dropMaterial + "，已转为石头");
+                        ExceptionHandler.handleError(
+                                "无法在附属" + addon.getAddonName() + "中读取材料" + dropMaterial + "，已转为石头");
                     } else {
                         if (amount == -1) {
-                            String between = section.getString("drop_amount","1");
+                            String between = section.getString("drop_amount", "1");
                             if (between.contains("-")) {
                                 String[] split = between.split("-");
                                 if (split.length == 2) {
                                     int min = Integer.parseInt(split[0]);
                                     int max = Integer.parseInt(split[1]);
-                                    DropFromBlock.addDrop(material, new DropFromBlock.Drop(sfis, chance, addon, min, max));
+                                    DropFromBlock.addDrop(
+                                            material, new DropFromBlock.Drop(sfis, chance, addon, min, max));
                                 } else {
-                                    ExceptionHandler.handleError("无法在附属" + addon.getAddonName() + "中读取掉落数量区间" + between + "，已把掉落数量转为1");
+                                    ExceptionHandler.handleError(
+                                            "无法在附属" + addon.getAddonName() + "中读取掉落数量区间" + between + "，已把掉落数量转为1");
                                     DropFromBlock.addDrop(material, new DropFromBlock.Drop(sfis, chance, addon));
                                 }
                             }
                         } else {
-                            DropFromBlock.addDrop(material, new DropFromBlock.Drop(sfis, chance, addon, amount, amount));
+                            DropFromBlock.addDrop(
+                                    material, new DropFromBlock.Drop(sfis, chance, addon, amount, amount));
                         }
                     }
                 } else {

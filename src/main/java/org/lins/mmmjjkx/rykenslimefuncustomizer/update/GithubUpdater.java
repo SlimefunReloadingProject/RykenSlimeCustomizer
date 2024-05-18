@@ -52,7 +52,8 @@ public class GithubUpdater {
             }
 
             if (!Objects.equals(currentVer, releaseName)) {
-                if (release.isPrerelease() && !RykenSlimefunCustomizer.INSTANCE.getConfig().getBoolean("update.pre-releases", false)) {
+                if (release.isPrerelease()
+                        && !RykenSlimefunCustomizer.INSTANCE.getConfig().getBoolean("update.pre-releases", false)) {
                     return false;
                 }
 

@@ -4,6 +4,7 @@ import io.github.thebusybiscuit.slimefun4.api.items.ItemGroup;
 import io.github.thebusybiscuit.slimefun4.api.items.SlimefunItemStack;
 import io.github.thebusybiscuit.slimefun4.libraries.dough.collections.Pair;
 import io.github.thebusybiscuit.slimefun4.libraries.dough.items.CustomItemStack;
+import java.util.List;
 import net.kyori.adventure.text.Component;
 import net.kyori.adventure.text.serializer.plain.PlainTextComponentSerializer;
 import org.bukkit.Material;
@@ -17,8 +18,6 @@ import org.lins.mmmjjkx.rykenslimefuncustomizer.objects.customs.item.exts.Custom
 import org.lins.mmmjjkx.rykenslimefuncustomizer.objects.yaml.YamlReader;
 import org.lins.mmmjjkx.rykenslimefuncustomizer.utils.CommonUtils;
 import org.lins.mmmjjkx.rykenslimefuncustomizer.utils.ExceptionHandler;
-
-import java.util.List;
 
 public class MobDropsReader extends YamlReader<CustomMobDrop> {
     public MobDropsReader(YamlConfiguration config, ProjectAddon addon) {
@@ -68,7 +67,8 @@ public class MobDropsReader extends YamlReader<CustomMobDrop> {
                 chance = chance >= 100 ? 100 : 1;
             }
 
-            String translate = PlainTextComponentSerializer.plainText().serialize(Component.translatable(entityType.translationKey()));
+            String translate = PlainTextComponentSerializer.plainText()
+                    .serialize(Component.translatable(entityType.translationKey()));
             String lore = CMIChatColor.translate("&a击杀 ")
                     .concat(translate)
                     .concat(" ")

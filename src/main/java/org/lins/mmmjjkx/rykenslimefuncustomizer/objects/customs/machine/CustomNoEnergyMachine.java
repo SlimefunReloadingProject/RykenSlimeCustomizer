@@ -29,7 +29,6 @@ import org.lins.mmmjjkx.rykenslimefuncustomizer.objects.machine.ScriptedEvalBrea
 import org.lins.mmmjjkx.rykenslimefuncustomizer.objects.machine.SmallerMachineInfo;
 import org.lins.mmmjjkx.rykenslimefuncustomizer.objects.script.lambda.RSCClickHandler;
 import org.lins.mmmjjkx.rykenslimefuncustomizer.objects.script.parent.ScriptEval;
-import org.lins.mmmjjkx.rykenslimefuncustomizer.utils.ExceptionHandler;
 
 @SuppressWarnings("deprecation")
 public class CustomNoEnergyMachine extends AbstractEmptyMachine<MachineOperation> {
@@ -40,8 +39,6 @@ public class CustomNoEnergyMachine extends AbstractEmptyMachine<MachineOperation
 
     @Getter
     private final CustomMenu menu;
-
-    private boolean worked = false;
 
     public CustomNoEnergyMachine(
             ItemGroup itemGroup,
@@ -75,8 +72,8 @@ public class CustomNoEnergyMachine extends AbstractEmptyMachine<MachineOperation
         this.menu = menu;
 
         if (eval != null) {
-            this.eval.addThing("setWorking", (Consumer<Boolean>) b -> worked = b);
-            this.eval.addThing("working", worked);
+            this.eval.addThing("setWorking", (Consumer<Boolean>) b -> eval.addThing("working", b));
+            this.eval.addThing("working", false);
 
             eval.doInit();
 
@@ -97,7 +94,9 @@ public class CustomNoEnergyMachine extends AbstractEmptyMachine<MachineOperation
                     menu.addMenuClickHandler(workSlot, new RSCClickHandler() {
                         @Override
                         public void mainFunction(Player player, int slot, ItemStack itemStack, ClickAction action) {
-                            CustomNoEnergyMachine.this.worked = true;
+                            if (eval != null) {
+                                eval.addThing("working", true);
+                            }
                         }
 
                         @Override

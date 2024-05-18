@@ -5,16 +5,15 @@ import com.oracle.truffle.api.TruffleLanguage;
 import com.oracle.truffle.js.lang.JavaScriptLanguage;
 import com.oracle.truffle.js.runtime.JSRealm;
 import com.oracle.truffle.js.scriptengine.GraalJSScriptEngine;
+import com.xzavier0722.mc.plugin.slimefun4.storage.util.StorageCacheUtils;
+import io.github.thebusybiscuit.slimefun4.api.items.SlimefunItem;
+import io.github.thebusybiscuit.slimefun4.implementation.SlimefunItems;
+import io.github.thebusybiscuit.slimefun4.utils.SlimefunUtils;
 import java.io.File;
 import java.io.IOException;
 import java.util.Arrays;
 import java.util.logging.FileHandler;
 import javax.script.ScriptException;
-
-import com.xzavier0722.mc.plugin.slimefun4.storage.util.StorageCacheUtils;
-import io.github.thebusybiscuit.slimefun4.api.items.SlimefunItem;
-import io.github.thebusybiscuit.slimefun4.implementation.SlimefunItems;
-import io.github.thebusybiscuit.slimefun4.utils.SlimefunUtils;
 import org.bukkit.entity.Player;
 import org.bukkit.event.Event;
 import org.graalvm.polyglot.Context;
@@ -28,35 +27,19 @@ import org.lins.mmmjjkx.rykenslimefuncustomizer.objects.script.parent.ScriptEval
 import org.lins.mmmjjkx.rykenslimefuncustomizer.utils.ExceptionHandler;
 
 public class JavaScriptEval extends ScriptEval {
-    private final GraalJSScriptEngine jsEngine;
-    private final FileHandler log;
+    private final ProjectAddon addon;
+
+    private GraalJSScriptEngine jsEngine;
+    private FileHandler log;
 
     public JavaScriptEval(@NotNull File js, ProjectAddon addon) {
         super(js, addon);
-        log = createLogFileHandler(addon);
 
-        jsEngine = GraalJSScriptEngine.create(
-                null,
-                Context.newBuilder("js")
-                        .allowAllAccess(true)
-                        .allowHostAccess(UNIVERSAL_HOST_ACCESS)
-                        .allowNativeAccess(false)
-                        .allowExperimentalOptions(true)
-                        .allowPolyglotAccess(PolyglotAccess.ALL)
-                        .allowCreateProcess(true)
-                        .allowIO(IOAccess.NONE)
-                        .allowHostClassLookup(s -> {
-                            if (s.equalsIgnoreCase("org.bukkit.Bukkit")) {
-                                return false;
-                            } else if (s.contains("org.bukkit.craftbukkit") && s.endsWith("CraftServer")) {
-                                return false;
-                            }
-                            return !s.equalsIgnoreCase("net.minecraft.server.MinecraftServer");
-                        })
-                        .logHandler(log));
+        this.addon = addon;
+
+        reSetup();
 
         setup();
-        advancedSetup();
 
         contextInit();
 
@@ -92,6 +75,8 @@ public class JavaScriptEval extends ScriptEval {
         try {
             jsEngine.close();
             log.close();
+
+            reSetup();
         } catch (IllegalStateException ignored) {
         }
     }
@@ -146,5 +131,31 @@ public class JavaScriptEval extends ScriptEval {
         }
 
         return null;
+    }
+
+    private void reSetup() {
+        log = createLogFileHandler(addon);
+
+        jsEngine = GraalJSScriptEngine.create(
+                null,
+                Context.newBuilder("js")
+                        .allowAllAccess(true)
+                        .allowHostAccess(UNIVERSAL_HOST_ACCESS)
+                        .allowNativeAccess(false)
+                        .allowExperimentalOptions(true)
+                        .allowPolyglotAccess(PolyglotAccess.ALL)
+                        .allowCreateProcess(true)
+                        .allowIO(IOAccess.NONE)
+                        .allowHostClassLookup(s -> {
+                            if (s.equalsIgnoreCase("org.bukkit.Bukkit")) {
+                                return false;
+                            } else if (s.contains("org.bukkit.craftbukkit") && s.endsWith("CraftServer")) {
+                                return false;
+                            }
+                            return !s.equalsIgnoreCase("net.minecraft.server.MinecraftServer");
+                        })
+                        .logHandler(log));
+
+        advancedSetup();
     }
 }

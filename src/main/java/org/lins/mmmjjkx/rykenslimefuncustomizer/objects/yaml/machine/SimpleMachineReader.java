@@ -10,6 +10,7 @@ import io.github.thebusybiscuit.slimefun4.implementation.items.electric.machines
 import io.github.thebusybiscuit.slimefun4.implementation.items.electric.machines.enchanting.BookBinder;
 import io.github.thebusybiscuit.slimefun4.implementation.items.electric.machines.entities.ProduceCollector;
 import io.github.thebusybiscuit.slimefun4.libraries.dough.collections.Pair;
+import java.util.List;
 import org.bukkit.configuration.ConfigurationSection;
 import org.bukkit.configuration.file.YamlConfiguration;
 import org.bukkit.inventory.ItemStack;
@@ -22,8 +23,6 @@ import org.lins.mmmjjkx.rykenslimefuncustomizer.objects.machine.SimpleMachineTyp
 import org.lins.mmmjjkx.rykenslimefuncustomizer.objects.yaml.YamlReader;
 import org.lins.mmmjjkx.rykenslimefuncustomizer.utils.CommonUtils;
 import org.lins.mmmjjkx.rykenslimefuncustomizer.utils.ExceptionHandler;
-
-import java.util.List;
 
 public class SimpleMachineReader extends YamlReader<SlimefunItem> {
     public SimpleMachineReader(YamlConfiguration config, ProjectAddon addon) {

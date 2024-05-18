@@ -5,7 +5,6 @@ import io.github.thebusybiscuit.slimefun4.api.items.SlimefunItem;
 import io.github.thebusybiscuit.slimefun4.api.items.SlimefunItemStack;
 import io.github.thebusybiscuit.slimefun4.api.recipes.RecipeType;
 import io.github.thebusybiscuit.slimefun4.libraries.dough.collections.Pair;
-
 import java.lang.reflect.*;
 import java.util.ArrayList;
 import java.util.Arrays;
@@ -103,7 +102,7 @@ public class SuperReader extends YamlReader<SlimefunItem> {
                 if (methodArray.isList(methodName)) {
                     args1 = methodArray.getList(methodName, new ArrayList<>()).toArray();
                 } else {
-                    args1 = new Object[] { methodArray.get(methodName) };
+                    args1 = new Object[] {methodArray.get(methodName)};
                 }
 
                 Method method = null;
@@ -132,7 +131,7 @@ public class SuperReader extends YamlReader<SlimefunItem> {
                 try {
                     Field[] fields = ReflectionUtils.getAllFields(instance);
                     Field field = null;
-                    
+
                     for (Field f : fields) {
                         if (f.getName().equals(fieldName)) {
                             field = f;
@@ -141,8 +140,10 @@ public class SuperReader extends YamlReader<SlimefunItem> {
                     }
 
                     if (field == null) throw new NoSuchFieldException(fieldName);
-                    if (Modifier.isStatic(field.getModifiers())) throw new IllegalAccessException("字段" + fieldName + "为static");
-                    if (Modifier.isFinal(field.getModifiers())) throw new IllegalAccessException("字段" + fieldName + "为final");
+                    if (Modifier.isStatic(field.getModifiers()))
+                        throw new IllegalAccessException("字段" + fieldName + "为static");
+                    if (Modifier.isFinal(field.getModifiers()))
+                        throw new IllegalAccessException("字段" + fieldName + "为final");
 
                     field.setAccessible(true);
                     Object object = fieldArray.getObject(fieldName, field.getType());

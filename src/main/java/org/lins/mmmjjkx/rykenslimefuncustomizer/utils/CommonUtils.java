@@ -191,7 +191,10 @@ public class CommonUtils {
 
                 YamlConfiguration configuration = YamlConfiguration.loadConfiguration(file);
 
-                itemStack = new RSCItemStack(configuration.getItemStack("item", new CustomItemStack(Material.STONE, name, lore)), name, lore);
+                itemStack = new RSCItemStack(
+                        configuration.getItemStack("item", new CustomItemStack(Material.STONE, name, lore)),
+                        name,
+                        lore);
 
                 if (itemStack.getAmount() > 1 && !countable) {
                     itemStack.setAmount(1);
@@ -220,8 +223,7 @@ public class CommonUtils {
             for (String enchant : enchants) {
                 String[] s2 = enchant.split(" ");
                 if (s2.length != 2) {
-                    ExceptionHandler.handleError(
-                            "无法在附属" + addon.getAddonName() + "中读取物品附魔" + enchant + ", 跳过添加此附魔");
+                    ExceptionHandler.handleError("无法在附属" + addon.getAddonName() + "中读取物品附魔" + enchant + ", 跳过添加此附魔");
                     continue;
                 }
 
@@ -230,8 +232,7 @@ public class CommonUtils {
 
                 Enchantment enchantment = Enchantment.getByKey(NamespacedKey.minecraft(enchantName.toLowerCase()));
                 if (enchantment == null) {
-                    ExceptionHandler.handleError(
-                            "无法在附属" + addon.getAddonName() + "中读取物品附魔" + enchant + ", 跳过添加此附魔");
+                    ExceptionHandler.handleError("无法在附属" + addon.getAddonName() + "中读取物品附魔" + enchant + ", 跳过添加此附魔");
                     continue;
                 }
 

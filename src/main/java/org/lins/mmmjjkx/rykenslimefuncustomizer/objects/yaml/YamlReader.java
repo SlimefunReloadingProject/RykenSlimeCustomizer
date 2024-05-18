@@ -1,9 +1,8 @@
 package org.lins.mmmjjkx.rykenslimefuncustomizer.objects.yaml;
 
+import io.github.thebusybiscuit.slimefun4.api.items.SlimefunItemStack;
 import java.util.ArrayList;
 import java.util.List;
-
-import io.github.thebusybiscuit.slimefun4.api.items.SlimefunItemStack;
 import org.bukkit.Bukkit;
 import org.bukkit.configuration.ConfigurationSection;
 import org.bukkit.configuration.file.YamlConfiguration;
@@ -91,7 +90,7 @@ public abstract class YamlReader<T> {
 
     private boolean checkForRegistration(String key, ConfigurationSection section) {
         if (section == null) return true;
-        
+
         List<String> conditions = section.getStringList("conditions");
         boolean warn = section.getBoolean("warn", false);
         boolean unfinished = section.getBoolean("unfinished", false);

@@ -2,6 +2,7 @@ package org.lins.mmmjjkx.rykenslimefuncustomizer.listeners;
 
 import java.util.List;
 import java.util.Random;
+import org.bukkit.Bukkit;
 import org.bukkit.block.Block;
 import org.bukkit.event.EventHandler;
 import org.bukkit.event.Listener;
@@ -10,8 +11,8 @@ import org.lins.mmmjjkx.rykenslimefuncustomizer.RykenSlimefunCustomizer;
 import org.lins.mmmjjkx.rykenslimefuncustomizer.objects.global.DropFromBlock;
 
 public class BlockBreak implements Listener {
-    public BlockBreak(RykenSlimefunCustomizer plugin) {
-        plugin.getServer().getPluginManager().registerEvents(this, plugin);
+    public BlockBreak() {
+        Bukkit.getPluginManager().registerEvents(this, RykenSlimefunCustomizer.INSTANCE);
     }
 
     @EventHandler
