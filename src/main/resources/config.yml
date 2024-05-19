@@ -2,7 +2,7 @@
 saveExample: true
 #获取调试日志，如果插件没有意外错误时，可以关闭该选项
 debug: false
-#是否启用插件更新
+#是否启用插件更新(需要GuizhanLibPlugin)
 pluginUpdate: true
 #附属更新配置
 update:

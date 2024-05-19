@@ -113,10 +113,12 @@ public class CommonUtils {
                     ExceptionHandler.handleError("无法在附属" + addon.getAddonName() + "中读取材料" + material + "，已转为石头");
                     mat = Material.STONE;
                 } else {
-                    mat = xMaterial.get().parseMaterial();
-                    if (mat == null) {
+                    Material mat1 = xMaterial.get().parseMaterial();
+                    if (mat1 == null) {
                         ExceptionHandler.handleError("无法在附属" + addon.getAddonName() + "中读取材料" + material + "，已转为石头");
                         mat = Material.STONE;
+                    } else {
+                        mat = mat1;
                     }
                 }
 
@@ -210,9 +212,9 @@ public class CommonUtils {
         itemStack.setItemMeta(meta);
 
         if (countable) {
-            if (amount > 64 || amount < 1) {
+            if (amount > 64 || amount < -1) {
                 ExceptionHandler.handleError(
-                        "无法在附属" + addon.getAddonName() + "中读取" + section.getCurrentPath() + "的物品: 物品数量不能大于64或小于1");
+                        "无法在附属" + addon.getAddonName() + "中读取" + section.getCurrentPath() + "的物品: 物品数量不能大于64或小于-1");
                 return null;
             }
             itemStack.setAmount(amount);
@@ -348,5 +350,19 @@ public class CommonUtils {
             e.printStackTrace();
             ExceptionHandler.handleError("无法完成文件" + resourceFile + "的同步，请检查插件文件是否损坏！");
         }
+    }
+
+    public static int versionToCode(String s) {
+        String[] ver = s.split("\\.");
+        String ver2 = "";
+        for (String v : ver) {
+            ver2 = ver2.concat(v);
+        }
+
+        if (ver.length == 2) {
+            ver2 = ver2.concat("0");
+        }
+
+        return Integer.parseInt(ver2);
     }
 }

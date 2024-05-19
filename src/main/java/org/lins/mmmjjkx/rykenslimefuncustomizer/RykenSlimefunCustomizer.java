@@ -52,7 +52,8 @@ public final class RykenSlimefunCustomizer extends JavaPlugin implements Slimefu
         ExceptionHandler.info("RykenSlimeCustomizer加载成功！");
 
         if (getConfig().getBoolean("pluginUpdate")
-                && getDescription().getVersion().startsWith("b")) {
+                && getDescription().getVersion().startsWith("b")
+                && getServer().getPluginManager().isPluginEnabled("GuizhanLibPlugin")) {
             GuizhanUpdater.start(this, getFile(), "SlimefunReloadingProject", "RykenSlimeCustomizer", "main");
         }
 

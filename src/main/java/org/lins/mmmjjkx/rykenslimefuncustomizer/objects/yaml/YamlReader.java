@@ -7,6 +7,7 @@ import org.bukkit.Bukkit;
 import org.bukkit.configuration.ConfigurationSection;
 import org.bukkit.configuration.file.YamlConfiguration;
 import org.lins.mmmjjkx.rykenslimefuncustomizer.objects.ProjectAddon;
+import org.lins.mmmjjkx.rykenslimefuncustomizer.utils.CommonUtils;
 import org.lins.mmmjjkx.rykenslimefuncustomizer.utils.ExceptionHandler;
 
 public abstract class YamlReader<T> {
@@ -130,8 +131,8 @@ public abstract class YamlReader<T> {
                     continue;
                 }
 
-                int current = versionToCode(Bukkit.getMinecraftVersion());
-                int destination = versionToCode(splits[2]);
+                int current = CommonUtils.versionToCode(Bukkit.getMinecraftVersion());
+                int destination = CommonUtils.versionToCode(splits[2]);
 
                 String operation;
                 boolean match;
@@ -160,26 +161,12 @@ public abstract class YamlReader<T> {
 
                 if (!match) {
                     if (warn) {
-                        ExceptionHandler.handleError(key + "需要版本" + operation + splits[1] + "才能被注册");
+                        ExceptionHandler.handleError(key + "需要版本" + operation + splits[2] + "才能被注册");
                     }
                     return false;
                 }
             }
         }
         return true;
-    }
-
-    private int versionToCode(String s) {
-        String[] ver = s.split("\\.");
-        String ver2 = "";
-        for (String v : ver) {
-            ver2 = ver2.concat(v);
-        }
-
-        if (ver.length == 2) {
-            ver2 = ver2.concat("0");
-        }
-
-        return Integer.parseInt(ver2);
     }
 }

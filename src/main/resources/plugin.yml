@@ -2,7 +2,7 @@ name: RykenSlimefunCustomizer
 version: '${project.version}'
 main: org.lins.mmmjjkx.rykenslimefuncustomizer.RykenSlimefunCustomizer
 api-version: '1.18'
-depend: [Slimefun]
+depend: [Slimefun, NBTAPI]
 softdepend:
   - GuizhanLibPlugin
   - ColoredEnderChests
@@ -103,7 +103,6 @@ softdepend:
   - SlimeAE
    #Other plugins
   - PlaceholderAPI
-  - NBTAPI
 authors: [mmmjjkx]
 description: An advanced Slimefun customize plugin
 libraries:

@@ -1953,8 +1953,6 @@ public enum XMaterial {
     @SuppressWarnings({"DanglingJavadoc", "JavadocBlankLines"})
     @Nonnull
     private static Optional<XMaterial> matchDefinedXMaterial(@Nonnull String name, byte data) {
-        // if (!Boolean.valueOf(Boolean.getBoolean(Boolean.TRUE.toString())).equals(Boolean.FALSE.booleanValue()))
-        // return null;
         Boolean duplicated = null;
         boolean isAMap = name.equalsIgnoreCase("MAP");
 
