@@ -39,7 +39,7 @@ public class MenuReader extends YamlReader<CustomMenu> {
             String script = section.getString("script", "");
             File file = new File(addon.getScriptsFolder(), script + ".js");
             if (!file.exists()) {
-                ExceptionHandler.handleWarning("找不到脚本文件 " + file.getName());
+                ExceptionHandler.handleWarning("在附属" + addon.getAddonId() + "中加载菜单" + s + "时遇到了问题: " + "找不到脚本文件 " + file.getName());
             } else {
                 eval = new JavaScriptEval(file, addon);
             }
@@ -49,7 +49,7 @@ public class MenuReader extends YamlReader<CustomMenu> {
             String menuId = section.getString("import", "");
             BlockMenuPreset menuPreset = Slimefun.getRegistry().getMenuPresets().get(menuId);
             if (menuPreset == null) {
-                ExceptionHandler.handleError("无法加载机器菜单" + s + ": 无法找到要导入的菜单");
+                ExceptionHandler.handleError("在附属" + addon.getAddonId() + "中加载菜单" + s + "时遇到了问题: " + "无法加载机器菜单" + s + ": 无法找到要导入的菜单");
                 return null;
             }
 
@@ -61,7 +61,7 @@ public class MenuReader extends YamlReader<CustomMenu> {
         Map<Integer, ItemStack> slotMap = new HashMap<>();
         ConfigurationSection slots = section.getConfigurationSection("slots");
         if (slots == null) {
-            ExceptionHandler.handleError("无法加载机器菜单" + s + ": 没有设置物品。");
+            ExceptionHandler.handleError("在附属" + addon.getAddonId() + "中加载菜单" + s + "时遇到了问题: " + "没有设置物品。");
             return null;
         }
 
@@ -71,13 +71,13 @@ public class MenuReader extends YamlReader<CustomMenu> {
             try {
                 int realSlot = Integer.parseInt(slot);
                 if (realSlot > 53 || realSlot < 0) {
-                    ExceptionHandler.handleWarning("在菜单" + s + "中有位于槽位大于53或小于0的物品，跳过对此物品的读取。");
+                    ExceptionHandler.handleWarning("在附属" + addon.getAddonId() + "中加载菜单" + s + "时遇到了问题: " + "位于槽位大于53或小于0的物品，跳过对此物品的读取。");
                     continue;
                 }
                 ConfigurationSection item = slots.getConfigurationSection(slot);
                 ItemStack itemStack = CommonUtils.readItem(item, true, addon);
                 if (itemStack == null) {
-                    ExceptionHandler.handleWarning("在菜单" + s + "中有位于槽位" + realSlot + "的物品格式错误或输入了错误的数据无法读取，跳过对此物品的读取。");
+                    ExceptionHandler.handleWarning("在附属" + addon.getAddonId() + "中加载菜单" + s + "时遇到了问题: " + "位于槽位" + realSlot + "的物品格式错误或输入了错误的数据无法读取，跳过对此物品的读取。");
                     continue;
                 }
                 if (item.getBoolean("progressbar", false)) {
@@ -93,19 +93,19 @@ public class MenuReader extends YamlReader<CustomMenu> {
             } catch (NumberFormatException e) {
                 String[] range = slot.split("-");
                 if (range.length != 2) {
-                    ExceptionHandler.handleError("在菜单" + s + "中有错误的槽位区间表达式" + slot);
+                    ExceptionHandler.handleError("在附属" + addon.getAddonId() + "中加载菜单" + s + "时遇到了问题: " + "有错误的槽位区间表达式" + slot);
                     continue;
                 }
                 ConfigurationSection item = slots.getConfigurationSection(slot);
                 ItemStack stack = CommonUtils.readItem(item, true, addon);
                 if (stack == null) {
-                    ExceptionHandler.handleWarning("在菜单" + s + "中有位于区间槽位" + slot + "的物品格式错误或输入了错误的数据无法读取，跳过对此物品的读取。");
+                    ExceptionHandler.handleWarning("在附属" + addon.getAddonId() + "中加载菜单" + s + "时遇到了问题: " + "位于区间槽位" + slot + "的物品格式错误或输入了错误的数据无法读取，跳过对此物品的读取。");
                     continue;
                 }
                 IntStream intStream = IntStream.rangeClosed(Integer.parseInt(range[0]), Integer.parseInt(range[1]));
                 intStream.forEach(i -> {
                     if (i > 53 || i < 0) {
-                        ExceptionHandler.handleWarning("在菜单" + s + "中有位于区间槽位大于53或小于0，跳过对此槽位放置物品。");
+                        ExceptionHandler.handleWarning("在附属" + addon.getAddonId() + "中加载菜单" + s + "时遇到了问题: " + "位于区间槽位大于53或小于0，跳过对此槽位放置物品。");
                         return;
                     }
                     slotMap.put(i, stack);

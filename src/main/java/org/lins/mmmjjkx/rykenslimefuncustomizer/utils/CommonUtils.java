@@ -82,7 +82,7 @@ public class CommonUtils {
         String type = section.getString("material_type", "mc");
 
         if (!type.equalsIgnoreCase("none") && !section.contains("material")) {
-            ExceptionHandler.handleError("请先设置一个材料！");
+            ExceptionHandler.handleError("你设置了材料类型，但没有设置对应的材料！");
             return null;
         }
 
@@ -110,12 +110,12 @@ public class CommonUtils {
                 Optional<XMaterial> xMaterial = XMaterial.matchXMaterial(material);
                 Material mat;
                 if (xMaterial.isEmpty()) {
-                    ExceptionHandler.handleError("无法在附属" + addon.getAddonName() + "中读取材料" + material + "，已转为石头");
+                    ExceptionHandler.handleError("无法在附属" + addon.getAddonId() + "中读取材料" + material + "，已转为石头");
                     mat = Material.STONE;
                 } else {
                     Material mat1 = xMaterial.get().parseMaterial();
                     if (mat1 == null) {
-                        ExceptionHandler.handleError("无法在附属" + addon.getAddonName() + "中读取材料" + material + "，已转为石头");
+                        ExceptionHandler.handleError("无法在附属" + addon.getAddonId() + "中读取材料" + material + "，已转为石头");
                         mat = Material.STONE;
                     } else {
                         mat = mat1;
@@ -214,7 +214,7 @@ public class CommonUtils {
         if (countable) {
             if (amount > 64 || amount < -1) {
                 ExceptionHandler.handleError(
-                        "无法在附属" + addon.getAddonName() + "中读取" + section.getCurrentPath() + "的物品: 物品数量不能大于64或小于-1");
+                        "无法在附属" + addon.getAddonId() + "中读取" + section.getCurrentPath() + "的物品: 物品数量不能大于64或小于-1");
                 return null;
             }
             itemStack.setAmount(amount);
@@ -225,7 +225,7 @@ public class CommonUtils {
             for (String enchant : enchants) {
                 String[] s2 = enchant.split(" ");
                 if (s2.length != 2) {
-                    ExceptionHandler.handleError("无法在附属" + addon.getAddonName() + "中读取物品附魔" + enchant + ", 跳过添加此附魔");
+                    ExceptionHandler.handleError("无法在附属" + addon.getAddonId() + "中读取物品附魔" + enchant + ", 跳过添加此附魔");
                     continue;
                 }
 
@@ -234,7 +234,7 @@ public class CommonUtils {
 
                 Enchantment enchantment = Enchantment.getByKey(NamespacedKey.minecraft(enchantName.toLowerCase()));
                 if (enchantment == null) {
-                    ExceptionHandler.handleError("无法在附属" + addon.getAddonName() + "中读取物品附魔" + enchant + ", 跳过添加此附魔");
+                    ExceptionHandler.handleError("无法在附属" + addon.getAddonId() + "中读取物品附魔" + enchant + ", 跳过添加此附魔");
                     continue;
                 }
 
