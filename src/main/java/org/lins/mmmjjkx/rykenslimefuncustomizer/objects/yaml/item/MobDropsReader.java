@@ -44,7 +44,7 @@ public class MobDropsReader extends YamlReader<CustomMobDrop> {
             String type = section.getString("entity");
 
             Pair<ExceptionHandler.HandleResult, EntityType> entity = ExceptionHandler.handleEnumValueOf(
-                    "无法在附属" + addon.getAddonName() + "中加载生物掉落" + s + ": 错误的生物类型", EntityType.class, type);
+                "在附属" + addon.getAddonId() + "中加载生物掉落物" + s + "时遇到了问题: " + "错误的生物类型", EntityType.class, type);
             if (entity.getFirstValue() == ExceptionHandler.HandleResult.FAILED) {
                 return null;
             }
@@ -65,7 +65,7 @@ public class MobDropsReader extends YamlReader<CustomMobDrop> {
 
             if (chance < 1 || chance > 100) {
                 ExceptionHandler.handleError(
-                        "在附属" + addon.getAddonName() + "中加载生物掉落" + s + "时发现问题: 掉落概率未设置或不应该小于1或大于100，已转换为1或100");
+                    "在附属" + addon.getAddonId() + "中加载生物掉落物" + s + "时遇到了问题: " + "掉落概率未设置或不应该小于1或大于100，已转换为1或100");
                 chance = chance >= 100 ? 100 : 1;
             }
 
@@ -97,7 +97,7 @@ public class MobDropsReader extends YamlReader<CustomMobDrop> {
         ConfigurationSection item = section.getConfigurationSection("item");
         ItemStack stack = CommonUtils.readItem(item, false, addon);
         if (stack == null) {
-            ExceptionHandler.handleError("无法在附属" + addon.getAddonName() + "中加载生物掉落" + s + ": 物品为空或格式错误导致无法加载");
+            ExceptionHandler.handleError("在附属" + addon.getAddonId() + "中加载生物掉落物" + s + "时遇到了问题: " + "物品为空或格式错误导致无法加载");
             return null;
         }
 

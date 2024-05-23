@@ -50,7 +50,7 @@ public class GeoResourceReader extends YamlReader<CustomGeoResource> {
             String name = section.getString("geo_name", "");
 
             Pair<ExceptionHandler.HandleResult, RecipeType> rt =
-                    ExceptionHandler.getRecipeType("错误的配方类型" + recipeType + "!", recipeType);
+                    ExceptionHandler.getRecipeType("在附属" + addon.getAddonId() + "中加载自然资源" + s + "时遇到了问题: " + "错误的配方类型" + recipeType + "!", recipeType);
 
             if (rt.getFirstValue() == ExceptionHandler.HandleResult.FAILED) return null;
 
@@ -85,8 +85,8 @@ public class GeoResourceReader extends YamlReader<CustomGeoResource> {
                 int amount = section.isInt("drop_amount") ? section.getInt("drop_amount", 1) : -1;
 
                 if (chance < 0 || chance > 100) {
-                    ExceptionHandler.handleError("在附属" + addon.getAddonName() + "中加载GEO资源" + s + "时发现问题: 掉落几率" + chance
-                            + "不在0-100范围内! 已转为100%");
+                    ExceptionHandler.handleError("在附属" + addon.getAddonId() + "中加载自然资源" + s + "时遇到了问题: " + "掉落几率" + chance
+                            + "不在0-100范围内! 已转为100");
                     chance = 100;
                 }
 
@@ -97,7 +97,7 @@ public class GeoResourceReader extends YamlReader<CustomGeoResource> {
                     Material material = xm.get().parseMaterial();
                     if (material == null) {
                         ExceptionHandler.handleError(
-                                "无法在附属" + addon.getAddonName() + "中读取材料" + dropMaterial + "，已转为石头");
+                            "在附属" + addon.getAddonId() + "中加载自然资源" + s + "时遇到了问题: " + "无法指定掉落方块材料类型" + dropMaterial + "，已转为石头");
                     } else {
                         if (amount == -1) {
                             String between = section.getString("drop_amount", "1");
@@ -110,7 +110,7 @@ public class GeoResourceReader extends YamlReader<CustomGeoResource> {
                                             material, new DropFromBlock.Drop(sfis, chance, addon, min, max));
                                 } else {
                                     ExceptionHandler.handleError(
-                                            "无法在附属" + addon.getAddonName() + "中读取掉落数量区间" + between + "，已把掉落数量转为1");
+                                        "在附属" + addon.getAddonId() + "中加载自然资源" + s + "时遇到了问题: " + "无法读取掉落数量区间" + between + "，已把掉落数量转为1");
                                     DropFromBlock.addDrop(material, new DropFromBlock.Drop(sfis, chance, addon));
                                 }
                             }
@@ -120,7 +120,7 @@ public class GeoResourceReader extends YamlReader<CustomGeoResource> {
                         }
                     }
                 } else {
-                    ExceptionHandler.handleError("在附属" + addon.getAddonName() + "中加载GEO资源" + s + "时发现问题: 指定掉落方块材料类型"
+                    ExceptionHandler.handleError("在附属" + addon.getAddonId() + "中加载自然资源" + s + "时遇到了问题: " + "指定掉落方块材料类型"
                             + dropMaterial + "不存在!");
                 }
             }
@@ -151,7 +151,7 @@ public class GeoResourceReader extends YamlReader<CustomGeoResource> {
         ConfigurationSection item = section.getConfigurationSection("item");
         ItemStack stack = CommonUtils.readItem(item, false, addon);
         if (stack == null) {
-            ExceptionHandler.handleError("无法在附属" + addon.getAddonName() + "中加载生物掉落" + s + ": 物品为空或格式错误导致无法加载");
+            ExceptionHandler.handleError("在附属" + addon.getAddonId() + "中加载自然资源" + s + "时遇到了问题: " + "物品为空或格式错误导致无法加载");
             return null;
         }
 

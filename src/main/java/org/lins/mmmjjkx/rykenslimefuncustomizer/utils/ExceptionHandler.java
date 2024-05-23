@@ -22,7 +22,7 @@ public class ExceptionHandler {
         SlimefunItem i = SlimefunItem.getById(id);
         if (i != null) {
             console.sendMessage(CMIChatColor.translate(
-                    "&4ERROR | ID冲突：" + id + "与" + i.getAddon().getName() + "中的物品ID冲突"));
+                    "&4ERROR | ID冲突：" + id + "与" + i.getAddon().getName() + "中的物品发生了ID冲突"));
             return HandleResult.FAILED;
         }
         return HandleResult.SUCCESS;
@@ -31,7 +31,7 @@ public class ExceptionHandler {
     public static HandleResult handleMenuConflict(String id, ProjectAddon addon) {
         CustomMenu menu = CommonUtils.getIf(addon.getMenus(), m -> m.getID().equalsIgnoreCase(id));
         if (menu != null) {
-            console.sendMessage(CMIChatColor.translate("&4ERROR | 菜单ID冲突：已存在菜单ID为" + id + "的菜单"));
+            console.sendMessage(CMIChatColor.translate("&4ERROR | ID冲突：已存在菜单ID为" + id + "的菜单"));
             return HandleResult.FAILED;
         }
         return HandleResult.SUCCESS;
@@ -44,11 +44,11 @@ public class ExceptionHandler {
         if (ig != null) {
             if (ig.getAddon() != null) {
                 console.sendMessage(CMIChatColor.translate("&4ERROR | ID冲突：" + id + "与物品组 "
-                        + ig.getKey().getKey() + "(来自" + ig.getAddon().getName() + ")冲突"));
+                        + ig.getKey().getKey() + "(来自" + ig.getAddon().getName() + ")发生ID冲突"));
                 return HandleResult.FAILED;
             }
             console.sendMessage(CMIChatColor.translate(
-                    "&4ERROR | ID冲突：" + id + "与物品组 " + ig.getKey().getKey() + "冲突"));
+                    "&4ERROR | ID冲突：" + id + "与物品组 " + ig.getKey().getKey() + "发生ID冲突"));
             return HandleResult.FAILED;
         }
         return HandleResult.SUCCESS;
@@ -119,7 +119,7 @@ public class ExceptionHandler {
                     Slimefun.getRegistry().getAllItemGroups(),
                     i -> i.getKey().getKey().equalsIgnoreCase(id));
             if (ig2 == null) {
-                handleError("无法在附属" + addon.getAddonName() + "中找不到该物品组 " + id);
+                handleError("无法在附属" + addon.getAddonName() + "中找到该物品组 " + id);
                 return new Pair<>(HandleResult.FAILED, null);
             }
             return new Pair<>(HandleResult.SUCCESS, ig2);

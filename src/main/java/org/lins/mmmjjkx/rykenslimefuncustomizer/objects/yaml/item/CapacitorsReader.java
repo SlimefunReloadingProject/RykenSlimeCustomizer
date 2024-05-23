@@ -43,13 +43,13 @@ public class CapacitorsReader extends YamlReader<Capacitor> {
         String recipeType = section.getString("recipe_type", "NULL");
 
         Pair<ExceptionHandler.HandleResult, RecipeType> rt =
-                ExceptionHandler.getRecipeType("错误的配方类型" + recipeType + "!", recipeType);
+                ExceptionHandler.getRecipeType("在附属" + addon.getAddonId() + "中加载电容" + s + "时遇到了问题: " + "错误的配方类型" + recipeType + "!", recipeType);
 
         if (rt.getFirstValue() == ExceptionHandler.HandleResult.FAILED) return null;
 
         int capacity = section.getInt("capacity");
         if (capacity < 1) {
-            ExceptionHandler.handleError("无法在附属" + addon.getAddonName() + "中加载电容" + s + ": 容量不能小于1");
+            ExceptionHandler.handleError("在附属" + addon.getAddonId() + "中加载电容" + s + "时遇到了问题: " + "容量不能小于1");
             return null;
         }
 
@@ -75,12 +75,12 @@ public class CapacitorsReader extends YamlReader<Capacitor> {
         String id = getAttribute(s + ".id_alias", s);
 
         if (stack == null) {
-            ExceptionHandler.handleError("无法在附属" + addon.getAddonName() + "中加载电容" + s + ": 物品为空或格式错误导致无法加载");
+            ExceptionHandler.handleError("在附属" + addon.getAddonId() + "中加载电容" + s + "时遇到了问题: " + "物品为空或格式错误导致无法加载");
             return null;
         }
 
         if (!stack.getType().isBlock()) {
-            ExceptionHandler.handleError("无法在附属" + addon.getAddonName() + "中加载电容" + s + ": 物品的材料类型必须是可放置的方块");
+            ExceptionHandler.handleError("在附属" + addon.getAddonId() + "中加载电容" + s + "时遇到了问题: " + "物品的材料类型必须是可放置的方块");
             return null;
         }
 

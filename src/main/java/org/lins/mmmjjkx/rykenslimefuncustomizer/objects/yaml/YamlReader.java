@@ -60,6 +60,7 @@ public abstract class YamlReader<T> {
 
             if (section.getBoolean("lateInit", false)) {
                 putLateInit(key);
+                ExceptionHandler.debugLog("检查结果：延迟加载");
                 continue;
             }
 
@@ -68,9 +69,11 @@ public abstract class YamlReader<T> {
             var object = readEach(key);
             if (object != null) {
                 objects.add(object);
+                ExceptionHandler.debugLog("SUCCESS | 读取项" + key + "成功！");
+            } else {
+                ExceptionHandler.debugLog("FAILURE | 读取项" + key + "失败！");
             }
-
-            ExceptionHandler.debugLog("读取项 " + key + " 完成, 添加结果： " + (object != null));
+            
         }
         return objects;
     }
@@ -81,7 +84,17 @@ public abstract class YamlReader<T> {
 
     public List<T> loadLateInits() {
         List<T> objects = new ArrayList<>();
-        lateInits.forEach(s -> objects.add(readEach(s)));
+        lateInits.forEach(key -> {
+                ExceptionHandler.debugLog("开始读取延迟项："+ key);
+                var object = readEach(key);
+                if (object != null) {
+                    objects.add(object);
+                    ExceptionHandler.debugLog("SUCCESS | 读取项" + key + "成功！");
+                } else {
+                    ExceptionHandler.debugLog("FAILURE | 读取项" + key + "失败！");
+                }
+            }
+        );
 
         lateInits.clear();
 
