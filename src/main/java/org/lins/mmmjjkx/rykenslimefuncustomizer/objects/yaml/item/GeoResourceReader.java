@@ -30,7 +30,7 @@ public class GeoResourceReader extends YamlReader<CustomGeoResource> {
     public CustomGeoResource readEach(String s) {
         ConfigurationSection section = configuration.getConfigurationSection(s);
         if (section != null) {
-            String id = getAttribute(s + ".id_alias", s);
+            String id = section.getString(s + ".id_alias", s);
 
             ExceptionHandler.HandleResult result = ExceptionHandler.handleIdConflict(id);
             if (result == ExceptionHandler.HandleResult.FAILED) return null;
@@ -146,7 +146,7 @@ public class GeoResourceReader extends YamlReader<CustomGeoResource> {
 
         if (section == null) return null;
 
-        String id = getAttribute(s + ".id_alias", s);
+        String id = section.getString(s + ".id_alias", s);
 
         ConfigurationSection item = section.getConfigurationSection("item");
         ItemStack stack = CommonUtils.readItem(item, false, addon);

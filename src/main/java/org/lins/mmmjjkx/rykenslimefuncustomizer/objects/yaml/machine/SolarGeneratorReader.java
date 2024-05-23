@@ -24,7 +24,9 @@ public class SolarGeneratorReader extends YamlReader<CustomSolarGenerator> {
     public CustomSolarGenerator readEach(String s) {
         ConfigurationSection section = configuration.getConfigurationSection(s);
         if (section == null) return null;
-        ExceptionHandler.HandleResult result = ExceptionHandler.handleIdConflict(s);
+        String id = section.getString(s + ".id_alias", s);
+
+        ExceptionHandler.HandleResult result = ExceptionHandler.handleIdConflict(id);
 
         if (result == ExceptionHandler.HandleResult.FAILED) return null;
 
@@ -33,7 +35,7 @@ public class SolarGeneratorReader extends YamlReader<CustomSolarGenerator> {
         Pair<ExceptionHandler.HandleResult, ItemGroup> group = ExceptionHandler.handleItemGroupGet(addon, igId);
         if (group.getFirstValue() == ExceptionHandler.HandleResult.FAILED) return null;
 
-        SlimefunItemStack slimefunItemStack = getPreloadItem(s);
+        SlimefunItemStack slimefunItemStack = getPreloadItem(id);
         if (slimefunItemStack == null) return null;
 
         ItemStack[] recipe = CommonUtils.readRecipe(section.getConfigurationSection("recipe"), addon);
@@ -82,6 +84,8 @@ public class SolarGeneratorReader extends YamlReader<CustomSolarGenerator> {
     public List<SlimefunItemStack> preloadItems(String s) {
         ConfigurationSection section = configuration.getConfigurationSection(s);
         if (section == null) return null;
+        String id = section.getString(s + ".id_alias", s);
+
         ConfigurationSection item = section.getConfigurationSection("item");
         ItemStack stack = CommonUtils.readItem(item, false, addon);
 
@@ -90,6 +94,6 @@ public class SolarGeneratorReader extends YamlReader<CustomSolarGenerator> {
             return null;
         }
 
-        return List.of(new SlimefunItemStack(s, stack));
+        return List.of(new SlimefunItemStack(id, stack));
     }
 }

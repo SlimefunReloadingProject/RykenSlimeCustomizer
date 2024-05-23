@@ -28,7 +28,9 @@ public class MultiBlockMachineReader extends YamlReader<CustomMultiBlockMachine>
     public CustomMultiBlockMachine readEach(String s) {
         ConfigurationSection section = configuration.getConfigurationSection(s);
         if (section == null) return null;
-        ExceptionHandler.HandleResult result = ExceptionHandler.handleIdConflict(s);
+        String id = section.getString(s + ".id_alias", s);
+
+        ExceptionHandler.HandleResult result = ExceptionHandler.handleIdConflict(id);
 
         if (result == ExceptionHandler.HandleResult.FAILED) return null;
 
@@ -37,7 +39,7 @@ public class MultiBlockMachineReader extends YamlReader<CustomMultiBlockMachine>
         Pair<ExceptionHandler.HandleResult, ItemGroup> group = ExceptionHandler.handleItemGroupGet(addon, igId);
         if (group.getFirstValue() == ExceptionHandler.HandleResult.FAILED) return null;
 
-        SlimefunItemStack slimefunItemStack = getPreloadItem(s);
+        SlimefunItemStack slimefunItemStack = getPreloadItem(id);
         if (slimefunItemStack == null) return null;
 
         ItemStack[] recipe = CommonUtils.readRecipe(section.getConfigurationSection("recipe"), addon);
@@ -107,6 +109,8 @@ public class MultiBlockMachineReader extends YamlReader<CustomMultiBlockMachine>
     public List<SlimefunItemStack> preloadItems(String s) {
         ConfigurationSection section = configuration.getConfigurationSection(s);
         if (section == null) return null;
+        String id = section.getString(s + ".id_alias", s);
+
         ConfigurationSection item = section.getConfigurationSection("item");
         ItemStack stack = CommonUtils.readItem(item, false, addon);
 
@@ -115,7 +119,7 @@ public class MultiBlockMachineReader extends YamlReader<CustomMultiBlockMachine>
             return null;
         }
 
-        return List.of(new SlimefunItemStack(s, stack));
+        return List.of(new SlimefunItemStack(id, stack));
     }
 
     private Map<ItemStack[], ItemStack> readRecipes(String s, ConfigurationSection section, ProjectAddon addon) {

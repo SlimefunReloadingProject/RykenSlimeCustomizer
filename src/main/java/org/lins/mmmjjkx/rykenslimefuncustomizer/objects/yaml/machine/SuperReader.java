@@ -29,13 +29,17 @@ public class SuperReader extends YamlReader<SlimefunItem> {
     public SlimefunItem readEach(String s) {
         ConfigurationSection section = configuration.getConfigurationSection(s);
         if (section == null) return null;
-        ExceptionHandler.HandleResult result = ExceptionHandler.handleIdConflict(s);
+        String id = section.getString(s + ".id_alias", s);
+
+        ExceptionHandler.HandleResult result = ExceptionHandler.handleIdConflict(id);
 
         if (result == ExceptionHandler.HandleResult.FAILED) return null;
 
         String igId = section.getString("item_group");
-        ConfigurationSection item = section.getConfigurationSection("item");
-        ItemStack stack = CommonUtils.readItem(item, false, addon);
+
+        SlimefunItemStack sfis = getPreloadItem(id);
+        if (sfis == null) return null;
+
         Pair<ExceptionHandler.HandleResult, ItemGroup> group = ExceptionHandler.handleItemGroupGet(addon, igId);
         if (group.getFirstValue() == ExceptionHandler.HandleResult.FAILED) return null;
         ItemStack[] recipe = CommonUtils.readRecipe(section.getConfigurationSection("recipe"), addon);
@@ -66,7 +70,6 @@ public class SuperReader extends YamlReader<SlimefunItem> {
         }
         Constructor<? extends SlimefunItem> ctor =
                 (Constructor<? extends SlimefunItem>) clazz.getConstructors()[ctorIndex];
-        SlimefunItemStack slimefunItemStack = new SlimefunItemStack(s, stack);
         Object[] args =
                 section.getList("args") == null ? null : section.getList("args").toArray();
         List<Object> argTemplate =
@@ -74,7 +77,7 @@ public class SuperReader extends YamlReader<SlimefunItem> {
         Object[] originArgs = argTemplate.stream()
                 .map(x -> {
                     if (x.equals("group")) return group.getSecondValue();
-                    if (x.equals("item")) return slimefunItemStack;
+                    if (x.equals("item")) return sfis;
                     if (x.equals("recipe_type")) return rt.getSecondValue();
                     if (x.equals("recipe")) return recipe;
                     return x;
@@ -162,6 +165,8 @@ public class SuperReader extends YamlReader<SlimefunItem> {
     public List<SlimefunItemStack> preloadItems(String s) {
         ConfigurationSection section = configuration.getConfigurationSection(s);
         if (section == null) return null;
+        String id = section.getString(s + ".id_alias", s);
+
         ConfigurationSection item = section.getConfigurationSection("item");
         ItemStack stack = CommonUtils.readItem(item, false, addon);
 
@@ -169,6 +174,6 @@ public class SuperReader extends YamlReader<SlimefunItem> {
             ExceptionHandler.handleError("在附属" + addon.getAddonId() + "中加载继承物品" + s + "时遇到了问题: " + "物品为空或格式错误导致无法加载");
             return null;
         }
-        return List.of(new SlimefunItemStack(s, stack));
+        return List.of(new SlimefunItemStack(id, stack));
     }
 }

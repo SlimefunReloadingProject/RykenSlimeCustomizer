@@ -47,7 +47,7 @@ public class ItemReader extends YamlReader<SlimefunItem> {
     public SlimefunItem readEach(String s) {
         ConfigurationSection section = configuration.getConfigurationSection(s);
         if (section == null) return null;
-        String id = getAttribute(s + ".id_alias", s);
+        String id = section.getString(s + ".id_alias", s);
 
         ExceptionHandler.HandleResult result = ExceptionHandler.handleIdConflict(id);
 
@@ -244,7 +244,7 @@ public class ItemReader extends YamlReader<SlimefunItem> {
 
         if (section == null) return null;
 
-        String id = getAttribute(s + ".id_alias", s);
+        String id = section.getString(s + ".id_alias", s);
 
         ConfigurationSection item = section.getConfigurationSection("item");
         ItemStack stack = CommonUtils.readItem(item, false, addon);
