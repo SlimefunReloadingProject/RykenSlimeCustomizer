@@ -49,8 +49,8 @@ public class MachineReader extends YamlReader<AbstractEmptyMachine<?>> {
         ItemStack[] recipe = CommonUtils.readRecipe(section.getConfigurationSection("recipe"), addon);
         String recipeType = section.getString("recipe_type", "NULL");
 
-        Pair<ExceptionHandler.HandleResult, RecipeType> rt =
-                ExceptionHandler.getRecipeType("在附属" + addon.getAddonId() + "中加载机器" + s + "时遇到了问题: " + "错误的配方类型" + recipeType + "!", recipeType);
+        Pair<ExceptionHandler.HandleResult, RecipeType> rt = ExceptionHandler.getRecipeType(
+                "在附属" + addon.getAddonId() + "中加载机器" + s + "时遇到了问题: " + "错误的配方类型" + recipeType + "!", recipeType);
 
         if (rt.getFirstValue() == ExceptionHandler.HandleResult.FAILED) return null;
 
@@ -59,7 +59,8 @@ public class MachineReader extends YamlReader<AbstractEmptyMachine<?>> {
             String script = section.getString("script", "");
             File file = new File(addon.getScriptsFolder(), script + ".js");
             if (!file.exists()) {
-                ExceptionHandler.handleWarning("在附属" + addon.getAddonId() + "中加载机器" + s + "时遇到了问题: " + "找不到脚本文件 " + file.getName());
+                ExceptionHandler.handleWarning(
+                        "在附属" + addon.getAddonId() + "中加载机器" + s + "时遇到了问题: " + "找不到脚本文件 " + file.getName());
             } else {
                 eval = new JavaScriptEval(file, addon);
             }
@@ -104,7 +105,8 @@ public class MachineReader extends YamlReader<AbstractEmptyMachine<?>> {
             }
             int totalTicks = energySettings.getInt("totalTicks");
             if (totalTicks < 1) {
-                ExceptionHandler.handleError("无法读取在附属" + addon.getAddonId() + "中的机器" + s + "的能源设置，已转为无电机器，原因: 总粘液刻不能小于1");
+                ExceptionHandler.handleError(
+                        "无法读取在附属" + addon.getAddonId() + "中的机器" + s + "的能源设置，已转为无电机器，原因: 总粘液刻不能小于1");
                 machine = new CustomNoEnergyMachine(
                         group.getSecondValue(),
                         slimefunItemStack,
@@ -120,7 +122,9 @@ public class MachineReader extends YamlReader<AbstractEmptyMachine<?>> {
             MachineRecord record = new MachineRecord(capacity, totalTicks);
             String encType = energySettings.getString("type");
             Pair<ExceptionHandler.HandleResult, EnergyNetComponentType> enc = ExceptionHandler.handleEnumValueOf(
-                "无法读取在附属" + addon.getAddonId() + "中的机器" + s + "的能源设置，已转为无电机器，原因: 错误的能源网络组件类型" + encType, EnergyNetComponentType.class, encType);
+                    "无法读取在附属" + addon.getAddonId() + "中的机器" + s + "的能源设置，已转为无电机器，原因: 错误的能源网络组件类型" + encType,
+                    EnergyNetComponentType.class,
+                    encType);
             if (enc.getFirstValue() == ExceptionHandler.HandleResult.FAILED) {
                 machine = new CustomNoEnergyMachine(
                         group.getSecondValue(),

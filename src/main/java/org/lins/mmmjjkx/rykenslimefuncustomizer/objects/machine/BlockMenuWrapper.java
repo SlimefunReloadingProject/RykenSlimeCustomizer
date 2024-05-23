@@ -1,14 +1,13 @@
 package org.lins.mmmjjkx.rykenslimefuncustomizer.objects.machine;
 
+import java.util.ArrayList;
+import java.util.List;
 import lombok.RequiredArgsConstructor;
 import me.mrCookieSlime.Slimefun.api.inventory.BlockMenu;
 import org.bukkit.inventory.Inventory;
 import org.bukkit.inventory.ItemStack;
 import org.jetbrains.annotations.NotNull;
 import org.jetbrains.annotations.Nullable;
-
-import java.util.ArrayList;
-import java.util.List;
 
 @RequiredArgsConstructor
 public class BlockMenuWrapper {
@@ -34,8 +33,7 @@ public class BlockMenuWrapper {
         return blockMenu.fits(item, slots);
     }
 
-    @Nullable
-    public ItemStack pushItem(@NotNull ItemStack item, int... slots) {
+    @Nullable public ItemStack pushItem(@NotNull ItemStack item, int... slots) {
         return blockMenu.pushItem(item, slots);
     }
 

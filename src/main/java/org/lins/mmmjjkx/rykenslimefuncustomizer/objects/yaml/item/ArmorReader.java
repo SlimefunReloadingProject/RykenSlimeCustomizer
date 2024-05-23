@@ -39,8 +39,10 @@ public class ArmorReader extends YamlReader<List<CustomArmorPiece>> {
         List<String> pt = section.getStringList("protection_types");
         List<ProtectionType> protectionTypes = new ArrayList<>();
         for (String type : pt) {
-            Pair<ExceptionHandler.HandleResult, ProtectionType> result =
-                    ExceptionHandler.handleEnumValueOf("在附属" + addon.getAddonId() + "中加载盔甲套" + s + "时遇到了问题: " + "错误的盔甲保护类型: " + type, ProtectionType.class, type);
+            Pair<ExceptionHandler.HandleResult, ProtectionType> result = ExceptionHandler.handleEnumValueOf(
+                    "在附属" + addon.getAddonId() + "中加载盔甲套" + s + "时遇到了问题: " + "错误的盔甲保护类型: " + type,
+                    ProtectionType.class,
+                    type);
             if (result.getFirstValue() == ExceptionHandler.HandleResult.FAILED) return null;
             protectionTypes.add(result.getSecondValue());
         }
@@ -57,8 +59,9 @@ public class ArmorReader extends YamlReader<List<CustomArmorPiece>> {
 
             String recipeType = pieceSection.getString("recipe_type", "NULL");
 
-            Pair<ExceptionHandler.HandleResult, RecipeType> rt =
-                    ExceptionHandler.getRecipeType("在附属" + addon.getAddonId() + "中加载盔甲套" + s + "的" + check + "时遇到了问题: " + "错误的配方类型" + recipeType + "!", recipeType);
+            Pair<ExceptionHandler.HandleResult, RecipeType> rt = ExceptionHandler.getRecipeType(
+                    "在附属" + addon.getAddonId() + "中加载盔甲套" + s + "的" + check + "时遇到了问题: " + "错误的配方类型" + recipeType + "!",
+                    recipeType);
             if (rt.getFirstValue() == ExceptionHandler.HandleResult.FAILED) return null;
 
             SlimefunItemStack sfis = getPreloadItem(pieceId);
@@ -73,7 +76,8 @@ public class ArmorReader extends YamlReader<List<CustomArmorPiece>> {
             for (String effect : effects) {
                 String[] split = effect.split(" ");
                 if (split.length != 2) {
-                    ExceptionHandler.handleError("在附属" + addon.getAddonId() + "中加载盔甲套" + s + "的" + check + "时遇到了问题: " + "错误的药水效果格式: " + effect);
+                    ExceptionHandler.handleError("在附属" + addon.getAddonId() + "中加载盔甲套" + s + "的" + check + "时遇到了问题: "
+                            + "错误的药水效果格式: " + effect);
                     return null;
                 }
                 String effectName = split[0];
@@ -81,12 +85,14 @@ public class ArmorReader extends YamlReader<List<CustomArmorPiece>> {
 
                 PotionEffectType type = PotionEffectType.getByName(effectName);
                 if (type == null) {
-                    ExceptionHandler.handleError("在附属" + addon.getAddonId() + "中加载盔甲套" + s + "的" + check + "时遇到了问题: " + "错误的药水效果类型: " + effectName);
+                    ExceptionHandler.handleError("在附属" + addon.getAddonId() + "中加载盔甲套" + s + "的" + check + "时遇到了问题: "
+                            + "错误的药水效果类型: " + effectName);
                     return null;
                 }
 
                 if (amplifier < 0) {
-                    ExceptionHandler.handleError("在附属" + addon.getAddonId() + "中加载盔甲套" + s + "的" + check + "时遇到了问题: " + "药水效果等级不能为负数: " + effect + "， 但你设置了" + amplifier);
+                    ExceptionHandler.handleError("在附属" + addon.getAddonId() + "中加载盔甲套" + s + "的" + check + "时遇到了问题: "
+                            + "药水效果等级不能为负数: " + effect + "， 但你设置了" + amplifier);
                     return null;
                 }
 
@@ -128,7 +134,7 @@ public class ArmorReader extends YamlReader<List<CustomArmorPiece>> {
             ItemStack stack = CommonUtils.readItem(pieceSection, false, addon);
             if (stack == null) {
                 ExceptionHandler.handleError(
-                    "在附属" + addon.getAddonId() + "中加载盔甲套" + s + "的" + check + "时遇到了问题: " + "物品为空或格式错误导致无法加载，已跳过");
+                        "在附属" + addon.getAddonId() + "中加载盔甲套" + s + "的" + check + "时遇到了问题: " + "物品为空或格式错误导致无法加载，已跳过");
                 continue;
             }
 

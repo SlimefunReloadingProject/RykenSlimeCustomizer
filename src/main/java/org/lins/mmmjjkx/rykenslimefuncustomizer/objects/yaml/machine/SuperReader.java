@@ -45,8 +45,8 @@ public class SuperReader extends YamlReader<SlimefunItem> {
         ItemStack[] recipe = CommonUtils.readRecipe(section.getConfigurationSection("recipe"), addon);
         String recipeType = section.getString("recipe_type", "NULL");
 
-        Pair<ExceptionHandler.HandleResult, RecipeType> rt =
-                ExceptionHandler.getRecipeType("在附属" + addon.getAddonId() + "中加载继承物品" + s + "时遇到了问题: " + "错误的配方类型" + recipeType + "!", recipeType);
+        Pair<ExceptionHandler.HandleResult, RecipeType> rt = ExceptionHandler.getRecipeType(
+                "在附属" + addon.getAddonId() + "中加载继承物品" + s + "时遇到了问题: " + "错误的配方类型" + recipeType + "!", recipeType);
         if (rt.getFirstValue() == ExceptionHandler.HandleResult.FAILED) return null;
 
         String className = section.getString("class", "");
@@ -122,7 +122,8 @@ public class SuperReader extends YamlReader<SlimefunItem> {
                         method.setAccessible(true);
                         method.invoke(instance, args1);
                     } catch (IllegalAccessException | InvocationTargetException e) {
-                        ExceptionHandler.handleError("在附属" + addon.getAddonId() + "中加载继承物品" + s + "时遇到了问题: " + "方法调用异常", e);
+                        ExceptionHandler.handleError(
+                                "在附属" + addon.getAddonId() + "中加载继承物品" + s + "时遇到了问题: " + "方法调用异常", e);
                     }
                 }
             }
@@ -144,9 +145,11 @@ public class SuperReader extends YamlReader<SlimefunItem> {
 
                     if (field == null) throw new NoSuchFieldException(fieldName);
                     if (Modifier.isStatic(field.getModifiers()))
-                        throw new IllegalAccessException("在附属" + addon.getAddonId() + "中加载继承物品" + s + "时遇到了问题: " + "字段" + fieldName + "为static");
+                        throw new IllegalAccessException(
+                                "在附属" + addon.getAddonId() + "中加载继承物品" + s + "时遇到了问题: " + "字段" + fieldName + "为static");
                     if (Modifier.isFinal(field.getModifiers()))
-                        throw new IllegalAccessException("在附属" + addon.getAddonId() + "中加载继承物品" + s + "时遇到了问题: " + "字段" + fieldName + "为final");
+                        throw new IllegalAccessException(
+                                "在附属" + addon.getAddonId() + "中加载继承物品" + s + "时遇到了问题: " + "字段" + fieldName + "为final");
 
                     field.setAccessible(true);
                     Object object = fieldArray.getObject(fieldName, field.getType());

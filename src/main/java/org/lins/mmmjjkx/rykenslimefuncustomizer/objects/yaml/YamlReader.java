@@ -41,8 +41,7 @@ public abstract class YamlReader<T> {
         }
     }
 
-    @Nullable
-    protected final SlimefunItemStack getPreloadItem(String itemId) {
+    @Nullable protected final SlimefunItemStack getPreloadItem(String itemId) {
         return addon.getPreloadItems().get(itemId);
     }
 
@@ -74,7 +73,6 @@ public abstract class YamlReader<T> {
             } else {
                 ExceptionHandler.debugLog("FAILURE | 读取项" + key + "失败！");
             }
-            
         }
         return objects;
     }
@@ -86,16 +84,15 @@ public abstract class YamlReader<T> {
     public List<T> loadLateInits() {
         List<T> objects = new ArrayList<>();
         lateInits.forEach(key -> {
-                ExceptionHandler.debugLog("开始读取延迟项："+ key);
-                var object = readEach(key);
-                if (object != null) {
-                    objects.add(object);
-                    ExceptionHandler.debugLog("SUCCESS | 读取项" + key + "成功！");
-                } else {
-                    ExceptionHandler.debugLog("FAILURE | 读取项" + key + "失败！");
-                }
+            ExceptionHandler.debugLog("开始读取延迟项：" + key);
+            var object = readEach(key);
+            if (object != null) {
+                objects.add(object);
+                ExceptionHandler.debugLog("SUCCESS | 读取项" + key + "成功！");
+            } else {
+                ExceptionHandler.debugLog("FAILURE | 读取项" + key + "失败！");
             }
-        );
+        });
 
         lateInits.clear();
 

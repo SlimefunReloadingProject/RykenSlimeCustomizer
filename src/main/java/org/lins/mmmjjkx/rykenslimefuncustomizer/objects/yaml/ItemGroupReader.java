@@ -61,8 +61,8 @@ public class ItemGroupReader extends YamlReader<ItemGroup> {
                         ItemGroup raw = CommonUtils.getIf(Slimefun.getRegistry().getAllItemGroups(), ig -> ig.getKey()
                                 .equals(parent));
                         if (raw == null) {
-                            ExceptionHandler.handleError(
-                                "在附属" + addon.getAddonId() + "中加载物品组" + s + "时遇到了问题: " + "无法找到父物品组" + parent.getKey());
+                            ExceptionHandler.handleError("在附属" + addon.getAddonId() + "中加载物品组" + s + "时遇到了问题: "
+                                    + "无法找到父物品组" + parent.getKey());
                             yield null;
                         }
                         if (!(raw instanceof NestedItemGroup nig)) {
@@ -99,8 +99,8 @@ public class ItemGroupReader extends YamlReader<ItemGroup> {
                         ItemGroup raw = CommonUtils.getIf(Slimefun.getRegistry().getAllItemGroups(), ig -> ig.getKey()
                                 .equals(parent));
                         if (raw == null) {
-                            ExceptionHandler.handleError(
-                                "在附属" + addon.getAddonId() + "中加载物品组" + s + "时遇到了问题: " + "无法找到父物品组" + parent.getKey());
+                            ExceptionHandler.handleError("在附属" + addon.getAddonId() + "中加载物品组" + s + "时遇到了问题: "
+                                    + "无法找到父物品组" + parent.getKey());
                             yield null;
                         }
 

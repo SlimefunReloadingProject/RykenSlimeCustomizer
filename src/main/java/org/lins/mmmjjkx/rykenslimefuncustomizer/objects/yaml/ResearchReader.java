@@ -26,7 +26,8 @@ public class ResearchReader extends YamlReader<Research> {
         if (section == null) return null;
 
         if (!VALID_KEY.matcher(s).matches()) {
-            ExceptionHandler.handleError("在附属" + addon.getAddonId() + "中加载研究" + s + "时遇到了问题: " + "研究" + s + " 的ID无效，只能使用[a-z0-9._-]这些字符。");
+            ExceptionHandler.handleError(
+                    "在附属" + addon.getAddonId() + "中加载研究" + s + "时遇到了问题: " + "研究" + s + " 的ID无效，只能使用[a-z0-9._-]这些字符。");
             return null;
         }
 
@@ -55,7 +56,8 @@ public class ResearchReader extends YamlReader<Research> {
         if (hasCurrency) {
             currency = section.getDouble("currencyCost");
             if (currency < 0) {
-                ExceptionHandler.handleWarning("在附属" + addon.getAddonId() + "中加载研究" + s + "时遇到了问题: " + "货币花费不能小于0! 已忽略.");
+                ExceptionHandler.handleWarning(
+                        "在附属" + addon.getAddonId() + "中加载研究" + s + "时遇到了问题: " + "货币花费不能小于0! 已忽略.");
                 hasCurrency = false;
             }
         }
@@ -71,7 +73,8 @@ public class ResearchReader extends YamlReader<Research> {
         for (String item : items) {
             SlimefunItem sfItem = SlimefunItem.getById(item);
             if (sfItem == null) {
-                ExceptionHandler.handleWarning("在附属" + addon.getAddonId() + "中加载研究" + s + "时遇到了问题: "  + item + " 不是粘液科技物品! 已跳过.");
+                ExceptionHandler.handleWarning(
+                        "在附属" + addon.getAddonId() + "中加载研究" + s + "时遇到了问题: " + item + " 不是粘液科技物品! 已跳过.");
                 continue;
             }
             research.addItems(sfItem);

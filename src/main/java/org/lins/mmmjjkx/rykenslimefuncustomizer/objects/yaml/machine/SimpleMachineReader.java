@@ -34,13 +34,13 @@ public class SimpleMachineReader extends YamlReader<SlimefunItem> {
         ConfigurationSection section = configuration.getConfigurationSection(s);
         if (section == null) return null;
         String id = section.getString(s + ".id_alias", s);
-        
+
         ExceptionHandler.HandleResult result = ExceptionHandler.handleIdConflict(id);
 
         if (result == ExceptionHandler.HandleResult.FAILED) return null;
 
         String igId = section.getString("item_group");
-        
+
         SlimefunItemStack sfis = getPreloadItem(id);
         if (sfis == null) return null;
 
@@ -50,11 +50,11 @@ public class SimpleMachineReader extends YamlReader<SlimefunItem> {
         ItemStack[] recipe = CommonUtils.readRecipe(section.getConfigurationSection("recipe"), addon);
         String recipeType = section.getString("recipe_type", "NULL");
 
-        Pair<ExceptionHandler.HandleResult, RecipeType> rt =
-                ExceptionHandler.getRecipeType("在附属" + addon.getAddonId() + "中加载简单机器" + s + "时遇到了问题: " + "错误的配方类型" + recipeType + "!", recipeType);
+        Pair<ExceptionHandler.HandleResult, RecipeType> rt = ExceptionHandler.getRecipeType(
+                "在附属" + addon.getAddonId() + "中加载简单机器" + s + "时遇到了问题: " + "错误的配方类型" + recipeType + "!", recipeType);
 
         if (rt.getFirstValue() == ExceptionHandler.HandleResult.FAILED || rt.getSecondValue() == null) return null;
-        
+
         String machineTypeStr = section.getString("type");
 
         Pair<ExceptionHandler.HandleResult, SimpleMachineType> machineTypePair = ExceptionHandler.handleEnumValueOf(
@@ -107,7 +107,8 @@ public class SimpleMachineReader extends YamlReader<SlimefunItem> {
                 if (machineType == SimpleMachineType.CROP_GROWTH_ACCELERATOR) {
                     speed = settings.getInt("speed", 1);
                     if (speed < 1) {
-                        ExceptionHandler.handleError("在附属" + addon.getAddonId() + "中加载简单机器" + s + "时遇到了问题: " + "处理速度小于1");
+                        ExceptionHandler.handleError(
+                                "在附属" + addon.getAddonId() + "中加载简单机器" + s + "时遇到了问题: " + "处理速度小于1");
                         return null;
                     }
                 }
@@ -159,27 +160,14 @@ public class SimpleMachineReader extends YamlReader<SlimefunItem> {
                             .setCapacity(capacity)
                             .setEnergyConsumption(consumption)
                             .setProcessingSpeed(speed);
-                    case CHARGING_BENCH -> new ChargingBench(
-                                    group.getSecondValue(), sfis, rt.getSecondValue(), recipe)
+                    case CHARGING_BENCH -> new ChargingBench(group.getSecondValue(), sfis, rt.getSecondValue(), recipe)
                             .setCapacity(capacity)
                             .setEnergyConsumption(consumption)
                             .setProcessingSpeed(speed);
                     case TREE_GROWTH_ACCELERATOR -> new AdvancedTreeGrowthAccelerator(
-                            group.getSecondValue(),
-                            sfis,
-                            rt.getSecondValue(),
-                            recipe,
-                            capacity,
-                            radius,
-                            consumption);
+                            group.getSecondValue(), sfis, rt.getSecondValue(), recipe, capacity, radius, consumption);
                     case ANIMAL_GROWTH_ACCELERATOR -> new AdvancedAnimalGrowthAccelerator(
-                            group.getSecondValue(),
-                            sfis,
-                            rt.getSecondValue(),
-                            recipe,
-                            capacity,
-                            radius,
-                            consumption);
+                            group.getSecondValue(), sfis, rt.getSecondValue(), recipe, capacity, radius, consumption);
                     case CROP_GROWTH_ACCELERATOR -> new AdvancedCropGrowthAccelerator(
                             group.getSecondValue(),
                             sfis,
@@ -193,13 +181,11 @@ public class SimpleMachineReader extends YamlReader<SlimefunItem> {
                             .setCapacity(capacity)
                             .setEnergyConsumption(consumption)
                             .setProcessingSpeed(speed);
-                    case CARBON_PRESS -> new CarbonPress(
-                                    group.getSecondValue(), sfis, rt.getSecondValue(), recipe)
+                    case CARBON_PRESS -> new CarbonPress(group.getSecondValue(), sfis, rt.getSecondValue(), recipe)
                             .setCapacity(capacity)
                             .setEnergyConsumption(consumption)
                             .setProcessingSpeed(speed);
-                    case ELECTRIC_PRESS -> new ElectricPress(
-                                    group.getSecondValue(), sfis, rt.getSecondValue(), recipe)
+                    case ELECTRIC_PRESS -> new ElectricPress(group.getSecondValue(), sfis, rt.getSecondValue(), recipe)
                             .setCapacity(capacity)
                             .setEnergyConsumption(consumption)
                             .setProcessingSpeed(speed);
@@ -218,13 +204,11 @@ public class SimpleMachineReader extends YamlReader<SlimefunItem> {
                             .setCapacity(capacity)
                             .setEnergyConsumption(consumption)
                             .setProcessingSpeed(speed);
-                    case BOOK_BINDER -> new BookBinder(
-                                    group.getSecondValue(), sfis, rt.getSecondValue(), recipe)
+                    case BOOK_BINDER -> new BookBinder(group.getSecondValue(), sfis, rt.getSecondValue(), recipe)
                             .setCapacity(capacity)
                             .setEnergyConsumption(consumption)
                             .setProcessingSpeed(speed);
-                    case AUTO_ENCHANTER -> new AutoEnchanter(
-                                    group.getSecondValue(), sfis, rt.getSecondValue(), recipe)
+                    case AUTO_ENCHANTER -> new AutoEnchanter(group.getSecondValue(), sfis, rt.getSecondValue(), recipe)
                             .setCapacity(capacity)
                             .setEnergyConsumption(consumption)
                             .setProcessingSpeed(speed);
@@ -234,26 +218,19 @@ public class SimpleMachineReader extends YamlReader<SlimefunItem> {
                             .setEnergyConsumption(consumption)
                             .setProcessingSpeed(speed);
                     case AUTO_ANVIL -> new AutoAnvil(
-                                    group.getSecondValue(),
-                                    repairFactor,
-                                    sfis,
-                                    rt.getSecondValue(),
-                                    recipe)
+                                    group.getSecondValue(), repairFactor, sfis, rt.getSecondValue(), recipe)
                             .setCapacity(capacity)
                             .setEnergyConsumption(consumption)
                             .setProcessingSpeed(speed);
-                    case AUTO_DRIER -> new AutoDrier(
-                                    group.getSecondValue(), sfis, rt.getSecondValue(), recipe)
+                    case AUTO_DRIER -> new AutoDrier(group.getSecondValue(), sfis, rt.getSecondValue(), recipe)
                             .setCapacity(capacity)
                             .setEnergyConsumption(consumption)
                             .setProcessingSpeed(speed);
-                    case AUTO_BREWER -> new AutoBrewer(
-                                    group.getSecondValue(), sfis, rt.getSecondValue(), recipe)
+                    case AUTO_BREWER -> new AutoBrewer(group.getSecondValue(), sfis, rt.getSecondValue(), recipe)
                             .setCapacity(capacity)
                             .setEnergyConsumption(consumption)
                             .setProcessingSpeed(speed);
-                    case REFINERY -> new Refinery(
-                                    group.getSecondValue(), sfis, rt.getSecondValue(), recipe)
+                    case REFINERY -> new Refinery(group.getSecondValue(), sfis, rt.getSecondValue(), recipe)
                             .setCapacity(capacity)
                             .setEnergyConsumption(consumption)
                             .setProcessingSpeed(speed);

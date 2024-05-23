@@ -230,8 +230,8 @@ public class SingleItemRecipeGuide implements Listener {
 
             int seconds = recipe.getTicks() / 2;
 
-            progressBar = new CustomItemStack(progressBar,
-                    "&e制作时间: &b" + seconds + "&es(&b" + formatSeconds(seconds) + "&e)");
+            progressBar = new CustomItemStack(
+                    progressBar, "&e制作时间: &b" + seconds + "&es(&b" + formatSeconds(seconds) + "&e)");
 
             addItem(progressSlot, progressBar, (pl, s, is, action) -> false);
         }
@@ -252,17 +252,17 @@ public class SingleItemRecipeGuide implements Listener {
         }
 
         private String formatSeconds(int seconds) {
-            if (seconds<60) {
-                return seconds+"s";
-            }else if (seconds>60&&seconds<3600) {
-                int m = seconds/60;
-                int s = seconds%60;
-                return m+"min"+s+"s";
-            }else {
-                int h = seconds/3600;
-                int m = (seconds%3600)/60;
-                int s = (seconds%3600)%60;
-                return h+"h"+m+"min"+s+"s";
+            if (seconds < 60) {
+                return seconds + "s";
+            } else if (seconds > 60 && seconds < 3600) {
+                int m = seconds / 60;
+                int s = seconds % 60;
+                return m + "min" + s + "s";
+            } else {
+                int h = seconds / 3600;
+                int m = (seconds % 3600) / 60;
+                int s = (seconds % 3600) % 60;
+                return h + "h" + m + "min" + s + "s";
             }
         }
     }

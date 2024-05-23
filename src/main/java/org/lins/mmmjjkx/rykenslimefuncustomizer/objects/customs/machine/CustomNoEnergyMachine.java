@@ -124,7 +124,8 @@ public class CustomNoEnergyMachine extends AbstractEmptyMachine<MachineOperation
     protected void tick(Block b, SlimefunItem item, SlimefunBlockData data) {
         if (eval != null) {
             BlockMenu blockMenu = StorageCacheUtils.getMenu(b.getLocation());
-            SmallerMachineInfo info = new SmallerMachineInfo(blockMenu == null ? null : new BlockMenuWrapper(blockMenu), data, this, item, b, processor);
+            SmallerMachineInfo info = new SmallerMachineInfo(
+                    blockMenu == null ? null : new BlockMenuWrapper(blockMenu), data, this, item, b, processor);
             eval.evalFunction("tick", info);
         }
     }

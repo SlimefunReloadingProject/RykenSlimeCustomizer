@@ -88,11 +88,11 @@ public class CommonUtils {
 
         String material = section.getString("material", "");
 
-        if (material.startsWith("ey")) {
+        if (material.startsWith("ey") || material.startsWith("ew")) {
             type = "skull";
         } else if (material.startsWith("http") || material.startsWith("https")) {
             type = "skull_url";
-        } else if (material.matches("^[A-Za-z0-9]{64}+$")) {
+        } else if (material.matches("^[0-9A-Fa-f]{64}+$")) {
             type = "skull_hash";
         }
 

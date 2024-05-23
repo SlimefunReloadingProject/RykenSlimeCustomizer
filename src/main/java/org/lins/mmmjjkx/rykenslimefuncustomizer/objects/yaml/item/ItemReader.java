@@ -69,8 +69,8 @@ public class ItemReader extends YamlReader<SlimefunItem> {
         if (piglin) {
             rt = RecipeType.BARTER_DROP;
         } else {
-            Pair<ExceptionHandler.HandleResult, RecipeType> rt1 =
-                    ExceptionHandler.getRecipeType("在附属" + addon.getAddonId() + "中加载物品" + s + "时遇到了问题: " + "错误的配方类型" + recipeType + "!", recipeType);
+            Pair<ExceptionHandler.HandleResult, RecipeType> rt1 = ExceptionHandler.getRecipeType(
+                    "在附属" + addon.getAddonId() + "中加载物品" + s + "时遇到了问题: " + "错误的配方类型" + recipeType + "!", recipeType);
 
             if (rt1.getFirstValue() == ExceptionHandler.HandleResult.FAILED) return null;
 
@@ -82,7 +82,8 @@ public class ItemReader extends YamlReader<SlimefunItem> {
             String script = section.getString("script", "");
             File file = new File(addon.getScriptsFolder(), script + ".js");
             if (!file.exists()) {
-                ExceptionHandler.handleWarning("在附属" + addon.getAddonId() + "中加载物品" + s + "时遇到了问题: " + "找不到脚本文件" + file.getName());
+                ExceptionHandler.handleWarning(
+                        "在附属" + addon.getAddonId() + "中加载物品" + s + "时遇到了问题: " + "找不到脚本文件" + file.getName());
             } else {
                 eval = new JavaScriptEval(file, addon);
             }
@@ -124,8 +125,10 @@ public class ItemReader extends YamlReader<SlimefunItem> {
                 List<Material> colorMaterials = new ArrayList<>();
 
                 for (String material : materials) {
-                    Pair<ExceptionHandler.HandleResult, Material> materialPair =
-                            ExceptionHandler.handleEnumValueOf("在附属" + addon.getAddonId() + "中加载物品" + s + "时遇到了问题: " + "错误的彩虹属性材料: " + material, Material.class, material);
+                    Pair<ExceptionHandler.HandleResult, Material> materialPair = ExceptionHandler.handleEnumValueOf(
+                            "在附属" + addon.getAddonId() + "中加载物品" + s + "时遇到了问题: " + "错误的彩虹属性材料: " + material,
+                            Material.class,
+                            material);
                     Material material1 = materialPair.getSecondValue();
                     if (materialPair.getFirstValue() == ExceptionHandler.HandleResult.FAILED || material1 == null) {
                         return null;
@@ -137,7 +140,9 @@ public class ItemReader extends YamlReader<SlimefunItem> {
             } else {
                 Pair<ExceptionHandler.HandleResult, ColoredMaterial> coloredMaterialPair =
                         ExceptionHandler.handleEnumValueOf(
-                            "在附属" + addon.getAddonId() + "中加载物品" + s + "时遇到了问题: " + "错误的可染色材料类型: " + materialType, ColoredMaterial.class, materialType);
+                                "在附属" + addon.getAddonId() + "中加载物品" + s + "时遇到了问题: " + "错误的可染色材料类型: " + materialType,
+                                ColoredMaterial.class,
+                                materialType);
                 ColoredMaterial coloredMaterial = coloredMaterialPair.getSecondValue();
                 if (coloredMaterialPair.getFirstValue() == ExceptionHandler.HandleResult.FAILED
                         || coloredMaterial == null) {
@@ -173,7 +178,8 @@ public class ItemReader extends YamlReader<SlimefunItem> {
         if (section.contains("piglin_trade_chance")) {
             int chance = section.getInt("piglin_trade_chance", 100);
             if (chance < 0 || chance > 100) {
-                ExceptionHandler.handleError("在附属" + addon.getAddonId() + "中加载物品" + s + "时遇到了问题: " + "猪灵交易掉落几率必须在0-100之间");
+                ExceptionHandler.handleError(
+                        "在附属" + addon.getAddonId() + "中加载物品" + s + "时遇到了问题: " + "猪灵交易掉落几率必须在0-100之间");
                 return null;
             }
 
@@ -197,7 +203,7 @@ public class ItemReader extends YamlReader<SlimefunItem> {
 
             if (chance < 0 || chance > 100) {
                 ExceptionHandler.handleError(
-                    "在附属" + addon.getAddonId() + "中加载物品" + s + "时遇到了问题: " + "掉落几率" + chance + "不在0-100范围内! 已转为100");
+                        "在附属" + addon.getAddonId() + "中加载物品" + s + "时遇到了问题: " + "掉落几率" + chance + "不在0-100范围内! 已转为100");
                 chance = 100;
             }
 
@@ -207,7 +213,8 @@ public class ItemReader extends YamlReader<SlimefunItem> {
             if (xm.isPresent()) {
                 Material material = xm.get().parseMaterial();
                 if (material == null) {
-                    ExceptionHandler.handleError("在附属" + addon.getAddonId() + "中加载物品" + s + "时遇到了问题: " + "无法指定方块掉落材料类型" + dropMaterial + "，已转为石头");
+                    ExceptionHandler.handleError("在附属" + addon.getAddonId() + "中加载物品" + s + "时遇到了问题: " + "无法指定方块掉落材料类型"
+                            + dropMaterial + "，已转为石头");
                 } else {
                     if (amount == -1) {
                         String between = section.getString("drop_amount", "1");
@@ -218,8 +225,8 @@ public class ItemReader extends YamlReader<SlimefunItem> {
                                 int max = Integer.parseInt(split[1]);
                                 DropFromBlock.addDrop(material, new DropFromBlock.Drop(sfis, chance, addon, min, max));
                             } else {
-                                ExceptionHandler.handleError(
-                                    "在附属" + addon.getAddonId() + "中加载物品" + s + "时遇到了问题: " + "无法读取掉落数量区间" + between + "，已将掉落数量转为1");
+                                ExceptionHandler.handleError("在附属" + addon.getAddonId() + "中加载物品" + s + "时遇到了问题: "
+                                        + "无法读取掉落数量区间" + between + "，已将掉落数量转为1");
                                 DropFromBlock.addDrop(material, new DropFromBlock.Drop(sfis, chance, addon));
                             }
                         }
@@ -229,7 +236,7 @@ public class ItemReader extends YamlReader<SlimefunItem> {
                 }
             } else {
                 ExceptionHandler.handleError(
-                    "在附属" + addon.getAddonId() + "中加载物品" + s + "时遇到了问题: " + "指定掉落方块材料类型" + dropMaterial + "不存在!");
+                        "在附属" + addon.getAddonId() + "中加载物品" + s + "时遇到了问题: " + "指定掉落方块材料类型" + dropMaterial + "不存在!");
             }
         }
 
@@ -268,8 +275,10 @@ public class ItemReader extends YamlReader<SlimefunItem> {
             ProjectAddon addon) {
 
         String radio = section.getString("radiation");
-        Pair<ExceptionHandler.HandleResult, Radioactivity> radioactivityPair =
-                ExceptionHandler.handleEnumValueOf("在附属" + addon.getAddonId() + "中加载物品" + id + "时遇到了问题: " + "错误的辐射等级级别: " + radio, Radioactivity.class, radio);
+        Pair<ExceptionHandler.HandleResult, Radioactivity> radioactivityPair = ExceptionHandler.handleEnumValueOf(
+                "在附属" + addon.getAddonId() + "中加载物品" + id + "时遇到了问题: " + "错误的辐射等级级别: " + radio,
+                Radioactivity.class,
+                radio);
         Radioactivity radioactivity = radioactivityPair.getSecondValue();
 
         if (radioactivityPair.getFirstValue() == ExceptionHandler.HandleResult.FAILED || radioactivity == null) {
@@ -285,13 +294,7 @@ public class ItemReader extends YamlReader<SlimefunItem> {
         if (energy) {
             double energyCapacity = section.getDouble("energy_capacity");
             instance = new CustomEnergyRadiationItem(
-                    itemGroup,
-                    original,
-                    recipeType,
-                    recipe,
-                    radioactivity,
-                    (float) energyCapacity,
-                    eval);
+                    itemGroup, original, recipeType, recipe, radioactivity, (float) energyCapacity, eval);
         } else if (section.getBoolean("placeable", false)) {
             instance = new CustomDefaultRadiationItem(itemGroup, original, recipeType, recipe, radioactivity);
         } else {
@@ -324,7 +327,8 @@ public class ItemReader extends YamlReader<SlimefunItem> {
         if (piglin) {
             int chance = section.getInt("piglin_trade_chance", 100);
             if (chance < 0 || chance > 100) {
-                ExceptionHandler.handleError("在附属" + addon.getAddonId() + "中加载物品" + id + "时遇到了问题: " + "猪灵交易掉落几率必须在0-100之间");
+                ExceptionHandler.handleError(
+                        "在附属" + addon.getAddonId() + "中加载物品" + id + "时遇到了问题: " + "猪灵交易掉落几率必须在0-100之间");
                 return null;
             }
 
@@ -347,8 +351,8 @@ public class ItemReader extends YamlReader<SlimefunItem> {
             int amount = section.isInt("drop_amount") ? section.getInt("drop_amount", 1) : -1;
 
             if (chance < 0 || chance > 100) {
-                ExceptionHandler.handleError(
-                    "在附属" + addon.getAddonId() + "中加载物品" + id + "时遇到了问题: " + "掉落几率" + chance + "不在0-100范围内! 已转为100");
+                ExceptionHandler.handleError("在附属" + addon.getAddonId() + "中加载物品" + id + "时遇到了问题: " + "掉落几率" + chance
+                        + "不在0-100范围内! 已转为100");
                 chance = 100;
             }
 
@@ -358,7 +362,8 @@ public class ItemReader extends YamlReader<SlimefunItem> {
             if (xm.isPresent()) {
                 Material material = xm.get().parseMaterial();
                 if (material == null) {
-                    ExceptionHandler.handleError("在附属" + addon.getAddonId() + "中加载物品" + id + "时遇到了问题: " + "无法指定掉落方块材料类型" + dropMaterial + "，已转为石头");
+                    ExceptionHandler.handleError("在附属" + addon.getAddonId() + "中加载物品" + id + "时遇到了问题: " + "无法指定掉落方块材料类型"
+                            + dropMaterial + "，已转为石头");
                 } else {
                     if (amount == -1) {
                         String between = section.getString("drop_amount", "1");
@@ -367,7 +372,8 @@ public class ItemReader extends YamlReader<SlimefunItem> {
                             if (split.length == 2) {
                                 int min = Integer.parseInt(split[0]);
                                 int max = Integer.parseInt(split[1]);
-                                DropFromBlock.addDrop(material, new DropFromBlock.Drop(original, chance, addon, min, max));
+                                DropFromBlock.addDrop(
+                                        material, new DropFromBlock.Drop(original, chance, addon, min, max));
                             } else {
                                 ExceptionHandler.handleError(
                                         "无法在附属" + addon.getAddonName() + "中读取掉落数量区间" + between + "，已把掉落数量转为1");
@@ -375,12 +381,13 @@ public class ItemReader extends YamlReader<SlimefunItem> {
                             }
                         }
                     } else {
-                        DropFromBlock.addDrop(material, new DropFromBlock.Drop(original, chance, addon, amount, amount));
+                        DropFromBlock.addDrop(
+                                material, new DropFromBlock.Drop(original, chance, addon, amount, amount));
                     }
                 }
             } else {
                 ExceptionHandler.handleError(
-                    "在附属" + addon.getAddonId() + "中加载物品" + id + "时遇到了问题: " + "指定掉落方块材料类型" + dropMaterial + "不存在!");
+                        "在附属" + addon.getAddonId() + "中加载物品" + id + "时遇到了问题: " + "指定掉落方块材料类型" + dropMaterial + "不存在!");
             }
         }
 

@@ -49,8 +49,8 @@ public class GeneratorReader extends YamlReader<CustomGenerator> {
         ItemStack[] recipe = CommonUtils.readRecipe(section.getConfigurationSection("recipe"), addon);
         String recipeType = section.getString("recipe_type", "NULL");
 
-        Pair<ExceptionHandler.HandleResult, RecipeType> rt =
-                ExceptionHandler.getRecipeType("在附属" + addon.getAddonId() + "中加载发电机" + s + "时遇到了问题: " + "错误的配方类型" + recipeType + "!", recipeType);
+        Pair<ExceptionHandler.HandleResult, RecipeType> rt = ExceptionHandler.getRecipeType(
+                "在附属" + addon.getAddonId() + "中加载发电机" + s + "时遇到了问题: " + "错误的配方类型" + recipeType + "!", recipeType);
 
         if (rt.getFirstValue() == ExceptionHandler.HandleResult.FAILED) return null;
 
@@ -74,8 +74,10 @@ public class GeneratorReader extends YamlReader<CustomGenerator> {
         };
 
         String rotationStr = section.getString("rotation", "NOT_ROTATABLE");
-        Pair<ExceptionHandler.HandleResult, Rotation> rotationPair =
-                ExceptionHandler.handleEnumValueOf("在附属" + addon.getAddonId() + "中加载发电机" + s + "时遇到了问题: " + "错误的旋转类型: " + rotationStr + "!", Rotation.class, rotationStr);
+        Pair<ExceptionHandler.HandleResult, Rotation> rotationPair = ExceptionHandler.handleEnumValueOf(
+                "在附属" + addon.getAddonId() + "中加载发电机" + s + "时遇到了问题: " + "错误的旋转类型: " + rotationStr + "!",
+                Rotation.class,
+                rotationStr);
 
         if (rotationPair.getFirstValue() == ExceptionHandler.HandleResult.FAILED) return null;
 
@@ -139,13 +141,15 @@ public class GeneratorReader extends YamlReader<CustomGenerator> {
             ConfigurationSection item = section1.getConfigurationSection("item");
             ItemStack stack = CommonUtils.readItem(item, true, addon);
             if (stack == null) {
-                ExceptionHandler.handleError("在附属" + addon.getAddonId() + "中加载发电机" + s + "的燃料" + key + "时遇到了问题: " + "输入物品为空或格式错误，已跳过加载");
+                ExceptionHandler.handleError(
+                        "在附属" + addon.getAddonId() + "中加载发电机" + s + "的燃料" + key + "时遇到了问题: " + "输入物品为空或格式错误，已跳过加载");
                 continue;
             }
             int seconds = section1.getInt("seconds");
 
             if (seconds < 1) {
-                ExceptionHandler.handleError("在附属" + addon.getAddonId() + "中加载发电机" + s + "的燃料" + key + "时遇到了问题: " + "秒数不能小于1，已跳过加载");
+                ExceptionHandler.handleError(
+                        "在附属" + addon.getAddonId() + "中加载发电机" + s + "的燃料" + key + "时遇到了问题: " + "秒数不能小于1，已跳过加载");
                 continue;
             }
 
@@ -154,7 +158,8 @@ public class GeneratorReader extends YamlReader<CustomGenerator> {
                 ConfigurationSection outputSet = section1.getConfigurationSection("output");
                 output = CommonUtils.readItem(outputSet, true, addon);
                 if (output == null) {
-                    ExceptionHandler.handleError("在附属" + addon.getAddonId() + "中加载发电机" + s + "的燃料" + key + "时遇到了问题: " + "输出物品为空或格式错误，已转为空");
+                    ExceptionHandler.handleError(
+                            "在附属" + addon.getAddonId() + "中加载发电机" + s + "的燃料" + key + "时遇到了问题: " + "输出物品为空或格式错误，已转为空");
                 }
             }
 

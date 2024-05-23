@@ -41,8 +41,8 @@ public class SolarGeneratorReader extends YamlReader<CustomSolarGenerator> {
         ItemStack[] recipe = CommonUtils.readRecipe(section.getConfigurationSection("recipe"), addon);
         String recipeType = section.getString("recipe_type", "NULL");
 
-        Pair<ExceptionHandler.HandleResult, RecipeType> rt =
-                ExceptionHandler.getRecipeType("在附属" + addon.getAddonId() + "中加载太阳能发电机" + s + "时遇到了问题: " + "错误的配方类型" + recipeType + "!", recipeType);
+        Pair<ExceptionHandler.HandleResult, RecipeType> rt = ExceptionHandler.getRecipeType(
+                "在附属" + addon.getAddonId() + "中加载太阳能发电机" + s + "时遇到了问题: " + "错误的配方类型" + recipeType + "!", recipeType);
 
         if (rt.getFirstValue() == ExceptionHandler.HandleResult.FAILED) return null;
 
@@ -65,7 +65,7 @@ public class SolarGeneratorReader extends YamlReader<CustomSolarGenerator> {
 
         if (lightLevel < 0 || lightLevel > 15) {
             ExceptionHandler.handleError(
-                "在附属" + addon.getAddonId() + "中加载太阳能发电机" + s + "时遇到了问题: " + "所需光照等级不能小于0或大于15，已转为15");
+                    "在附属" + addon.getAddonId() + "中加载太阳能发电机" + s + "时遇到了问题: " + "所需光照等级不能小于0或大于15，已转为15");
             lightLevel = 15;
         }
 

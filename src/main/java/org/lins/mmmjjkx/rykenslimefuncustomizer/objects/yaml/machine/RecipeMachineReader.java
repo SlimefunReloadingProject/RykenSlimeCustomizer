@@ -42,8 +42,8 @@ public class RecipeMachineReader extends YamlReader<CustomRecipeMachine> {
         ItemStack[] recipe = CommonUtils.readRecipe(section.getConfigurationSection("recipe"), addon);
         String recipeType = section.getString("recipe_type", "NULL");
 
-        Pair<ExceptionHandler.HandleResult, RecipeType> rt =
-                ExceptionHandler.getRecipeType("在附属" + addon.getAddonId() + "中加载配方机器" + s + "时遇到了问题: " + "错误的配方类型" + recipeType + "!", recipeType);
+        Pair<ExceptionHandler.HandleResult, RecipeType> rt = ExceptionHandler.getRecipeType(
+                "在附属" + addon.getAddonId() + "中加载配方机器" + s + "时遇到了问题: " + "错误的配方类型" + recipeType + "!", recipeType);
 
         if (rt.getFirstValue() == ExceptionHandler.HandleResult.FAILED) return null;
 
@@ -74,7 +74,8 @@ public class RecipeMachineReader extends YamlReader<CustomRecipeMachine> {
         int energy = section.getInt("energyPerCraft");
 
         if (energy <= 0) {
-            ExceptionHandler.handleError("在附属" + addon.getAddonId() + "中加载配方机器" + s + "时遇到了问题: " + "合成一次的消耗能量未设置或小于等于0");
+            ExceptionHandler.handleError(
+                    "在附属" + addon.getAddonId() + "中加载配方机器" + s + "时遇到了问题: " + "合成一次的消耗能量未设置或小于等于0");
             return null;
         }
 
@@ -130,22 +131,26 @@ public class RecipeMachineReader extends YamlReader<CustomRecipeMachine> {
             if (recipes == null) continue;
             int seconds = recipes.getInt("seconds");
             if (seconds < 0) {
-                ExceptionHandler.handleError("在附属" + addon.getAddonId() + "中加载配方机器" + s + "的工作配方" + key + "时遇到了问题: " + "间隔时间未设置或不能小于0");
+                ExceptionHandler.handleError(
+                        "在附属" + addon.getAddonId() + "中加载配方机器" + s + "的工作配方" + key + "时遇到了问题: " + "间隔时间未设置或不能小于0");
                 continue;
             }
             ConfigurationSection inputs = recipes.getConfigurationSection("input");
             if (inputs == null) {
-                ExceptionHandler.handleError("在附属" + addon.getAddonId() + "中加载配方机器" + s + "的工作配方" + key + "时遇到了问题: " + "没有输入物品");
+                ExceptionHandler.handleError(
+                        "在附属" + addon.getAddonId() + "中加载配方机器" + s + "的工作配方" + key + "时遇到了问题: " + "没有输入物品");
                 continue;
             }
             ItemStack[] input = CommonUtils.readRecipe(inputs, addon, inputSize);
             if (input == null) {
-                ExceptionHandler.handleError("在附属" + addon.getAddonId() + "中加载配方机器" + s + "的工作配方" + key + "时遇到了问题: " + "输入物品为空或格式错误");
+                ExceptionHandler.handleError(
+                        "在附属" + addon.getAddonId() + "中加载配方机器" + s + "的工作配方" + key + "时遇到了问题: " + "输入物品为空或格式错误");
                 continue;
             }
             ConfigurationSection outputs = recipes.getConfigurationSection("output");
             if (outputs == null) {
-                ExceptionHandler.handleError("在附属" + addon.getAddonId() + "中加载配方机器" + s + "的工作配方" + key + "时遇到了问题: " + "没有输出物品");
+                ExceptionHandler.handleError(
+                        "在附属" + addon.getAddonId() + "中加载配方机器" + s + "的工作配方" + key + "时遇到了问题: " + "没有输出物品");
                 continue;
             }
 
@@ -159,7 +164,8 @@ public class RecipeMachineReader extends YamlReader<CustomRecipeMachine> {
                     int chance = section1.getInt("chance", 100);
 
                     if (chance < 1) {
-                        ExceptionHandler.handleError("在附属" + addon.getAddonId() + "中加载配方机器" + s + "的工作配方" + key + "时遇到了问题: " + "概率不应该小于1，已转为1");
+                        ExceptionHandler.handleError("在附属" + addon.getAddonId() + "中加载配方机器" + s + "的工作配方" + key
+                                + "时遇到了问题: " + "概率不应该小于1，已转为1");
                         chance = 1;
                     }
 
