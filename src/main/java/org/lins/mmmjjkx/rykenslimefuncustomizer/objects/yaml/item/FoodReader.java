@@ -29,7 +29,10 @@ public class FoodReader extends YamlReader<CustomFood> {
     public CustomFood readEach(String s) {
         ConfigurationSection section = configuration.getConfigurationSection(s);
         if (section == null) return null;
-        ExceptionHandler.HandleResult result = ExceptionHandler.handleIdConflict(s);
+
+        String id = getAttribute(s + ".id_alias", s);
+
+        ExceptionHandler.HandleResult result = ExceptionHandler.handleIdConflict(id);
 
         if (result == ExceptionHandler.HandleResult.FAILED) return null;
 
@@ -38,7 +41,7 @@ public class FoodReader extends YamlReader<CustomFood> {
         Pair<ExceptionHandler.HandleResult, ItemGroup> group = ExceptionHandler.handleItemGroupGet(addon, igId);
         if (group.getFirstValue() == ExceptionHandler.HandleResult.FAILED) return null;
 
-        SlimefunItemStack sfis = getPreloadItem(s);
+        SlimefunItemStack sfis = getPreloadItem(id);
         if (sfis == null) return null;
 
         ItemStack[] itemStacks = CommonUtils.readRecipe(section.getConfigurationSection("recipe"), addon);
@@ -61,7 +64,9 @@ public class FoodReader extends YamlReader<CustomFood> {
         }
 
         if (CommonUtils.versionToCode(Bukkit.getMinecraftVersion()) >= 1205) {
-            sfis = nbtApply(section, sfis);
+            if (Bukkit.getPluginManager().isPluginEnabled("NBTAPI")) {
+                sfis = nbtApply(section, sfis);
+            }
         }
 
         return new CustomFood(group.getSecondValue(), sfis, rt.getSecondValue(), itemStacks, eval);
@@ -103,6 +108,8 @@ public class FoodReader extends YamlReader<CustomFood> {
 
         if (section == null) return null;
 
+        String id = getAttribute(s + ".id_alias", s);
+
         ConfigurationSection item = section.getConfigurationSection("item");
         ItemStack stack = CommonUtils.readItem(item, false, addon);
         if (stack == null) {
@@ -110,7 +117,7 @@ public class FoodReader extends YamlReader<CustomFood> {
             return null;
         }
 
-        SlimefunItemStack sfis = new SlimefunItemStack(s, stack);
+        SlimefunItemStack sfis = new SlimefunItemStack(id, stack);
 
         return List.of(sfis);
     }

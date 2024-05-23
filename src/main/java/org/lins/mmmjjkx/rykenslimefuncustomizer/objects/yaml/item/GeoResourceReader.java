@@ -30,7 +30,9 @@ public class GeoResourceReader extends YamlReader<CustomGeoResource> {
     public CustomGeoResource readEach(String s) {
         ConfigurationSection section = configuration.getConfigurationSection(s);
         if (section != null) {
-            ExceptionHandler.HandleResult result = ExceptionHandler.handleIdConflict(s);
+            String id = getAttribute(s + ".id_alias", s);
+
+            ExceptionHandler.HandleResult result = ExceptionHandler.handleIdConflict(id);
             if (result == ExceptionHandler.HandleResult.FAILED) return null;
 
             String igId = section.getString("item_group");
@@ -38,7 +40,7 @@ public class GeoResourceReader extends YamlReader<CustomGeoResource> {
             Pair<ExceptionHandler.HandleResult, ItemGroup> group = ExceptionHandler.handleItemGroupGet(addon, igId);
             if (group.getFirstValue() == ExceptionHandler.HandleResult.FAILED) return null;
 
-            SlimefunItemStack sfis = getPreloadItem(s);
+            SlimefunItemStack sfis = getPreloadItem(id);
             if (sfis == null) return null;
 
             ItemStack[] recipe = CommonUtils.readRecipe(section.getConfigurationSection("recipe"), addon);
@@ -144,6 +146,8 @@ public class GeoResourceReader extends YamlReader<CustomGeoResource> {
 
         if (section == null) return null;
 
+        String id = getAttribute(s + ".id_alias", s);
+
         ConfigurationSection item = section.getConfigurationSection("item");
         ItemStack stack = CommonUtils.readItem(item, false, addon);
         if (stack == null) {
@@ -151,8 +155,6 @@ public class GeoResourceReader extends YamlReader<CustomGeoResource> {
             return null;
         }
 
-        SlimefunItemStack sfis = new SlimefunItemStack(s, stack);
-
-        return List.of(sfis);
+        return List.of(new SlimefunItemStack(id, stack));
     }
 }

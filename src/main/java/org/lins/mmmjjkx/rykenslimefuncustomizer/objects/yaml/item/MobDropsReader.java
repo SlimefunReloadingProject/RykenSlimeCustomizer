@@ -28,7 +28,9 @@ public class MobDropsReader extends YamlReader<CustomMobDrop> {
     public CustomMobDrop readEach(String s) {
         ConfigurationSection section = configuration.getConfigurationSection(s);
         if (section != null) {
-            ExceptionHandler.HandleResult result = ExceptionHandler.handleIdConflict(s);
+            String id = getAttribute(s + ".id_alias", s);
+
+            ExceptionHandler.HandleResult result = ExceptionHandler.handleIdConflict(id);
             if (result == ExceptionHandler.HandleResult.FAILED) return null;
 
             String igId = section.getString("item_group");
@@ -36,7 +38,7 @@ public class MobDropsReader extends YamlReader<CustomMobDrop> {
             Pair<ExceptionHandler.HandleResult, ItemGroup> group = ExceptionHandler.handleItemGroupGet(addon, igId);
             if (group.getFirstValue() == ExceptionHandler.HandleResult.FAILED) return null;
 
-            SlimefunItemStack sfis = getPreloadItem(s);
+            SlimefunItemStack sfis = getPreloadItem(id);
             if (sfis == null) return null;
 
             String type = section.getString("entity");
@@ -90,6 +92,8 @@ public class MobDropsReader extends YamlReader<CustomMobDrop> {
 
         if (section == null) return null;
 
+        String id = getAttribute(s + ".id_alias", s);
+
         ConfigurationSection item = section.getConfigurationSection("item");
         ItemStack stack = CommonUtils.readItem(item, false, addon);
         if (stack == null) {
@@ -97,7 +101,7 @@ public class MobDropsReader extends YamlReader<CustomMobDrop> {
             return null;
         }
 
-        SlimefunItemStack sfis = new SlimefunItemStack(s, stack);
+        SlimefunItemStack sfis = new SlimefunItemStack(id, stack);
 
         return List.of(sfis);
     }

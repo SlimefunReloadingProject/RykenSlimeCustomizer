@@ -25,7 +25,9 @@ public class CapacitorsReader extends YamlReader<Capacitor> {
     public Capacitor readEach(String s) {
         ConfigurationSection section = configuration.getConfigurationSection(s);
         if (section == null) return null;
-        ExceptionHandler.HandleResult result = ExceptionHandler.handleIdConflict(s);
+
+        String id = getAttribute(s + ".id_alias", s);
+        ExceptionHandler.HandleResult result = ExceptionHandler.handleIdConflict(id);
 
         if (result == ExceptionHandler.HandleResult.FAILED) return null;
 
@@ -34,7 +36,7 @@ public class CapacitorsReader extends YamlReader<Capacitor> {
         Pair<ExceptionHandler.HandleResult, ItemGroup> group = ExceptionHandler.handleItemGroupGet(addon, igId);
         if (group.getFirstValue() == ExceptionHandler.HandleResult.FAILED) return null;
 
-        SlimefunItemStack sfis = getPreloadItem(s);
+        SlimefunItemStack sfis = getPreloadItem(id);
         if (sfis == null) return null;
 
         ItemStack[] recipe = CommonUtils.readRecipe(section.getConfigurationSection("recipe"), addon);
@@ -70,6 +72,8 @@ public class CapacitorsReader extends YamlReader<Capacitor> {
         ConfigurationSection item = section.getConfigurationSection("item");
         ItemStack stack = CommonUtils.readItem(item, false, addon);
 
+        String id = getAttribute(s + ".id_alias", s);
+
         if (stack == null) {
             ExceptionHandler.handleError("无法在附属" + addon.getAddonName() + "中加载电容" + s + ": 物品为空或格式错误导致无法加载");
             return null;
@@ -80,6 +84,6 @@ public class CapacitorsReader extends YamlReader<Capacitor> {
             return null;
         }
 
-        return List.of(new SlimefunItemStack(s, stack));
+        return List.of(new SlimefunItemStack(id, stack));
     }
 }

@@ -47,7 +47,9 @@ public class ItemReader extends YamlReader<SlimefunItem> {
     public SlimefunItem readEach(String s) {
         ConfigurationSection section = configuration.getConfigurationSection(s);
         if (section == null) return null;
-        ExceptionHandler.HandleResult result = ExceptionHandler.handleIdConflict(s);
+        String id = getAttribute(s + ".id_alias", s);
+
+        ExceptionHandler.HandleResult result = ExceptionHandler.handleIdConflict(id);
 
         if (result == ExceptionHandler.HandleResult.FAILED) return null;
 
@@ -56,7 +58,7 @@ public class ItemReader extends YamlReader<SlimefunItem> {
         Pair<ExceptionHandler.HandleResult, ItemGroup> group = ExceptionHandler.handleItemGroupGet(addon, igId);
         if (group.getFirstValue() == ExceptionHandler.HandleResult.FAILED) return null;
 
-        SlimefunItemStack sfis = getPreloadItem(s);
+        SlimefunItemStack sfis = getPreloadItem(id);
         if (sfis == null) return null;
 
         ItemStack[] itemStacks = CommonUtils.readRecipe(section.getConfigurationSection("recipe"), addon);
@@ -242,6 +244,8 @@ public class ItemReader extends YamlReader<SlimefunItem> {
 
         if (section == null) return null;
 
+        String id = getAttribute(s + ".id_alias", s);
+
         ConfigurationSection item = section.getConfigurationSection("item");
         ItemStack stack = CommonUtils.readItem(item, false, addon);
         if (stack == null) {
@@ -249,9 +253,7 @@ public class ItemReader extends YamlReader<SlimefunItem> {
             return null;
         }
 
-        SlimefunItemStack sfis = new SlimefunItemStack(s, stack);
-
-        return List.of(sfis);
+        return List.of(new SlimefunItemStack(id, stack));
     }
 
     @SneakyThrows
@@ -280,13 +282,11 @@ public class ItemReader extends YamlReader<SlimefunItem> {
 
         BaseRadiationItem instance;
 
-        var sfis = new SlimefunItemStack(id, original);
-
         if (energy) {
             double energyCapacity = section.getDouble("energy_capacity");
             instance = new CustomEnergyRadiationItem(
                     itemGroup,
-                    new SlimefunItemStack(id, original),
+                    original,
                     recipeType,
                     recipe,
                     radioactivity,
@@ -367,15 +367,15 @@ public class ItemReader extends YamlReader<SlimefunItem> {
                             if (split.length == 2) {
                                 int min = Integer.parseInt(split[0]);
                                 int max = Integer.parseInt(split[1]);
-                                DropFromBlock.addDrop(material, new DropFromBlock.Drop(sfis, chance, addon, min, max));
+                                DropFromBlock.addDrop(material, new DropFromBlock.Drop(original, chance, addon, min, max));
                             } else {
                                 ExceptionHandler.handleError(
                                         "无法在附属" + addon.getAddonName() + "中读取掉落数量区间" + between + "，已把掉落数量转为1");
-                                DropFromBlock.addDrop(material, new DropFromBlock.Drop(sfis, chance, addon));
+                                DropFromBlock.addDrop(material, new DropFromBlock.Drop(original, chance, addon));
                             }
                         }
                     } else {
-                        DropFromBlock.addDrop(material, new DropFromBlock.Drop(sfis, chance, addon, amount, amount));
+                        DropFromBlock.addDrop(material, new DropFromBlock.Drop(original, chance, addon, amount, amount));
                     }
                 }
             } else {

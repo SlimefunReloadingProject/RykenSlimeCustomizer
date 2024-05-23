@@ -50,7 +50,7 @@ public class ArmorReader extends YamlReader<List<CustomArmorPiece>> {
             ConfigurationSection pieceSection = section.getConfigurationSection(check);
             if (pieceSection == null) continue;
 
-            String id = pieceSection.getString("id", "");
+            String pieceId = pieceSection.getString("id", "");
 
             ExceptionHandler.HandleResult result = ExceptionHandler.handleIdConflict(s);
             if (result == ExceptionHandler.HandleResult.FAILED) return null;
@@ -61,7 +61,7 @@ public class ArmorReader extends YamlReader<List<CustomArmorPiece>> {
                     ExceptionHandler.getRecipeType("错误的配方类型" + recipeType + "!", recipeType);
             if (rt.getFirstValue() == ExceptionHandler.HandleResult.FAILED) return null;
 
-            SlimefunItemStack sfis = getPreloadItem(id);
+            SlimefunItemStack sfis = getPreloadItem(pieceId);
             if (sfis == null) return null;
 
             ConfigurationSection recipeSection = pieceSection.getConfigurationSection("recipe");
@@ -123,6 +123,8 @@ public class ArmorReader extends YamlReader<List<CustomArmorPiece>> {
             ConfigurationSection pieceSection = section.getConfigurationSection(check);
             if (pieceSection == null) continue;
 
+            String id = pieceSection.getString(".id_alias", pieceSection.getString("id", ""));
+
             ItemStack stack = CommonUtils.readItem(pieceSection, false, addon);
             if (stack == null) {
                 ExceptionHandler.handleError(
@@ -130,7 +132,7 @@ public class ArmorReader extends YamlReader<List<CustomArmorPiece>> {
                 continue;
             }
 
-            SlimefunItemStack sfis = new SlimefunItemStack(pieceSection.getString("id", ""), stack);
+            SlimefunItemStack sfis = new SlimefunItemStack(id, stack);
             items.add(sfis);
         }
 
