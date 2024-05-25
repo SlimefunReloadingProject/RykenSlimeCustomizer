@@ -230,8 +230,13 @@ public class SingleItemRecipeGuide implements Listener {
 
             int seconds = recipe.getTicks() / 2;
 
-            progressBar = new CustomItemStack(
-                    progressBar, "&e制作时间: &b" + seconds + "&es(&b" + formatSeconds(seconds) + "&e)");
+            String rawName = "&e制作时间: &b" + seconds + "&es";
+
+            if (seconds > 60) {
+                rawName = rawName.concat("("+formatSeconds(seconds)+"&e)");
+            }
+
+            progressBar = new CustomItemStack(progressBar, rawName);
 
             addItem(progressSlot, progressBar, (pl, s, is, action) -> false);
         }
@@ -250,20 +255,20 @@ public class SingleItemRecipeGuide implements Listener {
             CommonUtils.addLore(item, true, CMIChatColor.translate("&a有&b " + chance + "% &a的概率产出"));
             return item;
         }
+    }
 
-        private String formatSeconds(int seconds) {
-            if (seconds < 60) {
-                return seconds + "s";
-            } else if (seconds > 60 && seconds < 3600) {
-                int m = seconds / 60;
-                int s = seconds % 60;
-                return m + "min" + s + "s";
-            } else {
-                int h = seconds / 3600;
-                int m = (seconds % 3600) / 60;
-                int s = (seconds % 3600) % 60;
-                return h + "h" + m + "min" + s + "s";
-            }
+    public static String formatSeconds(int seconds) {
+        if (seconds < 60) {
+            return "&b" + seconds + "&es";
+        } else if (seconds > 60 && seconds < 3600) {
+            int m = seconds / 60;
+            int s = seconds % 60;
+            return "&b" + m + "&emin" + (s != 0 ? "&b" + s + "&es" : "");
+        } else {
+            int h = seconds / 3600;
+            int m = (seconds % 3600) / 60;
+            int s = (seconds % 3600) % 60;
+            return "&b" + h + "&eh" + (m != 0 ? "&b" + m + "&emin" : "" ) + (s != 0 ? "&b" + s + "&es" : "");
         }
     }
 }

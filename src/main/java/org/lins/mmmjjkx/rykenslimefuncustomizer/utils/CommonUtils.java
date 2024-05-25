@@ -39,7 +39,7 @@ import org.lins.mmmjjkx.rykenslimefuncustomizer.objects.customs.item.RSCItemStac
 import org.lins.mmmjjkx.rykenslimefuncustomizer.objects.global.XMaterial;
 
 public class CommonUtils {
-    public static <T extends ItemStack> T doGlow(T item) {
+    public static ItemStack doGlow(ItemStack item) {
         item.addUnsafeEnchantment(Enchantment.LUCK, 1);
         item.addItemFlags(ItemFlag.HIDE_ENCHANTS);
 
@@ -253,9 +253,9 @@ public class CommonUtils {
             if (emptyLine) {
                 lorel.add("");
             }
-            lorel.addAll(Arrays.asList(lore));
+            lorel.addAll(CMIChatColor.translate(Arrays.asList(lore)));
         } else {
-            lorel = Arrays.asList(lore);
+            lorel = CMIChatColor.translate(Arrays.asList(lore));
         }
         im.setLore(lorel);
         stack.setItemMeta(im);

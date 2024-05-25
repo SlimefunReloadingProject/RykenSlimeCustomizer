@@ -22,7 +22,6 @@ import org.jetbrains.annotations.NotNull;
 import org.jetbrains.annotations.Nullable;
 import org.lins.mmmjjkx.rykenslimefuncustomizer.objects.customs.CustomMenu;
 import org.lins.mmmjjkx.rykenslimefuncustomizer.objects.customs.parent.AbstractEmptyMachine;
-import org.lins.mmmjjkx.rykenslimefuncustomizer.objects.machine.BlockMenuWrapper;
 import org.lins.mmmjjkx.rykenslimefuncustomizer.objects.machine.MachineInfo;
 import org.lins.mmmjjkx.rykenslimefuncustomizer.objects.machine.MachineRecord;
 import org.lins.mmmjjkx.rykenslimefuncustomizer.objects.machine.ScriptedEvalBreakHandler;
@@ -92,7 +91,7 @@ public class CustomMachine extends AbstractEmptyMachine<MachineOperation> implem
         if (eval != null) {
             BlockMenu blockMenu = StorageCacheUtils.getMenu(b.getLocation());
             MachineInfo info = new MachineInfo(
-                    blockMenu == null ? null : new BlockMenuWrapper(blockMenu),
+                    blockMenu,
                     data,
                     item,
                     b,
