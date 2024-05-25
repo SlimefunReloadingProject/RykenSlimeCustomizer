@@ -89,10 +89,10 @@ softdepend:
   - CrispyMachine
   - DimensionTraveler
   - Chocohills
-  - draconic # 疑似新版
-  - DracFun # 疑似旧版(?
-  - EzSFAddon # 疑似旧版
-  - EzTech # 疑似新版
+  - draconic # 疑似新版↓
+  - DracFun # 疑似旧版↑
+  - EzSFAddon # 疑似旧版↓
+  - EzTech # 疑似新版↑
   - RandomExpansion
   - ExLimus
   - MoneyAndThings
@@ -106,6 +106,8 @@ softdepend:
   - RelicsOfCthonia
   - Supreme
   - DyeBench
+  - OreGeneration
+  - Huolaiy
   - MiniBlocks
   - SlimeHUD
   - SpiritsUnchained

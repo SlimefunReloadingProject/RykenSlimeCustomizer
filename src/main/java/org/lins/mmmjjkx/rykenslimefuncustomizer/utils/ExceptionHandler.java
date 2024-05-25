@@ -112,17 +112,29 @@ public class ExceptionHandler {
     }
 
     public static Pair<HandleResult, ItemGroup> handleItemGroupGet(ProjectAddon addon, String id) {
-        ItemGroup ig = CommonUtils.getIf(
-                addon.getItemGroups(), i -> i.getKey().getKey().equalsIgnoreCase(id));
+        // fast path
+        ItemGroup ig = CommonUtils.getIf(addon.getItemGroups(), i -> i.getKey().getKey().equalsIgnoreCase(id));
+        
+        // 检测是否为rsc内部分类
         if (ig == null) {
-            ItemGroup ig2 = CommonUtils.getIf(
-                    Slimefun.getRegistry().getAllItemGroups(),
-                    i -> i.getKey().getKey().equalsIgnoreCase(id));
-            if (ig2 == null) {
-                handleError("无法在附属" + addon.getAddonName() + "中找到该物品组 " + id);
+            // 检测是否为外部分类
+            if (id.startsWith("outside")){
+                String[] group = id.substring(8).split(":");
+                if (group.length != 2) {
+                    console.sendMessage(CMIChatColor.translate("&4ERROR | 分类 " + id + " 格式错误。 示例: outside:slimefun:misc"));
+                    return new Pair<>(HandleResult.FAILED, null);
+                }
+                // 命名空间+名字
+                for (ItemGroup itemGroup : Slimefun.getRegistry().getAllItemGroups()) {
+                    if (itemGroup.getKey().getNamespace().equals(group[0]) && itemGroup.getKey().getKey().equals(group[1])) {
+                        return new Pair<>(HandleResult.SUCCESS, itemGroup);
+                    }
+                }
+                console.sendMessage(CMIChatColor.translate("&4ERROR | 无法找到分类 " + id + "！"));
                 return new Pair<>(HandleResult.FAILED, null);
             }
-            return new Pair<>(HandleResult.SUCCESS, ig2);
+            console.sendMessage(CMIChatColor.translate("&4ERROR | 分类 " + id + " 格式错误。 示例: outside:slimefun:misc"));
+            return new Pair<>(HandleResult.FAILED, null);
         }
         return new Pair<>(HandleResult.SUCCESS, ig);
     }
