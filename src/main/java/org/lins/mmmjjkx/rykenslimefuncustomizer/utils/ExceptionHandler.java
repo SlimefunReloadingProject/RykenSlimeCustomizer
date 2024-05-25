@@ -6,6 +6,8 @@ import io.github.thebusybiscuit.slimefun4.api.recipes.RecipeType;
 import io.github.thebusybiscuit.slimefun4.implementation.Slimefun;
 import io.github.thebusybiscuit.slimefun4.libraries.dough.collections.Pair;
 import java.lang.reflect.Field;
+import java.util.List;
+
 import org.bukkit.Bukkit;
 import org.bukkit.command.ConsoleCommandSender;
 import org.jetbrains.annotations.NotNull;
@@ -38,18 +40,18 @@ public class ExceptionHandler {
     }
 
     public static HandleResult handleGroupIdConflict(String id) {
+        List<ItemGroup> allGroups = Slimefun.getRegistry().getAllItemGroups();
         ItemGroup ig = CommonUtils.getIf(
-                Slimefun.getRegistry().getAllItemGroups(),
+                allGroups,
                 i -> i.getKey().getKey().equalsIgnoreCase(id));
         if (ig != null) {
-            if (ig.getAddon() != null) {
-                console.sendMessage(CMIChatColor.translate("&4ERROR | ID冲突：" + id + "与物品组 "
-                        + ig.getKey().getKey() + "(来自" + ig.getAddon().getName() + ")发生ID冲突"));
-                return HandleResult.FAILED;
+            for (ItemGroup itemGroup : allGroups) {
+                if (itemGroup.getKey().getNamespace().equals("rykenslimecustomizer") && itemGroup.getKey().getKey().equals(id)) {
+                    console.sendMessage(CMIChatColor.translate("&4ERROR | ID冲突：" + id + "与物品组 "
+                            + ig.getKey().getKey() + "发生ID冲突"));
+                    return HandleResult.FAILED;
+                }
             }
-            console.sendMessage(CMIChatColor.translate(
-                    "&4ERROR | ID冲突：" + id + "与物品组 " + ig.getKey().getKey() + "发生ID冲突"));
-            return HandleResult.FAILED;
         }
         return HandleResult.SUCCESS;
     }
@@ -114,26 +116,21 @@ public class ExceptionHandler {
     public static Pair<HandleResult, ItemGroup> handleItemGroupGet(ProjectAddon addon, String id) {
         // fast path
         ItemGroup ig = CommonUtils.getIf(addon.getItemGroups(), i -> i.getKey().getKey().equalsIgnoreCase(id));
-        
+
         // 检测是否为rsc内部分类
-        if (ig == null) {
-            // 检测是否为外部分类
-            if (id.startsWith("outside")){
-                String[] group = id.substring(8).split(":");
-                if (group.length != 2) {
-                    console.sendMessage(CMIChatColor.translate("&4ERROR | 分类 " + id + " 格式错误。 示例: outside:slimefun:misc"));
-                    return new Pair<>(HandleResult.FAILED, null);
-                }
-                // 命名空间+名字
-                for (ItemGroup itemGroup : Slimefun.getRegistry().getAllItemGroups()) {
-                    if (itemGroup.getKey().getNamespace().equals(group[0]) && itemGroup.getKey().getKey().equals(group[1])) {
-                        return new Pair<>(HandleResult.SUCCESS, itemGroup);
-                    }
-                }
-                console.sendMessage(CMIChatColor.translate("&4ERROR | 无法找到分类 " + id + "！"));
+        if ((ig == null) && (id.startsWith("outside"))){
+            String[] group = id.substring(8).split(":");
+            if (group.length != 2) {
+                console.sendMessage(CMIChatColor.translate("&4ERROR | 分类 " + id + " 格式错误。 示例: outside:slimefun:misc"));
                 return new Pair<>(HandleResult.FAILED, null);
             }
-            console.sendMessage(CMIChatColor.translate("&4ERROR | 分类 " + id + " 格式错误。 示例: outside:slimefun:misc"));
+            // 命名空间+名字
+            for (ItemGroup itemGroup : Slimefun.getRegistry().getAllItemGroups()) {
+                if (itemGroup.getKey().getNamespace().equals(group[0]) && itemGroup.getKey().getKey().equals(group[1])) {
+                    return new Pair<>(HandleResult.SUCCESS, itemGroup);
+                }
+            }
+            console.sendMessage(CMIChatColor.translate("&4ERROR | 无法找到分类 " + id + "！"));
             return new Pair<>(HandleResult.FAILED, null);
         }
         return new Pair<>(HandleResult.SUCCESS, ig);
