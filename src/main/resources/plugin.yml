@@ -123,6 +123,8 @@ softdepend:
   - ThermalFun
   - FastMachines
   - MomoTech
+  - OreGeneration
+  - Huolaiy
   - EnchanterLimit
   - SlimeAE
   - SlimeChem
