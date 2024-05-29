@@ -2,7 +2,7 @@ package org.lins.mmmjjkx.rykenslimefuncustomizer.objects.customs;
 
 import io.github.thebusybiscuit.slimefun4.api.items.SlimefunItem;
 import io.github.thebusybiscuit.slimefun4.implementation.Slimefun;
-import io.github.thebusybiscuit.slimefun4.libraries.dough.protection.Interaction;
+
 import java.util.HashMap;
 import java.util.Map;
 import lombok.Getter;
@@ -12,9 +12,7 @@ import me.mrCookieSlime.CSCoreLibPlugin.general.Inventory.ClickAction;
 import me.mrCookieSlime.Slimefun.Objects.SlimefunItem.abstractItems.AContainer;
 import me.mrCookieSlime.Slimefun.Objects.SlimefunItem.interfaces.InventoryBlock;
 import me.mrCookieSlime.Slimefun.api.inventory.BlockMenuPreset;
-import me.mrCookieSlime.Slimefun.api.item_transport.ItemTransportFlow;
 import org.bukkit.Bukkit;
-import org.bukkit.block.Block;
 import org.bukkit.entity.Player;
 import org.bukkit.inventory.Inventory;
 import org.bukkit.inventory.ItemStack;
@@ -156,7 +154,7 @@ public class CustomMenu {
     }
 
     private ChestMenu.MenuClickHandler getClickHandler(int slot) {
-        return clickHandlers.getOrDefault(slot, ((player, i, itemStack, clickAction) -> true));
+        return clickHandlers.getOrDefault(slot, (player, i, itemStack, clickAction) -> true);
     }
 
     @Nullable public ItemStack getProgressBarItem() {
@@ -167,12 +165,6 @@ public class CustomMenu {
         return id;
     }
 
-    public void reInit() {
-        Slimefun.getRegistry().getMenuPresets().remove(id);
-        BlockMenuPreset preset = createSimplePreset();
-        apply(preset);
-        Slimefun.getRegistry().getMenuPresets().put(id, preset);
-    }
 
     private void cloneFromPresetInventory(BlockMenuPreset preset) {
         preset.getContents();
@@ -208,28 +200,6 @@ public class CustomMenu {
 
     public void addMenuClickHandler(int i, ChestMenu.MenuClickHandler onClick) {
         clickHandlers.put(i, onClick);
-    }
-
-    protected BlockMenuPreset createSimplePreset() {
-        return new BlockMenuPreset(id, title) {
-            @Override
-            public void init() {
-                apply(this);
-            }
-
-            @Override
-            public boolean canOpen(@NotNull Block b, @NotNull Player p) {
-                return Slimefun.getProtectionManager().hasPermission(p, b.getLocation(), Interaction.INTERACT_BLOCK);
-            }
-
-            @Override
-            public int[] getSlotsAccessedByItemTransport(ItemTransportFlow flow) {
-                if (invb == null) {
-                    return new int[0];
-                }
-                return flow == ItemTransportFlow.INSERT ? invb.getInputSlots() : invb.getOutputSlots();
-            }
-        };
     }
 
     public void apply(BlockMenuPreset preset) {

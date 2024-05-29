@@ -11,7 +11,7 @@ import io.github.thebusybiscuit.slimefun4.core.attributes.RecipeDisplayItem;
 import io.github.thebusybiscuit.slimefun4.core.networks.energy.EnergyNetComponentType;
 import io.github.thebusybiscuit.slimefun4.implementation.handlers.SimpleBlockBreakHandler;
 import io.github.thebusybiscuit.slimefun4.libraries.dough.items.CustomItemStack;
-import io.github.thebusybiscuit.slimefun4.utils.ChestMenuUtils;
+
 import java.util.ArrayList;
 import java.util.Collections;
 import java.util.List;
@@ -67,8 +67,6 @@ public class CustomMaterialGenerator extends SlimefunItem
                 }
             }
         });
-
-        menu.addMenuClickHandler(statusSlot, ChestMenuUtils.getEmptyClickHandler());
 
         createPreset(this, menu::apply);
 

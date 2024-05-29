@@ -6,6 +6,8 @@ import io.github.thebusybiscuit.slimefun4.api.recipes.RecipeType;
 import io.github.thebusybiscuit.slimefun4.libraries.dough.collections.Pair;
 import java.util.Arrays;
 import java.util.List;
+
+import io.github.thebusybiscuit.slimefun4.utils.ChestMenuUtils;
 import org.bukkit.configuration.ConfigurationSection;
 import org.bukkit.configuration.file.YamlConfiguration;
 import org.bukkit.inventory.ItemStack;
@@ -102,7 +104,10 @@ public class MaterialGeneratorReader extends YamlReader<CustomMaterialGenerator>
                 Arrays.asList(out),
                 menu,
                 per);
+
         menu.setInvb(cmg);
+        menu.addMenuClickHandler(status, ChestMenuUtils.getEmptyClickHandler());
+
         return cmg;
     }
 
