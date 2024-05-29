@@ -5,8 +5,10 @@ api-version: '1.18'
 depend: [Slimefun]
 softdepend:
   - GuizhanLibPlugin
+  - SlimeGlue
   - ColoredEnderChests
   - DyedBackpacks
+  - EnderCargo
   - EcoPower
   - ElectricSpawners
   - ExoticGarden
@@ -14,6 +16,7 @@ softdepend:
   - ExtraHeads
   - HotbarPets
   - luckyblocks-sf
+  - RedstoneConnector
   - PrivateStorage
   - SlimefunOreChunks
   - SlimyTreeTaps
@@ -23,6 +26,7 @@ softdepend:
   - QuickMarket
   - QuickSell
   - RankPrefixPlus
+  - MoreTools
   - LiteXpansion
   - MobCapturer
   - SoundMuffler
@@ -32,29 +36,36 @@ softdepend:
   - SFCalc
   - SlimefunWarfare
   - Slimy-Power-Suits
+  - InfernalExpansion
   - FluffyMachines
   - SlimyRepair
   - InfinityExpansion
   - FoxyMachines
   - GlobalWarming
+  - GlobiaMachines
   - DynaTech
   - GeneticChickengineering
   - HeadLimiter
+  - BlockLimiter
   - SlimeXpansion
   - Barrels
   #- ClayTech
   - FNAmplifications
   - SimpleMaterialGenerators
+  - Netheopoiesis
   - Networks
   - EMC2
-  - Simple-Storage
+  - Nexcavate
+  - SimpleStorage
+  - SimpleUtils
   - AlchimiaVitae
   - SlimeTinker
   - PotionExpansion
   - FlowerPower
   - Galactifun
-  - Element-Manipulation
+  - ElementManipulation
   - CrystamaeHistoria
+  - DankTech
   - DankTech2
   - Networks
   - VillagerUtil
@@ -62,18 +73,26 @@ softdepend:
   - SensibleToolbox
   - Endrex
   - Bump
-  - FinalTech
+  - FinalTech # For build 29- (included)
+  - FinalTECH # For build 29+
+  - SlimefunLuckyBlocks
   - FutureTech
-  - bedrocktechnology
+  - DemonicExpansion
+  - BedrockTechnology
   - SlimefunItemExpansion
   - SupplementalServiceableness
   - GuizhanCraft
-  - UltimateGenerators-RC27
+  - Magmanimous
+  - UltimateGenerators-RC27 # 不确定是否存在这个版本
+  - UltimateGenerators # 构建站有
+  - UltimateGenerators2 # 同上
   - CrispyMachine
   - DimensionTraveler
   - Chocohills
-  - draconic
-  - EzSFAddon
+  - draconic # 疑似新版
+  - DracFun # 疑似旧版(?
+  - EzSFAddon # 疑似旧版
+  - EzTech # 疑似新版
   - RandomExpansion
   - ExLimus
   - MoneyAndThings
@@ -93,15 +112,34 @@ softdepend:
   - Cultivation
   - Gastronomicon
   - SmallSpace
+  - BetterReactor
   - BetterGenerator
   - VillagerTrade
   - SlimeFrame
   - AdvancedTech
   - Quaptics
+  - CompressionCraft
+  - CringleBosses
+  - ThermalFun
   - FastMachines
-  - SlimeCustomizer
+  - MomoTech
+  - OreGeneration
+  - Huolaiy
+  - EnchanterLimit
   - SlimeAE
-   #Other plugins
+  - SlimeChem
+  - WilderNether
+  - MapJammers
+  - Cakecraft
+  - SFMobDrops
+  - Drugfun
+  - SlimefunNukes
+  - SlimeCustomizer
+  - SlimefunAdvancements
+  - HardcoreSlimefun
+  - SfChunkInfo
+  - SlimefunTranslation
+  # Other plugins
   - PlaceholderAPI
   - NBTAPI
 authors: [mmmjjkx]
