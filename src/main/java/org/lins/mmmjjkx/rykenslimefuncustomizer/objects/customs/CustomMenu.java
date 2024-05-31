@@ -2,7 +2,6 @@ package org.lins.mmmjjkx.rykenslimefuncustomizer.objects.customs;
 
 import io.github.thebusybiscuit.slimefun4.api.items.SlimefunItem;
 import io.github.thebusybiscuit.slimefun4.implementation.Slimefun;
-
 import java.util.HashMap;
 import java.util.Map;
 import lombok.Getter;
@@ -164,7 +163,6 @@ public class CustomMenu {
     public String getID() {
         return id;
     }
-
 
     private void cloneFromPresetInventory(BlockMenuPreset preset) {
         preset.getContents();

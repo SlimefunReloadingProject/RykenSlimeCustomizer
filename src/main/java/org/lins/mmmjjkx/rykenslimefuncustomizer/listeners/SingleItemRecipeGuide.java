@@ -233,7 +233,7 @@ public class SingleItemRecipeGuide implements Listener {
             String rawName = "&e制作时间: &b" + seconds + "&es";
 
             if (seconds > 60) {
-                rawName = rawName.concat("("+formatSeconds(seconds)+"&e)");
+                rawName = rawName.concat("(" + formatSeconds(seconds) + "&e)");
             }
 
             progressBar = new CustomItemStack(progressBar, rawName);
@@ -268,7 +268,7 @@ public class SingleItemRecipeGuide implements Listener {
             int h = seconds / 3600;
             int m = (seconds % 3600) / 60;
             int s = (seconds % 3600) % 60;
-            return "&b" + h + "&eh" + (m != 0 ? "&b" + m + "&emin" : "" ) + (s != 0 ? "&b" + s + "&es" : "");
+            return "&b" + h + "&eh" + (m != 0 ? "&b" + m + "&emin" : "") + (s != 0 ? "&b" + s + "&es" : "");
         }
     }
 }
