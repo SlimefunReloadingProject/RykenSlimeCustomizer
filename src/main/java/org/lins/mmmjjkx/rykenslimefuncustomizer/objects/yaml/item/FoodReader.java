@@ -8,7 +8,6 @@ import io.github.thebusybiscuit.slimefun4.api.recipes.RecipeType;
 import io.github.thebusybiscuit.slimefun4.libraries.dough.collections.Pair;
 import java.io.File;
 import java.util.List;
-
 import org.bukkit.Bukkit;
 import org.bukkit.configuration.ConfigurationSection;
 import org.bukkit.configuration.file.YamlConfiguration;
@@ -75,18 +74,18 @@ public class FoodReader extends YamlReader<CustomFood> {
         boolean alwaysEatable = section.getBoolean("always_eatable", false);
         float eatseconds = section.getInt("eat_seconds", 0);
         if (nutrition < 1) {
-            ExceptionHandler.handleError("在附属" + addon.getAddonName() + "中加载食物" + sfis.getItemId() + "时发现问题: 饥饿值 " + nutrition
-                    + "小于1! 已转为1");
+            ExceptionHandler.handleError("在附属" + addon.getAddonName() + "中加载食物" + sfis.getItemId() + "时发现问题: 饥饿值 "
+                    + nutrition + "小于1! 已转为1");
             nutrition = 1;
         }
         if (saturation < 0f) {
-            ExceptionHandler.handleError("在附属" + addon.getAddonName() + "中加载食物" + sfis.getItemId() + "时发现问题: 饱和度 " + saturation
-                    + "小于0! 已转为0");
+            ExceptionHandler.handleError("在附属" + addon.getAddonName() + "中加载食物" + sfis.getItemId() + "时发现问题: 饱和度 "
+                    + saturation + "小于0! 已转为0");
             saturation = 0f;
         }
         if (eatseconds < 0) {
-            ExceptionHandler.handleError("在附属" + addon.getAddonName() + "中加载食物" + sfis.getItemId() + "时发现问题: 食用时间 " + eatseconds
-                    + "小于0! 已转为1.6");
+            ExceptionHandler.handleError("在附属" + addon.getAddonName() + "中加载食物" + sfis.getItemId() + "时发现问题: 食用时间 "
+                    + eatseconds + "小于0! 已转为1.6");
             eatseconds = 1.6f;
         }
         food.setInteger("nutrition", nutrition);
