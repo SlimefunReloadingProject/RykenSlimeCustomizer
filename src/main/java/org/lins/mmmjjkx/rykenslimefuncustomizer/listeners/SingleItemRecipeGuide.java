@@ -5,6 +5,7 @@ import io.github.thebusybiscuit.slimefun4.api.player.PlayerProfile;
 import io.github.thebusybiscuit.slimefun4.core.guide.GuideHistory;
 import io.github.thebusybiscuit.slimefun4.implementation.Slimefun;
 import io.github.thebusybiscuit.slimefun4.implementation.guide.SurvivalSlimefunGuide;
+import io.github.thebusybiscuit.slimefun4.libraries.dough.items.CustomItemStack;
 import io.github.thebusybiscuit.slimefun4.utils.ChestMenuUtils;
 import java.util.ArrayList;
 import java.util.List;
@@ -104,6 +105,9 @@ public class SingleItemRecipeGuide implements Listener {
 
             boolean defaultRecipeGUI = true;
 
+            int progressSlot = 31;
+            ItemStack progressBar = item.getProgressBar();
+
             int[] inputSlots = item.getInputSlots();
             int[] outputSlots = item.getOutputSlots();
 
@@ -111,6 +115,10 @@ public class SingleItemRecipeGuide implements Listener {
                 CustomMenu menu = crm.getMenu();
                 if (menu != null) {
                     defaultRecipeGUI = false;
+                    progressSlot = menu.getProgressSlot();
+                    if (menu.getProgressBarItem() != null) {
+                        progressBar = menu.getProgressBarItem();
+                    }
                 }
             } else {
                 inputSlots = new int[] {28, 29};
@@ -219,6 +227,18 @@ public class SingleItemRecipeGuide implements Listener {
                     }
                 }
             }
+
+            int seconds = recipe.getTicks() / 2;
+
+            String rawName = "&e制作时间: &b" + seconds + "&es";
+
+            if (seconds > 60) {
+                rawName = rawName.concat("(" + formatSeconds(seconds) + "&e)");
+            }
+
+            progressBar = new CustomItemStack(progressBar, rawName);
+
+            addItem(progressSlot, progressBar, (pl, s, is, action) -> false);
         }
 
         @Override
@@ -234,6 +254,21 @@ public class SingleItemRecipeGuide implements Listener {
             item = item.clone();
             CommonUtils.addLore(item, true, CMIChatColor.translate("&a有&b " + chance + "% &a的概率产出"));
             return item;
+        }
+    }
+
+    public static String formatSeconds(int seconds) {
+        if (seconds < 60) {
+            return "&b" + seconds + "&es";
+        } else if (seconds > 60 && seconds < 3600) {
+            int m = seconds / 60;
+            int s = seconds % 60;
+            return "&b" + m + "&emin" + (s != 0 ? "&b" + s + "&es" : "");
+        } else {
+            int h = seconds / 3600;
+            int m = (seconds % 3600) / 60;
+            int s = (seconds % 3600) % 60;
+            return "&b" + h + "&eh" + (m != 0 ? "&b" + m + "&emin" : "") + (s != 0 ? "&b" + s + "&es" : "");
         }
     }
 }

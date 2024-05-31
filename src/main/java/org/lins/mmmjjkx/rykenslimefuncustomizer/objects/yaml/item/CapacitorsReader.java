@@ -25,7 +25,9 @@ public class CapacitorsReader extends YamlReader<Capacitor> {
     public Capacitor readEach(String s) {
         ConfigurationSection section = configuration.getConfigurationSection(s);
         if (section == null) return null;
-        ExceptionHandler.HandleResult result = ExceptionHandler.handleIdConflict(s);
+
+        String id = section.getString(s + ".id_alias", s);
+        ExceptionHandler.HandleResult result = ExceptionHandler.handleIdConflict(id);
 
         if (result == ExceptionHandler.HandleResult.FAILED) return null;
 
@@ -34,20 +36,20 @@ public class CapacitorsReader extends YamlReader<Capacitor> {
         Pair<ExceptionHandler.HandleResult, ItemGroup> group = ExceptionHandler.handleItemGroupGet(addon, igId);
         if (group.getFirstValue() == ExceptionHandler.HandleResult.FAILED) return null;
 
-        SlimefunItemStack sfis = getPreloadItem(s);
+        SlimefunItemStack sfis = getPreloadItem(id);
         if (sfis == null) return null;
 
         ItemStack[] recipe = CommonUtils.readRecipe(section.getConfigurationSection("recipe"), addon);
         String recipeType = section.getString("recipe_type", "NULL");
 
-        Pair<ExceptionHandler.HandleResult, RecipeType> rt =
-                ExceptionHandler.getRecipeType("错误的配方类型" + recipeType + "!", recipeType);
+        Pair<ExceptionHandler.HandleResult, RecipeType> rt = ExceptionHandler.getRecipeType(
+                "在附属" + addon.getAddonId() + "中加载电容" + s + "时遇到了问题: " + "错误的配方类型" + recipeType + "!", recipeType);
 
         if (rt.getFirstValue() == ExceptionHandler.HandleResult.FAILED) return null;
 
         int capacity = section.getInt("capacity");
         if (capacity < 1) {
-            ExceptionHandler.handleError("无法在附属" + addon.getAddonName() + "中加载电容" + s + ": 容量不能小于1");
+            ExceptionHandler.handleError("在附属" + addon.getAddonId() + "中加载电容" + s + "时遇到了问题: " + "容量不能小于1");
             return null;
         }
 
@@ -70,16 +72,18 @@ public class CapacitorsReader extends YamlReader<Capacitor> {
         ConfigurationSection item = section.getConfigurationSection("item");
         ItemStack stack = CommonUtils.readItem(item, false, addon);
 
+        String id = section.getString(s + ".id_alias", s);
+
         if (stack == null) {
-            ExceptionHandler.handleError("无法在附属" + addon.getAddonName() + "中加载电容" + s + ": 物品为空或格式错误导致无法加载");
+            ExceptionHandler.handleError("在附属" + addon.getAddonId() + "中加载电容" + s + "时遇到了问题: " + "物品为空或格式错误导致无法加载");
             return null;
         }
 
         if (!stack.getType().isBlock()) {
-            ExceptionHandler.handleError("无法在附属" + addon.getAddonName() + "中加载电容" + s + ": 物品的材料类型必须是可放置的方块");
+            ExceptionHandler.handleError("在附属" + addon.getAddonId() + "中加载电容" + s + "时遇到了问题: " + "物品的材料类型必须是可放置的方块");
             return null;
         }
 
-        return List.of(new SlimefunItemStack(s, stack));
+        return List.of(new SlimefunItemStack(id, stack));
     }
 }

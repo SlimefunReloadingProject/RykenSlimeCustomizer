@@ -28,7 +28,9 @@ public class MultiBlockMachineReader extends YamlReader<CustomMultiBlockMachine>
     public CustomMultiBlockMachine readEach(String s) {
         ConfigurationSection section = configuration.getConfigurationSection(s);
         if (section == null) return null;
-        ExceptionHandler.HandleResult result = ExceptionHandler.handleIdConflict(s);
+        String id = section.getString(s + ".id_alias", s);
+
+        ExceptionHandler.HandleResult result = ExceptionHandler.handleIdConflict(id);
 
         if (result == ExceptionHandler.HandleResult.FAILED) return null;
 
@@ -37,7 +39,7 @@ public class MultiBlockMachineReader extends YamlReader<CustomMultiBlockMachine>
         Pair<ExceptionHandler.HandleResult, ItemGroup> group = ExceptionHandler.handleItemGroupGet(addon, igId);
         if (group.getFirstValue() == ExceptionHandler.HandleResult.FAILED) return null;
 
-        SlimefunItemStack slimefunItemStack = getPreloadItem(s);
+        SlimefunItemStack slimefunItemStack = getPreloadItem(id);
         if (slimefunItemStack == null) return null;
 
         ItemStack[] recipe = CommonUtils.readRecipe(section.getConfigurationSection("recipe"), addon);
@@ -46,12 +48,12 @@ public class MultiBlockMachineReader extends YamlReader<CustomMultiBlockMachine>
 
         int workSlot = section.getInt("work", -1);
         if (workSlot < 0) {
-            ExceptionHandler.handleError("无法在附属" + addon.getAddonName() + "中加载多方块机器" + s + ": 没有设置工作槽");
+            ExceptionHandler.handleError("在附属" + addon.getAddonId() + "中加载多方块机器" + s + "时遇到了问题: " + "没有设置工作槽");
             return null;
         }
 
         if (recipe == null) {
-            ExceptionHandler.handleError("无法在附属" + addon.getAddonName() + "中加载多方块机器" + s + ": 放置配方为空");
+            ExceptionHandler.handleError("在附属" + addon.getAddonId() + "中加载多方块机器" + s + "时遇到了问题: " + "放置配方为空");
             return null;
         }
 
@@ -67,21 +69,23 @@ public class MultiBlockMachineReader extends YamlReader<CustomMultiBlockMachine>
         }
 
         if (!hasDispenser) {
-            ExceptionHandler.handleError("无法在附属" + addon.getAddonName() + "中加载多方块机器" + s + ": 放置配方里没有发射器");
+            ExceptionHandler.handleError("在附属" + addon.getAddonId() + "中加载多方块机器" + s + "时遇到了问题: " + "放置配方里没有发射器");
             return null;
         }
 
         if (recipe[workSlot - 1] == null) {
-            ExceptionHandler.handleError("无法在附属" + addon.getAddonName() + "中加载多方块机器" + s + ": 对应工作方块不存在");
+            ExceptionHandler.handleError("在附属" + addon.getAddonId() + "中加载多方块机器" + s + "时遇到了问题: " + "对应工作方块不存在");
             return null;
         }
 
-        Map<ItemStack[], ItemStack> recipes = readRecipes(recipesSection, addon);
+        Map<ItemStack[], ItemStack> recipes = readRecipes(s, recipesSection, addon);
         SoundEffect sound = null;
         if (section.contains("sound")) {
             String soundString = section.getString("sound");
             Pair<ExceptionHandler.HandleResult, SoundEffect> soundEffectPair = ExceptionHandler.handleEnumValueOf(
-                    "无法在多方块机器" + s + "获取声音类型" + soundString, SoundEffect.class, soundString);
+                    "在附属" + addon.getAddonId() + "中加载多方块机器" + s + "无法获取声音类型" + soundString,
+                    SoundEffect.class,
+                    soundString);
             ExceptionHandler.HandleResult result1 = soundEffectPair.getFirstValue();
             if (result1 != ExceptionHandler.HandleResult.FAILED && soundEffectPair.getSecondValue() != null) {
                 sound = soundEffectPair.getSecondValue();
@@ -93,7 +97,8 @@ public class MultiBlockMachineReader extends YamlReader<CustomMultiBlockMachine>
             String script = section.getString("script", "");
             File file = new File(addon.getScriptsFolder(), script + ".js");
             if (!file.exists()) {
-                ExceptionHandler.handleWarning("找不到脚本文件 " + file.getName());
+                ExceptionHandler.handleWarning(
+                        "在附属" + addon.getAddonId() + "中加载多方块机器" + s + "时遇到了问题: " + "找不到脚本文件 " + file.getName());
             } else {
                 eval = new JavaScriptEval(file, addon);
             }
@@ -107,18 +112,20 @@ public class MultiBlockMachineReader extends YamlReader<CustomMultiBlockMachine>
     public List<SlimefunItemStack> preloadItems(String s) {
         ConfigurationSection section = configuration.getConfigurationSection(s);
         if (section == null) return null;
+        String id = section.getString(s + ".id_alias", s);
+
         ConfigurationSection item = section.getConfigurationSection("item");
         ItemStack stack = CommonUtils.readItem(item, false, addon);
 
         if (stack == null) {
-            ExceptionHandler.handleError("无法在附属" + addon.getAddonName() + "中加载多方块机器" + s + ": 物品为空或格式错误导致无法加载");
+            ExceptionHandler.handleError("在附属" + addon.getAddonId() + "中加载多方块机器" + s + "时遇到了问题: " + "物品为空或格式错误导致无法加载");
             return null;
         }
 
-        return List.of(new SlimefunItemStack(s, stack));
+        return List.of(new SlimefunItemStack(id, stack));
     }
 
-    private Map<ItemStack[], ItemStack> readRecipes(ConfigurationSection section, ProjectAddon addon) {
+    private Map<ItemStack[], ItemStack> readRecipes(String s, ConfigurationSection section, ProjectAddon addon) {
         Map<ItemStack[], ItemStack> map = new HashMap<>();
         if (section == null) return map;
 
@@ -127,22 +134,26 @@ public class MultiBlockMachineReader extends YamlReader<CustomMultiBlockMachine>
             if (recipe == null) continue;
             ConfigurationSection inputs = recipe.getConfigurationSection("input");
             if (inputs == null) {
-                ExceptionHandler.handleError("读取多方块机器配方" + key + "时发生错误: 没有输入物品");
+                ExceptionHandler.handleError(
+                        "在附属" + addon.getAddonId() + "中加载多方块机器" + s + "的工作配方" + key + "时遇到了问题: " + "没有输入物品");
                 continue;
             }
             ItemStack[] input = CommonUtils.readRecipe(inputs, addon);
             if (input == null) {
-                ExceptionHandler.handleError("读取多方块机器配方" + key + "时发生错误: 输出物品为空或格式错误");
+                ExceptionHandler.handleError(
+                        "在附属" + addon.getAddonId() + "中加载多方块机器" + s + "的工作配方" + key + "时遇到了问题: " + "输出物品为空或格式错误");
                 continue;
             }
             ConfigurationSection outputs = recipe.getConfigurationSection("output");
             if (outputs == null) {
-                ExceptionHandler.handleError("读取多方块机器配方" + key + "时发生错误: 没有输出物品");
+                ExceptionHandler.handleError(
+                        "在附属" + addon.getAddonId() + "中加载多方块机器" + s + "的工作配方" + key + "时遇到了问题: " + "没有输出物品");
                 continue;
             }
             ItemStack output = CommonUtils.readItem(outputs, true, addon);
             if (output == null) {
-                ExceptionHandler.handleError("读取多方块机器配方" + key + "时发生错误: 输出物品为空或格式错误");
+                ExceptionHandler.handleError(
+                        "在附属" + addon.getAddonId() + "中加载多方块机器" + s + "的工作配方" + key + "时遇到了问题: " + "输出物品为空或格式错误");
                 continue;
             }
             map.put(input, output);

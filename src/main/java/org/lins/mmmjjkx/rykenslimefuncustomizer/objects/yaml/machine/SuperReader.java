@@ -29,20 +29,24 @@ public class SuperReader extends YamlReader<SlimefunItem> {
     public SlimefunItem readEach(String s) {
         ConfigurationSection section = configuration.getConfigurationSection(s);
         if (section == null) return null;
-        ExceptionHandler.HandleResult result = ExceptionHandler.handleIdConflict(s);
+        String id = section.getString(s + ".id_alias", s);
+
+        ExceptionHandler.HandleResult result = ExceptionHandler.handleIdConflict(id);
 
         if (result == ExceptionHandler.HandleResult.FAILED) return null;
 
         String igId = section.getString("item_group");
-        ConfigurationSection item = section.getConfigurationSection("item");
-        ItemStack stack = CommonUtils.readItem(item, false, addon);
+
+        SlimefunItemStack sfis = getPreloadItem(id);
+        if (sfis == null) return null;
+
         Pair<ExceptionHandler.HandleResult, ItemGroup> group = ExceptionHandler.handleItemGroupGet(addon, igId);
         if (group.getFirstValue() == ExceptionHandler.HandleResult.FAILED) return null;
         ItemStack[] recipe = CommonUtils.readRecipe(section.getConfigurationSection("recipe"), addon);
         String recipeType = section.getString("recipe_type", "NULL");
 
-        Pair<ExceptionHandler.HandleResult, RecipeType> rt =
-                ExceptionHandler.getRecipeType("错误的配方类型" + recipeType + "!", recipeType);
+        Pair<ExceptionHandler.HandleResult, RecipeType> rt = ExceptionHandler.getRecipeType(
+                "在附属" + addon.getAddonId() + "中加载继承物品" + s + "时遇到了问题: " + "错误的配方类型" + recipeType + "!", recipeType);
         if (rt.getFirstValue() == ExceptionHandler.HandleResult.FAILED) return null;
 
         String className = section.getString("class", "");
@@ -50,23 +54,22 @@ public class SuperReader extends YamlReader<SlimefunItem> {
         try {
             clazz = Class.forName(className);
         } catch (ClassNotFoundException e) {
-            ExceptionHandler.handleError("未找到基类", e);
+            ExceptionHandler.handleError("在附属" + addon.getAddonId() + "中加载继承物品" + s + "时遇到了问题: " + "未找到基类", e);
             return null;
         }
 
         if (!SlimefunItem.class.isAssignableFrom(clazz)) {
-            ExceptionHandler.handleError("基类不是粘液物品");
+            ExceptionHandler.handleError("在附属" + addon.getAddonId() + "中加载继承物品" + s + "时遇到了问题: " + "基类不是粘液物品");
             return null;
         }
         // a zero-based number
         int ctorIndex = section.getInt("ctor", 0);
         if (clazz.getConstructors().length < ctorIndex + 1) {
-            ExceptionHandler.handleError("无效的构造函数");
+            ExceptionHandler.handleError("在附属" + addon.getAddonId() + "中加载继承物品" + s + "时遇到了问题: " + "无效的构造函数");
             return null;
         }
         Constructor<? extends SlimefunItem> ctor =
                 (Constructor<? extends SlimefunItem>) clazz.getConstructors()[ctorIndex];
-        SlimefunItemStack slimefunItemStack = new SlimefunItemStack(s, stack);
         Object[] args =
                 section.getList("args") == null ? null : section.getList("args").toArray();
         List<Object> argTemplate =
@@ -74,7 +77,7 @@ public class SuperReader extends YamlReader<SlimefunItem> {
         Object[] originArgs = argTemplate.stream()
                 .map(x -> {
                     if (x.equals("group")) return group.getSecondValue();
-                    if (x.equals("item")) return slimefunItemStack;
+                    if (x.equals("item")) return sfis;
                     if (x.equals("recipe_type")) return rt.getSecondValue();
                     if (x.equals("recipe")) return recipe;
                     return x;
@@ -90,7 +93,7 @@ public class SuperReader extends YamlReader<SlimefunItem> {
                 instance = ctor.newInstance(newArgs.toArray());
             }
         } catch (InstantiationException | InvocationTargetException | IllegalAccessException e) {
-            ExceptionHandler.handleError("无法创建类", e);
+            ExceptionHandler.handleError("在附属" + addon.getAddonId() + "中加载继承物品" + s + "时遇到了问题: " + "无法创建类", e);
             return null;
         }
 
@@ -111,7 +114,7 @@ public class SuperReader extends YamlReader<SlimefunItem> {
                             methodName,
                             Arrays.stream(args1).map(Object::getClass).toArray(Class<?>[]::new));
                 } catch (NoSuchMethodException e) {
-                    ExceptionHandler.handleError("没有找到方法", e);
+                    ExceptionHandler.handleError("在附属" + addon.getAddonId() + "中加载继承物品" + s + "时遇到了问题: " + "没有找到方法", e);
                 }
 
                 if (method != null) {
@@ -119,7 +122,8 @@ public class SuperReader extends YamlReader<SlimefunItem> {
                         method.setAccessible(true);
                         method.invoke(instance, args1);
                     } catch (IllegalAccessException | InvocationTargetException e) {
-                        ExceptionHandler.handleError("方法调用异常", e);
+                        ExceptionHandler.handleError(
+                                "在附属" + addon.getAddonId() + "中加载继承物品" + s + "时遇到了问题: " + "方法调用异常", e);
                     }
                 }
             }
@@ -141,15 +145,17 @@ public class SuperReader extends YamlReader<SlimefunItem> {
 
                     if (field == null) throw new NoSuchFieldException(fieldName);
                     if (Modifier.isStatic(field.getModifiers()))
-                        throw new IllegalAccessException("字段" + fieldName + "为static");
+                        throw new IllegalAccessException(
+                                "在附属" + addon.getAddonId() + "中加载继承物品" + s + "时遇到了问题: " + "字段" + fieldName + "为static");
                     if (Modifier.isFinal(field.getModifiers()))
-                        throw new IllegalAccessException("字段" + fieldName + "为final");
+                        throw new IllegalAccessException(
+                                "在附属" + addon.getAddonId() + "中加载继承物品" + s + "时遇到了问题: " + "字段" + fieldName + "为final");
 
                     field.setAccessible(true);
                     Object object = fieldArray.getObject(fieldName, field.getType());
                     field.set(instance, object);
                 } catch (Exception e) {
-                    ExceptionHandler.handleError("字段修改异常", e);
+                    ExceptionHandler.handleError("在附属" + addon.getAddonId() + "中加载继承物品" + s + "时遇到了问题: " + "字段修改异常", e);
                 }
             }
         }
@@ -162,13 +168,15 @@ public class SuperReader extends YamlReader<SlimefunItem> {
     public List<SlimefunItemStack> preloadItems(String s) {
         ConfigurationSection section = configuration.getConfigurationSection(s);
         if (section == null) return null;
+        String id = section.getString(s + ".id_alias", s);
+
         ConfigurationSection item = section.getConfigurationSection("item");
         ItemStack stack = CommonUtils.readItem(item, false, addon);
 
         if (stack == null) {
-            ExceptionHandler.handleError("无法在附属" + addon.getAddonName() + "中加载发电机" + s + ": 物品为空或格式错误导致无法加载");
+            ExceptionHandler.handleError("在附属" + addon.getAddonId() + "中加载继承物品" + s + "时遇到了问题: " + "物品为空或格式错误导致无法加载");
             return null;
         }
-        return List.of(new SlimefunItemStack(s, stack));
+        return List.of(new SlimefunItemStack(id, stack));
     }
 }

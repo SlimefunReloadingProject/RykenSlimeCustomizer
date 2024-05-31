@@ -33,13 +33,15 @@ public class GeneratorReader extends YamlReader<CustomGenerator> {
     public CustomGenerator readEach(String s) {
         ConfigurationSection section = configuration.getConfigurationSection(s);
         if (section == null) return null;
-        ExceptionHandler.HandleResult result = ExceptionHandler.handleIdConflict(s);
+        String id = section.getString(s + ".id_alias", s);
+
+        ExceptionHandler.HandleResult result = ExceptionHandler.handleIdConflict(id);
 
         if (result == ExceptionHandler.HandleResult.FAILED) return null;
 
         String igId = section.getString("item_group");
 
-        SlimefunItemStack sfis = getPreloadItem(s);
+        SlimefunItemStack sfis = getPreloadItem(id);
         if (sfis == null) return null;
 
         Pair<ExceptionHandler.HandleResult, ItemGroup> group = ExceptionHandler.handleItemGroupGet(addon, igId);
@@ -47,8 +49,8 @@ public class GeneratorReader extends YamlReader<CustomGenerator> {
         ItemStack[] recipe = CommonUtils.readRecipe(section.getConfigurationSection("recipe"), addon);
         String recipeType = section.getString("recipe_type", "NULL");
 
-        Pair<ExceptionHandler.HandleResult, RecipeType> rt =
-                ExceptionHandler.getRecipeType("错误的配方类型" + recipeType + "!", recipeType);
+        Pair<ExceptionHandler.HandleResult, RecipeType> rt = ExceptionHandler.getRecipeType(
+                "在附属" + addon.getAddonId() + "中加载发电机" + s + "时遇到了问题: " + "错误的配方类型" + recipeType + "!", recipeType);
 
         if (rt.getFirstValue() == ExceptionHandler.HandleResult.FAILED) return null;
 
@@ -63,7 +65,7 @@ public class GeneratorReader extends YamlReader<CustomGenerator> {
         int production = section.getInt("production");
 
         if (production < 1) {
-            ExceptionHandler.handleError("无法加载发电机" + s + ": 产量不能小于1");
+            ExceptionHandler.handleError("在附属" + addon.getAddonId() + "中加载发电机" + s + "时遇到了问题: " + "产电量不能小于1");
             return null;
         }
 
@@ -72,8 +74,10 @@ public class GeneratorReader extends YamlReader<CustomGenerator> {
         };
 
         String rotationStr = section.getString("rotation", "NOT_ROTATABLE");
-        Pair<ExceptionHandler.HandleResult, Rotation> rotationPair =
-                ExceptionHandler.handleEnumValueOf("错误的旋转类型: " + rotationStr + "!", Rotation.class, rotationStr);
+        Pair<ExceptionHandler.HandleResult, Rotation> rotationPair = ExceptionHandler.handleEnumValueOf(
+                "在附属" + addon.getAddonId() + "中加载发电机" + s + "时遇到了问题: " + "错误的旋转类型: " + rotationStr + "!",
+                Rotation.class,
+                rotationStr);
 
         if (rotationPair.getFirstValue() == ExceptionHandler.HandleResult.FAILED) return null;
 
@@ -114,17 +118,19 @@ public class GeneratorReader extends YamlReader<CustomGenerator> {
     public List<SlimefunItemStack> preloadItems(String s) {
         ConfigurationSection section = configuration.getConfigurationSection(s);
         if (section == null) return null;
+        String id = section.getString(s + ".id_alias", s);
+
         ConfigurationSection item = section.getConfigurationSection("item");
         ItemStack stack = CommonUtils.readItem(item, false, addon);
 
         if (stack == null) {
-            ExceptionHandler.handleError("无法在附属" + addon.getAddonName() + "中加载发电机" + s + ": 物品为空或格式错误导致无法加载");
+            ExceptionHandler.handleError("在附属" + addon.getAddonId() + "中加载发电机" + s + "时遇到了问题: " + "物品为空或格式错误导致无法加载");
             return null;
         }
-        return List.of(new SlimefunItemStack(s, stack));
+        return List.of(new SlimefunItemStack(id, stack));
     }
 
-    private List<MachineFuel> readFuels(String id, ConfigurationSection section, ProjectAddon addon) {
+    private List<MachineFuel> readFuels(String s, ConfigurationSection section, ProjectAddon addon) {
         List<MachineFuel> fuels = new ArrayList<>();
 
         if (section == null) return fuels;
@@ -135,13 +141,15 @@ public class GeneratorReader extends YamlReader<CustomGenerator> {
             ConfigurationSection item = section1.getConfigurationSection("item");
             ItemStack stack = CommonUtils.readItem(item, true, addon);
             if (stack == null) {
-                ExceptionHandler.handleError("无法在发电机" + id + "中加载燃料" + key + ": 物品为空或格式错误，已跳过加载");
+                ExceptionHandler.handleError(
+                        "在附属" + addon.getAddonId() + "中加载发电机" + s + "的燃料" + key + "时遇到了问题: " + "输入物品为空或格式错误，已跳过加载");
                 continue;
             }
             int seconds = section1.getInt("seconds");
 
             if (seconds < 1) {
-                ExceptionHandler.handleError("无法在发电机" + id + "中加载燃料" + key + ": 秒数不能小于1，已跳过加载");
+                ExceptionHandler.handleError(
+                        "在附属" + addon.getAddonId() + "中加载发电机" + s + "的燃料" + key + "时遇到了问题: " + "秒数不能小于1，已跳过加载");
                 continue;
             }
 
@@ -150,7 +158,8 @@ public class GeneratorReader extends YamlReader<CustomGenerator> {
                 ConfigurationSection outputSet = section1.getConfigurationSection("output");
                 output = CommonUtils.readItem(outputSet, true, addon);
                 if (output == null) {
-                    ExceptionHandler.handleError("无法在发电机" + id + "中读取燃料" + key + "的输出: 物品为空或格式错误，已转为空");
+                    ExceptionHandler.handleError(
+                            "在附属" + addon.getAddonId() + "中加载发电机" + s + "的燃料" + key + "时遇到了问题: " + "输出物品为空或格式错误，已转为空");
                 }
             }
 

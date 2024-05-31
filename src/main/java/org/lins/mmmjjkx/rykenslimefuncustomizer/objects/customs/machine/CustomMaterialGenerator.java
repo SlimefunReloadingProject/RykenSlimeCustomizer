@@ -11,7 +11,6 @@ import io.github.thebusybiscuit.slimefun4.core.attributes.RecipeDisplayItem;
 import io.github.thebusybiscuit.slimefun4.core.networks.energy.EnergyNetComponentType;
 import io.github.thebusybiscuit.slimefun4.implementation.handlers.SimpleBlockBreakHandler;
 import io.github.thebusybiscuit.slimefun4.libraries.dough.items.CustomItemStack;
-import io.github.thebusybiscuit.slimefun4.utils.ChestMenuUtils;
 import java.util.ArrayList;
 import java.util.Collections;
 import java.util.List;
@@ -68,8 +67,6 @@ public class CustomMaterialGenerator extends SlimefunItem
             }
         });
 
-        menu.addMenuClickHandler(statusSlot, ChestMenuUtils.getEmptyClickHandler());
-
         createPreset(this, menu::apply);
 
         register(RykenSlimefunCustomizer.INSTANCE);
@@ -83,7 +80,7 @@ public class CustomMaterialGenerator extends SlimefunItem
         if (blockMenu != null) {
             if (getCharge(b.getLocation()) >= per) {
                 if (progress >= tickRate) {
-                    setProgress(b, 0);
+                    setProgress(b, 1);
                     for (ItemStack item : generation) {
                         if (blockMenu.fits(item, getOutputSlots())) {
                             if (blockMenu.hasViewer() && statusSlot > -1) {
@@ -127,7 +124,7 @@ public class CustomMaterialGenerator extends SlimefunItem
         try {
             progress = Integer.parseInt(Objects.requireNonNull(StorageCacheUtils.getData(b.getLocation(), "progress")));
         } catch (NumberFormatException | NullPointerException ex) {
-            StorageCacheUtils.setData(b.getLocation(), "progress", "0");
+            StorageCacheUtils.setData(b.getLocation(), "progress", "1");
             progress = 0;
         }
         return progress;

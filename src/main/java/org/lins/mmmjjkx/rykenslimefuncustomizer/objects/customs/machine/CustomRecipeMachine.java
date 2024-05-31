@@ -25,6 +25,7 @@ import org.lins.mmmjjkx.rykenslimefuncustomizer.RykenSlimefunCustomizer;
 import org.lins.mmmjjkx.rykenslimefuncustomizer.listeners.SingleItemRecipeGuide;
 import org.lins.mmmjjkx.rykenslimefuncustomizer.objects.customs.CustomMenu;
 import org.lins.mmmjjkx.rykenslimefuncustomizer.objects.machine.RecipeMachineRecipe;
+import org.lins.mmmjjkx.rykenslimefuncustomizer.utils.CommonUtils;
 
 public class CustomRecipeMachine extends AContainer implements RecipeDisplayItem {
     private final ItemStack RECIPE_SPLITTER =
@@ -150,7 +151,14 @@ public class CustomRecipeMachine extends AContainer implements RecipeDisplayItem
             }
 
             if (output.length == 1) {
-                displayRecipes.add(output[0]);
+                int seconds = recipe.getTicks() / 2;
+                ItemStack out = output[0].clone();
+                String rawLore = "&e制作时间: &b" + seconds + "&es";
+                if (seconds > 60) {
+                    rawLore = rawLore.concat("(" + SingleItemRecipeGuide.formatSeconds(seconds) + "&e)");
+                }
+                CommonUtils.addLore(out, true, rawLore);
+                displayRecipes.add(out);
             } else {
                 ItemStack out = SingleItemRecipeGuide.tagItemRecipe(RECIPE_OUTPUT, i);
                 displayRecipes.add(out);
