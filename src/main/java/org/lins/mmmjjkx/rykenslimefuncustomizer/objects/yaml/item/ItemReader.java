@@ -94,6 +94,7 @@ public class ItemReader extends YamlReader<SlimefunItem> {
         boolean energy = section.contains("energy_capacity");
         boolean hasRadiation = section.contains("radiation");
 
+        // 将在粘液发布下一个正式版后删除
         if (hasRadiation) {
             return setupRadiationItem(section, sfis, group.getSecondValue(), s, rt, itemStacks, eval, addon);
         }
@@ -264,6 +265,7 @@ public class ItemReader extends YamlReader<SlimefunItem> {
     }
 
     @SneakyThrows
+    @Deprecated(forRemoval = true, since = "RSC 1.4, Slimefun 2024.5+")
     private SlimefunItem setupRadiationItem(
             ConfigurationSection section,
             SlimefunItemStack original,

@@ -117,7 +117,7 @@ public class ExceptionHandler {
         if (ig == null) {
             ItemGroup ig2 = CommonUtils.getIf(
                     Slimefun.getRegistry().getAllItemGroups(),
-                    i -> i.getKey().getKey().equalsIgnoreCase(id));
+                    i -> i.getKey().toString().equalsIgnoreCase(id));
             if (ig2 == null) {
                 handleError("无法在附属" + addon.getAddonName() + "中找到该物品组 " + id);
                 return new Pair<>(HandleResult.FAILED, null);

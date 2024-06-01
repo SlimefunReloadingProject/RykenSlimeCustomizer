@@ -2,16 +2,12 @@ package org.lins.mmmjjkx.rykenslimefuncustomizer.objects.machine;
 
 import io.github.thebusybiscuit.slimefun4.libraries.dough.collections.Pair;
 import java.util.List;
-import lombok.Getter;
+
+import io.github.thebusybiscuit.slimefun4.utils.SlimefunUtils;
 import org.bukkit.inventory.ItemStack;
 
-@Getter
-public class MachineTemplate extends ItemStack {
-    private final List<Pair<RecipeMachineRecipe, Integer>> recipes;
-
-    public MachineTemplate(ItemStack item, int cost, List<Pair<RecipeMachineRecipe, Integer>> recipes) {
-        super(item);
-
-        this.recipes = recipes;
+public record MachineTemplate(ItemStack item, int cost, List<Pair<RecipeMachineRecipe, Integer>> recipes) {
+    public boolean isSimilar(ItemStack item) {
+        return SlimefunUtils.isItemSimilar(item, this.item, true);
     }
 }

@@ -1,5 +1,6 @@
 package org.lins.mmmjjkx.rykenslimefuncustomizer.objects.yaml.item;
 
+import io.github.thebusybiscuit.slimefun4.api.geo.GEOResource;
 import io.github.thebusybiscuit.slimefun4.api.items.ItemGroup;
 import io.github.thebusybiscuit.slimefun4.api.items.SlimefunItemStack;
 import io.github.thebusybiscuit.slimefun4.api.recipes.RecipeType;
@@ -8,11 +9,13 @@ import java.util.List;
 import java.util.Optional;
 import java.util.function.BiFunction;
 import org.bukkit.Material;
+import org.bukkit.NamespacedKey;
 import org.bukkit.World;
 import org.bukkit.block.Biome;
 import org.bukkit.configuration.ConfigurationSection;
 import org.bukkit.configuration.file.YamlConfiguration;
 import org.bukkit.inventory.ItemStack;
+import org.jetbrains.annotations.NotNull;
 import org.lins.mmmjjkx.rykenslimefuncustomizer.objects.ProjectAddon;
 import org.lins.mmmjjkx.rykenslimefuncustomizer.objects.customs.item.CustomGeoResource;
 import org.lins.mmmjjkx.rykenslimefuncustomizer.objects.global.DropFromBlock;
@@ -21,13 +24,13 @@ import org.lins.mmmjjkx.rykenslimefuncustomizer.objects.yaml.YamlReader;
 import org.lins.mmmjjkx.rykenslimefuncustomizer.utils.CommonUtils;
 import org.lins.mmmjjkx.rykenslimefuncustomizer.utils.ExceptionHandler;
 
-public class GeoResourceReader extends YamlReader<CustomGeoResource> {
+public class GeoResourceReader extends YamlReader<GEOResource> {
     public GeoResourceReader(YamlConfiguration config, ProjectAddon addon) {
         super(config, addon);
     }
 
     @Override
-    public CustomGeoResource readEach(String s) {
+    public GEOResource readEach(String s) {
         ConfigurationSection section = configuration.getConfigurationSection(s);
         if (section != null) {
             String id = section.getString(s + ".id_alias", s);
@@ -156,5 +159,47 @@ public class GeoResourceReader extends YamlReader<CustomGeoResource> {
         }
 
         return List.of(new SlimefunItemStack(id, stack));
+    }
+
+    private GEOResource createGEO(
+            BiFunction<World.Environment, Biome, Integer> supply,
+            int maxDeviation,
+            boolean obtainableFromGEOMiner,
+            String name,
+            SlimefunItemStack item,
+            NamespacedKey key) {
+        return new GEOResource() {
+            @Override
+            public int getDefaultSupply(@NotNull World.Environment environment, @NotNull Biome biome) {
+                return supply.apply(environment, biome);
+            }
+
+            @Override
+            public int getMaxDeviation() {
+                return maxDeviation;
+            }
+
+            @NotNull
+            @Override
+            public String getName() {
+                return name;
+            }
+
+            @NotNull
+            @Override
+            public ItemStack getItem() {
+                return item;
+            }
+
+            @Override
+            public boolean isObtainableFromGEOMiner() {
+                return obtainableFromGEOMiner;
+            }
+
+            @Override
+            public @NotNull NamespacedKey getKey() {
+                return key;
+            }
+        };
     }
 }

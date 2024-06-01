@@ -1,5 +1,6 @@
 package org.lins.mmmjjkx.rykenslimefuncustomizer.objects;
 
+import io.github.thebusybiscuit.slimefun4.api.geo.GEOResource;
 import io.github.thebusybiscuit.slimefun4.api.items.ItemGroup;
 import io.github.thebusybiscuit.slimefun4.api.items.SlimefunItem;
 import io.github.thebusybiscuit.slimefun4.api.items.SlimefunItemStack;
@@ -57,7 +58,7 @@ public final class ProjectAddon {
     // menus.yml
     private List<CustomMenu> menus = new ArrayList<>();
     // geo_resources.yml
-    private List<CustomGeoResource> geoResources = new ArrayList<>();
+    private List<GEOResource> geoResources = new ArrayList<>();
     // items.yml
     private List<SlimefunItem> items = new ArrayList<>();
     // machines.yml
@@ -121,7 +122,12 @@ public final class ProjectAddon {
         machines.forEach(this::unregisterItem);
         solarGenerators.forEach(this::unregisterItem);
         generators.forEach(this::unregisterItem);
-        geoResources.forEach(this::unregisterGeo);
+        geoResources.forEach(g -> {
+            if (g instanceof CustomGeoResource cgr) {
+                unregisterItem(cgr);
+            }
+            unregisterGeo(g);
+        });
         materialGenerators.forEach(this::unregisterItem);
         recipeMachines.forEach(this::unregisterItem);
         multiBlockMachines.forEach(this::unregisterItem);
@@ -168,9 +174,7 @@ public final class ProjectAddon {
         Slimefun.getRegistry().getAllSlimefunItems().remove(item);
     }
 
-    private void unregisterGeo(CustomGeoResource resource) {
-        unregisterItem(resource);
-
+    private void unregisterGeo(GEOResource resource) {
         Slimefun.getRegistry().getGEOResources().remove(resource.getKey());
     }
 }
