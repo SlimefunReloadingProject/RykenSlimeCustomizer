@@ -106,9 +106,9 @@ public class CustomTemplateMachine extends AbstractEmptyMachine<CraftingOperatio
         // TODO: Implement recipe finding
         // 需要等待 https://github.com/Slimefun/Slimefun4/pull/4177 被合并
 
-        RecipeMachineRecipe recipe = currentTemplate.getRecipes().get(0).getFirstValue();
+        RecipeMachineRecipe recipe = currentTemplate.recipes().get(0).getFirstValue();
 
-        int cost = currentTemplate.getRecipes().stream()
+        int cost = currentTemplate.recipes().stream()
                 .filter(k -> Objects.equals(k.getFirstValue(), recipe))
                 .mapToInt(Pair::getSecondValue)
                 .findFirst()
