@@ -17,7 +17,6 @@ import me.mrCookieSlime.Slimefun.Objects.SlimefunItem.abstractItems.AContainer;
 import me.mrCookieSlime.Slimefun.Objects.SlimefunItem.abstractItems.MachineRecipe;
 import me.mrCookieSlime.Slimefun.api.inventory.BlockMenu;
 import me.mrCookieSlime.Slimefun.api.inventory.BlockMenuPreset;
-import org.bukkit.Location;
 import org.bukkit.Material;
 import org.bukkit.block.Block;
 import org.bukkit.inventory.ItemStack;
@@ -25,6 +24,7 @@ import org.jetbrains.annotations.NotNull;
 import org.jetbrains.annotations.Nullable;
 import org.lins.mmmjjkx.rykenslimefuncustomizer.RykenSlimefunCustomizer;
 import org.lins.mmmjjkx.rykenslimefuncustomizer.listeners.SingleItemRecipeGuideListener;
+import org.lins.mmmjjkx.rykenslimefuncustomizer.objects.customs.CustomCraftingOperation;
 import org.lins.mmmjjkx.rykenslimefuncustomizer.objects.customs.CustomMenu;
 import org.lins.mmmjjkx.rykenslimefuncustomizer.objects.machine.CustomMachineRecipe;
 import org.lins.mmmjjkx.rykenslimefuncustomizer.utils.CommonUtils;
@@ -46,8 +46,6 @@ public class CustomRecipeMachine extends AContainer implements RecipeDisplayItem
 
     @Getter
     @Nullable private final CustomMenu menu;
-
-    private final Map<Location, CustomMachineRecipe> currentRecipe = new HashMap<>();
 
     public CustomRecipeMachine(
             ItemGroup itemGroup,
@@ -195,7 +193,7 @@ public class CustomRecipeMachine extends AContainer implements RecipeDisplayItem
     @Override
     protected void tick(Block b) {
         BlockMenu inv = StorageCacheUtils.getMenu(b.getLocation());
-        CraftingOperation currentOperation = this.processor.getOperation(b);
+        CustomCraftingOperation currentOperation = (CustomCraftingOperation) this.processor.getOperation(b);
         int progressSlot = this.menu == null || this.menu.getProgressSlot() == -1 ? 22 : this.menu.getProgressSlot();
         if (inv != null) {
             if (currentOperation != null) {
@@ -204,7 +202,7 @@ public class CustomRecipeMachine extends AContainer implements RecipeDisplayItem
                         this.processor.updateProgressBar(inv, progressSlot, currentOperation);
                         currentOperation.addProgress(1);
                     } else {
-                        CustomMachineRecipe currentRecipe = this.currentRecipe.get(b.getLocation());
+                        CustomMachineRecipe currentRecipe = currentOperation.getRecipe();
                         if (currentRecipe != null) {
                             ItemStack[] outputs =
                                     currentRecipe.getMatchChanceResult().toArray(ItemStack[]::new);
@@ -230,11 +228,11 @@ public class CustomRecipeMachine extends AContainer implements RecipeDisplayItem
                         if (this.menu == null) {
                             progress = ChestMenuUtils.getBackground();
                         } else {
-                            progress = this.menu.getSlotMap().getOrDefault(progressSlot, ChestMenuUtils.getBackground());
+                            progress =
+                                    this.menu.getSlotMap().getOrDefault(progressSlot, ChestMenuUtils.getBackground());
                         }
                         inv.replaceExistingItem(progressSlot, progress);
 
-                        this.currentRecipe.remove(b.getLocation());
                         this.processor.endOperation(b);
                     }
                 }
@@ -242,8 +240,7 @@ public class CustomRecipeMachine extends AContainer implements RecipeDisplayItem
                 MachineRecipe next = this.findNextRecipe(inv);
                 if (next != null) {
                     CustomMachineRecipe currentRecipe = (CustomMachineRecipe) next;
-                    currentOperation = new CraftingOperation(currentRecipe);
-                    this.currentRecipe.put(b.getLocation(), currentRecipe);
+                    currentOperation = new CustomCraftingOperation(currentRecipe);
                     this.processor.startOperation(b, currentOperation);
                     this.processor.updateProgressBar(inv, progressSlot, currentOperation);
                 }
