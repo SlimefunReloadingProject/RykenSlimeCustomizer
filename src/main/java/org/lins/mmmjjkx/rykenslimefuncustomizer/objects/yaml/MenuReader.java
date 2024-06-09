@@ -9,9 +9,14 @@ import java.util.Map;
 import java.util.stream.IntStream;
 import me.mrCookieSlime.Slimefun.api.inventory.BlockMenuPreset;
 import org.bukkit.Material;
+import org.bukkit.NamespacedKey;
 import org.bukkit.configuration.ConfigurationSection;
 import org.bukkit.configuration.file.YamlConfiguration;
 import org.bukkit.inventory.ItemStack;
+import org.bukkit.inventory.meta.ItemMeta;
+import org.bukkit.persistence.PersistentDataContainer;
+import org.bukkit.persistence.PersistentDataType;
+import org.lins.mmmjjkx.rykenslimefuncustomizer.RykenSlimefunCustomizer;
 import org.lins.mmmjjkx.rykenslimefuncustomizer.bulit_in.JavaScriptEval;
 import org.lins.mmmjjkx.rykenslimefuncustomizer.objects.ProjectAddon;
 import org.lins.mmmjjkx.rykenslimefuncustomizer.objects.customs.CustomMenu;
@@ -19,6 +24,8 @@ import org.lins.mmmjjkx.rykenslimefuncustomizer.utils.CommonUtils;
 import org.lins.mmmjjkx.rykenslimefuncustomizer.utils.ExceptionHandler;
 
 public class MenuReader extends YamlReader<CustomMenu> {
+    private static final NamespacedKey PROGRESS_KEY = new NamespacedKey(RykenSlimefunCustomizer.INSTANCE, "progress");
+
     public MenuReader(YamlConfiguration config, ProjectAddon addon) {
         super(config, addon);
     }
@@ -92,6 +99,10 @@ public class MenuReader extends YamlReader<CustomMenu> {
                     } else {
                         progressItem = itemStack;
                     }
+
+                    ItemMeta meta = progressItem.getItemMeta();
+                    PersistentDataContainer pdc = meta.getPersistentDataContainer();
+                    pdc.set(PROGRESS_KEY, PersistentDataType.INTEGER, 0);
                 }
                 slotMap.put(realSlot, itemStack);
             } catch (NumberFormatException e) {

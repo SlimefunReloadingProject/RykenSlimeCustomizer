@@ -12,7 +12,7 @@ import io.github.thebusybiscuit.slimefun4.core.machines.MachineProcessor;
 import io.github.thebusybiscuit.slimefun4.implementation.SlimefunItems;
 import io.github.thebusybiscuit.slimefun4.implementation.handlers.SimpleBlockBreakHandler;
 import io.github.thebusybiscuit.slimefun4.implementation.operations.FuelOperation;
-import io.github.thebusybiscuit.slimefun4.libraries.dough.items.CustomItemStack;
+import io.github.thebusybiscuit.slimefun4.utils.ChestMenuUtils;
 import io.github.thebusybiscuit.slimefun4.utils.SlimefunUtils;
 import io.github.thebusybiscuit.slimefun4.utils.itemstack.ItemStackWrapper;
 import java.util.HashMap;
@@ -114,7 +114,14 @@ public class CustomGenerator extends AGenerator implements MachineProcessHolder<
                         inv.pushItem(operation.getResult().clone(), getOutputSlots());
                     }
 
-                    inv.replaceExistingItem(progressSlot, new CustomItemStack(Material.BLACK_STAINED_GLASS_PANE, " "));
+                    ItemStack progress;
+                    if (menu == null) {
+                        progress = ChestMenuUtils.getBackground();
+                    } else {
+                        progress = menu.getSlotMap().getOrDefault(progressSlot, ChestMenuUtils.getBackground());
+                    }
+
+                    inv.replaceExistingItem(progressSlot, progress);
 
                     processor.endOperation(l);
                     return 0;

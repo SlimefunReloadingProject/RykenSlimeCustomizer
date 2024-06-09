@@ -11,6 +11,8 @@ import io.github.thebusybiscuit.slimefun4.implementation.handlers.SimpleBlockBre
 import io.github.thebusybiscuit.slimefun4.implementation.operations.CraftingOperation;
 import io.github.thebusybiscuit.slimefun4.libraries.dough.items.CustomItemStack;
 import java.util.*;
+
+import io.github.thebusybiscuit.slimefun4.utils.ChestMenuUtils;
 import lombok.Getter;
 import me.mrCookieSlime.Slimefun.Objects.SlimefunItem.abstractItems.AContainer;
 import me.mrCookieSlime.Slimefun.Objects.SlimefunItem.abstractItems.MachineRecipe;
@@ -131,7 +133,7 @@ public class CustomRecipeMachine extends AContainer implements RecipeDisplayItem
     @Override
     // Outside init
     public ItemStack getProgressBar() {
-        return new ItemStack(Material.GREEN_STAINED_GLASS_PANE);
+        return new ItemStack(Material.BLACK_STAINED_GLASS_PANE);
     }
 
     @Override
@@ -205,11 +207,9 @@ public class CustomRecipeMachine extends AContainer implements RecipeDisplayItem
                         this.processor.updateProgressBar(inv, progressSlot, currentOperation);
                         currentOperation.addProgress(1);
                     } else {
-                        inv.replaceExistingItem(progressSlot, processor.getProgressBar());
-
                         if (currentRecipe != null) {
                             ItemStack[] outputs =
-                                    currentRecipe.getMatchChanceResult().toArray(new ItemStack[] {});
+                                    currentRecipe.getMatchChanceResult().toArray(new ItemStack[]{});
 
                             if (!currentRecipe.isChooseOneIfHas()) {
                                 for (ItemStack o : outputs) {
@@ -228,12 +228,19 @@ public class CustomRecipeMachine extends AContainer implements RecipeDisplayItem
                             }
                         }
 
+                        ItemStack progress;
+                        if (menu == null) {
+                            progress = ChestMenuUtils.getBackground();
+                        } else {
+                            progress = menu.getSlotMap().getOrDefault(progressSlot, ChestMenuUtils.getBackground());
+                        }
+                        inv.replaceExistingItem(progressSlot, progress);
+
                         currentRecipe = null;
                         this.processor.endOperation(b);
                     }
                 }
             } else {
-                inv.reload();
                 MachineRecipe next = this.findNextRecipe(inv);
                 if (next != null) {
                     currentRecipe = (RecipeMachineRecipe) next;
