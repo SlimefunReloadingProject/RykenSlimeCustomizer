@@ -15,6 +15,8 @@ import java.util.ArrayList;
 import java.util.Collections;
 import java.util.List;
 import java.util.Objects;
+
+import io.github.thebusybiscuit.slimefun4.utils.ChestMenuUtils;
 import me.mrCookieSlime.Slimefun.Objects.SlimefunItem.interfaces.InventoryBlock;
 import me.mrCookieSlime.Slimefun.Objects.handlers.BlockTicker;
 import me.mrCookieSlime.Slimefun.api.inventory.BlockMenu;
@@ -66,6 +68,9 @@ public class CustomMaterialGenerator extends SlimefunItem
                 }
             }
         });
+
+        menu.getSlotMap().put(statusSlot, ChestMenuUtils.getBackground());
+        menu.addMenuClickHandler(statusSlot, (player, slot, i, clickType) -> false);
 
         createPreset(this, menu::apply);
 
