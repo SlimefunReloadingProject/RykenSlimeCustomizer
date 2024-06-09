@@ -179,14 +179,12 @@ public class GeoResourceReader extends YamlReader<GEOResource> {
                 return maxDeviation;
             }
 
-            @NotNull
-            @Override
+            @NotNull @Override
             public String getName() {
                 return name;
             }
 
-            @NotNull
-            @Override
+            @NotNull @Override
             public ItemStack getItem() {
                 return item;
             }

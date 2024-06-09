@@ -61,7 +61,6 @@ public class CustomMachine extends AbstractEmptyMachine<MachineOperation> implem
         this.processor = new MachineProcessor<>(this);
 
         if (menu != null) {
-            menu.setInvb(this);
             this.processor.setProgressBar(menu.getProgressBarItem());
 
             createPreset(this, menu::apply);

@@ -56,7 +56,6 @@ public class CustomGenerator extends AGenerator implements MachineProcessHolder<
         super(itemGroup, item, recipeType, recipe);
 
         if (menu != null) {
-            menu.setInvb(this);
             this.processor.setProgressBar(menu.getProgressBarItem());
 
             createPreset(this, menu::apply);

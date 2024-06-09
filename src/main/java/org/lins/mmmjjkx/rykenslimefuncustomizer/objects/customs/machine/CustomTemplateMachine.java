@@ -19,8 +19,8 @@ import org.bukkit.inventory.ItemStack;
 import org.jetbrains.annotations.NotNull;
 import org.lins.mmmjjkx.rykenslimefuncustomizer.objects.customs.CustomMenu;
 import org.lins.mmmjjkx.rykenslimefuncustomizer.objects.customs.parent.AbstractEmptyMachine;
+import org.lins.mmmjjkx.rykenslimefuncustomizer.objects.machine.CustomMachineRecipe;
 import org.lins.mmmjjkx.rykenslimefuncustomizer.objects.machine.MachineTemplate;
-import org.lins.mmmjjkx.rykenslimefuncustomizer.objects.machine.RecipeMachineRecipe;
 import org.lins.mmmjjkx.rykenslimefuncustomizer.utils.CommonUtils;
 
 public class CustomTemplateMachine extends AbstractEmptyMachine<CraftingOperation> implements RecipeDisplayItem {
@@ -97,16 +97,16 @@ public class CustomTemplateMachine extends AbstractEmptyMachine<CraftingOperatio
             ItemStack templateItem = m.getItemInSlot(templateSlot);
             MachineTemplate template = CommonUtils.getIf(templates, t -> t.isSimilar(templateItem));
             if (template != null) {
-                RecipeMachineRecipe recipe = findRecipe(template, m);
+                CustomMachineRecipe recipe = findRecipe(template, m);
             }
         }
     }
 
-    private RecipeMachineRecipe findRecipe(MachineTemplate currentTemplate, BlockMenu menu) {
+    private CustomMachineRecipe findRecipe(MachineTemplate currentTemplate, BlockMenu menu) {
         // TODO: Implement recipe finding
         // 需要等待 https://github.com/Slimefun/Slimefun4/pull/4177 被合并
 
-        RecipeMachineRecipe recipe = currentTemplate.recipes().get(0).getFirstValue();
+        CustomMachineRecipe recipe = currentTemplate.recipes().get(0).getFirstValue();
 
         int cost = currentTemplate.recipes().stream()
                 .filter(k -> Objects.equals(k.getFirstValue(), recipe))
