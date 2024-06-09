@@ -10,35 +10,32 @@ import io.github.thebusybiscuit.slimefun4.core.machines.MachineProcessor;
 import io.github.thebusybiscuit.slimefun4.implementation.handlers.SimpleBlockBreakHandler;
 import io.github.thebusybiscuit.slimefun4.implementation.operations.CraftingOperation;
 import io.github.thebusybiscuit.slimefun4.libraries.dough.items.CustomItemStack;
-import java.util.*;
-
 import io.github.thebusybiscuit.slimefun4.utils.ChestMenuUtils;
+import java.util.*;
 import lombok.Getter;
 import me.mrCookieSlime.Slimefun.Objects.SlimefunItem.abstractItems.AContainer;
 import me.mrCookieSlime.Slimefun.Objects.SlimefunItem.abstractItems.MachineRecipe;
 import me.mrCookieSlime.Slimefun.api.inventory.BlockMenu;
 import me.mrCookieSlime.Slimefun.api.inventory.BlockMenuPreset;
-import org.bukkit.Location;
 import org.bukkit.Material;
 import org.bukkit.block.Block;
 import org.bukkit.inventory.ItemStack;
 import org.jetbrains.annotations.NotNull;
 import org.jetbrains.annotations.Nullable;
 import org.lins.mmmjjkx.rykenslimefuncustomizer.RykenSlimefunCustomizer;
-import org.lins.mmmjjkx.rykenslimefuncustomizer.listeners.SingleItemRecipeGuide;
+import org.lins.mmmjjkx.rykenslimefuncustomizer.listeners.SingleItemRecipeGuideListener;
+import org.lins.mmmjjkx.rykenslimefuncustomizer.objects.customs.CustomCraftingOperation;
 import org.lins.mmmjjkx.rykenslimefuncustomizer.objects.customs.CustomMenu;
-import org.lins.mmmjjkx.rykenslimefuncustomizer.objects.machine.RecipeMachineRecipe;
+import org.lins.mmmjjkx.rykenslimefuncustomizer.objects.machine.CustomMachineRecipe;
 import org.lins.mmmjjkx.rykenslimefuncustomizer.utils.CommonUtils;
+import org.lins.mmmjjkx.rykenslimefuncustomizer.utils.TimeUtils;
 
 public class CustomRecipeMachine extends AContainer implements RecipeDisplayItem {
-    private final ItemStack RECIPE_SPLITTER =
-            new CustomItemStack(Material.GRAY_STAINED_GLASS_PANE, "&a").setCustomModel(2200002);
-    private final ItemStack AIR = new ItemStack(Material.AIR);
     private final MachineProcessor<CraftingOperation> processor;
-    private final List<Integer> input;
-    private final List<Integer> output;
-    private final List<RecipeMachineRecipe> raw_recipes;
-    private final List<RecipeMachineRecipe> recipes;
+    private final int[] input;
+    private final int[] output;
+    private final List<CustomMachineRecipe> raw_recipes;
+    private final List<CustomMachineRecipe> recipes;
     private final int energyPerCraft;
     private final int capacity;
 
@@ -50,16 +47,14 @@ public class CustomRecipeMachine extends AContainer implements RecipeDisplayItem
     @Getter
     @Nullable private final CustomMenu menu;
 
-    private final Map<Location, RecipeMachineRecipe> currentRecipe = new HashMap<>();
-
     public CustomRecipeMachine(
             ItemGroup itemGroup,
             SlimefunItemStack item,
             RecipeType recipeType,
             ItemStack[] recipe,
-            List<Integer> input,
-            List<Integer> output,
-            List<RecipeMachineRecipe> recipes,
+            int[] input,
+            int[] output,
+            List<CustomMachineRecipe> recipes,
             int energyPerCraft,
             int capacity,
             @Nullable CustomMenu menu,
@@ -81,7 +76,6 @@ public class CustomRecipeMachine extends AContainer implements RecipeDisplayItem
         }
 
         if (menu != null) {
-            menu.setInvb(this);
             this.processor.setProgressBar(menu.getProgressBarItem());
 
             createPreset(this, menu::apply);
@@ -142,14 +136,14 @@ public class CustomRecipeMachine extends AContainer implements RecipeDisplayItem
         List<ItemStack> displayRecipes = new ArrayList<>();
 
         int i = 0;
-        for (RecipeMachineRecipe recipe : raw_recipes) {
+        for (CustomMachineRecipe recipe : raw_recipes) {
             ItemStack[] input = recipe.getInput();
             ItemStack[] output = recipe.getOutput();
 
             if (input.length == 1) {
                 displayRecipes.add(input[0]);
             } else {
-                ItemStack in = SingleItemRecipeGuide.tagItemRecipe(RECIPE_INPUT, i);
+                ItemStack in = SingleItemRecipeGuideListener.tagItemRecipe(RECIPE_INPUT, i);
                 displayRecipes.add(in);
             }
 
@@ -158,12 +152,12 @@ public class CustomRecipeMachine extends AContainer implements RecipeDisplayItem
                 ItemStack out = output[0].clone();
                 String rawLore = "&e制作时间: &b" + seconds + "&es";
                 if (seconds > 60) {
-                    rawLore = rawLore.concat("(" + SingleItemRecipeGuide.formatSeconds(seconds) + "&e)");
+                    rawLore = rawLore.concat("(" + TimeUtils.formatSeconds(seconds) + "&e)");
                 }
                 CommonUtils.addLore(out, true, rawLore);
                 displayRecipes.add(out);
             } else {
-                ItemStack out = SingleItemRecipeGuide.tagItemRecipe(RECIPE_OUTPUT, i);
+                ItemStack out = SingleItemRecipeGuideListener.tagItemRecipe(RECIPE_OUTPUT, i);
                 displayRecipes.add(out);
             }
 
@@ -175,12 +169,12 @@ public class CustomRecipeMachine extends AContainer implements RecipeDisplayItem
 
     @Override
     public int[] getInputSlots() {
-        return input.stream().mapToInt(i -> i).toArray();
+        return input;
     }
 
     @Override
     public int[] getOutputSlots() {
-        return output.stream().mapToInt(i -> i).toArray();
+        return output;
     }
 
     @Override
@@ -199,7 +193,7 @@ public class CustomRecipeMachine extends AContainer implements RecipeDisplayItem
     @Override
     protected void tick(Block b) {
         BlockMenu inv = StorageCacheUtils.getMenu(b.getLocation());
-        CraftingOperation currentOperation = this.processor.getOperation(b);
+        CustomCraftingOperation currentOperation = (CustomCraftingOperation) this.processor.getOperation(b);
         int progressSlot = this.menu == null || this.menu.getProgressSlot() == -1 ? 22 : this.menu.getProgressSlot();
         if (inv != null) {
             if (currentOperation != null) {
@@ -208,9 +202,10 @@ public class CustomRecipeMachine extends AContainer implements RecipeDisplayItem
                         this.processor.updateProgressBar(inv, progressSlot, currentOperation);
                         currentOperation.addProgress(1);
                     } else {
-                        RecipeMachineRecipe currentRecipe = this.currentRecipe.get(b.getLocation());
+                        CustomMachineRecipe currentRecipe = currentOperation.getRecipe();
                         if (currentRecipe != null) {
-                            ItemStack[] outputs = currentRecipe.getMatchChanceResult().toArray(new ItemStack[]{});
+                            ItemStack[] outputs =
+                                    currentRecipe.getMatchChanceResult().toArray(ItemStack[]::new);
 
                             if (!currentRecipe.isChooseOneIfHas()) {
                                 for (ItemStack o : outputs) {
@@ -233,20 +228,19 @@ public class CustomRecipeMachine extends AContainer implements RecipeDisplayItem
                         if (this.menu == null) {
                             progress = ChestMenuUtils.getBackground();
                         } else {
-                            progress = this.menu.getSlotMap().getOrDefault(progressSlot, ChestMenuUtils.getBackground());
+                            progress =
+                                    this.menu.getSlotMap().getOrDefault(progressSlot, ChestMenuUtils.getBackground());
                         }
                         inv.replaceExistingItem(progressSlot, progress);
 
-                        this.currentRecipe.remove(b.getLocation());
                         this.processor.endOperation(b);
                     }
                 }
             } else {
                 MachineRecipe next = this.findNextRecipe(inv);
                 if (next != null) {
-                    RecipeMachineRecipe currentRecipe = (RecipeMachineRecipe) next;
-                    currentOperation = new CraftingOperation(currentRecipe);
-                    this.currentRecipe.put(b.getLocation(), currentRecipe);
+                    CustomMachineRecipe currentRecipe = (CustomMachineRecipe) next;
+                    currentOperation = new CustomCraftingOperation(currentRecipe);
                     this.processor.startOperation(b, currentOperation);
                     this.processor.updateProgressBar(inv, progressSlot, currentOperation);
                 }

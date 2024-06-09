@@ -104,7 +104,6 @@ public class MaterialGeneratorReader extends YamlReader<CustomMaterialGenerator>
                 menu,
                 per);
 
-        menu.setInvb(cmg);
         menu.addMenuClickHandler(status, ChestMenuUtils.getEmptyClickHandler());
 
         return cmg;

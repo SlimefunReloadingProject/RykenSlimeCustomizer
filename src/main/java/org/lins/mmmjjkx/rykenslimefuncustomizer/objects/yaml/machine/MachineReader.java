@@ -169,10 +169,6 @@ public class MachineReader extends YamlReader<AbstractEmptyMachine<?>> {
                     workSlots);
         }
 
-        if (menu != null) {
-            menu.setInvb(machine);
-        }
-
         machine.register(RykenSlimefunCustomizer.INSTANCE);
         return machine;
     }

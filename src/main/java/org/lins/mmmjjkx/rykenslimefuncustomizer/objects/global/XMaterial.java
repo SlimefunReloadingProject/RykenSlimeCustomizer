@@ -184,7 +184,7 @@ public enum XMaterial {
     BLACKSTONE_WALL,
     BLACK_BANNER("STANDING_BANNER", "BANNER"),
     /**
-     * Version 1.12+ interprets "BED" as BLACK_BED due to enum alphabetic ordering.
+     * version 1.12+ interprets "BED" as BLACK_BED due to enum alphabetic ordering.
      */
     BLACK_BED(supports(12) ? 15 : 0, "BED_BLOCK", "BED"),
     BLACK_CANDLE,
