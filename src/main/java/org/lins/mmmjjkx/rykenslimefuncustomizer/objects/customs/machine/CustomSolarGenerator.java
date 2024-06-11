@@ -44,7 +44,7 @@ public class CustomSolarGenerator extends SolarGenerator {
             if (!isDaytime && getNightEnergy() < 1) {
                 return 0;
             } else if (!world.isChunkLoaded(l.getBlockX() >> 4, l.getBlockZ() >> 4)
-                    || l.getBlock().getRelative(0, 1, 0).getLightFromSky() < lightLevel) {
+                    || l.getBlock().getRelative(0, 1, 0).getLightFromSky() < (byte) lightLevel) {
                 return 0;
             } else {
                 return isDaytime ? getDayEnergy() : getNightEnergy();

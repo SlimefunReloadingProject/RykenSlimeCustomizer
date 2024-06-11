@@ -46,11 +46,6 @@ public class ItemGroupReader extends YamlReader<ItemGroup> {
 
         int tier = section.getInt("tier", 3);
 
-        if (tier < 1) {
-            ExceptionHandler.handleError("在附属" + addon.getAddonId() + "中加载物品组" + s + "时遇到了问题: " + "显示优先级不能小于1！");
-            return null;
-        }
-
         ItemGroup group =
                 switch (type) {
                     default -> new ItemGroup(key, stack, tier);
