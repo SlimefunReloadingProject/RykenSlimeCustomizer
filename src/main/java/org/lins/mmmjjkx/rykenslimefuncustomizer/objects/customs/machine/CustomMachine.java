@@ -89,16 +89,7 @@ public class CustomMachine extends AbstractEmptyMachine<MachineOperation> implem
     protected void tick(Block b, SlimefunItem item, SlimefunBlockData data) {
         if (eval != null) {
             BlockMenu blockMenu = StorageCacheUtils.getMenu(b.getLocation());
-            MachineInfo info = new MachineInfo(
-                    blockMenu,
-                    data,
-                    item,
-                    b,
-                    theRecord.totalTicks(),
-                    theRecord.getProgress(),
-                    processor,
-                    theRecord,
-                    this);
+            MachineInfo info = new MachineInfo(blockMenu, data, item, b, processor, null, this);
             eval.evalFunction("tick", info);
         }
     }

@@ -103,23 +103,7 @@ public class MachineReader extends YamlReader<AbstractEmptyMachine<?>> {
                         -1);
                 return machine;
             }
-            int totalTicks = energySettings.getInt("totalTicks");
-            if (totalTicks < 1) {
-                ExceptionHandler.handleError(
-                        "无法读取在附属" + addon.getAddonId() + "中的机器" + s + "的能源设置，已转为无电机器，原因: 总粘液刻不能小于1");
-                machine = new CustomNoEnergyMachine(
-                        group.getSecondValue(),
-                        slimefunItemStack,
-                        rt.getSecondValue(),
-                        recipe,
-                        menu,
-                        input,
-                        output,
-                        eval,
-                        -1);
-                return machine;
-            }
-            MachineRecord record = new MachineRecord(capacity, totalTicks);
+            MachineRecord record = new MachineRecord(capacity);
             String encType = energySettings.getString("type");
             Pair<ExceptionHandler.HandleResult, EnergyNetComponentType> enc = ExceptionHandler.handleEnumValueOf(
                     "无法读取在附属" + addon.getAddonId() + "中的机器" + s + "的能源设置，已转为无电机器，原因: 错误的能源网络组件类型" + encType,
