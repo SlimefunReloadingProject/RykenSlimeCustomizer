@@ -61,7 +61,6 @@ public class CustomMachine extends AbstractEmptyMachine<MachineOperation> implem
         this.processor = new MachineProcessor<>(this);
 
         if (menu != null) {
-            menu.setInvb(this);
             this.processor.setProgressBar(menu.getProgressBarItem());
 
             createPreset(this, menu::apply);
@@ -90,16 +89,7 @@ public class CustomMachine extends AbstractEmptyMachine<MachineOperation> implem
     protected void tick(Block b, SlimefunItem item, SlimefunBlockData data) {
         if (eval != null) {
             BlockMenu blockMenu = StorageCacheUtils.getMenu(b.getLocation());
-            MachineInfo info = new MachineInfo(
-                    blockMenu,
-                    data,
-                    item,
-                    b,
-                    theRecord.totalTicks(),
-                    theRecord.getProgress(),
-                    processor,
-                    theRecord,
-                    this);
+            MachineInfo info = new MachineInfo(blockMenu, data, item, b, processor, null, this);
             eval.evalFunction("tick", info);
         }
     }

@@ -1,4 +1,4 @@
-package org.lins.mmmjjkx.rykenslimefuncustomizer.libraries.Colors;
+package org.lins.mmmjjkx.rykenslimefuncustomizer.libraries.colors;
 
 import java.util.*;
 import java.util.Map.Entry;
@@ -7,7 +7,7 @@ import java.util.regex.Pattern;
 import lombok.Getter;
 import org.bukkit.ChatColor;
 import org.bukkit.Color;
-import org.lins.mmmjjkx.rykenslimefuncustomizer.libraries.Version.Version;
+import org.lins.mmmjjkx.rykenslimefuncustomizer.libraries.version.Version;
 
 public class CMIChatColor {
 

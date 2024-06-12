@@ -10,8 +10,8 @@ import org.bukkit.event.block.BlockBreakEvent;
 import org.lins.mmmjjkx.rykenslimefuncustomizer.RykenSlimefunCustomizer;
 import org.lins.mmmjjkx.rykenslimefuncustomizer.objects.global.DropFromBlock;
 
-public class BlockBreak implements Listener {
-    public BlockBreak() {
+public class BlockListener implements Listener {
+    public BlockListener() {
         Bukkit.getPluginManager().registerEvents(this, RykenSlimefunCustomizer.INSTANCE);
     }
 
@@ -28,7 +28,7 @@ public class BlockBreak implements Listener {
         }
     }
 
-    private boolean matchChance(int chance) {
+    private static boolean matchChance(int chance) {
         if (chance >= 100) return true;
 
         Random rand = new Random();

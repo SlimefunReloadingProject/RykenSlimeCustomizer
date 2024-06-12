@@ -1,4 +1,4 @@
-package org.lins.mmmjjkx.rykenslimefuncustomizer.libraries.Colors;
+package org.lins.mmmjjkx.rykenslimefuncustomizer.libraries.colors;
 
 import lombok.Getter;
 

@@ -12,7 +12,7 @@ import org.bukkit.inventory.ItemStack;
 import org.lins.mmmjjkx.rykenslimefuncustomizer.objects.ProjectAddon;
 import org.lins.mmmjjkx.rykenslimefuncustomizer.objects.customs.CustomMenu;
 import org.lins.mmmjjkx.rykenslimefuncustomizer.objects.customs.machine.CustomRecipeMachine;
-import org.lins.mmmjjkx.rykenslimefuncustomizer.objects.machine.RecipeMachineRecipe;
+import org.lins.mmmjjkx.rykenslimefuncustomizer.objects.machine.CustomMachineRecipe;
 import org.lins.mmmjjkx.rykenslimefuncustomizer.objects.yaml.YamlReader;
 import org.lins.mmmjjkx.rykenslimefuncustomizer.utils.CommonUtils;
 import org.lins.mmmjjkx.rykenslimefuncustomizer.utils.ExceptionHandler;
@@ -36,8 +36,8 @@ public class RecipeMachineReader extends YamlReader<CustomRecipeMachine> {
         Pair<ExceptionHandler.HandleResult, ItemGroup> group = ExceptionHandler.handleItemGroupGet(addon, igId);
         if (group.getFirstValue() == ExceptionHandler.HandleResult.FAILED) return null;
 
-        SlimefunItemStack sfis = getPreloadItem(id);
-        if (sfis == null) return null;
+        SlimefunItemStack slimefunItemStack = getPreloadItem(id);
+        if (slimefunItemStack == null) return null;
 
         ItemStack[] recipe = CommonUtils.readRecipe(section.getConfigurationSection("recipe"), addon);
         String recipeType = section.getString("recipe_type", "NULL");
@@ -86,15 +86,15 @@ public class RecipeMachineReader extends YamlReader<CustomRecipeMachine> {
             return null;
         }
 
-        List<RecipeMachineRecipe> mr = readRecipes(s, input.size(), output.size(), recipes, addon);
+        List<CustomMachineRecipe> mr = readRecipes(s, input.size(), output.size(), recipes, addon);
 
         return new CustomRecipeMachine(
                 group.getSecondValue(),
-                sfis,
+                slimefunItemStack,
                 rt.getSecondValue(),
                 recipe,
-                input,
-                output,
+                input.stream().mapToInt(x -> x).toArray(),
+                output.stream().mapToInt(x -> x).toArray(),
                 mr,
                 energy,
                 capacity,
@@ -119,9 +119,9 @@ public class RecipeMachineReader extends YamlReader<CustomRecipeMachine> {
         return List.of(new SlimefunItemStack(id, stack));
     }
 
-    private List<RecipeMachineRecipe> readRecipes(
+    private List<CustomMachineRecipe> readRecipes(
             String s, int inputSize, int outputSize, ConfigurationSection section, ProjectAddon addon) {
-        List<RecipeMachineRecipe> list = new ArrayList<>();
+        List<CustomMachineRecipe> list = new ArrayList<>();
         if (section == null) {
             return list;
         }
@@ -182,7 +182,7 @@ public class RecipeMachineReader extends YamlReader<CustomRecipeMachine> {
             input = removeNulls(input);
             output = removeNulls(output);
 
-            list.add(new RecipeMachineRecipe(seconds, input, output, chances, chooseOne, forDisplay));
+            list.add(new CustomMachineRecipe(seconds, input, output, chances, chooseOne, forDisplay));
         }
         return list;
     }

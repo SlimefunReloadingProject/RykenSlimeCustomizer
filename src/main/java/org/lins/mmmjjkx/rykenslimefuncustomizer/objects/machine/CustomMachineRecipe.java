@@ -7,7 +7,7 @@ import lombok.Getter;
 import me.mrCookieSlime.Slimefun.Objects.SlimefunItem.abstractItems.MachineRecipe;
 import org.bukkit.inventory.ItemStack;
 
-public class RecipeMachineRecipe extends MachineRecipe {
+public class CustomMachineRecipe extends MachineRecipe {
     @Getter
     private final List<Integer> chances;
 
@@ -19,7 +19,7 @@ public class RecipeMachineRecipe extends MachineRecipe {
 
     private final Random RNG = new Random();
 
-    public RecipeMachineRecipe(
+    public CustomMachineRecipe(
             int seconds,
             ItemStack[] input,
             ItemStack[] output,

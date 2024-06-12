@@ -15,8 +15,6 @@ public record MachineInfo(
         SlimefunBlockData data,
         SlimefunItem machineItem,
         Block block,
-        int totalTicks,
-        int progress,
         MachineProcessor<?> processor,
         MachineOperation operation,
         CustomMachine machine) {

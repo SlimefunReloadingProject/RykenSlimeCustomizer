@@ -1,4 +1,4 @@
-package org.lins.mmmjjkx.rykenslimefuncustomizer.libraries.Version;
+package org.lins.mmmjjkx.rykenslimefuncustomizer.libraries.version;
 
 import com.google.errorprone.annotations.CanIgnoreReturnValue;
 import java.util.ArrayList;
