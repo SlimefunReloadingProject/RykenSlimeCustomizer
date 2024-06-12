@@ -26,20 +26,21 @@ import org.bukkit.inventory.meta.ItemMeta;
 import org.bukkit.persistence.PersistentDataContainer;
 import org.bukkit.persistence.PersistentDataType;
 import org.lins.mmmjjkx.rykenslimefuncustomizer.RykenSlimefunCustomizer;
-import org.lins.mmmjjkx.rykenslimefuncustomizer.libraries.Colors.CMIChatColor;
+import org.lins.mmmjjkx.rykenslimefuncustomizer.libraries.colors.CMIChatColor;
 import org.lins.mmmjjkx.rykenslimefuncustomizer.objects.customs.CustomMenu;
 import org.lins.mmmjjkx.rykenslimefuncustomizer.objects.customs.machine.CustomRecipeMachine;
-import org.lins.mmmjjkx.rykenslimefuncustomizer.objects.machine.RecipeMachineRecipe;
+import org.lins.mmmjjkx.rykenslimefuncustomizer.objects.machine.CustomMachineRecipe;
 import org.lins.mmmjjkx.rykenslimefuncustomizer.objects.slimefun.AsyncChanceRecipeTask;
 import org.lins.mmmjjkx.rykenslimefuncustomizer.utils.CommonUtils;
+import org.lins.mmmjjkx.rykenslimefuncustomizer.utils.TimeUtils;
 
 @SuppressWarnings("deprecation")
-public class SingleItemRecipeGuide implements Listener {
+public class SingleItemRecipeGuideListener implements Listener {
     private static final NamespacedKey RECIPE_KEY = new NamespacedKey(RykenSlimefunCustomizer.INSTANCE, "rsc_recipe");
     private static final NamespacedKey RECIPE_INDEX_KEY =
             new NamespacedKey(RykenSlimefunCustomizer.INSTANCE, "rsc_recipe_index");
 
-    public SingleItemRecipeGuide() {
+    public SingleItemRecipeGuideListener() {
         Bukkit.getPluginManager().registerEvents(this, RykenSlimefunCustomizer.INSTANCE);
     }
 
@@ -184,7 +185,7 @@ public class SingleItemRecipeGuide implements Listener {
                 }
             }
 
-            if (recipe instanceof RecipeMachineRecipe rmr) {
+            if (recipe instanceof CustomMachineRecipe rmr) {
                 int outputSlot = outputSlots[0];
                 List<ItemStack> inputs = List.of(rmr.getInput());
                 ItemStack[] outputs = recipe.getOutput();
@@ -233,7 +234,7 @@ public class SingleItemRecipeGuide implements Listener {
             String rawName = "&e制作时间: &b" + seconds + "&es";
 
             if (seconds > 60) {
-                rawName = rawName.concat("(" + formatSeconds(seconds) + "&e)");
+                rawName = rawName.concat("(" + TimeUtils.formatSeconds(seconds) + "&e)");
             }
 
             progressBar = new CustomItemStack(progressBar, rawName);
@@ -254,21 +255,6 @@ public class SingleItemRecipeGuide implements Listener {
             item = item.clone();
             CommonUtils.addLore(item, true, CMIChatColor.translate("&a有&b " + chance + "% &a的概率产出"));
             return item;
-        }
-    }
-
-    public static String formatSeconds(int seconds) {
-        if (seconds < 60) {
-            return "&b" + seconds + "&es";
-        } else if (seconds > 60 && seconds < 3600) {
-            int m = seconds / 60;
-            int s = seconds % 60;
-            return "&b" + m + "&emin" + (s != 0 ? "&b" + s + "&es" : "");
-        } else {
-            int h = seconds / 3600;
-            int m = (seconds % 3600) / 60;
-            int s = (seconds % 3600) % 60;
-            return "&b" + h + "&eh" + (m != 0 ? "&b" + m + "&emin" : "") + (s != 0 ? "&b" + s + "&es" : "");
         }
     }
 }

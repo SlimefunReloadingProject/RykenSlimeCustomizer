@@ -7,15 +7,12 @@ import java.nio.file.Path;
 import java.nio.file.Paths;
 import java.util.Objects;
 import net.guizhanss.guizhanlibplugin.updater.GuizhanUpdater;
-import org.bukkit.plugin.PluginDescriptionFile;
 import org.bukkit.plugin.java.JavaPlugin;
-import org.bukkit.plugin.java.JavaPluginLoader;
-import org.bukkit.plugin.java.PluginClassLoader;
 import org.jetbrains.annotations.NotNull;
 import org.lins.mmmjjkx.rykenslimefuncustomizer.bulit_in.JavaScriptCreator;
 import org.lins.mmmjjkx.rykenslimefuncustomizer.commands.MainCommand;
-import org.lins.mmmjjkx.rykenslimefuncustomizer.listeners.BlockBreak;
-import org.lins.mmmjjkx.rykenslimefuncustomizer.listeners.SingleItemRecipeGuide;
+import org.lins.mmmjjkx.rykenslimefuncustomizer.listeners.BlockListener;
+import org.lins.mmmjjkx.rykenslimefuncustomizer.listeners.SingleItemRecipeGuideListener;
 import org.lins.mmmjjkx.rykenslimefuncustomizer.objects.global.ScriptCreators;
 import org.lins.mmmjjkx.rykenslimefuncustomizer.utils.CommonUtils;
 import org.lins.mmmjjkx.rykenslimefuncustomizer.utils.ExceptionHandler;
@@ -49,8 +46,8 @@ public final class RykenSlimefunCustomizer extends JavaPlugin implements Slimefu
 
         addonManager.setup(this);
 
-        new BlockBreak();
-        new SingleItemRecipeGuide();
+        new BlockListener();
+        new SingleItemRecipeGuideListener();
 
         ExceptionHandler.info("RykenSlimeCustomizer加载成功！");
 
