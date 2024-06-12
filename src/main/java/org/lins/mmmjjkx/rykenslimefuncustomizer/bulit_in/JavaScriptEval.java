@@ -11,18 +11,15 @@ import io.github.thebusybiscuit.slimefun4.implementation.SlimefunItems;
 import io.github.thebusybiscuit.slimefun4.utils.SlimefunUtils;
 import java.io.File;
 import java.io.IOException;
-import java.util.Arrays;
 import java.util.logging.FileHandler;
 import javax.script.ScriptException;
-import org.bukkit.entity.Player;
-import org.bukkit.event.Event;
+
 import org.graalvm.polyglot.Context;
 import org.graalvm.polyglot.PolyglotAccess;
 import org.graalvm.polyglot.io.IOAccess;
 import org.jetbrains.annotations.NotNull;
 import org.jetbrains.annotations.Nullable;
 import org.lins.mmmjjkx.rykenslimefuncustomizer.objects.ProjectAddon;
-import org.lins.mmmjjkx.rykenslimefuncustomizer.objects.script.ban.Delegations;
 import org.lins.mmmjjkx.rykenslimefuncustomizer.objects.script.parent.ScriptEval;
 import org.lins.mmmjjkx.rykenslimefuncustomizer.utils.ExceptionHandler;
 
@@ -108,19 +105,6 @@ public class JavaScriptEval extends ScriptEval {
         if (getFileContext() == null || getFileContext().isBlank()) {
             contextInit();
         }
-
-        args = Arrays.stream(args)
-                .map(o -> {
-                    String fileName = getFile().getName();
-                    if (o instanceof Player p) {
-                        return Delegations.delegatePlayer(fileName, p);
-                    } else if (o instanceof Event e) {
-                        return Delegations.replacePlayerInEvent(fileName, e);
-                    } else {
-                        return o;
-                    }
-                })
-                .toArray();
 
         try {
             return jsEngine.invokeFunction(funName, args);

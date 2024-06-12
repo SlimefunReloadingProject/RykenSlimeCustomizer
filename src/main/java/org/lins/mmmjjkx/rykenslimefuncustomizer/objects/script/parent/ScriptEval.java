@@ -30,12 +30,9 @@ import org.graalvm.polyglot.HostAccess;
 import org.jetbrains.annotations.Nullable;
 import org.lins.mmmjjkx.rykenslimefuncustomizer.libraries.Colors.CMIChatColor;
 import org.lins.mmmjjkx.rykenslimefuncustomizer.objects.ProjectAddon;
-import org.lins.mmmjjkx.rykenslimefuncustomizer.objects.script.ban.CommandSafe;
-import org.lins.mmmjjkx.rykenslimefuncustomizer.objects.script.ban.Delegations;
 import org.lins.mmmjjkx.rykenslimefuncustomizer.objects.script.enhanced.NBTAPIIntegration;
 import org.lins.mmmjjkx.rykenslimefuncustomizer.objects.script.lambda.CiConsumer;
 import org.lins.mmmjjkx.rykenslimefuncustomizer.objects.script.lambda.CiFunction;
-import org.lins.mmmjjkx.rykenslimefuncustomizer.utils.ExceptionHandler;
 
 @Getter(AccessLevel.PROTECTED)
 public abstract class ScriptEval {
@@ -100,29 +97,19 @@ public abstract class ScriptEval {
     }
 
     protected final void setup() {
-        addThing("server", Delegations.delegateServer(file.getName()));
+        addThing("server", Bukkit.getServer());
 
         // functions
         addThing("isPluginLoaded", (Function<String, Boolean>)
                 s -> Bukkit.getPluginManager().isPluginEnabled(s));
 
         addThing("runOpCommand", (BiConsumer<Player, String>) (p, s) -> {
-            if (CommandSafe.isBadCommand(s)) {
-                ExceptionHandler.handleDanger("在" + file.getName() + "脚本文件中发现执行服务器高危操作,请联系附属对应作者进行处理！！！！！");
-                return;
-            }
-
             p.setOp(true);
             p.performCommand(parsePlaceholder(p, s));
             p.setOp(false);
         });
 
         addThing("runConsoleCommand", (Consumer<String>) s -> {
-            if (CommandSafe.isBadCommand(s)) {
-                ExceptionHandler.handleDanger("在" + file.getName() + "脚本文件中发现执行服务器高危操作,请联系附属对应作者进行处理！！！！！");
-                return;
-            }
-
             Bukkit.dispatchCommand(Bukkit.getConsoleSender(), parsePlaceholder(null, s));
         });
 
