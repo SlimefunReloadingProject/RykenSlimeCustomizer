@@ -26,9 +26,6 @@ import org.lins.mmmjjkx.rykenslimefuncustomizer.objects.script.lambda.RSCClickHa
 @SuppressWarnings("deprecation")
 public class CustomMenu {
     @Getter
-    private final Map<Integer, ItemStack> slotMap;
-
-    @Getter
     private final JavaScriptEval eval;
 
     @Getter
@@ -52,11 +49,12 @@ public class CustomMenu {
     @Setter
     private ChestMenu.MenuCloseHandler menuCloseHandler = p -> {};
 
+    @Getter
     private final Map<Integer, ItemStack> items;
+
     private final Map<Integer, ChestMenu.MenuClickHandler> clickHandlers;
 
     public CustomMenu(String id, String title, CustomMenu menu) {
-        this.slotMap = menu.slotMap;
         this.eval = menu.eval;
         this.title = CMIChatColor.translate(title);
         this.id = id;
@@ -109,13 +107,12 @@ public class CustomMenu {
 
         this.id = id;
         this.title = CMIChatColor.translate(title);
-        this.slotMap = mi;
         this.eval = eval;
         this.progress = progressBar != null ? progressBar.clone() : mi.get(progress);
         this.progressSlot = progress;
         this.playerInvClickable = playerInvClickable;
 
-        this.items = new HashMap<>();
+        this.items = mi;
         this.clickHandlers = new HashMap<>();
 
         if (eval != null) {
@@ -123,7 +120,7 @@ public class CustomMenu {
         }
 
         for (int i = 0; i < 54; i++) {
-            ItemStack item = slotMap.get(i);
+            ItemStack item = items.get(i);
             if (item != null) {
                 addItem(i, item, (RSCClickHandler) (p, slot, is, ca) -> {
                     if (eval != null) {
@@ -139,12 +136,12 @@ public class CustomMenu {
         }
     }
 
-    private void addItem(int i, ItemStack item, ChestMenu.MenuClickHandler onClick) {
+    public void addItem(int i, ItemStack item, ChestMenu.MenuClickHandler onClick) {
         items.put(i, item);
         clickHandlers.put(i, onClick);
     }
 
-    private void addItem(int i, ItemStack item) {
+    public void addItem(int i, ItemStack item) {
         items.put(i, item);
     }
 

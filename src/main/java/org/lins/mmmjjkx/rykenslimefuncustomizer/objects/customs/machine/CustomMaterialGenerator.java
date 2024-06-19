@@ -68,8 +68,7 @@ public class CustomMaterialGenerator extends SlimefunItem
             }
         });
 
-        menu.getSlotMap().put(statusSlot, ChestMenuUtils.getBackground());
-        menu.addMenuClickHandler(statusSlot, (player, slot, i, clickType) -> false);
+        menu.addItem(statusSlot, ChestMenuUtils.getBackground(), ChestMenuUtils.getEmptyClickHandler());
 
         createPreset(this, menu::apply);
 

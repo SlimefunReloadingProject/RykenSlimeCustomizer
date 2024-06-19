@@ -228,8 +228,7 @@ public class CustomRecipeMachine extends AContainer implements RecipeDisplayItem
                         if (this.menu == null) {
                             progress = ChestMenuUtils.getBackground();
                         } else {
-                            progress =
-                                    this.menu.getSlotMap().getOrDefault(progressSlot, ChestMenuUtils.getBackground());
+                            progress = this.menu.getItems().getOrDefault(progressSlot, ChestMenuUtils.getBackground());
                         }
                         inv.replaceExistingItem(progressSlot, progress);
 

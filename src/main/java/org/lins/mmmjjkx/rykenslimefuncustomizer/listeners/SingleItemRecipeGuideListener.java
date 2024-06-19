@@ -247,7 +247,7 @@ public class SingleItemRecipeGuideListener implements Listener {
             super.open(players);
 
             if (!recipeTask.isEmpty()) {
-                recipeTask.start(getInventory());
+                recipeTask.start(toInventory());
             }
         }
 

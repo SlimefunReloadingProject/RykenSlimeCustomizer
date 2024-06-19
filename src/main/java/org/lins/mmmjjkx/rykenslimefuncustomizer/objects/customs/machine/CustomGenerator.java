@@ -117,7 +117,7 @@ public class CustomGenerator extends AGenerator implements MachineProcessHolder<
                     if (menu == null) {
                         progress = ChestMenuUtils.getBackground();
                     } else {
-                        progress = menu.getSlotMap().getOrDefault(progressSlot, ChestMenuUtils.getBackground());
+                        progress = menu.getItems().getOrDefault(progressSlot, ChestMenuUtils.getBackground());
                     }
 
                     inv.replaceExistingItem(progressSlot, progress);
