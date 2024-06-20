@@ -32,7 +32,6 @@ import org.lins.mmmjjkx.rykenslimefuncustomizer.objects.customs.machine.CustomRe
 import org.lins.mmmjjkx.rykenslimefuncustomizer.objects.machine.CustomMachineRecipe;
 import org.lins.mmmjjkx.rykenslimefuncustomizer.objects.slimefun.AsyncChanceRecipeTask;
 import org.lins.mmmjjkx.rykenslimefuncustomizer.utils.CommonUtils;
-import org.lins.mmmjjkx.rykenslimefuncustomizer.utils.TimeUtils;
 
 @SuppressWarnings("deprecation")
 public class SingleItemRecipeGuideListener implements Listener {
@@ -234,7 +233,7 @@ public class SingleItemRecipeGuideListener implements Listener {
             String rawName = "&e制作时间: &b" + seconds + "&es";
 
             if (seconds > 60) {
-                rawName = rawName.concat("(" + TimeUtils.formatSeconds(seconds) + "&e)");
+                rawName = rawName.concat("(" + CommonUtils.formatSeconds(seconds) + "&e)");
             }
 
             progressBar = new CustomItemStack(progressBar, rawName);

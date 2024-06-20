@@ -3,6 +3,7 @@ package org.lins.mmmjjkx.rykenslimefuncustomizer.objects.yaml;
 import io.github.thebusybiscuit.slimefun4.api.items.SlimefunItemStack;
 import io.github.thebusybiscuit.slimefun4.implementation.Slimefun;
 import java.io.File;
+import java.util.ArrayList;
 import java.util.HashMap;
 import java.util.List;
 import java.util.Map;
@@ -57,11 +58,15 @@ public class MenuReader extends YamlReader<CustomMenu> {
             String menuId = section.getString("import", "");
             BlockMenuPreset menuPreset = Slimefun.getRegistry().getMenuPresets().get(menuId);
             if (menuPreset == null) {
-                ExceptionHandler.handleError(
-                        "在附属" + addon.getAddonId() + "中加载菜单" + s + "时遇到了问题: " + "无法加载机器菜单" + s + ": 无法找到要导入的菜单");
-                return null;
+                CustomMenu menu = addon.getMenus().stream().filter(m -> m.getId().equals(menuId)).findFirst().orElse(null);
+                if (menu == null) {
+                    ExceptionHandler.handleError(
+                            "在附属" + addon.getAddonId() + "中加载菜单" + s + "时遇到了问题: " + "无法加载机器菜单" + s + ": 无法找到要导入的菜单");
+                    return null;
+                } else {
+                    return new CustomMenu(s, title, menu);
+                }
             }
-
             return new CustomMenu(s, title, menuPreset, new ItemStack(Material.BLACK_STAINED_GLASS_PANE), eval);
         }
 
@@ -75,6 +80,7 @@ public class MenuReader extends YamlReader<CustomMenu> {
         }
 
         ItemStack progressItem = new ItemStack(Material.BLACK_STAINED_GLASS_PANE);
+        List<Integer> forceClickableSlots = new ArrayList<>();
 
         for (String slot : slots.getKeys(false)) {
             try {
@@ -101,8 +107,13 @@ public class MenuReader extends YamlReader<CustomMenu> {
                     }
 
                     ItemMeta meta = progressItem.getItemMeta();
-                    PersistentDataContainer pdc = meta.getPersistentDataContainer();
-                    pdc.set(PROGRESS_KEY, PersistentDataType.INTEGER, 0);
+                    if (meta != null) {
+                        PersistentDataContainer pdc = meta.getPersistentDataContainer();
+                        pdc.set(PROGRESS_KEY, PersistentDataType.INTEGER, 0);
+                    }
+                }
+                if (item.getBoolean("clickable", false)) {
+                    forceClickableSlots.add(realSlot);
                 }
                 slotMap.put(realSlot, itemStack);
             } catch (NumberFormatException e) {

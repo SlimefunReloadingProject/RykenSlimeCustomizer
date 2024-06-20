@@ -218,6 +218,47 @@ public class MainCommand implements TabExecutor {
                     sender.sendMessage(CMIChatColor.translate("&4你不能在控制台使用此指令！"));
                     return false;
                 }
+            } else if (args[0].equalsIgnoreCase("getsaveitem")) {
+                if (!sender.hasPermission("rsc.command") || !sender.hasPermission("rsc.command.getsaveitem")) {
+                    sender.sendMessage(CMIChatColor.translate("&4你没有权限去做这些！"));
+                    return false;
+                }
+
+                String prjId = args[1];
+                String itemId = args[2];
+                ProjectAddon addon = RykenSlimefunCustomizer.addonManager.get(prjId);
+                if (addon == null) {
+                    sender.sendMessage(CMIChatColor.translate("&4没有这个附属！"));
+                    return false;
+                }
+
+                File file = new File(RykenSlimefunCustomizer.addonManager.getAddonFolder(prjId), "items/" + itemId + ".yml");
+                if (!file.exists() || file.length() == 0) {
+                    sender.sendMessage(CMIChatColor.translate("&4指向的物品文件没有内容！"));
+                    return false;
+                }
+
+                YamlConfiguration config = YamlConfiguration.loadConfiguration(file);
+                ItemStack item = config.getItemStack("item");
+                if (item == null) {
+                    sender.sendMessage(CMIChatColor.translate("&4无法读取此物品文件！"));
+                    return false;
+                }
+
+                if (sender instanceof Player p) {
+                    ItemStack itemStack = p.getInventory().getItemInMainHand();
+                    if (itemStack.getType() == Material.AIR) {
+                        p.getInventory().setItemInMainHand(item);
+                        sender.sendMessage(CMIChatColor.translate("&a物品已放入你的手中！"));
+                        return true;
+                    }
+                    p.getInventory().addItem(item);
+                    sender.sendMessage(CMIChatColor.translate("&a物品已放入你的背包中！"));
+                    return true;
+                } else {
+                    sender.sendMessage(CMIChatColor.translate("&4你不能在控制台使用此指令！"));
+                    return false;
+                }
             }
         } else {
             sender.sendMessage(CMIChatColor.translate("&4找不到此子指令！"));
@@ -241,7 +282,7 @@ public class MainCommand implements TabExecutor {
                 case "enable" -> Arrays.stream(Objects.requireNonNull(ProjectAddonManager.ADDONS_DIRECTORY.listFiles()))
                         .map(File::getName)
                         .toList();
-                case "disable", "saveitem" -> RykenSlimefunCustomizer.addonManager.getAllValues().stream()
+                case "disable", "saveitem", "getsaveitem" -> RykenSlimefunCustomizer.addonManager.getAllValues().stream()
                         .map(ProjectAddon::getAddonId)
                         .toList();
                 case "menupreview" -> Slimefun.getRegistry().getMenuPresets().keySet().stream()

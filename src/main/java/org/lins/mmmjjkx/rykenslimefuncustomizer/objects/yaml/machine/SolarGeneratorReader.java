@@ -60,7 +60,6 @@ public class SolarGeneratorReader extends YamlReader<CustomSolarGenerator> {
         }
 
         int capacity = section.getInt("capacity", 0);
-
         int lightLevel = section.getInt("lightLevel", 15);
 
         if (lightLevel < 0 || lightLevel > 15) {

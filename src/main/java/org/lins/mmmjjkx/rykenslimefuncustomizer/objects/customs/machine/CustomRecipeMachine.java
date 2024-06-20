@@ -28,7 +28,6 @@ import org.lins.mmmjjkx.rykenslimefuncustomizer.objects.customs.CustomCraftingOp
 import org.lins.mmmjjkx.rykenslimefuncustomizer.objects.customs.CustomMenu;
 import org.lins.mmmjjkx.rykenslimefuncustomizer.objects.machine.CustomMachineRecipe;
 import org.lins.mmmjjkx.rykenslimefuncustomizer.utils.CommonUtils;
-import org.lins.mmmjjkx.rykenslimefuncustomizer.utils.TimeUtils;
 
 public class CustomRecipeMachine extends AContainer implements RecipeDisplayItem {
     private final MachineProcessor<CraftingOperation> processor;
@@ -152,7 +151,7 @@ public class CustomRecipeMachine extends AContainer implements RecipeDisplayItem
                 ItemStack out = output[0].clone();
                 String rawLore = "&e制作时间: &b" + seconds + "&es";
                 if (seconds > 60) {
-                    rawLore = rawLore.concat("(" + TimeUtils.formatSeconds(seconds) + "&e)");
+                    rawLore = rawLore.concat("(" + CommonUtils.formatSeconds(seconds) + "&e)");
                 }
                 CommonUtils.addLore(out, true, rawLore);
                 displayRecipes.add(out);

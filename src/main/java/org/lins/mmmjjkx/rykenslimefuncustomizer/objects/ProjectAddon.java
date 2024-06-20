@@ -50,6 +50,7 @@ public final class ProjectAddon {
     private @NotNull final Map<String, SlimefunItemStack> preloadItems = new HashMap<>();
     //
     private @Nullable String githubRepo;
+    private @Nullable String downloadZipName;
     //
     private List<JavaScriptEval> scriptEvals = new ArrayList<>();
     //
@@ -107,7 +108,6 @@ public final class ProjectAddon {
     }
 
     public void unregister() {
-        // scripts.forEach((s, eval) -> eval.close());
         scriptEvals.forEach(JavaScriptEval::close);
         itemGroups.forEach(ig -> Slimefun.getRegistry().getAllItemGroups().remove(ig));
         researches.forEach(Research::disable);

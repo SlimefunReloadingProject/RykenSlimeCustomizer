@@ -73,8 +73,6 @@ public abstract class ScriptEval {
         this.file = file;
 
         contextInit();
-
-        // addon.getScripts().put(key(), this);
     }
 
     public abstract String key();

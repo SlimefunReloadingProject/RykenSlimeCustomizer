@@ -8,7 +8,7 @@ import org.lins.mmmjjkx.rykenslimefuncustomizer.objects.machine.CustomMachineRec
 
 @Getter
 public class CustomCraftingOperation extends CraftingOperation {
-    private CustomMachineRecipe recipe;
+    private final CustomMachineRecipe recipe;
 
     public CustomCraftingOperation(@Nonnull CustomMachineRecipe recipe) {
         super(recipe.getInput(), recipe.getOutput(), recipe.getTicks());

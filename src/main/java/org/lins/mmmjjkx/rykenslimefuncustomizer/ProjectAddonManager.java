@@ -125,4 +125,8 @@ public final class ProjectAddonManager {
     public List<ProjectAddon> getAllValues() {
         return new ArrayList<>(projectAddons.values());
     }
+
+    public File getAddonFolder(String id) {
+        return projectIds.get(id);
+    }
 }

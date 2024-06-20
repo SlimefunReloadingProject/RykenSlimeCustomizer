@@ -1,5 +1,6 @@
 package org.lins.mmmjjkx.rykenslimefuncustomizer.objects;
 
+import io.github.thebusybiscuit.slimefun4.api.researches.Research;
 import io.github.thebusybiscuit.slimefun4.libraries.commons.lang.Validate;
 import java.io.File;
 import java.util.*;
@@ -41,6 +42,7 @@ public class ProjectAddonLoader {
             String version = info.getString("version", "1.0");
             String id = info.getString("id", ""); // checked in ProjectAddonManager
             String description = info.getString("description", "");
+            String downloadZipName = info.getString("downloadZipName", "");
             List<String> depends = new ArrayList<>();
             List<String> pluginDepends = new ArrayList<>();
             List<String> authors = info.getStringList("authors");
@@ -93,6 +95,10 @@ public class ProjectAddonLoader {
 
             if (!repo.isBlank()) {
                 addon.setGithubRepo("https://github.com/" + repo);
+            }
+
+            if (!downloadZipName.isBlank()) {
+                addon.setDownloadZipName(downloadZipName);
             }
         } else {
             ExceptionHandler.handleError("在名称为 " + file.getName() + "的文件夹中有无效的项目信息，导致此附属无法加载！");
@@ -198,7 +204,9 @@ public class ProjectAddonLoader {
 
         YamlConfiguration researches = doFileLoad(file, Constants.RESEARCHES_FILE);
         ResearchReader researchReader = new ResearchReader(researches, addon);
-        addon.setResearches(researchReader.readAll());
+        List<Research> researchesList = researchReader.readAll();
+        researchesList.addAll(researchReader.loadLateInits());
+        addon.setResearches(researchesList);
 
         ExceptionHandler.debugLog("加载附属 " + addon.getAddonId() + " 成功!");
 

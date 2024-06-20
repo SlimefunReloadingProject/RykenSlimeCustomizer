@@ -3,6 +3,7 @@ package org.lins.mmmjjkx.rykenslimefuncustomizer.objects.customs;
 import io.github.thebusybiscuit.slimefun4.api.items.SlimefunItem;
 import io.github.thebusybiscuit.slimefun4.implementation.Slimefun;
 import java.util.HashMap;
+import java.util.List;
 import java.util.Map;
 import lombok.Getter;
 import lombok.Setter;
@@ -42,6 +43,9 @@ public class CustomMenu {
 
     @Setter
     private boolean playerInvClickable;
+
+    @Setter
+    private List<Integer> forceClickableSlots;
 
     @Setter
     private ChestMenu.MenuOpeningHandler menuOpeningHandler = p -> {};
@@ -122,10 +126,11 @@ public class CustomMenu {
         for (int i = 0; i < 54; i++) {
             ItemStack item = items.get(i);
             if (item != null) {
-                addItem(i, item, (RSCClickHandler) (p, slot, is, ca) -> {
+                addItem(i, item, (p, slot, is, ca) -> {
                     if (eval != null) {
                         eval.evalFunction("onClick", p, slot, is, ca);
                     }
+                    return forceClickableSlots != null && forceClickableSlots.contains(slot);
                 });
             }
         }
