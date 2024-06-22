@@ -3,7 +3,6 @@ package org.lins.mmmjjkx.rykenslimefuncustomizer.objects.customs;
 import io.github.thebusybiscuit.slimefun4.api.items.SlimefunItem;
 import io.github.thebusybiscuit.slimefun4.implementation.Slimefun;
 import java.util.HashMap;
-import java.util.List;
 import java.util.Map;
 import lombok.Getter;
 import lombok.Setter;
@@ -23,6 +22,7 @@ import org.lins.mmmjjkx.rykenslimefuncustomizer.objects.customs.machine.CustomMa
 import org.lins.mmmjjkx.rykenslimefuncustomizer.objects.customs.machine.CustomNoEnergyMachine;
 import org.lins.mmmjjkx.rykenslimefuncustomizer.objects.customs.machine.CustomRecipeMachine;
 import org.lins.mmmjjkx.rykenslimefuncustomizer.objects.script.lambda.RSCClickHandler;
+import org.lins.mmmjjkx.rykenslimefuncustomizer.objects.yaml.MenuReader;
 
 @SuppressWarnings("deprecation")
 public class CustomMenu {
@@ -32,20 +32,18 @@ public class CustomMenu {
     @Getter
     private final String title;
 
-    @Getter
     private final String id;
 
     @Getter
     private int progressSlot;
+
+    private int size;
 
     @Getter
     private ItemStack progress;
 
     @Setter
     private boolean playerInvClickable;
-
-    @Setter
-    private List<Integer> forceClickableSlots;
 
     @Setter
     private ChestMenu.MenuOpeningHandler menuOpeningHandler = p -> {};
@@ -65,6 +63,7 @@ public class CustomMenu {
         this.items = menu.items;
         this.progressSlot = menu.progressSlot;
         this.clickHandlers = menu.clickHandlers;
+        this.size = menu.size;
 
         if (eval != null) {
             menuOpeningHandler = menu.menuOpeningHandler;
@@ -97,6 +96,8 @@ public class CustomMenu {
                 this.progressSlot = 22;
                 this.progress = container.getProgressBar();
             }
+
+            this.size = preset.getSize();
         }
     }
 
@@ -126,11 +127,10 @@ public class CustomMenu {
         for (int i = 0; i < 54; i++) {
             ItemStack item = items.get(i);
             if (item != null) {
-                addItem(i, item, (p, slot, is, ca) -> {
+                addItem(i, item, (RSCClickHandler) (p, slot, is, ca) -> {
                     if (eval != null) {
                         eval.evalFunction("onClick", p, slot, is, ca);
                     }
-                    return forceClickableSlots != null && forceClickableSlots.contains(slot);
                 });
             }
         }
@@ -139,6 +139,27 @@ public class CustomMenu {
             menuOpeningHandler = (p -> eval.evalFunction("onOpen", p));
             menuCloseHandler = (p -> eval.evalFunction("onClose", p));
         }
+    }
+
+    public String getId() {
+        return id;
+    }
+
+    public CustomMenu setSize(int size) {
+        if (size == MenuReader.NOT_SET) {
+            this.size = MenuReader.NOT_SET;
+            return this;
+        }
+
+        if (size > 54 || size < 0) {
+            throw new IllegalArgumentException("Size must be between 0 and 54");
+        }
+        if (size % 9 != 0) {
+            throw new IllegalArgumentException("Size must be a multiple of 9");
+        }
+
+        this.size = size;
+        return this;
     }
 
     public void addItem(int i, ItemStack item, ChestMenu.MenuClickHandler onClick) {
@@ -200,6 +221,10 @@ public class CustomMenu {
 
     public void apply(BlockMenuPreset preset) {
         preset.setPlayerInventoryClickable(playerInvClickable);
+
+        if (size != MenuReader.NOT_SET) {
+            preset.setSize(size);
+        }
 
         for (int slot : items.keySet()) {
             preset.addItem(slot, items.get(slot), getClickHandler(slot));

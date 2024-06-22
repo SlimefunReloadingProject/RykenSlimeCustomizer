@@ -85,6 +85,12 @@ public final class ProjectAddonManager {
         for (File folder : folders) {
             if (notMatchTemplate.contains(folder.getName())) continue;
 
+            YamlConfiguration infoConfig = YamlConfiguration.loadConfiguration(new File(folder, Constants.INFO_FILE));
+            String id = infoConfig.getString("id");
+            if (projectAddons.containsKey(id)) {
+                continue;
+            }
+
             ProjectAddonLoader loader = new ProjectAddonLoader(folder, projectIds);
             ProjectAddon addon = loader.load();
             if (addon != null) {

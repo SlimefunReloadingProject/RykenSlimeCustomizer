@@ -43,9 +43,12 @@ public class ExceptionHandler {
                 i -> i.getKey().getKey().equalsIgnoreCase(id));
         if (ig != null) {
             if (ig.getAddon() != null) {
-                console.sendMessage(CMIChatColor.translate("&4ERROR | ID冲突：" + id + "与物品组 "
-                        + ig.getKey().getKey() + "(来自" + ig.getAddon().getName() + ")发生ID冲突"));
-                return HandleResult.FAILED;
+                if (ig.getAddon().getClass() == RykenSlimefunCustomizer.class) {
+                    console.sendMessage(CMIChatColor.translate("&4ERROR | ID冲突：" + id + "与物品组 "
+                            + ig.getKey().getKey() + "发生ID冲突"));
+                    return HandleResult.FAILED;
+                }
+                return HandleResult.SUCCESS;
             }
             console.sendMessage(CMIChatColor.translate(
                     "&4ERROR | ID冲突：" + id + "与物品组 " + ig.getKey().getKey() + "发生ID冲突"));

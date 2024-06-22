@@ -36,7 +36,6 @@ import org.lins.mmmjjkx.rykenslimefuncustomizer.RykenSlimefunCustomizer;
 import org.lins.mmmjjkx.rykenslimefuncustomizer.libraries.colors.CMIChatColor;
 import org.lins.mmmjjkx.rykenslimefuncustomizer.objects.ProjectAddon;
 import org.lins.mmmjjkx.rykenslimefuncustomizer.objects.customs.item.RSCItemStack;
-import org.lins.mmmjjkx.rykenslimefuncustomizer.objects.global.XMaterial;
 
 public class CommonUtils {
     public static ItemStack doGlow(ItemStack item) {
@@ -107,19 +106,13 @@ public class CommonUtils {
 
         switch (type.toLowerCase()) {
             default -> {
-                Optional<XMaterial> xMaterial = XMaterial.matchXMaterial(material);
+                Optional<Material> materialo = Optional.ofNullable(Material.matchMaterial(material));
                 Material mat;
-                if (xMaterial.isEmpty()) {
+                if (materialo.isEmpty()) {
                     ExceptionHandler.handleError("无法在附属" + addon.getAddonId() + "中读取材料" + material + "，已转为石头");
                     mat = Material.STONE;
                 } else {
-                    Material mat1 = xMaterial.get().parseMaterial();
-                    if (mat1 == null) {
-                        ExceptionHandler.handleError("无法在附属" + addon.getAddonId() + "中读取材料" + material + "，已转为石头");
-                        mat = Material.STONE;
-                    } else {
-                        mat = mat1;
-                    }
+                    mat = materialo.get();
                 }
 
                 itemStack = new CustomItemStack(mat, name, lore);

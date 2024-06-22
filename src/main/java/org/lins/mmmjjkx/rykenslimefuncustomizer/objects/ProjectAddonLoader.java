@@ -215,6 +215,10 @@ public class ProjectAddonLoader {
 
     private boolean loadDependencies(List<String> depends) {
         for (String dependency : depends) {
+            if (RykenSlimefunCustomizer.addonManager.isLoaded(dependency)) {
+                continue;
+            }
+
             if (ids.containsKey(dependency)) {
                 File dependencyFile = ids.get(dependency);
                 ProjectAddonLoader loader = new ProjectAddonLoader(dependencyFile, ids);

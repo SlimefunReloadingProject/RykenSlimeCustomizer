@@ -19,7 +19,6 @@ import org.jetbrains.annotations.NotNull;
 import org.lins.mmmjjkx.rykenslimefuncustomizer.objects.ProjectAddon;
 import org.lins.mmmjjkx.rykenslimefuncustomizer.objects.customs.item.CustomGeoResource;
 import org.lins.mmmjjkx.rykenslimefuncustomizer.objects.global.DropFromBlock;
-import org.lins.mmmjjkx.rykenslimefuncustomizer.objects.global.XMaterial;
 import org.lins.mmmjjkx.rykenslimefuncustomizer.objects.yaml.YamlReader;
 import org.lins.mmmjjkx.rykenslimefuncustomizer.utils.CommonUtils;
 import org.lins.mmmjjkx.rykenslimefuncustomizer.utils.ExceptionHandler;
@@ -95,32 +94,27 @@ public class GeoResourceReader extends YamlReader<GEOResource> {
 
                 String dropMaterial = section.getString("drop_from", "");
 
-                Optional<XMaterial> xm = XMaterial.matchXMaterial(dropMaterial);
+                Optional<Material> xm = Optional.ofNullable(Material.matchMaterial(dropMaterial));
                 if (xm.isPresent()) {
-                    Material material = xm.get().parseMaterial();
-                    if (material == null) {
-                        ExceptionHandler.handleError("在附属" + addon.getAddonId() + "中加载自然资源" + s + "时遇到了问题: "
-                                + "无法指定掉落方块材料类型" + dropMaterial + "，已转为石头");
-                    } else {
-                        if (amount == -1) {
-                            String between = section.getString("drop_amount", "1");
-                            if (between.contains("-")) {
-                                String[] split = between.split("-");
-                                if (split.length == 2) {
-                                    int min = Integer.parseInt(split[0]);
-                                    int max = Integer.parseInt(split[1]);
-                                    DropFromBlock.addDrop(
-                                            material, new DropFromBlock.Drop(sfis, chance, addon, min, max));
-                                } else {
-                                    ExceptionHandler.handleError("在附属" + addon.getAddonId() + "中加载自然资源" + s + "时遇到了问题: "
-                                            + "无法读取掉落数量区间" + between + "，已把掉落数量转为1");
-                                    DropFromBlock.addDrop(material, new DropFromBlock.Drop(sfis, chance, addon));
-                                }
+                    Material material = xm.get();
+                    if (amount == -1) {
+                        String between = section.getString("drop_amount", "1");
+                        if (between.contains("-")) {
+                            String[] split = between.split("-");
+                            if (split.length == 2) {
+                                int min = Integer.parseInt(split[0]);
+                                int max = Integer.parseInt(split[1]);
+                                DropFromBlock.addDrop(
+                                        material, new DropFromBlock.Drop(sfis, chance, addon, min, max));
+                            } else {
+                                ExceptionHandler.handleError("在附属" + addon.getAddonId() + "中加载自然资源" + s + "时遇到了问题: "
+                                        + "无法读取掉落数量区间" + between + "，已把掉落数量转为1");
+                                DropFromBlock.addDrop(material, new DropFromBlock.Drop(sfis, chance, addon));
                             }
-                        } else {
-                            DropFromBlock.addDrop(
-                                    material, new DropFromBlock.Drop(sfis, chance, addon, amount, amount));
                         }
+                    } else {
+                        DropFromBlock.addDrop(
+                                material, new DropFromBlock.Drop(sfis, chance, addon, amount, amount));
                     }
                 } else {
                     ExceptionHandler.handleError("在附属" + addon.getAddonId() + "中加载自然资源" + s + "时遇到了问题: " + "指定掉落方块材料类型"

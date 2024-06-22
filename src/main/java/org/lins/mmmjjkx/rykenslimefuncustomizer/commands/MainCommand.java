@@ -309,6 +309,7 @@ public class MainCommand implements TabExecutor {
                         &e/rsc enable <addons里的文件夹名称> 加载某个附属
                         &e/rsc disable <附属ID> 卸载某个附属
                         &e/rsc saveitem <附属ID> <ID> 保存物品
-                        &e/rsc menupreview <ID> 预览机器菜单"""));
+                        &e/rsc menupreview <ID> 预览机器菜单
+                        &e/rsc getsaveitem <附属ID> <ID> 获取保存的物品"""));
     }
 }

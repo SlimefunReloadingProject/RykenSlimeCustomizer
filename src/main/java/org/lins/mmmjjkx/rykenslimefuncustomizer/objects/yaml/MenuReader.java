@@ -3,7 +3,6 @@ package org.lins.mmmjjkx.rykenslimefuncustomizer.objects.yaml;
 import io.github.thebusybiscuit.slimefun4.api.items.SlimefunItemStack;
 import io.github.thebusybiscuit.slimefun4.implementation.Slimefun;
 import java.io.File;
-import java.util.ArrayList;
 import java.util.HashMap;
 import java.util.List;
 import java.util.Map;
@@ -25,6 +24,7 @@ import org.lins.mmmjjkx.rykenslimefuncustomizer.utils.CommonUtils;
 import org.lins.mmmjjkx.rykenslimefuncustomizer.utils.ExceptionHandler;
 
 public class MenuReader extends YamlReader<CustomMenu> {
+    public static final int NOT_SET = -1;
     private static final NamespacedKey PROGRESS_KEY = new NamespacedKey(RykenSlimefunCustomizer.INSTANCE, "progress");
 
     public MenuReader(YamlConfiguration config, ProjectAddon addon) {
@@ -41,6 +41,12 @@ public class MenuReader extends YamlReader<CustomMenu> {
 
         String title = section.getString("title", "");
         boolean playerInvClickable = section.getBoolean("playerInvClickable", true);
+        int size = section.getInt("size", NOT_SET);
+
+        if (section.contains("size") && size != NOT_SET && size % 9 != 0) {
+            ExceptionHandler.handleError("在附属" + addon.getAddonId() + "中加载菜单" + s + "时遇到了问题: " + "菜单大小必须是9的倍数。");
+            return null;
+        }
 
         JavaScriptEval eval = null;
         if (section.contains("script")) {
@@ -58,7 +64,7 @@ public class MenuReader extends YamlReader<CustomMenu> {
             String menuId = section.getString("import", "");
             BlockMenuPreset menuPreset = Slimefun.getRegistry().getMenuPresets().get(menuId);
             if (menuPreset == null) {
-                CustomMenu menu = addon.getMenus().stream().filter(m -> m.getId().equals(menuId)).findFirst().orElse(null);
+                CustomMenu menu = CommonUtils.getIf(addon.getMenus(), m -> m.getId().equals(menuId));
                 if (menu == null) {
                     ExceptionHandler.handleError(
                             "在附属" + addon.getAddonId() + "中加载菜单" + s + "时遇到了问题: " + "无法加载机器菜单" + s + ": 无法找到要导入的菜单");
@@ -80,7 +86,6 @@ public class MenuReader extends YamlReader<CustomMenu> {
         }
 
         ItemStack progressItem = new ItemStack(Material.BLACK_STAINED_GLASS_PANE);
-        List<Integer> forceClickableSlots = new ArrayList<>();
 
         for (String slot : slots.getKeys(false)) {
             try {
@@ -112,9 +117,6 @@ public class MenuReader extends YamlReader<CustomMenu> {
                         pdc.set(PROGRESS_KEY, PersistentDataType.INTEGER, 0);
                     }
                 }
-                if (item.getBoolean("clickable", false)) {
-                    forceClickableSlots.add(realSlot);
-                }
                 slotMap.put(realSlot, itemStack);
             } catch (NumberFormatException e) {
                 String[] range = slot.split("-");
@@ -142,7 +144,7 @@ public class MenuReader extends YamlReader<CustomMenu> {
             }
         }
 
-        return new CustomMenu(s, title, slotMap, playerInvClickable, progress, progressItem, eval);
+        return new CustomMenu(s, title, slotMap, playerInvClickable, progress, progressItem, eval).setSize(size);
     }
 
     // 菜单不需要预加载物品
