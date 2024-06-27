@@ -141,11 +141,31 @@ public class CommonUtils {
             case "slimefun" -> {
                 SlimefunItemStack sfis = addon.getPreloadItems().get(material);
                 if (sfis != null) {
-                    itemStack = new RSCItemStack(sfis, name, lore);
+                    itemStack = sfis.clone();
+                    itemStack.editMeta(m -> {
+                        if (!name.isBlank()) {
+                            m.setDisplayName(name);
+                        }
+
+
+                        if (!lore.isEmpty()) {
+                            m.setLore(lore);
+                        }
+                    });
+
                 } else {
                     SlimefunItem sfItem = SlimefunItem.getById(material);
                     if (sfItem != null) {
-                        itemStack = new RSCItemStack(sfItem.getItem().clone(), name, lore);
+                        itemStack = sfItem.getItem().clone();
+                        itemStack.editMeta(m -> {
+                           if (!name.isBlank()) {
+                               m.setDisplayName(name);
+                           }
+
+                           if (!lore.isEmpty()) {
+                               m.setLore(lore);
+                           }
+                        });
                     } else {
                         ExceptionHandler.handleError("无法找到粘液物品" + material + "，已转为石头");
                         itemStack = new CustomItemStack(Material.STONE, name, lore);
@@ -171,7 +191,7 @@ public class CommonUtils {
                     int v = Integer.parseInt(replace.replace("v: ", ""));
 
                     if (v > Bukkit.getUnsafe().getDataVersion()) {
-                        String r2 = replace.replace(
+                        String r2 = replace.replaceFirst(
                                 String.valueOf(v),
                                 String.valueOf(Bukkit.getUnsafe().getDataVersion()));
                         fileContext = fileContext.replace(replace, r2);
@@ -290,7 +310,7 @@ public class CommonUtils {
                 || typeNameString.endsWith("_BOOTS");
     }
 
-    public static void completeFile(String resourceFile, String... notNeedSyncKeys) {
+    public static void completeFile(String resourceFile) {
         JavaPlugin plugin = RykenSlimefunCustomizer.INSTANCE;
 
         InputStream stream = plugin.getResource(resourceFile);
@@ -325,19 +345,6 @@ public class CommonUtils {
                     configuration2.set(key, value);
                 }
             }
-
-            List<String> notSync = Arrays.stream(notNeedSyncKeys).toList();
-
-            for (String key2 : configuration2.getKeys(true)) {
-                boolean b = notSync.contains(key2);
-
-                if (!configuration.contains(key2)) {
-                    if (!b) {
-                        configuration2.set(key2, null);
-                    }
-                }
-            }
-
             configuration2.save(file);
         } catch (Exception e) {
             e.printStackTrace();

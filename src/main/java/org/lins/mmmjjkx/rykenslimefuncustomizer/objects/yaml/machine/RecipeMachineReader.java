@@ -171,8 +171,6 @@ public class RecipeMachineReader extends YamlReader<CustomRecipeMachine> {
 
                     output[i] = item;
                     chances.add(chance);
-                } else {
-                    output[i] = null;
                 }
             }
 
