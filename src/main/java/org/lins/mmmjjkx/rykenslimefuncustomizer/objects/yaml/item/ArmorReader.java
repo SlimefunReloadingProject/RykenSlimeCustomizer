@@ -52,7 +52,7 @@ public class ArmorReader extends YamlReader<List<CustomArmorPiece>> {
             ConfigurationSection pieceSection = section.getConfigurationSection(check);
             if (pieceSection == null) continue;
 
-            String pieceId = pieceSection.getString("id", "");
+            String pieceId = pieceSection.getString("id_alias", pieceSection.getString("id", ""));
 
             ExceptionHandler.HandleResult result = ExceptionHandler.handleIdConflict(s);
             if (result == ExceptionHandler.HandleResult.FAILED) return null;
@@ -129,7 +129,7 @@ public class ArmorReader extends YamlReader<List<CustomArmorPiece>> {
             ConfigurationSection pieceSection = section.getConfigurationSection(check);
             if (pieceSection == null) continue;
 
-            String id = pieceSection.getString(".id_alias", pieceSection.getString("id", ""));
+            String id = pieceSection.getString("id_alias", pieceSection.getString("id", ""));
 
             ItemStack stack = CommonUtils.readItem(pieceSection, false, addon);
             if (stack == null) {

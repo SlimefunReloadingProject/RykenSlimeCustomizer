@@ -33,7 +33,7 @@ public class MachineReader extends YamlReader<AbstractEmptyMachine<?>> {
     public AbstractEmptyMachine<?> readEach(String s) {
         ConfigurationSection section = configuration.getConfigurationSection(s);
         if (section == null) return null;
-        String id = section.getString(s + ".id_alias", s);
+        String id = section.getString("id_alias", s);
 
         ExceptionHandler.HandleResult result = ExceptionHandler.handleIdConflict(id);
 

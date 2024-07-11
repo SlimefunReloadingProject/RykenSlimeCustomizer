@@ -13,6 +13,8 @@ import java.io.File;
 import java.io.IOException;
 import java.util.logging.FileHandler;
 import javax.script.ScriptException;
+
+import me.mrCookieSlime.Slimefun.api.inventory.BlockMenu;
 import org.graalvm.polyglot.Context;
 import org.graalvm.polyglot.PolyglotAccess;
 import org.graalvm.polyglot.io.IOAccess;
@@ -49,6 +51,7 @@ public class JavaScriptEval extends ScriptEval {
         addThing("SlimefunItem", env.asHostSymbol(SlimefunItem.class));
         addThing("StorageCacheUtils", env.asHostSymbol(StorageCacheUtils.class));
         addThing("SlimefunUtils", env.asHostSymbol(SlimefunUtils.class));
+        addThing("BlockMenu", env.asHostSymbol(BlockMenu.class));
     }
 
     private FileHandler createLogFileHandler(ProjectAddon addon) {
