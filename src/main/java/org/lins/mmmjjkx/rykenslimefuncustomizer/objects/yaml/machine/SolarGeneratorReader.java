@@ -83,7 +83,6 @@ public class SolarGeneratorReader extends YamlReader<CustomSolarGenerator> {
     public List<SlimefunItemStack> preloadItems(String s) {
         ConfigurationSection section = configuration.getConfigurationSection(s);
         if (section == null) return null;
-        String id = section.getString(s + ".id_alias", s);
 
         ConfigurationSection item = section.getConfigurationSection("item");
         ItemStack stack = CommonUtils.readItem(item, false, addon);
@@ -93,6 +92,6 @@ public class SolarGeneratorReader extends YamlReader<CustomSolarGenerator> {
             return null;
         }
 
-        return List.of(new SlimefunItemStack(id, stack));
+        return List.of(new SlimefunItemStack(s, stack));
     }
 }

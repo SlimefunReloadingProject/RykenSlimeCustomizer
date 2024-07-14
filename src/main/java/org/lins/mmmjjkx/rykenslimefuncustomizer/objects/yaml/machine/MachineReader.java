@@ -161,7 +161,6 @@ public class MachineReader extends YamlReader<AbstractEmptyMachine<?>> {
     public List<SlimefunItemStack> preloadItems(String s) {
         ConfigurationSection section = configuration.getConfigurationSection(s);
         if (section == null) return null;
-        String id = section.getString(s + ".id_alias", s);
 
         ConfigurationSection item = section.getConfigurationSection("item");
         ItemStack stack = CommonUtils.readItem(item, false, addon);
@@ -171,6 +170,6 @@ public class MachineReader extends YamlReader<AbstractEmptyMachine<?>> {
             return null;
         }
 
-        return List.of(new SlimefunItemStack(id, stack));
+        return List.of(new SlimefunItemStack(s, stack));
     }
 }

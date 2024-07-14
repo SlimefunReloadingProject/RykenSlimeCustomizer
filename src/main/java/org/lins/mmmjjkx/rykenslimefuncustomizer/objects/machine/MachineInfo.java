@@ -10,14 +10,14 @@ import org.bukkit.inventory.Inventory;
 import org.jetbrains.annotations.Nullable;
 import org.lins.mmmjjkx.rykenslimefuncustomizer.objects.customs.machine.CustomMachine;
 
-public record MachineInfo(
-        @Nullable BlockMenu blockMenu,
-        SlimefunBlockData data,
-        SlimefunItem machineItem,
-        Block block,
-        MachineProcessor<?> processor,
-        MachineOperation operation,
-        CustomMachine machine) {
+public record MachineInfo (
+    @Nullable BlockMenu blockMenu,
+    SlimefunBlockData data,
+    SlimefunItem machineItem,
+    Block block,
+    MachineProcessor<?> processor,
+    MachineOperation operation,
+    CustomMachine machine) {
 
     public Inventory getInventory() {
         if (blockMenu == null) {

@@ -172,7 +172,6 @@ public class SuperReader extends YamlReader<SlimefunItem> {
     public List<SlimefunItemStack> preloadItems(String s) {
         ConfigurationSection section = configuration.getConfigurationSection(s);
         if (section == null) return null;
-        String id = section.getString(s + ".id_alias", s);
 
         ConfigurationSection item = section.getConfigurationSection("item");
         ItemStack stack = CommonUtils.readItem(item, false, addon);
@@ -181,6 +180,6 @@ public class SuperReader extends YamlReader<SlimefunItem> {
             ExceptionHandler.handleError("在附属" + addon.getAddonId() + "中加载继承物品" + s + "时遇到了问题: " + "物品为空或格式错误导致无法加载");
             return null;
         }
-        return List.of(new SlimefunItemStack(id, stack));
+        return List.of(new SlimefunItemStack(s, stack));
     }
 }

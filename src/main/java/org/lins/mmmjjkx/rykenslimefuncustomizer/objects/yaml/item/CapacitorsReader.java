@@ -65,22 +65,20 @@ public class CapacitorsReader extends YamlReader<Capacitor> {
     }
 
     @Override
-    public List<SlimefunItemStack> preloadItems(String s) {
-        ConfigurationSection section = configuration.getConfigurationSection(s);
+    public List<SlimefunItemStack> preloadItems(String id) {
+        ConfigurationSection section = configuration.getConfigurationSection(id);
         if (section == null) return null;
 
         ConfigurationSection item = section.getConfigurationSection("item");
         ItemStack stack = CommonUtils.readItem(item, false, addon);
 
-        String id = section.getString(s + ".id_alias", s);
-
         if (stack == null) {
-            ExceptionHandler.handleError("在附属" + addon.getAddonId() + "中加载电容" + s + "时遇到了问题: " + "物品为空或格式错误导致无法加载");
+            ExceptionHandler.handleError("在附属" + addon.getAddonId() + "中加载电容" + id + "时遇到了问题: " + "物品为空或格式错误导致无法加载");
             return null;
         }
 
         if (!stack.getType().isBlock()) {
-            ExceptionHandler.handleError("在附属" + addon.getAddonId() + "中加载电容" + s + "时遇到了问题: " + "物品的材料类型必须是可放置的方块");
+            ExceptionHandler.handleError("在附属" + addon.getAddonId() + "中加载电容" + id + "时遇到了问题: " + "物品的材料类型必须是可放置的方块");
             return null;
         }
 

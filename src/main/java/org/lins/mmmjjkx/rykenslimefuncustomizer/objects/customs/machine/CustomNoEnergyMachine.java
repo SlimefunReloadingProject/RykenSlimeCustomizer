@@ -1,7 +1,6 @@
 package org.lins.mmmjjkx.rykenslimefuncustomizer.objects.customs.machine;
 
 import com.xzavier0722.mc.plugin.slimefun4.storage.controller.SlimefunBlockData;
-import com.xzavier0722.mc.plugin.slimefun4.storage.util.StorageCacheUtils;
 import io.github.thebusybiscuit.slimefun4.api.items.ItemGroup;
 import io.github.thebusybiscuit.slimefun4.api.items.SlimefunItem;
 import io.github.thebusybiscuit.slimefun4.api.items.SlimefunItemStack;
@@ -16,7 +15,6 @@ import lombok.Getter;
 import me.mrCookieSlime.CSCoreLibPlugin.general.Inventory.ChestMenu;
 import me.mrCookieSlime.CSCoreLibPlugin.general.Inventory.ClickAction;
 import me.mrCookieSlime.Slimefun.Objects.handlers.BlockTicker;
-import me.mrCookieSlime.Slimefun.api.inventory.BlockMenu;
 import org.bukkit.block.Block;
 import org.bukkit.entity.Player;
 import org.bukkit.event.block.BlockPlaceEvent;
@@ -122,8 +120,7 @@ public class CustomNoEnergyMachine extends AbstractEmptyMachine<MachineOperation
 
     protected void tick(Block b, SlimefunItem item, SlimefunBlockData data) {
         if (eval != null) {
-            BlockMenu blockMenu = StorageCacheUtils.getMenu(b.getLocation());
-            SmallerMachineInfo info = new SmallerMachineInfo(blockMenu, data, this, item, b, processor);
+            SmallerMachineInfo info = new SmallerMachineInfo(data.getBlockMenu(), data, this, item, b, processor);
             eval.evalFunction("tick", info);
         }
     }

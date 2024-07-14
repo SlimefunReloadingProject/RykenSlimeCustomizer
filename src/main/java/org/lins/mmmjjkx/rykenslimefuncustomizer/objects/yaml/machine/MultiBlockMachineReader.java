@@ -112,7 +112,6 @@ public class MultiBlockMachineReader extends YamlReader<CustomMultiBlockMachine>
     public List<SlimefunItemStack> preloadItems(String s) {
         ConfigurationSection section = configuration.getConfigurationSection(s);
         if (section == null) return null;
-        String id = section.getString(s + ".id_alias", s);
 
         ConfigurationSection item = section.getConfigurationSection("item");
         ItemStack stack = CommonUtils.readItem(item, false, addon);
@@ -122,7 +121,7 @@ public class MultiBlockMachineReader extends YamlReader<CustomMultiBlockMachine>
             return null;
         }
 
-        return List.of(new SlimefunItemStack(id, stack));
+        return List.of(new SlimefunItemStack(s, stack));
     }
 
     private Map<ItemStack[], ItemStack> readRecipes(String s, ConfigurationSection section, ProjectAddon addon) {

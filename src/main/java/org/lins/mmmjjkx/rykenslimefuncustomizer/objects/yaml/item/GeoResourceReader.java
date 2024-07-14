@@ -138,17 +138,15 @@ public class GeoResourceReader extends YamlReader<GEOResource> {
     }
 
     @Override
-    public List<SlimefunItemStack> preloadItems(String s) {
-        ConfigurationSection section = configuration.getConfigurationSection(s);
+    public List<SlimefunItemStack> preloadItems(String id) {
+        ConfigurationSection section = configuration.getConfigurationSection(id);
 
         if (section == null) return null;
-
-        String id = section.getString(s + ".id_alias", s);
 
         ConfigurationSection item = section.getConfigurationSection("item");
         ItemStack stack = CommonUtils.readItem(item, false, addon);
         if (stack == null) {
-            ExceptionHandler.handleError("在附属" + addon.getAddonId() + "中加载自然资源" + s + "时遇到了问题: " + "物品为空或格式错误导致无法加载");
+            ExceptionHandler.handleError("在附属" + addon.getAddonId() + "中加载自然资源" + id + "时遇到了问题: " + "物品为空或格式错误导致无法加载");
             return null;
         }
 

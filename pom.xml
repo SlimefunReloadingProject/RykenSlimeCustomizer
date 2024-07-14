@@ -82,6 +82,10 @@
 
 	<repositories>
 		<repository>
+			<id>jitpack</id>
+			<url>https://jitpack.io</url>
+		</repository>
+		<repository>
 			<id>minebench-repo</id>
 			<url>https://repo.minebench.de/</url>
 		</repository>
@@ -96,10 +100,6 @@
 		<repository>
 			<id>placeholderapi</id>
 			<url>https://repo.extendedclip.com/content/repositories/placeholderapi/</url>
-		</repository>
-		<repository>
-			<id>jitpack</id>
-			<url>https://jitpack.io</url>
 		</repository>
 		<repository>
 			<id>papermc-repo</id>
@@ -163,9 +163,9 @@
 			<scope>provided</scope>
 		</dependency>
 		<dependency>
-			<groupId>com.github.StarWishsama</groupId>
+			<groupId>com.github.SlimefunGuguProject</groupId>
 			<artifactId>Slimefun4</artifactId>
-			<version>master-SNAPSHOT</version>
+			<version>2024.3</version>
 			<scope>provided</scope>
 		</dependency>
 		<dependency>
