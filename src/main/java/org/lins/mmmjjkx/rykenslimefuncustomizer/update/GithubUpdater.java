@@ -87,6 +87,8 @@ public class GithubUpdater {
                     throw new IOException("创建下载文件失败");
                 }
 
+                zip.createNewFile();
+
                 long result = Files.copy(urlObj.openStream(), zip.toPath(), StandardCopyOption.REPLACE_EXISTING);
 
                 if (result < 1) {

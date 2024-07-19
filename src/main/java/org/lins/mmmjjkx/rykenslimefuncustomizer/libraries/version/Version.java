@@ -1,15 +1,34 @@
 package org.lins.mmmjjkx.rykenslimefuncustomizer.libraries.version;
 
-import com.google.errorprone.annotations.CanIgnoreReturnValue;
-import java.util.ArrayList;
-import java.util.Arrays;
-import java.util.List;
-import java.util.Objects;
-import java.util.stream.Collectors;
 import lombok.Getter;
 import org.bukkit.Bukkit;
 
+import java.util.ArrayList;
+import java.util.Arrays;
+import java.util.List;
+import java.util.stream.Collectors;
+
 public enum Version {
+
+    v1_7_R1,
+    v1_7_R2,
+    v1_7_R3,
+    v1_7_R4,
+    v1_8_R1,
+    v1_8_R2,
+    v1_8_R3,
+    v1_9_R1,
+    v1_9_R2,
+    v1_10_R1,
+    v1_11_R1,
+    v1_12_R1,
+    v1_13_R1,
+    v1_13_R2,
+    v1_13_R3,
+    v1_14_R1,
+    v1_14_R2,
+    v1_15_R1,
+    v1_15_R2,
     v1_16_R1,
     v1_16_R2,
     v1_16_R3,
@@ -22,8 +41,8 @@ public enum Version {
     v1_20_R1,
     v1_20_R2,
     v1_20_R3(4),
-    v1_20_R4(5),
-    v1_21_R1,
+    v1_20_R4(5, 6),
+    v1_21_R1(0),
     v1_21_R2,
     v1_21_R3,
     v1_22_R1,
@@ -33,21 +52,18 @@ public enum Version {
     v1_23_R2,
     v1_23_R3;
 
-    @Getter
-    private Integer value;
-
-    private int[] minorVersions = null;
-
-    @Getter
-    private final String shortVersion;
-
     private static int subVersion = 0;
     private static Version current = null;
-    private static MinecraftPlatform platform = null;
 
     static {
         getCurrent();
     }
+
+    @Getter
+    private Integer value;
+    private int[] minorVersions = null;
+    @Getter
+    private final String shortVersion;
 
     Version(int... versions) {
         this();
@@ -57,94 +73,32 @@ public enum Version {
     Version() {
         try {
             this.value = Integer.valueOf(this.name().replaceAll("[^\\d.]", ""));
-        } catch (Exception e) {
+        } catch (Exception ignored) {
         }
         shortVersion = this.name().substring(0, this.name().length() - 3);
     }
 
-    public static boolean isPaperBranch() {
-        switch (getPlatform()) {
-            case mohist:
-                break;
-            case purpur:
-            case folia:
-            case paper:
-            case pufferfish:
-                return true;
-        }
-        return false;
-    }
-
-    public String getShortFormated() {
-        return shortVersion.replace("v", "").replace("_", ".") + ".x";
-    }
-
-    public String getFormated() {
-        return shortVersion.replace("v", "").replace("_", ".") + "." + subVersion;
-    }
-
-    public static boolean isPaper() {
-        return getPlatform().equals(MinecraftPlatform.paper)
-                || getPlatform().equals(MinecraftPlatform.folia)
-                || getPlatform().equals(MinecraftPlatform.purpur);
-    }
-
-    public static boolean isFolia() {
-        return getPlatform().equals(MinecraftPlatform.folia);
-    }
-
-    public static boolean isPurpur() {
-        return getPlatform().equals(MinecraftPlatform.purpur);
-    }
-
-    public static MinecraftPlatform getPlatform() {
-        if (platform != null) return platform;
-
-        if (Bukkit.getVersion().toLowerCase().contains("mohist")) {
-            platform = MinecraftPlatform.mohist;
-            return platform;
-        }
-
-        if (Bukkit.getVersion().toLowerCase().contains("arclight")) {
-            platform = MinecraftPlatform.arclight;
-            return platform;
-        }
-
-        if (Bukkit.getVersion().toLowerCase().contains("purpur")) {
-            platform = MinecraftPlatform.purpur;
-            return platform;
-        }
-
-        try {
-            Class.forName("io.papermc.paper.threadedregions.RegionizedServer");
-            platform = MinecraftPlatform.folia;
-            return platform;
-        } catch (ClassNotFoundException e) {
-        }
-
-        try {
-            Class.forName("com.destroystokyo.paper.PaperConfig");
-            platform = MinecraftPlatform.paper;
-            return platform;
-        } catch (ClassNotFoundException e) {
-        }
-
-        return platform;
-    }
-
-    @CanIgnoreReturnValue
     public static Version getCurrent() {
-        if (current != null) return current;
+        if (current != null)
+            return current;
+// Paper returns examples as of 1.20
+//        Bukkit.getServer().getClass().getPackage().getName();   org.bukkit.craftbukkit
+//        Bukkit.getBukkitVersion();                              1.21-R0.1-SNAPSHOT
+//        Bukkit.getMinecraftVersion();                           1.21
+//        Bukkit.getVersion();                                    1.21-4-090775e (MC: 1.21)
+//        Bukkit.getVersionMessage();                             This server is running Paper version 1.21-4-master@090775e (2024-06-18T13:42:35Z) (Implementing API version 1.21-R0.1-SNAPSHOT)
+
         String[] v = Bukkit.getServer().getClass().getPackage().getName().split("\\.");
 
         try {
             String vr = Bukkit.getBukkitVersion().split("-", 2)[0];
             String[] split = vr.split("\\.");
-            if (split.length <= 2) subVersion = 0;
+            if (split.length <= 2)
+                subVersion = 0;
             else {
                 subVersion = Integer.parseInt(split[2]);
             }
-        } catch (Throwable e) {
+        } catch (Throwable ignored) {
         }
 
         String vv = v[v.length - 1];
@@ -155,73 +109,75 @@ public enum Version {
             }
         }
 
-        if (current == null) {
-            String ve = Bukkit.getBukkitVersion().split("-", 2)[0];
-            main:
-            for (Version one : values()) {
-                if (one.name().equalsIgnoreCase(ve)) {
+        if (current != null)
+            return current;
+
+        String ve = Bukkit.getBukkitVersion().split("-", 2)[0];
+        main:
+        for (Version one : values()) {
+            if (one.name().equalsIgnoreCase(ve)) {
+                current = one;
+                break;
+            }
+            List<String> cleanVersion = one.getMinorVersions();
+            for (String cv : cleanVersion) {
+                if (ve.equalsIgnoreCase(cv)) {
                     current = one;
-                    break;
-                }
-                List<String> cleanVersion = one.getMinorVersions();
-                for (String cv : cleanVersion) {
-                    if (ve.equalsIgnoreCase(cv)) {
-                        current = one;
-                        break main;
-                    }
+                    break main;
                 }
             }
         }
 
-        if (current == null) {
-            String ve = Bukkit.getBukkitVersion().split("-", 2)[0];
-            for (Version one : values()) {
-                if (ve.startsWith(one.getSimplifiedVersion())) {
-                    current = one;
-                    Bukkit.getConsoleSender()
-                            .sendMessage("§c[RykenSlimeCustomizer] §eServer version detection needs aditional update");
-                    break;
+        if (current != null)
+            return current;
+
+        main:
+        for (int i = 1; i < 10; i++) {
+            try {
+                Class.forName("org.bukkit.craftbukkit.v" + ve.replace(".", "_") + "_R" + i + ".entity.CraftPlayer");
+                for (Version one : values()) {
+                    if (one.name().equalsIgnoreCase("v" + ve.replace(".", "_") + "_R" + i)) {
+                        current = one;
+                        break main;
+                    }
                 }
+
+                break;
+            } catch (ClassNotFoundException ignored) {
+            }
+        }
+
+        if (current != null)
+            return current;
+
+        for (Version one : values()) {
+            if (ve.startsWith(one.getSimplifiedVersion()) || ve.startsWith(one.getSimplifiedVersion().substring(0, one.getSimplifiedVersion().length() - 1))) {
+                current = one;
+                break;
             }
         }
 
         return current;
     }
 
-    public boolean isLower(Version version) {
-        return getValue() < version.getValue();
-    }
-
-    public boolean isHigher(Version version) {
-        return getValue() > version.getValue();
-    }
-
-    public boolean isEqualOrLower(Version version) {
-        return getValue() <= version.getValue();
-    }
-
-    public boolean isEqualOrHigher(Version version) {
-        return getValue() >= version.getValue();
-    }
-
     public static boolean isCurrentEqualOrHigher(Version v) {
-        return current.getValue() >= v.getValue();
+        return getCurrent().getValue() >= v.getValue();
     }
 
     public static boolean isCurrentHigher(Version v) {
-        return current.getValue() > v.getValue();
+        return getCurrent().getValue() > v.getValue();
     }
 
     public static boolean isCurrentLower(Version v) {
-        return current.getValue() < v.getValue();
+        return getCurrent().getValue() < v.getValue();
     }
 
     public static boolean isCurrentEqualOrLower(Version v) {
-        return current.getValue() <= v.getValue();
+        return getCurrent().getValue() <= v.getValue();
     }
 
     public static boolean isCurrentEqual(Version v) {
-        return Objects.equals(current.getValue(), v.getValue());
+        return getCurrent().getValue() == v.getValue();
     }
 
     public static boolean isCurrentSubEqualOrHigher(int subVersion) {
@@ -246,17 +202,18 @@ public enum Version {
 
     public static Integer convertVersion(String v) {
         v = v.replaceAll("[^\\d.]", "");
-        int version = 0;
+        Integer version = 0;
         if (v.contains(".")) {
-            StringBuilder lVersion = new StringBuilder();
+            String lVersion = "";
             for (String one : v.split("\\.")) {
                 String s = one;
-                if (s.length() == 1) s = "0" + s;
-                lVersion.append(s);
+                if (s.length() == 1)
+                    s = "0" + s;
+                lVersion += s;
             }
 
             try {
-                version = Integer.parseInt(lVersion.toString());
+                version = Integer.parseInt(lVersion);
             } catch (Exception e) {
             }
         } else {
@@ -274,8 +231,8 @@ public enum Version {
 
         String vs = String.valueOf(v);
 
-        while (!vs.isEmpty()) {
-            int subv;
+        while (vs.length() > 0) {
+            int subv = 0;
             try {
                 if (vs.length() > 2) {
                     subv = Integer.parseInt(vs.substring(vs.length() - 2));
@@ -284,14 +241,40 @@ public enum Version {
                     subv = Integer.parseInt(vs);
                     version.insert(0, subv);
                 }
-            } catch (Throwable ignored) {
-            }
+            } catch (Throwable e) {
 
-            if (vs.length() > 2) vs = vs.substring(0, vs.length() - 2);
-            else break;
+            }
+            if (vs.length() > 2)
+                vs = vs.substring(0, vs.length() - 2);
+            else
+                break;
         }
 
         return version.toString();
+    }
+
+    public String getShortFormated() {
+        return shortVersion.replace("v", "").replace("_", ".") + ".x";
+    }
+
+    public String getFormated() {
+        return shortVersion.replace("v", "").replace("_", ".") + "." + subVersion;
+    }
+
+    public boolean isLower(Version version) {
+        return getValue() < version.getValue();
+    }
+
+    public boolean isHigher(Version version) {
+        return getValue() > version.getValue();
+    }
+
+    public boolean isEqualOrLower(Version version) {
+        return getValue() <= version.getValue();
+    }
+
+    public boolean isEqualOrHigher(Version version) {
+        return getValue() >= version.getValue();
     }
 
     private String getSimplifiedVersion() {
@@ -300,7 +283,8 @@ public enum Version {
 
     public List<String> getMinorVersions() {
 
-        if (minorVersions == null) return new ArrayList<>();
+        if (minorVersions == null)
+            return new ArrayList<>();
 
         return Arrays.stream(minorVersions)
                 .mapToObj(version -> getSimplifiedVersion() + version)
