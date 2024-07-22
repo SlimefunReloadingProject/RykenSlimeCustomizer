@@ -232,7 +232,8 @@ public class MainCommand implements TabExecutor {
                     return false;
                 }
 
-                File file = new File(RykenSlimefunCustomizer.addonManager.getAddonFolder(prjId), "items/" + itemId + ".yml");
+                File file = new File(
+                        RykenSlimefunCustomizer.addonManager.getAddonFolder(prjId), "items/" + itemId + ".yml");
                 if (!file.exists() || file.length() == 0) {
                     sender.sendMessage(CMIChatColor.translate("&4指向的物品文件没有内容！"));
                     return false;
@@ -282,7 +283,9 @@ public class MainCommand implements TabExecutor {
                 case "enable" -> Arrays.stream(Objects.requireNonNull(ProjectAddonManager.ADDONS_DIRECTORY.listFiles()))
                         .map(File::getName)
                         .toList();
-                case "disable", "saveitem", "getsaveitem" -> RykenSlimefunCustomizer.addonManager.getAllValues().stream()
+                case "disable", "saveitem", "getsaveitem" -> RykenSlimefunCustomizer.addonManager
+                        .getAllValues()
+                        .stream()
                         .map(ProjectAddon::getAddonId)
                         .toList();
                 case "menupreview" -> Slimefun.getRegistry().getMenuPresets().keySet().stream()

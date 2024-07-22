@@ -104,8 +104,7 @@ public class GeoResourceReader extends YamlReader<GEOResource> {
                             if (split.length == 2) {
                                 int min = Integer.parseInt(split[0]);
                                 int max = Integer.parseInt(split[1]);
-                                DropFromBlock.addDrop(
-                                        material, new DropFromBlock.Drop(sfis, chance, addon, min, max));
+                                DropFromBlock.addDrop(material, new DropFromBlock.Drop(sfis, chance, addon, min, max));
                             } else {
                                 ExceptionHandler.handleError("在附属" + addon.getAddonId() + "中加载自然资源" + s + "时遇到了问题: "
                                         + "无法读取掉落数量区间" + between + "，已把掉落数量转为1");
@@ -113,8 +112,7 @@ public class GeoResourceReader extends YamlReader<GEOResource> {
                             }
                         }
                     } else {
-                        DropFromBlock.addDrop(
-                                material, new DropFromBlock.Drop(sfis, chance, addon, amount, amount));
+                        DropFromBlock.addDrop(material, new DropFromBlock.Drop(sfis, chance, addon, amount, amount));
                     }
                 } else {
                     ExceptionHandler.handleError("在附属" + addon.getAddonId() + "中加载自然资源" + s + "时遇到了问题: " + "指定掉落方块材料类型"

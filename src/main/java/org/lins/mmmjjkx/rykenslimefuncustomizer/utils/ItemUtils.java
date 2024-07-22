@@ -1,12 +1,11 @@
 package org.lins.mmmjjkx.rykenslimefuncustomizer.utils;
 
 import io.github.thebusybiscuit.slimefun4.api.items.SlimefunItem;
-import org.bukkit.Material;
-import org.bukkit.inventory.ItemStack;
-
-import javax.annotation.Nonnull;
 import java.util.HashSet;
 import java.util.Set;
+import javax.annotation.Nonnull;
+import org.bukkit.Material;
+import org.bukkit.inventory.ItemStack;
 
 public class ItemUtils {
     /**
@@ -46,7 +45,6 @@ public class ItemUtils {
             } else {
                 materials.add(itemStack.getType());
             }
-
         }
 
         return sfItems.size() + materials.size();

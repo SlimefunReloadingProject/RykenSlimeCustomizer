@@ -72,7 +72,8 @@ public class GithubUpdater {
                     } else {
                         GitHubRelease.Asset asset = assets.stream()
                                 .filter(z -> z.getName().equalsIgnoreCase(prj.getDownloadZipName()))
-                                .findFirst().orElse(null);
+                                .findFirst()
+                                .orElse(null);
                         if (asset == null) {
                             zipUrl = release.getZipball_url();
                         } else {

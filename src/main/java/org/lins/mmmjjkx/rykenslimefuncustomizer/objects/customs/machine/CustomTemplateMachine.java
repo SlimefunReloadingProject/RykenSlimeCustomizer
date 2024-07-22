@@ -1,6 +1,10 @@
 package org.lins.mmmjjkx.rykenslimefuncustomizer.objects.customs.machine;
 
+import static org.lins.mmmjjkx.rykenslimefuncustomizer.objects.customs.machine.CustomRecipeMachine.RECIPE_INPUT;
+import static org.lins.mmmjjkx.rykenslimefuncustomizer.objects.customs.machine.CustomRecipeMachine.RECIPE_OUTPUT;
+
 import com.xzavier0722.mc.plugin.slimefun4.storage.controller.SlimefunBlockData;
+import com.xzavier0722.mc.plugin.slimefun4.storage.util.StorageCacheUtils;
 import io.github.thebusybiscuit.slimefun4.api.items.ItemGroup;
 import io.github.thebusybiscuit.slimefun4.api.items.SlimefunItem;
 import io.github.thebusybiscuit.slimefun4.api.items.SlimefunItemStack;
@@ -9,15 +13,13 @@ import io.github.thebusybiscuit.slimefun4.core.attributes.EnergyNetComponent;
 import io.github.thebusybiscuit.slimefun4.core.attributes.RecipeDisplayItem;
 import io.github.thebusybiscuit.slimefun4.core.machines.MachineProcessor;
 import io.github.thebusybiscuit.slimefun4.core.networks.energy.EnergyNetComponentType;
-import io.github.thebusybiscuit.slimefun4.implementation.operations.CraftingOperation;
-
-import java.util.*;
-
+import io.github.thebusybiscuit.slimefun4.implementation.handlers.SimpleBlockBreakHandler;
 import io.github.thebusybiscuit.slimefun4.libraries.commons.lang.Validate;
 import io.github.thebusybiscuit.slimefun4.libraries.dough.inventory.InvUtils;
-import io.github.thebusybiscuit.slimefun4.libraries.dough.items.CustomItemStack;
+import io.github.thebusybiscuit.slimefun4.utils.ChestMenuUtils;
 import io.github.thebusybiscuit.slimefun4.utils.SlimefunUtils;
 import io.github.thebusybiscuit.slimefun4.utils.itemstack.ItemStackWrapper;
+import java.util.*;
 import lombok.Getter;
 import me.mrCookieSlime.Slimefun.Objects.handlers.BlockTicker;
 import me.mrCookieSlime.Slimefun.api.inventory.BlockMenu;
@@ -26,25 +28,36 @@ import org.bukkit.Material;
 import org.bukkit.block.Block;
 import org.bukkit.inventory.ItemStack;
 import org.jetbrains.annotations.NotNull;
-import org.lins.mmmjjkx.rykenslimefuncustomizer.objects.customs.CustomCraftingOperation;
+import org.lins.mmmjjkx.rykenslimefuncustomizer.RykenSlimefunCustomizer;
+import org.lins.mmmjjkx.rykenslimefuncustomizer.listeners.SingleItemRecipeGuideListener;
 import org.lins.mmmjjkx.rykenslimefuncustomizer.objects.customs.CustomMenu;
 import org.lins.mmmjjkx.rykenslimefuncustomizer.objects.customs.parent.AbstractEmptyMachine;
-import org.lins.mmmjjkx.rykenslimefuncustomizer.objects.machine.CustomTemplateMachineRecipe;
+import org.lins.mmmjjkx.rykenslimefuncustomizer.objects.machine.CustomMachineRecipe;
+import org.lins.mmmjjkx.rykenslimefuncustomizer.objects.machine.CustomTemplateCraftingOperation;
 import org.lins.mmmjjkx.rykenslimefuncustomizer.objects.machine.MachineTemplate;
+import org.lins.mmmjjkx.rykenslimefuncustomizer.utils.CommonUtils;
 import org.lins.mmmjjkx.rykenslimefuncustomizer.utils.ItemUtils;
 
-public class CustomTemplateMachine extends AbstractEmptyMachine<CraftingOperation> implements RecipeDisplayItem, EnergyNetComponent {
-    private final MachineProcessor<CraftingOperation> processor;
+public class CustomTemplateMachine extends AbstractEmptyMachine<CustomTemplateCraftingOperation>
+        implements RecipeDisplayItem, EnergyNetComponent {
+    private final MachineProcessor<CustomTemplateCraftingOperation> processor;
 
     @Getter
     private final CustomMenu menu;
 
     private final List<Integer> inputSlots;
     private final List<Integer> outputSlots;
+
+    @Getter
     private final int templateSlot;
+
+    @Getter
     private final List<MachineTemplate> templates;
+
     private final int consumption;
     private final int capacity;
+    private final boolean fasterIfMoreTemplates;
+    private final boolean moreOutputIfMoreTemplates;
 
     public CustomTemplateMachine(
             ItemGroup itemGroup,
@@ -57,7 +70,9 @@ public class CustomTemplateMachine extends AbstractEmptyMachine<CraftingOperatio
             int templateSlot,
             List<MachineTemplate> templates,
             int consumption,
-            int capacity) {
+            int capacity,
+            boolean fasterIfMoreTemplates,
+            boolean moreOutputIfMoreTemplates) {
         super(itemGroup, item, recipeType, recipe);
 
         this.processor = new MachineProcessor<>(this);
@@ -68,6 +83,8 @@ public class CustomTemplateMachine extends AbstractEmptyMachine<CraftingOperatio
         this.templates = templates;
         this.consumption = consumption;
         this.capacity = capacity;
+        this.fasterIfMoreTemplates = fasterIfMoreTemplates;
+        this.moreOutputIfMoreTemplates = moreOutputIfMoreTemplates;
 
         createPreset(this, bmp -> {
             menu.apply(bmp);
@@ -75,6 +92,23 @@ public class CustomTemplateMachine extends AbstractEmptyMachine<CraftingOperatio
                 bmp.addItem(templateSlot, null, ((player, i, itemStack, clickAction) -> true));
             }
         });
+
+        this.addItemHandler(getBlockTicker());
+        this.addItemHandler(new SimpleBlockBreakHandler() {
+            @Override
+            public void onBlockBreak(@NotNull Block block) {
+                BlockMenu inv = StorageCacheUtils.getMenu(block.getLocation());
+                if (inv != null) {
+                    inv.dropItems(block.getLocation(), templateSlot);
+                    inv.dropItems(block.getLocation(), getOutputSlots());
+                    inv.dropItems(block.getLocation(), getInputSlots());
+                }
+            }
+        });
+
+        processor.setProgressBar(menu.getProgressBarItem());
+
+        register(RykenSlimefunCustomizer.INSTANCE);
     }
 
     @Override
@@ -92,22 +126,72 @@ public class CustomTemplateMachine extends AbstractEmptyMachine<CraftingOperatio
         };
     }
 
+    @Override
+    @NotNull public List<ItemStack> getDisplayRecipes() {
+        List<ItemStack> displayRecipes = new ArrayList<>();
+
+        int templateIndex = 0, recipeIndex = 0;
+        for (MachineTemplate template : templates) {
+            for (CustomMachineRecipe recipe : template.recipes()) {
+                if (recipe.getInput().length == 0) {
+                    ItemStack templateItem = template.template().clone();
+                    CommonUtils.addLore(templateItem, true, "&d&l&o*模板物品不消耗*");
+                    displayRecipes.add(templateItem);
+                } else {
+                    displayRecipes.add(SingleItemRecipeGuideListener.tagItemTemplateRecipe(
+                            RECIPE_INPUT, templateIndex, recipeIndex));
+                }
+
+                if (recipe.getOutput().length == 1) {
+                    int seconds = recipe.getTicks() / 2;
+                    ItemStack out = recipe.getOutput()[0].clone();
+                    String rawLore = "&e制作时间: &b" + seconds + "&es";
+                    if (seconds > 60) {
+                        rawLore = rawLore.concat("(" + CommonUtils.formatSeconds(seconds) + "&e)");
+                    }
+                    CommonUtils.addLore(out, true, rawLore);
+
+                    displayRecipes.add(out);
+                } else {
+                    displayRecipes.add(SingleItemRecipeGuideListener.tagItemTemplateRecipe(
+                            RECIPE_OUTPUT, templateIndex, recipeIndex));
+                }
+
+                recipeIndex++;
+            }
+            templateIndex++;
+            recipeIndex = 0;
+        }
+
+        return displayRecipes;
+    }
+
     private void tick(Block b, SlimefunItem item, SlimefunBlockData data) {
         BlockMenu inv = data.getBlockMenu();
         if (inv != null) {
             ItemStack templateItem = inv.getItemInSlot(templateSlot);
-            CustomCraftingOperation currentOperation = (CustomCraftingOperation) processor.getOperation(b);
+            CustomTemplateCraftingOperation currentOperation = processor.getOperation(b);
             if (currentOperation != null) {
                 if (this.takeCharge(b.getLocation())) {
                     if (!currentOperation.isFinished()) {
-                        this.processor.updateProgressBar(inv, 22, currentOperation);
+                        this.processor.updateProgressBar(inv, menu.getProgressSlot(), currentOperation);
                         currentOperation.addProgress(1);
                     } else {
-                        inv.replaceExistingItem(22, new CustomItemStack(Material.BLACK_STAINED_GLASS_PANE, " ", new String[0]));
+                        if (menu.getProgressSlot() >= 0) {
+                            inv.replaceExistingItem(
+                                    menu.getProgressSlot(),
+                                    menu.getItems()
+                                            .getOrDefault(menu.getProgressSlot(), ChestMenuUtils.getBackground()));
+                        }
+
                         List<ItemStack> result = currentOperation.getRecipe().getMatchChanceResult();
 
                         for (ItemStack output : result) {
-                            inv.pushItem(output.clone(), this.getOutputSlots());
+                            ItemStack outputItem = output.clone();
+                            if (moreOutputIfMoreTemplates) {
+                                outputItem.setAmount(outputItem.getAmount() * templateItem.getAmount());
+                            }
+                            inv.pushItem(outputItem, this.getOutputSlots());
                         }
 
                         this.processor.endOperation(b);
@@ -116,9 +200,15 @@ public class CustomTemplateMachine extends AbstractEmptyMachine<CraftingOperatio
             } else {
                 for (MachineTemplate template : templates) {
                     if (template.isItemSimilar(templateItem)) {
-                        CustomTemplateMachineRecipe recipe = findNextRecipe(template, inv);
+                        CustomMachineRecipe recipe = findNextRecipe(template, inv);
                         if (recipe != null) {
-                            processor.startOperation(b, new CustomCraftingOperation(recipe));
+                            int ticks = recipe.getTicks();
+                            if (fasterIfMoreTemplates) {
+                                if (templateItem.getAmount() > 1) {
+                                    ticks = ticks / templateItem.getAmount();
+                                }
+                            }
+                            processor.startOperation(b, new CustomTemplateCraftingOperation(recipe, ticks));
                         }
                     }
                 }
@@ -142,7 +232,7 @@ public class CustomTemplateMachine extends AbstractEmptyMachine<CraftingOperatio
     }
 
     @NotNull @Override
-    public MachineProcessor<CraftingOperation> getMachineProcessor() {
+    public MachineProcessor<CustomTemplateCraftingOperation> getMachineProcessor() {
         return processor;
     }
 
@@ -156,13 +246,8 @@ public class CustomTemplateMachine extends AbstractEmptyMachine<CraftingOperatio
         return outputSlots.stream().mapToInt(i -> i).toArray();
     }
 
-    @NotNull @Override
-    public List<ItemStack> getDisplayRecipes() {
-        return List.of();
-    }
-
-    private CustomTemplateMachineRecipe findNextRecipe(MachineTemplate currentTemplate, BlockMenu inv) {
-        List<CustomTemplateMachineRecipe> recipes = currentTemplate.recipes();
+    private CustomMachineRecipe findNextRecipe(MachineTemplate currentTemplate, BlockMenu inv) {
+        List<CustomMachineRecipe> recipes = currentTemplate.recipes();
 
         Map<Integer, ItemStack> inventory = new HashMap<>();
 
@@ -174,11 +259,41 @@ public class CustomTemplateMachine extends AbstractEmptyMachine<CraftingOperatio
             }
         }
 
-        Map<CustomTemplateMachineRecipe, Map<Integer, Integer>> matched = new HashMap<>();
+        Map<CustomMachineRecipe, Map<Integer, Integer>> matched = new HashMap<>();
 
-        for (CustomTemplateMachineRecipe recipe : recipes) {
-            //Map<slot, amount>
+        for (CustomMachineRecipe recipe : recipes) {
+            // Map<slot, amount>
             Map<Integer, Integer> found = new HashMap<>();
+
+            if (recipe.getInput().length == 0) {
+                if (getInputSlots().length == 0) {
+                    for (ItemStack output : recipe.getOutput()) {
+                        if (!InvUtils.fitAll(inv.toInventory(), recipe.getOutput(), getOutputSlots())) {
+                            return null;
+                        }
+                    }
+
+                    return recipe;
+                } else {
+                    boolean allEmpty = true;
+                    for (int i : getInputSlots()) {
+                        ItemStack item = inv.getItemInSlot(i);
+                        if (item != null && item.getType() != Material.AIR) {
+                            allEmpty = false;
+                        }
+                    }
+
+                    if (allEmpty) {
+                        for (ItemStack output : recipe.getOutput()) {
+                            if (!InvUtils.fitAll(inv.toInventory(), recipe.getOutput(), getOutputSlots())) {
+                                return null;
+                            }
+                        }
+
+                        return recipe;
+                    }
+                }
+            }
 
             for (ItemStack input : recipe.getInput()) {
                 for (int slot : getInputSlots()) {
@@ -202,11 +317,12 @@ public class CustomTemplateMachine extends AbstractEmptyMachine<CraftingOperatio
             return null;
         }
 
-        Map.Entry<CustomTemplateMachineRecipe, Map<Integer, Integer>> recipe = null;
+        Map.Entry<CustomMachineRecipe, Map<Integer, Integer>> recipe = null;
         int max_Size = 0;
 
-        for (Map.Entry<CustomTemplateMachineRecipe, Map<Integer, Integer>> item : matched.entrySet()) {
-            int size = ItemUtils.getAllItemTypeAmount(item.getKey().getInput()) * 1000 + ItemUtils.getAllItemAmount(item.getKey().getInput());
+        for (Map.Entry<CustomMachineRecipe, Map<Integer, Integer>> item : matched.entrySet()) {
+            int size = ItemUtils.getAllItemTypeAmount(item.getKey().getInput()) * 1000
+                    + ItemUtils.getAllItemAmount(item.getKey().getInput());
             if (size > max_Size) {
                 recipe = item;
                 max_Size = size;
@@ -221,17 +337,6 @@ public class CustomTemplateMachine extends AbstractEmptyMachine<CraftingOperatio
             return null;
         }
 
-        int cost = recipe.getKey().getCost();
-
-        int templateAmount = inv.getItemInSlot(templateSlot).getAmount();
-
-        if (templateAmount < cost) {
-            return null;
-        } else {
-            int take = templateAmount - cost;
-            inv.consumeItem(templateSlot, take);
-        }
-
         for (Map.Entry<Integer, Integer> entry : recipe.getValue().entrySet()) {
             inv.consumeItem(entry.getKey(), entry.getValue());
         }
@@ -239,8 +344,7 @@ public class CustomTemplateMachine extends AbstractEmptyMachine<CraftingOperatio
         return recipe.getKey();
     }
 
-    @NotNull
-    @Override
+    @NotNull @Override
     public EnergyNetComponentType getEnergyComponentType() {
         return EnergyNetComponentType.CONSUMER;
     }

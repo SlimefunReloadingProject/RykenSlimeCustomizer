@@ -13,7 +13,6 @@ import java.io.File;
 import java.io.IOException;
 import java.util.logging.FileHandler;
 import javax.script.ScriptException;
-
 import me.mrCookieSlime.Slimefun.api.inventory.BlockMenu;
 import org.graalvm.polyglot.Context;
 import org.graalvm.polyglot.PolyglotAccess;

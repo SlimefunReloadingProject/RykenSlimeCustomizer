@@ -36,7 +36,7 @@ public class CustomMenu {
 
     @Getter
     private int progressSlot;
-
+    @Getter
     private int size;
 
     @Getter

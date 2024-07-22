@@ -15,7 +15,6 @@ import java.util.ArrayList;
 import java.util.List;
 import java.util.Map;
 import javax.annotation.Nonnull;
-
 import net.kyori.adventure.text.Component;
 import org.bukkit.Bukkit;
 import org.bukkit.Material;
@@ -80,7 +79,8 @@ public class CustomMultiBlockMachine extends MultiBlockMachine {
 
                 for (ItemStack[] input : inputs) {
                     if (isCraftable(inv, input)) {
-                        ItemStack output = RecipeType.getRecipeOutputList(this, input).clone();
+                        ItemStack output =
+                                RecipeType.getRecipeOutputList(this, input).clone();
                         MultiBlockCraftEvent event = new MultiBlockCraftEvent(p, this, input, output);
 
                         Bukkit.getPluginManager().callEvent(event);
@@ -123,7 +123,7 @@ public class CustomMultiBlockMachine extends MultiBlockMachine {
     protected Inventory createVirtualInventory(@Nonnull Inventory inv) {
         Inventory fakeInv = Bukkit.createInventory(null, 9, Component.text("Fake Inventory"));
 
-        for(int j = 0; j < inv.getContents().length; ++j) {
+        for (int j = 0; j < inv.getContents().length; ++j) {
             ItemStack stack = inv.getContents()[j];
             if (stack != null) {
                 stack = stack.clone();
@@ -137,7 +137,7 @@ public class CustomMultiBlockMachine extends MultiBlockMachine {
     }
 
     private boolean isCraftable(Inventory inv, ItemStack[] recipe) {
-        for(int j = 0; j < inv.getContents().length; ++j) {
+        for (int j = 0; j < inv.getContents().length; ++j) {
             if (!SlimefunUtils.isItemSimilar(inv.getContents()[j], recipe[j], true, true, false, false)) {
                 if (!SlimefunUtils.isItemSimilar(inv.getContents()[j], recipe[j], false, true, false, false)) {
                     return false;

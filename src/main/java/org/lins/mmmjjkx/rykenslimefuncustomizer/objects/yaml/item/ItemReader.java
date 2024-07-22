@@ -13,7 +13,6 @@ import java.io.File;
 import java.util.ArrayList;
 import java.util.List;
 import java.util.Optional;
-
 import lombok.SneakyThrows;
 import net.bytebuddy.implementation.FixedValue;
 import net.bytebuddy.matcher.ElementMatchers;
@@ -363,8 +362,7 @@ public class ItemReader extends YamlReader<SlimefunItem> {
                         if (split.length == 2) {
                             int min = Integer.parseInt(split[0]);
                             int max = Integer.parseInt(split[1]);
-                            DropFromBlock.addDrop(
-                                    material, new DropFromBlock.Drop(original, chance, addon, min, max));
+                            DropFromBlock.addDrop(material, new DropFromBlock.Drop(original, chance, addon, min, max));
                         } else {
                             ExceptionHandler.handleError(
                                     "无法在附属" + addon.getAddonName() + "中读取掉落数量区间" + between + "，已把掉落数量转为1");
@@ -372,8 +370,7 @@ public class ItemReader extends YamlReader<SlimefunItem> {
                         }
                     }
                 } else {
-                    DropFromBlock.addDrop(
-                            material, new DropFromBlock.Drop(original, chance, addon, amount, amount));
+                    DropFromBlock.addDrop(material, new DropFromBlock.Drop(original, chance, addon, amount, amount));
                 }
             } else {
                 ExceptionHandler.handleError(

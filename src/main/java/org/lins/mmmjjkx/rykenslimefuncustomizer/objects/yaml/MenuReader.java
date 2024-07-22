@@ -64,7 +64,8 @@ public class MenuReader extends YamlReader<CustomMenu> {
             String menuId = section.getString("import", "");
             BlockMenuPreset menuPreset = Slimefun.getRegistry().getMenuPresets().get(menuId);
             if (menuPreset == null) {
-                CustomMenu menu = CommonUtils.getIf(addon.getMenus(), m -> m.getId().equals(menuId));
+                CustomMenu menu =
+                        CommonUtils.getIf(addon.getMenus(), m -> m.getId().equals(menuId));
                 if (menu == null) {
                     ExceptionHandler.handleError(
                             "在附属" + addon.getAddonId() + "中加载菜单" + s + "时遇到了问题: " + "无法加载机器菜单" + s + ": 无法找到要导入的菜单");

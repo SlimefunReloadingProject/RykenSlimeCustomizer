@@ -44,8 +44,8 @@ public class ExceptionHandler {
         if (ig != null) {
             if (ig.getAddon() != null) {
                 if (ig.getAddon().getClass() == RykenSlimefunCustomizer.class) {
-                    console.sendMessage(CMIChatColor.translate("&4ERROR | ID冲突：" + id + "与物品组 "
-                            + ig.getKey().getKey() + "发生ID冲突"));
+                    console.sendMessage(CMIChatColor.translate(
+                            "&4ERROR | ID冲突：" + id + "与物品组 " + ig.getKey().getKey() + "发生ID冲突"));
                     return HandleResult.FAILED;
                 }
                 return HandleResult.SUCCESS;

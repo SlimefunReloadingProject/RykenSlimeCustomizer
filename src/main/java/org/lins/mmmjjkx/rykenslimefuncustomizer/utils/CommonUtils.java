@@ -147,7 +147,6 @@ public class CommonUtils {
                             m.setDisplayName(name);
                         }
 
-
                         if (!lore.isEmpty()) {
                             m.setLore(lore);
                         }
@@ -158,13 +157,13 @@ public class CommonUtils {
                     if (sfItem != null) {
                         itemStack = sfItem.getItem().clone();
                         itemStack.editMeta(m -> {
-                           if (!name.isBlank()) {
-                               m.setDisplayName(name);
-                           }
+                            if (!name.isBlank()) {
+                                m.setDisplayName(name);
+                            }
 
-                           if (!lore.isEmpty()) {
-                               m.setLore(lore);
-                           }
+                            if (!lore.isEmpty()) {
+                                m.setLore(lore);
+                            }
                         });
                     } else {
                         ExceptionHandler.handleError("无法找到粘液物品" + material + "，已转为石头");
