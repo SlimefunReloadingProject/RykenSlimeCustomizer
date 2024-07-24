@@ -8,10 +8,13 @@ public class CustomTemplateCraftingOperation implements MachineOperation {
     @Getter
     private final CustomMachineRecipe recipe;
 
+    @Getter
+    private final MachineTemplate template;
+
     private final int ticks;
     private int currentTicks;
 
-    public CustomTemplateCraftingOperation(CustomMachineRecipe recipe, int totalTicks) {
+    public CustomTemplateCraftingOperation(MachineTemplate template, CustomMachineRecipe recipe, int totalTicks) {
         this.currentTicks = 0;
         Validate.isTrue(recipe.getOutput().length != 0, "The recipe must have at least one output.");
         Validate.isTrue(
@@ -19,6 +22,7 @@ public class CustomTemplateCraftingOperation implements MachineOperation {
                 "The amount of total ticks must be a positive integer or zero, received: " + totalTicks);
         this.recipe = recipe;
         this.ticks = totalTicks;
+        this.template = template;
     }
 
     public void addProgress(int num) {

@@ -185,6 +185,18 @@ public class CustomTemplateMachine extends AbstractEmptyMachine<CustomTemplateCr
 
             CustomTemplateCraftingOperation currentOperation = processor.getOperation(b);
             if (currentOperation != null) {
+
+                if (!currentOperation.getTemplate().isItemSimilar(templateItem)) {
+                    processor.endOperation(b);
+                    if (menu.getProgressSlot() >= 0) {
+                        inv.replaceExistingItem(
+                                menu.getProgressSlot(),
+                                menu.getItems()
+                                        .getOrDefault(menu.getProgressSlot(), ChestMenuUtils.getBackground()));
+                    }
+                    return;
+                }
+
                 if (this.takeCharge(b.getLocation())) {
                     if (!currentOperation.isFinished()) {
                         this.processor.updateProgressBar(inv, menu.getProgressSlot(), currentOperation);
@@ -221,7 +233,7 @@ public class CustomTemplateMachine extends AbstractEmptyMachine<CustomTemplateCr
                                     ticks = ticks / templateItem.getAmount();
                                 }
                             }
-                            processor.startOperation(b, new CustomTemplateCraftingOperation(recipe, ticks));
+                            processor.startOperation(b, new CustomTemplateCraftingOperation(template, recipe, ticks));
                         }
                     }
                 }
