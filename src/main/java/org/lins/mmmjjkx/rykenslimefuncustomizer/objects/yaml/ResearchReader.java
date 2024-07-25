@@ -51,7 +51,7 @@ public class ResearchReader extends YamlReader<Research> {
 
         name = CMIChatColor.translate(name);
 
-        boolean hasCurrency = section.getBoolean("currencyCost");
+        boolean hasCurrency = section.contains("currencyCost");
         double currency = 0;
         if (hasCurrency) {
             currency = section.getDouble("currencyCost");

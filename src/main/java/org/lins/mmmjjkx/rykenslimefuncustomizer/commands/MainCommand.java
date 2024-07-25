@@ -190,6 +190,30 @@ public class MainCommand implements TabExecutor {
                     sender.sendMessage(CMIChatColor.translate("&4你不能在控制台使用此指令！"));
                     return false;
                 }
+            } else if (args[0].equalsIgnoreCase("reload")) {
+                if (!sender.hasPermission("rsc.command") || !sender.hasPermission("rsc.command.reload")) {
+                    sender.sendMessage(CMIChatColor.translate("&4你没有权限去做这些！"));
+                    return false;
+                }
+
+                String prjId = args[1];
+                ProjectAddon addon = RykenSlimefunCustomizer.addonManager.get(prjId);
+                if (addon == null) {
+                    sender.sendMessage(CMIChatColor.translate("&4没有这个附属！"));
+                    return false;
+                }
+
+                addon.unregister();
+                RykenSlimefunCustomizer.addonManager.removeProjectAddon(addon);
+
+                File folder = addon.getFolder();
+                ProjectAddonLoader pal = new ProjectAddonLoader(folder, RykenSlimefunCustomizer.addonManager.getProjectIds());
+                ProjectAddon addonNew = pal.load();
+
+                RykenSlimefunCustomizer.addonManager.pushProjectAddon(addonNew);
+
+                sender.sendMessage(CMIChatColor.translate("&a重载成功！"));
+                return true;
             }
         } else if (args.length == 3) {
             if (args[0].equalsIgnoreCase("saveitem")) {

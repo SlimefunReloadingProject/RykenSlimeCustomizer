@@ -29,7 +29,7 @@ public class DropFromBlock {
     }
 
     public static void unregisterAddonDrops(ProjectAddon addon) {
-        for (Material material : drops.keySet()) {
+        for (Material material : new ArrayList<>(drops.keySet())) {
             List<Drop> dropsList = getDrops(material);
             dropsList.removeIf(drop -> drop.owner.equals(addon));
             if (dropsList.isEmpty()) {

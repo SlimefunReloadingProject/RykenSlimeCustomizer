@@ -103,6 +103,7 @@ public final class ProjectAddonManager {
         for (ProjectAddon addon : projectAddons.values()) {
             addon.unregister();
         }
+
         projectAddons.clear();
         projectIds.clear();
 
