@@ -51,27 +51,27 @@ public abstract class YamlReader<T> {
             ConfigurationSection section = configuration.getConfigurationSection(key);
             if (section == null) continue;
 
-            ExceptionHandler.debugLog("开始读取项: " + key);
+            ExceptionHandler.debugLog("Start reading section: " + key);
 
             ConfigurationSection register = section.getConfigurationSection("register");
             if (!checkForRegistration(key, register)) continue;
 
-            ExceptionHandler.debugLog("检查延迟加载...");
+            ExceptionHandler.debugLog("Check lateInit...");
 
             if (section.getBoolean("lateInit", false)) {
                 putLateInit(key);
-                ExceptionHandler.debugLog("检查结果：延迟加载");
+                ExceptionHandler.debugLog("Check result: lateInit");
                 continue;
             }
 
-            ExceptionHandler.debugLog("开始读取...");
+            ExceptionHandler.debugLog("Start reading object...");
 
             var object = readEach(key);
             if (object != null) {
                 objects.add(object);
-                ExceptionHandler.debugLog("SUCCESS | 读取项" + key + "成功！");
+                ExceptionHandler.debugLog("SUCCESS | Reading section " + key + "success！");
             } else {
-                ExceptionHandler.debugLog("FAILURE | 读取项" + key + "失败！");
+                ExceptionHandler.debugLog("FAILURE | Reading section " + key + "failed！");
             }
         }
         return objects;
@@ -84,13 +84,13 @@ public abstract class YamlReader<T> {
     public List<T> loadLateInits() {
         List<T> objects = new ArrayList<>();
         lateInits.forEach(key -> {
-            ExceptionHandler.debugLog("开始读取延迟项：" + key);
+            ExceptionHandler.debugLog("Start reading lateInit section：" + key);
             var object = readEach(key);
             if (object != null) {
                 objects.add(object);
-                ExceptionHandler.debugLog("SUCCESS | 读取项" + key + "成功！");
+                ExceptionHandler.debugLog("SUCCESS | Reading section " + key + "success！");
             } else {
-                ExceptionHandler.debugLog("FAILURE | 读取项" + key + "失败！");
+                ExceptionHandler.debugLog("FAILURE | Reading section " + key + "failed！");
             }
         });
 

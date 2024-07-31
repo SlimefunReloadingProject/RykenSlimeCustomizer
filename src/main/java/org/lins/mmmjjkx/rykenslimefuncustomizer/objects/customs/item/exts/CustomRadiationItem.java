@@ -10,7 +10,7 @@ import io.github.thebusybiscuit.slimefun4.core.handlers.ItemUseHandler;
 import org.bukkit.inventory.ItemStack;
 import org.jetbrains.annotations.NotNull;
 import org.lins.mmmjjkx.rykenslimefuncustomizer.objects.customs.parent.BaseRadiationItem;
-import org.lins.mmmjjkx.rykenslimefuncustomizer.objects.script.parent.ScriptEval;
+import org.lins.mmmjjkx.rykenslimefuncustomizer.objects.script.ScriptEval;
 
 public class CustomRadiationItem extends BaseRadiationItem implements Radioactive {
     private final Radioactivity radioactivity;

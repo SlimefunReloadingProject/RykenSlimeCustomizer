@@ -8,6 +8,7 @@ import io.github.thebusybiscuit.slimefun4.api.recipes.RecipeType;
 import io.github.thebusybiscuit.slimefun4.core.multiblocks.MultiBlockMachine;
 import io.github.thebusybiscuit.slimefun4.core.services.sounds.SoundEffect;
 import io.github.thebusybiscuit.slimefun4.implementation.Slimefun;
+import io.github.thebusybiscuit.slimefun4.implementation.items.backpacks.SlimefunBackpack;
 import io.github.thebusybiscuit.slimefun4.libraries.dough.items.ItemUtils;
 import io.github.thebusybiscuit.slimefun4.libraries.paperlib.PaperLib;
 import io.github.thebusybiscuit.slimefun4.utils.SlimefunUtils;
@@ -27,7 +28,7 @@ import org.bukkit.inventory.Inventory;
 import org.bukkit.inventory.ItemStack;
 import org.jetbrains.annotations.Nullable;
 import org.lins.mmmjjkx.rykenslimefuncustomizer.RykenSlimefunCustomizer;
-import org.lins.mmmjjkx.rykenslimefuncustomizer.objects.script.parent.ScriptEval;
+import org.lins.mmmjjkx.rykenslimefuncustomizer.objects.script.ScriptEval;
 
 public class CustomMultiBlockMachine extends MultiBlockMachine {
     private final SoundEffect craftSound;
@@ -73,7 +74,6 @@ public class CustomMultiBlockMachine extends MultiBlockMachine {
             BlockState bs = PaperLib.getBlockState(disBlock, false).getState();
             if (bs instanceof Dispenser dispenser) {
                 Inventory inv = dispenser.getInventory();
-                ItemStack[] contents = inv.getContents();
 
                 List<ItemStack[]> inputs = RecipeType.getRecipeInputList(this);
 
@@ -137,9 +137,13 @@ public class CustomMultiBlockMachine extends MultiBlockMachine {
     }
 
     private boolean isCraftable(Inventory inv, ItemStack[] recipe) {
-        for (int j = 0; j < inv.getContents().length; ++j) {
-            if (!SlimefunUtils.isItemSimilar(inv.getContents()[j], recipe[j], true, true, false, false)) {
-                if (!SlimefunUtils.isItemSimilar(inv.getContents()[j], recipe[j], false, true, false, false)) {
+        for(int j = 0; j < inv.getContents().length; ++j) {
+            if (!SlimefunUtils.isItemSimilar(inv.getContents()[j], recipe[j], true, true, false)) {
+                if (!(SlimefunItem.getByItem(recipe[j]) instanceof SlimefunBackpack)) {
+                    return false;
+                }
+
+                if (!SlimefunUtils.isItemSimilar(inv.getContents()[j], recipe[j], false, true, false)) {
                     return false;
                 }
             }

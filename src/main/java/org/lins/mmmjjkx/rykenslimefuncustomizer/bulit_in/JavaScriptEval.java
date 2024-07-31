@@ -5,7 +5,6 @@ import com.oracle.truffle.api.TruffleLanguage;
 import com.oracle.truffle.js.lang.JavaScriptLanguage;
 import com.oracle.truffle.js.runtime.JSRealm;
 import com.oracle.truffle.js.scriptengine.GraalJSScriptEngine;
-import com.xzavier0722.mc.plugin.slimefun4.storage.util.StorageCacheUtils;
 import io.github.thebusybiscuit.slimefun4.api.items.SlimefunItem;
 import io.github.thebusybiscuit.slimefun4.implementation.SlimefunItems;
 import io.github.thebusybiscuit.slimefun4.utils.SlimefunUtils;
@@ -13,6 +12,8 @@ import java.io.File;
 import java.io.IOException;
 import java.util.logging.FileHandler;
 import javax.script.ScriptException;
+
+import me.mrCookieSlime.Slimefun.api.BlockStorage;
 import me.mrCookieSlime.Slimefun.api.inventory.BlockMenu;
 import org.graalvm.polyglot.Context;
 import org.graalvm.polyglot.PolyglotAccess;
@@ -20,7 +21,7 @@ import org.graalvm.polyglot.io.IOAccess;
 import org.jetbrains.annotations.NotNull;
 import org.jetbrains.annotations.Nullable;
 import org.lins.mmmjjkx.rykenslimefuncustomizer.objects.ProjectAddon;
-import org.lins.mmmjjkx.rykenslimefuncustomizer.objects.script.parent.ScriptEval;
+import org.lins.mmmjjkx.rykenslimefuncustomizer.objects.script.ScriptEval;
 import org.lins.mmmjjkx.rykenslimefuncustomizer.utils.ExceptionHandler;
 
 public class JavaScriptEval extends ScriptEval {
@@ -30,7 +31,7 @@ public class JavaScriptEval extends ScriptEval {
     private FileHandler log;
 
     public JavaScriptEval(@NotNull File js, ProjectAddon addon) {
-        super(js, addon);
+        super(js);
 
         this.addon = addon;
 
@@ -48,7 +49,7 @@ public class JavaScriptEval extends ScriptEval {
         TruffleLanguage.Env env = realm.getEnv();
         addThing("SlimefunItems", env.asHostSymbol(SlimefunItems.class));
         addThing("SlimefunItem", env.asHostSymbol(SlimefunItem.class));
-        addThing("StorageCacheUtils", env.asHostSymbol(StorageCacheUtils.class));
+        addThing("BlockStorage", env.asHostSymbol(BlockStorage.class));
         addThing("SlimefunUtils", env.asHostSymbol(SlimefunUtils.class));
         addThing("BlockMenu", env.asHostSymbol(BlockMenu.class));
     }

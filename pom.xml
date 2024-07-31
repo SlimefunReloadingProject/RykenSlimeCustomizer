@@ -165,12 +165,6 @@
 			<scope>provided</scope>
 		</dependency>
 		<dependency>
-			<groupId>com.github.SlimefunGuguProject</groupId>
-			<artifactId>Slimefun4</artifactId>
-			<version>2024.3</version>
-			<scope>provided</scope>
-		</dependency>
-		<dependency>
 			<groupId>org.projectlombok</groupId>
 			<artifactId>lombok</artifactId>
 			<version>1.18.30</version>

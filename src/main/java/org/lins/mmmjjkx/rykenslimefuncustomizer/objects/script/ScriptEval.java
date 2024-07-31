@@ -1,8 +1,6 @@
-package org.lins.mmmjjkx.rykenslimefuncustomizer.objects.script.parent;
+package org.lins.mmmjjkx.rykenslimefuncustomizer.objects.script;
 
 import com.google.errorprone.annotations.CanIgnoreReturnValue;
-import com.xzavier0722.mc.plugin.slimefun4.storage.controller.SlimefunBlockData;
-import com.xzavier0722.mc.plugin.slimefun4.storage.util.StorageCacheUtils;
 import io.github.thebusybiscuit.slimefun4.api.items.SlimefunItem;
 import io.github.thebusybiscuit.slimefun4.utils.SlimefunUtils;
 import java.io.File;
@@ -21,17 +19,13 @@ import java.util.stream.IntStream;
 import lombok.AccessLevel;
 import lombok.Getter;
 import me.clip.placeholderapi.PlaceholderAPI;
-import me.mrCookieSlime.Slimefun.api.inventory.BlockMenu;
 import org.bukkit.Bukkit;
-import org.bukkit.Location;
 import org.bukkit.entity.Player;
 import org.bukkit.inventory.ItemStack;
 import org.graalvm.polyglot.HostAccess;
 import org.jetbrains.annotations.Nullable;
 import org.lins.mmmjjkx.rykenslimefuncustomizer.libraries.colors.CMIChatColor;
-import org.lins.mmmjjkx.rykenslimefuncustomizer.objects.ProjectAddon;
 import org.lins.mmmjjkx.rykenslimefuncustomizer.objects.script.enhanced.NBTAPIIntegration;
-import org.lins.mmmjjkx.rykenslimefuncustomizer.objects.script.lambda.CiConsumer;
 import org.lins.mmmjjkx.rykenslimefuncustomizer.objects.script.lambda.CiFunction;
 
 @Getter(AccessLevel.PROTECTED)
@@ -69,7 +63,7 @@ public abstract class ScriptEval {
     private final File file;
     private String fileContext;
 
-    public ScriptEval(File file, ProjectAddon addon) {
+    public ScriptEval(File file) {
         this.file = file;
 
         contextInit();
@@ -139,16 +133,6 @@ public abstract class ScriptEval {
             int[] arr = stream.toArray();
             return arr[random.nextInt(arr.length)];
         });
-
-        // StorageCacheUtils functions
-        // removal
-        addThing("setData", (CiConsumer<Location, String, String>) StorageCacheUtils::setData);
-        addThing("getData", (BiFunction<Location, String, String>) StorageCacheUtils::getData);
-        addThing("getBlockMenu", (Function<Location, BlockMenu>) StorageCacheUtils::getMenu);
-        addThing("getBlockData", (Function<Location, SlimefunBlockData>) StorageCacheUtils::getBlock);
-        addThing("isSlimefunBlock", (Function<Location, Boolean>) StorageCacheUtils::hasBlock);
-        addThing("isBlock", (BiFunction<Location, String, Boolean>) StorageCacheUtils::isBlock);
-        addThing("getSfItemByBlock", (Function<Location, SlimefunItem>) StorageCacheUtils::getSfItem);
 
         if (Bukkit.getPluginManager().isPluginEnabled("NBTAPI")) {
             addThing("NBTAPI", new NBTAPIIntegration());

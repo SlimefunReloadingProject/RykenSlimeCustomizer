@@ -43,7 +43,6 @@ public class MainCommand implements TabExecutor {
 
                 RykenSlimefunCustomizer.reload();
                 sender.sendMessage(CMIChatColor.translate("&aReloaded successfully！"));
-                sender.sendMessage(CMIChatColor.translate("&4Note: researches will be lost after reload! If u don't want to lose them, please restart the server instead!"));
                 return true;
             } else if (args[0].equalsIgnoreCase("list")) {
                 if (!sender.hasPermission("rsc.command") || !sender.hasPermission("rsc.command.list")) {

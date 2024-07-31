@@ -105,7 +105,7 @@ public class ProjectAddonLoader {
             return null;
         }
 
-        ExceptionHandler.debugLog("读取完成，开始加载附属 " + addon.getAddonId() + " 中的内容...");
+        ExceptionHandler.debugLog("Read finished, start reading contents from addon " + addon.getAddonId() + "...");
 
         YamlConfiguration groups = doFileLoad(file, Constants.GROUPS_FILE);
         ItemGroupReader groupReader = new ItemGroupReader(groups, addon);
@@ -150,7 +150,7 @@ public class ProjectAddonLoader {
         SuperReader superReader = new SuperReader(supers, addon);
         TemplateMachineReader templateMachineReader = new TemplateMachineReader(templateMachines, addon);
 
-        ExceptionHandler.debugLog("开始加载 " + file.getName() + " 中的物品内容...");
+        ExceptionHandler.debugLog("Start preloading items from addon " + addon.getAddonId() + "...");
 
         mobDropsReader.preload();
         resourceReader.preload();
@@ -168,7 +168,7 @@ public class ProjectAddonLoader {
         superReader.preload();
         templateMachineReader.preload();
 
-        ExceptionHandler.debugLog("开始注册 " + file.getName() + " 存放的内容...");
+        ExceptionHandler.debugLog("Start registering contents from addon " + addon.getAddonId() + "...");
 
         addon.setMobDrops(mobDropsReader.readAll());
         addon.setGeoResources(resourceReader.readAll());
@@ -187,7 +187,7 @@ public class ProjectAddonLoader {
         addon.setSupers(superReader.readAll());
         addon.setTemplateMachines(templateMachineReader.readAll());
 
-        ExceptionHandler.debugLog("开始加载要求延迟加载的内容...");
+        ExceptionHandler.debugLog("Start late init contents from addon " + addon.getAddonId() + "...");
 
         // late inits
         addon.getMobDrops().addAll(mobDropsReader.loadLateInits());
@@ -213,7 +213,7 @@ public class ProjectAddonLoader {
         researchesList.addAll(researchReader.loadLateInits());
         addon.setResearches(researchesList);
 
-        ExceptionHandler.debugLog("加载附属 " + addon.getAddonId() + " 成功!");
+        ExceptionHandler.debugLog("Loaded addon " + addon.getAddonId() + " successfully!");
 
         return addon;
     }
