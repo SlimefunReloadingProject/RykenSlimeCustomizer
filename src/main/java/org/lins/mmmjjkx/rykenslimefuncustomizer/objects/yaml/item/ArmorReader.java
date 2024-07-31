@@ -4,6 +4,7 @@ import io.github.thebusybiscuit.slimefun4.api.items.ItemGroup;
 import io.github.thebusybiscuit.slimefun4.api.items.SlimefunItemStack;
 import io.github.thebusybiscuit.slimefun4.api.recipes.RecipeType;
 import io.github.thebusybiscuit.slimefun4.core.attributes.ProtectionType;
+import io.github.thebusybiscuit.slimefun4.implementation.Slimefun;
 import io.github.thebusybiscuit.slimefun4.libraries.dough.collections.Pair;
 import java.util.ArrayList;
 import java.util.List;
@@ -96,7 +97,7 @@ public class ArmorReader extends YamlReader<List<CustomArmorPiece>> {
                     return null;
                 }
 
-                potionEffects.add(new PotionEffect(type, Integer.MAX_VALUE, amplifier));
+                potionEffects.add(new PotionEffect(type, (Slimefun.getCfg().getInt("options.armor-update-interval") + 3) * 20, amplifier));
             }
 
             pieces.add(new CustomArmorPiece(

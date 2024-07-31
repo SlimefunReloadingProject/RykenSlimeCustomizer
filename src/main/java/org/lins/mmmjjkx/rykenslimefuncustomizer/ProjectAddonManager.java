@@ -70,6 +70,11 @@ public final class ProjectAddonManager {
 
             if (projectIds.containsKey(id)) {
                 ProjectAddon addon = projectAddons.get(id);
+                if (addon == null) {
+                    ExceptionHandler.handleError("无法正常加载附属 " + id + "！请检查所有附属内容！");
+                    continue;
+                }
+
                 if (addon.isMarkAsDepend()) {
                     continue;
                 }
