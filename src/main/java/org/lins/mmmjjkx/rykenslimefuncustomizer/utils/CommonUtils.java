@@ -81,7 +81,7 @@ public class CommonUtils {
         String type = section.getString("material_type", "mc");
 
         if (!type.equalsIgnoreCase("none") && !section.contains("material")) {
-            ExceptionHandler.handleError("你设置了材料类型，但没有设置对应的材料！");
+            ExceptionHandler.handleError("You need to specify a material for the item in " + section.getCurrentPath());
             return null;
         }
 
@@ -109,7 +109,7 @@ public class CommonUtils {
                 Optional<Material> materialo = Optional.ofNullable(Material.matchMaterial(material));
                 Material mat;
                 if (materialo.isEmpty()) {
-                    ExceptionHandler.handleError("无法在附属" + addon.getAddonId() + "中读取材料" + material + "，已转为石头");
+                    ExceptionHandler.handleError("Cannot find material " + material + " in a addon called " + addon.getAddonId() + ", using stone instead");
                     mat = Material.STONE;
                 } else {
                     mat = materialo.get();
@@ -166,7 +166,7 @@ public class CommonUtils {
                             }
                         });
                     } else {
-                        ExceptionHandler.handleError("无法找到粘液物品" + material + "，已转为石头");
+                        ExceptionHandler.handleError("Cannot find Slimefun item " + material + ", using stone instead");
                         itemStack = new CustomItemStack(Material.STONE, name, lore);
                     }
                 }
@@ -174,7 +174,7 @@ public class CommonUtils {
             case "saveditem" -> {
                 File file = new File(addon.getSavedItemsFolder(), material + ".yml");
                 if (!file.exists()) {
-                    ExceptionHandler.handleError("保存物品的文件" + material + "不存在，已转为石头");
+                    ExceptionHandler.handleError("The saved item file " + material + " is not found, using stone instead");
                     itemStack = new CustomItemStack(Material.STONE, name, lore);
                     break;
                 }

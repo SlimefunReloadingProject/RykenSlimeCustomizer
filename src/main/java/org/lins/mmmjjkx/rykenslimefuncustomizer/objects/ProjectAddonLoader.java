@@ -35,7 +35,7 @@ public class ProjectAddonLoader {
         ProjectAddon addon;
         YamlConfiguration info = doFileLoad(file, Constants.INFO_FILE);
 
-        ExceptionHandler.debugLog("开始读取文件夹 " + file.getName() + " 中的项目信息...");
+        ExceptionHandler.debugLog("Start reading project info from folder called " + file.getName() + " ...");
 
         if (info.contains("name") && info.contains("version") && info.contains("id")) {
             String name = info.getString("name");
@@ -64,7 +64,7 @@ public class ProjectAddonLoader {
             }
 
             if (name == null || name.isBlank()) {
-                ExceptionHandler.handleError("在名称为 " + file.getName() + "的文件夹中有无效的项目名称，导致此附属无法加载！");
+                ExceptionHandler.handleError("A folder called " + file.getName() + "contains invalid project information, so the addon cannot be loaded！");
                 return null;
             }
 
@@ -73,8 +73,8 @@ public class ProjectAddonLoader {
                 if (!RykenSlimefunCustomizer.addonManager.isLoaded(depends.toArray(new String[0]))) {
                     boolean loadResult = loadDependencies(depends);
                     if (!loadResult) {
-                        ExceptionHandler.handleError("在名称为 " + name + " 的附属(附属id：" + id + ")中需要依赖项 " + depends
-                                + "，由于部分依赖项在加载时出错或未安装，导致此附属无法加载！");
+                        ExceptionHandler.handleError("A addon called " + name + " (Addon id：" + id + ") needs the dependencies " + depends
+                                + "，because some of them are not loaded or installed, so the addon cannot be loaded! ");
                         return null;
                     }
                 }
@@ -84,8 +84,8 @@ public class ProjectAddonLoader {
                 pluginDepends = info.getStringList("pluginDepends");
                 for (String pluginDepend : pluginDepends) {
                     if (!Bukkit.getPluginManager().isPluginEnabled(pluginDepend)) {
-                        ExceptionHandler.handleError("在名称为 " + name + " 的附属(附属id：" + id + ")中需要插件依赖项 " + pluginDepends
-                                + "，由于部分依赖项在加载时出错或未安装，导致此附属无法加载！");
+                        ExceptionHandler.handleError("A addon called " + name + " (Addon id：" + id + ") needs the plugin " + pluginDepends
+                                + "，because it is not loaded or installed, so the addon cannot be loaded! ");
                         return null;
                     }
                 }
@@ -101,7 +101,7 @@ public class ProjectAddonLoader {
                 addon.setDownloadZipName(downloadZipName);
             }
         } else {
-            ExceptionHandler.handleError("在名称为 " + file.getName() + "的文件夹中有无效的项目信息，导致此附属无法加载！");
+            ExceptionHandler.handleError("A folder called " + file.getName() + "contains invalid project information, so the addon cannot be loaded！");
             return null;
         }
 
