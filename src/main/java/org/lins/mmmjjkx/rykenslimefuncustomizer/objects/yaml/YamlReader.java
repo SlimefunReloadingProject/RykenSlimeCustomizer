@@ -115,31 +115,31 @@ public abstract class YamlReader<T> {
             String head = splits[0];
             if (head.equalsIgnoreCase("hasplugin")) {
                 if (splits.length != 2) {
-                    ExceptionHandler.handleError("读取" + key + "的注册条件时发现问题: hasplugin仅需要一个参数");
+                    ExceptionHandler.handleError("Found invalid condition while reading register conditions in " + key + ": hasplugin only takes one argument");
                     continue;
                 }
                 boolean b = Bukkit.getPluginManager().isPluginEnabled(splits[1]);
                 if (!b) {
                     if (warn) {
-                        ExceptionHandler.handleError(key + "需要服务端插件" + splits[1] + "才能被注册");
+                        ExceptionHandler.handleError(key + "needs server plugin " + splits[1] + " to be registered");
                     }
                     return false;
                 }
             } else if (head.equalsIgnoreCase("!hasplugin")) {
                 if (splits.length != 2) {
-                    ExceptionHandler.handleError("读取" + key + "的注册条件时发现问题: !hasplugin仅需要一个参数");
+                    ExceptionHandler.handleError("Found invalid condition while reading register conditions in " + key + ": !hasplugin only takes one argument");
                     continue;
                 }
                 boolean b = Bukkit.getPluginManager().isPluginEnabled(splits[1]);
                 if (b) {
                     if (warn) {
-                        ExceptionHandler.handleError(key + "需要卸载服务端插件" + splits[1] + "才能被注册(可能与其冲突？)");
+                        ExceptionHandler.handleError(key + "needs removing server plugin " + splits[1] + " to be registered(may have conflicts?)");
                     }
                     return false;
                 }
             } else if (head.equalsIgnoreCase("version")) {
                 if (splits.length != 3) {
-                    ExceptionHandler.handleError("读取" + key + "的注册条件时发现问题: version需要两个参数");
+                    ExceptionHandler.handleError("Found invalid condition while reading register conditions in " + key + ": version needs two arguments");
                     continue;
                 }
 
@@ -150,30 +150,30 @@ public abstract class YamlReader<T> {
                 boolean match;
                 switch (splits[1]) {
                     case ">" -> {
-                        operation = "大于";
+                        operation = "greater than";
                         match = current > destination;
                     }
                     case "<" -> {
-                        operation = "小于";
+                        operation = "less than";
                         match = current < destination;
                     }
                     case ">=" -> {
-                        operation = "大于或等于";
+                        operation = "greater than or equal to";
                         match = current >= destination;
                     }
                     case "<=" -> {
-                        operation = "小于或等于";
+                        operation = "less than or equal to";
                         match = current <= destination;
                     }
                     default -> {
-                        ExceptionHandler.handleError("读取" + key + "的注册条件时发现问题: version需要合法的比较符！");
+                        ExceptionHandler.handleError("Found invalid condition while reading register conditions in " + key + ": version needs a valid operator character!(>, <, >=, <=)");
                         continue;
                     }
                 }
 
                 if (!match) {
                     if (warn) {
-                        ExceptionHandler.handleError(key + "需要版本" + operation + splits[2] + "才能被注册");
+                        ExceptionHandler.handleError(key + "needs Minecraft version " + operation + splits[2] + " to be registered");
                     }
                     return false;
                 }

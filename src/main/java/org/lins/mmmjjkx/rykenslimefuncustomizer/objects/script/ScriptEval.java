@@ -32,8 +32,8 @@ import org.lins.mmmjjkx.rykenslimefuncustomizer.objects.script.lambda.CiFunction
 public abstract class ScriptEval {
     protected final HostAccess UNIVERSAL_HOST_ACCESS = HostAccess.newBuilder()
             .allowPublicAccess(true)
-            .allowAllImplementations(true)
-            .allowAllClassImplementations(true)
+            .allowAllImplementations(false)
+            .allowAllClassImplementations(false)
             .allowArrayAccess(true)
             .allowListAccess(true)
             .allowBufferAccess(false)
