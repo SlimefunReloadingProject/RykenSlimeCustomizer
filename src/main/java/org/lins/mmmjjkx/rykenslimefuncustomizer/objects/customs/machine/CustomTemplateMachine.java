@@ -171,13 +171,12 @@ public class CustomTemplateMachine extends AbstractEmptyMachine<CustomTemplateCr
         if (inv != null) {
             ItemStack templateItem = inv.getItemInSlot(templateSlot);
 
-            //断掉进度
+            // 断掉进度
             if (templateItem == null || templateItem.getType() == Material.AIR) {
                 if (menu.getProgressSlot() >= 0) {
                     inv.replaceExistingItem(
                             menu.getProgressSlot(),
-                            menu.getItems()
-                                    .getOrDefault(menu.getProgressSlot(), ChestMenuUtils.getBackground()));
+                            menu.getItems().getOrDefault(menu.getProgressSlot(), ChestMenuUtils.getBackground()));
                 }
                 processor.endOperation(b);
                 return;
@@ -191,8 +190,7 @@ public class CustomTemplateMachine extends AbstractEmptyMachine<CustomTemplateCr
                     if (menu.getProgressSlot() >= 0) {
                         inv.replaceExistingItem(
                                 menu.getProgressSlot(),
-                                menu.getItems()
-                                        .getOrDefault(menu.getProgressSlot(), ChestMenuUtils.getBackground()));
+                                menu.getItems().getOrDefault(menu.getProgressSlot(), ChestMenuUtils.getBackground()));
                     }
                     return;
                 }

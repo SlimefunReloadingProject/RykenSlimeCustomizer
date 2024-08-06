@@ -7,6 +7,8 @@ import io.github.thebusybiscuit.slimefun4.api.recipes.RecipeType;
 import io.github.thebusybiscuit.slimefun4.core.attributes.NotPlaceable;
 import io.github.thebusybiscuit.slimefun4.core.attributes.Rechargeable;
 import io.github.thebusybiscuit.slimefun4.core.handlers.ItemUseHandler;
+import io.github.thebusybiscuit.slimefun4.core.handlers.ToolUseHandler;
+import io.github.thebusybiscuit.slimefun4.core.handlers.WeaponUseHandler;
 import org.bukkit.inventory.ItemStack;
 import org.graalvm.polyglot.HostAccess;
 import org.jetbrains.annotations.Nullable;
@@ -36,6 +38,9 @@ public class CustomEnergyItem extends CustomItem implements Rechargeable, NotPla
                 eval.evalFunction("onUse", e, this);
                 e.cancel();
             });
+
+            this.addItemHandler((WeaponUseHandler) (e, p, it) -> eval.evalFunction("onWeaponHit", e, p, it));
+            this.addItemHandler((ToolUseHandler) (e, it, i, drops) -> eval.evalFunction("onToolUse", e, it, i, drops));
         } else {
             this.addItemHandler((ItemUseHandler) PlayerRightClickEvent::cancel);
         }

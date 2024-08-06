@@ -46,8 +46,8 @@ public class MultiBlockMachineReader extends YamlReader<CustomMultiBlockMachine>
 
         ConfigurationSection recipesSection = section.getConfigurationSection("recipes");
 
-        int workSlot = section.getInt("work", -1);
-        if (workSlot < 0) {
+        int workSlot = section.getInt("work");
+        if (workSlot < 1) {
             ExceptionHandler.handleError("在附属" + addon.getAddonId() + "中加载多方块机器" + s + "时遇到了问题: " + "没有设置工作槽");
             return null;
         }

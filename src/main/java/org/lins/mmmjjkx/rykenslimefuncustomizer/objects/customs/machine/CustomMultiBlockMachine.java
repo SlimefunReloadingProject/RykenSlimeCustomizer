@@ -31,8 +31,9 @@ import org.lins.mmmjjkx.rykenslimefuncustomizer.objects.script.parent.ScriptEval
 
 public class CustomMultiBlockMachine extends MultiBlockMachine {
     private final SoundEffect craftSound;
-    private final int work;
+    private final int workIndex;
     private final ScriptEval eval;
+    private final BlockFace dispenserFace;
 
     public CustomMultiBlockMachine(
             ItemGroup itemGroup,
@@ -44,9 +45,10 @@ public class CustomMultiBlockMachine extends MultiBlockMachine {
             @Nullable ScriptEval eval) {
         super(itemGroup, item, recipe, BlockFace.SELF);
 
-        this.work = work;
+        this.workIndex = work - 1;
         this.craftSound = soundEffect;
         this.eval = eval;
+        this.dispenserFace = dispenserFaceGet();
 
         for (Map.Entry<ItemStack[], ItemStack> e : craftRecipes.entrySet()) {
             addRecipe(e.getKey(), e.getValue());
@@ -62,14 +64,13 @@ public class CustomMultiBlockMachine extends MultiBlockMachine {
 
     @Override
     public void onInteract(Player p, Block block) {
-        Material material = super.getRecipe()[work - 1].getType();
+        Material material = super.getRecipe()[workIndex].getType();
         if (block.getType().equals(material)) {
             if (eval != null) {
                 eval.evalFunction("onWork", p, block);
             }
 
-            BlockFace dis = dispenserFaceGet();
-            Block disBlock = block.getRelative(dis);
+            Block disBlock = block.getRelative(dispenserFace);
             BlockState bs = PaperLib.getBlockState(disBlock, false).getState();
             if (bs instanceof Dispenser dispenser) {
                 Inventory inv = dispenser.getInventory();
@@ -86,7 +87,7 @@ public class CustomMultiBlockMachine extends MultiBlockMachine {
                         Bukkit.getPluginManager().callEvent(event);
                         if (!event.isCancelled() && SlimefunUtils.canPlayerUseItem(p, output, true)) {
                             Inventory fakeInv = this.createVirtualInventory(inv);
-                            Inventory outputInv = this.findOutputInventory(output, block, inv, fakeInv);
+                            Inventory outputInv = this.findOutputInventory(output, disBlock, inv, fakeInv);
                             if (outputInv != null) {
                                 SlimefunItem sfItem = SlimefunItem.getByItem(output);
                                 boolean waitCallback = false;
@@ -149,7 +150,7 @@ public class CustomMultiBlockMachine extends MultiBlockMachine {
     }
 
     private BlockFace dispenserFaceGet() {
-        int center = work - 1;
+        int center = workIndex;
         ItemStack[] is = getRecipe();
         if (center - 3 > 0) {
             ItemStack o1 = is[center - 3];
