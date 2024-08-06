@@ -207,7 +207,8 @@ public class MainCommand implements TabExecutor {
                 RykenSlimefunCustomizer.addonManager.removeProjectAddon(addon);
 
                 File folder = addon.getFolder();
-                ProjectAddonLoader pal = new ProjectAddonLoader(folder, RykenSlimefunCustomizer.addonManager.getProjectIds());
+                ProjectAddonLoader pal =
+                        new ProjectAddonLoader(folder, RykenSlimefunCustomizer.addonManager.getProjectIds());
                 ProjectAddon addonNew = pal.load();
 
                 RykenSlimefunCustomizer.addonManager.pushProjectAddon(addonNew);
