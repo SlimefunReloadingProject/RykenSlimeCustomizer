@@ -44,7 +44,7 @@ public class TemplateMachineReader extends YamlReader<CustomTemplateMachine> {
         String recipeType = section.getString("recipe_type", "NULL");
 
         Pair<ExceptionHandler.HandleResult, RecipeType> rt = ExceptionHandler.getRecipeType(
-                "在附属" + addon.getAddonId() + "中加载继承物品" + s + "时遇到了问题: " + "错误的配方类型" + recipeType + "!", recipeType);
+                "在附属" + addon.getAddonId() + "中加载模板机器" + s + "时遇到了问题: " + "错误的配方类型" + recipeType + "!", recipeType);
         if (rt.getFirstValue() == ExceptionHandler.HandleResult.FAILED) return null;
 
         boolean fasterIfMoreTemplates = section.getBoolean("fasterIfMoreTemplates", false);
@@ -144,7 +144,7 @@ public class TemplateMachineReader extends YamlReader<CustomTemplateMachine> {
             int seconds = recipes.getInt("seconds");
             if (seconds < 0) {
                 ExceptionHandler.handleError(
-                        "在附属" + addon.getAddonId() + "中加载配方机器" + s + "的工作配方" + key + "时遇到了问题: " + "间隔时间未设置或不能小于0");
+                        "在附属" + addon.getAddonId() + "中加载模板机器" + s + "的工作配方" + key + "时遇到了问题: " + "间隔时间未设置或不能小于0");
                 continue;
             }
 
@@ -153,7 +153,7 @@ public class TemplateMachineReader extends YamlReader<CustomTemplateMachine> {
             ConfigurationSection outputs = recipes.getConfigurationSection("output");
             if (outputs == null) {
                 ExceptionHandler.handleError(
-                        "在附属" + addon.getAddonId() + "中加载配方机器" + s + "的工作配方" + key + "时遇到了问题: " + "没有输出物品");
+                        "在附属" + addon.getAddonId() + "中加载模板机器" + s + "的工作配方" + key + "时遇到了问题: " + "没有输出物品");
                 continue;
             }
 
@@ -167,7 +167,7 @@ public class TemplateMachineReader extends YamlReader<CustomTemplateMachine> {
                     int chance = section1.getInt("chance", 100);
 
                     if (chance < 1) {
-                        ExceptionHandler.handleError("在附属" + addon.getAddonId() + "中加载配方机器" + s + "的工作配方" + key
+                        ExceptionHandler.handleError("在附属" + addon.getAddonId() + "中加载模板机器" + s + "的工作配方" + key
                                 + "时遇到了问题: " + "概率不应该小于1，已转为1");
                         chance = 1;
                     }
