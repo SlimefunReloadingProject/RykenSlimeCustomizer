@@ -89,7 +89,6 @@ public class CustomMultiBlockMachine extends MultiBlockMachine {
                             Inventory fakeInv = this.createVirtualInventory(inv);
                             Inventory outputInv = this.findOutputInventory(output, disBlock, inv, fakeInv);
                             if (outputInv != null) {
-                                SlimefunItem sfItem = SlimefunItem.getByItem(output);
                                 boolean waitCallback = false;
 
                                 for (int j = 0; j < 9; ++j) {
