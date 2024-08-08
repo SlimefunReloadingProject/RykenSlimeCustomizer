@@ -20,6 +20,7 @@ import org.bukkit.ChatColor;
 import org.bukkit.NamespacedKey;
 import org.bukkit.entity.Player;
 import org.bukkit.inventory.ItemStack;
+import org.jetbrains.annotations.NotNull;
 import org.lins.mmmjjkx.rykenslimefuncustomizer.utils.ExceptionHandler;
 
 public class AdvancedNestedItemGroup extends NestedItemGroup {
@@ -34,7 +35,7 @@ public class AdvancedNestedItemGroup extends NestedItemGroup {
     }
 
     @Override
-    public void open(Player p, PlayerProfile profile, SlimefunGuideMode mode) {
+    public void open(@NotNull Player p, @NotNull PlayerProfile profile, @NotNull SlimefunGuideMode mode) {
         setup(p, profile, mode, 1);
     }
 

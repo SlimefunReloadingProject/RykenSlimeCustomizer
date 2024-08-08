@@ -1,7 +1,5 @@
 package org.lins.mmmjjkx.rykenslimefuncustomizer.objects.customs.machine;
 
-import com.xzavier0722.mc.plugin.slimefun4.storage.controller.SlimefunBlockData;
-import com.xzavier0722.mc.plugin.slimefun4.storage.util.StorageCacheUtils;
 import io.github.thebusybiscuit.slimefun4.api.items.ItemGroup;
 import io.github.thebusybiscuit.slimefun4.api.items.SlimefunItemStack;
 import io.github.thebusybiscuit.slimefun4.api.recipes.RecipeType;
@@ -20,8 +18,10 @@ import java.util.List;
 import java.util.Map;
 import javax.annotation.Nonnull;
 import lombok.Getter;
+import me.mrCookieSlime.CSCoreLibPlugin.Configuration.Config;
 import me.mrCookieSlime.Slimefun.Objects.SlimefunItem.abstractItems.AGenerator;
 import me.mrCookieSlime.Slimefun.Objects.SlimefunItem.abstractItems.MachineFuel;
+import me.mrCookieSlime.Slimefun.api.BlockStorage;
 import me.mrCookieSlime.Slimefun.api.inventory.BlockMenu;
 import org.bukkit.Location;
 import org.bukkit.Material;
@@ -78,8 +78,8 @@ public class CustomGenerator extends AGenerator implements MachineProcessHolder<
     }
 
     @Override
-    public int getGeneratedOutput(@NotNull Location l, @NotNull SlimefunBlockData data) {
-        BlockMenu inv = StorageCacheUtils.getMenu(l);
+    public int getGeneratedOutput(@NotNull Location l, @NotNull Config data) {
+        BlockMenu inv = BlockStorage.getInventory(l);
         FuelOperation operation = processor.getOperation(l);
 
         int progressSlot = menu == null || menu.getProgressSlot() == -1 ? 22 : menu.getProgressSlot();
@@ -172,7 +172,7 @@ public class CustomGenerator extends AGenerator implements MachineProcessHolder<
     protected BlockBreakHandler onBlockBreak() {
         return new SimpleBlockBreakHandler() {
             public void onBlockBreak(@NotNull Block b) {
-                BlockMenu inv = StorageCacheUtils.getMenu(b.getLocation());
+                BlockMenu inv = BlockStorage.getInventory(b.getLocation());
                 if (inv != null) {
                     inv.dropItems(b.getLocation(), CustomGenerator.this.getInputSlots());
                     inv.dropItems(b.getLocation(), CustomGenerator.this.getOutputSlots());

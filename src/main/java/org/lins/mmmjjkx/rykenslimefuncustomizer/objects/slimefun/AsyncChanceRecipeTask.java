@@ -14,7 +14,6 @@ import org.bukkit.inventory.ItemStack;
 import org.lins.mmmjjkx.rykenslimefuncustomizer.RykenSlimefunCustomizer;
 
 public class AsyncChanceRecipeTask implements Runnable {
-    private static final int UPDATE_INTERVAL = 15;
     private final Map<Integer, LoopIterator<ItemStack>> iterators = new HashMap<>();
     private final ReadWriteLock lock = new ReentrantReadWriteLock();
     private Inventory inventory;
@@ -52,16 +51,6 @@ public class AsyncChanceRecipeTask implements Runnable {
         }
 
         return var1;
-    }
-
-    public void clear() {
-        this.lock.writeLock().lock();
-
-        try {
-            this.iterators.clear();
-        } finally {
-            this.lock.writeLock().unlock();
-        }
     }
 
     public void run() {

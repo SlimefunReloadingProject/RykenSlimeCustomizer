@@ -1,11 +1,7 @@
 # RykenSlimeCustomizer
 <div style="font-size: 17px">
-一款更高级的粘液自定义附属插件
+An advanced Slimefun customizer plugin.
 
-Wiki: <https://rsc.hiworldmc.com>  
-QQ群: 811756705
-</div>
-
-<div style="font-size: 21px; font-weight: bold">
-此附属已完善，基本不会有任何更新！
+Wiki: <https://rsc.hiworldmc.com> (Chinese)  
+If you want help, you can join our discord server: <https://discord.gg/M2yRf7VV3X>
 </div>
