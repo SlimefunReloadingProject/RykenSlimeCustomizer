@@ -140,7 +140,7 @@ public class MultiBlockMachineReader extends YamlReader<CustomMultiBlockMachine>
             ItemStack[] input = CommonUtils.readRecipe(inputs, addon);
             if (input == null) {
                 ExceptionHandler.handleError(
-                        "在附属" + addon.getAddonId() + "中加载多方块机器" + s + "的工作配方" + key + "时遇到了问题: " + "输出物品为空或格式错误");
+                        "在附属" + addon.getAddonId() + "中加载多方块机器" + s + "的工作配方" + key + "时遇到了问题: " + "输入物品为空或格式错误");
                 continue;
             }
             ConfigurationSection outputs = recipe.getConfigurationSection("output");
