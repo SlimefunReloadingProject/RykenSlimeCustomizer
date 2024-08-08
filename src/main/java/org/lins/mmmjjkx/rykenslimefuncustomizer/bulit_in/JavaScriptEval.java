@@ -36,9 +36,7 @@ public class JavaScriptEval extends ScriptEval {
         this.addon = addon;
 
         reSetup();
-
         setup();
-
         contextInit();
 
         addon.getScriptEvals().add(this);
