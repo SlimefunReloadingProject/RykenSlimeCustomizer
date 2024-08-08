@@ -92,10 +92,10 @@ public class CustomMultiBlockMachine extends MultiBlockMachine {
                                 SlimefunItem sfItem = SlimefunItem.getByItem(output);
                                 boolean waitCallback = false;
 
-                                for (int j = 0; j < 9; ++j) {
-                                    ItemStack item = inv.getContents()[j];
+                                for (int j = 0; j < input.length; ++j) {
+                                    ItemStack item = contents[j];
                                     if (item != null && item.getType() != Material.AIR) {
-                                        ItemUtils.consumeItem(item, true);
+                                        ItemUtils.consumeItem(item, input[j].getAmount(), true);
                                     }
                                 }
 
@@ -158,11 +158,18 @@ public class CustomMultiBlockMachine extends MultiBlockMachine {
                 return BlockFace.UP;
             }
         }
+
         ItemStack o2 = is[center - 1];
         if (o2 != null && o2.getType().equals(Material.DISPENSER)) {
             return BlockFace.EAST;
         }
+
+        if (center + 1 >= 9) {
+            return BlockFace.SELF;
+        }
+
         ItemStack o3 = is[center + 1];
+
         if (o3 != null && o3.getType().equals(Material.DISPENSER)) {
             return BlockFace.WEST;
         }
@@ -172,6 +179,7 @@ public class CustomMultiBlockMachine extends MultiBlockMachine {
                 return BlockFace.DOWN;
             }
         }
+
         return BlockFace.SELF;
     }
 }

@@ -179,17 +179,18 @@ public class ItemReader extends YamlReader<SlimefunItem> {
             int chance = section.getInt("piglin_trade_chance", 100);
             if (chance < 0 || chance > 100) {
                 ExceptionHandler.handleError(
-                        "在附属" + addon.getAddonId() + "中加载物品" + s + "时遇到了问题: " + "猪灵交易掉落几率必须在0-100之间");
-                return null;
+                        "在附属" + addon.getAddonId() + "中加载物品" + s + "时遇到了问题: " + "猪灵交易掉落几率必须在0-100之间！已转为100");
+                chance = 100;
             }
 
+            int finalChance = chance;
             Class<? extends CustomItem> clazz = (Class<? extends CustomItem>) ClassUtils.generateClass(
                     instance.getClass(),
                     "PiglinTradeAble",
                     "Item",
                     new Class[] {PiglinBarterDrop.class},
                     builder -> builder.method(ElementMatchers.isDeclaredBy(PiglinBarterDrop.class))
-                            .intercept(FixedValue.value(chance)));
+                            .intercept(FixedValue.value(finalChance)));
 
             instance = (CustomItem) clazz.getDeclaredConstructors()[0].newInstance(constructorArgs);
         }
@@ -322,17 +323,18 @@ public class ItemReader extends YamlReader<SlimefunItem> {
             int chance = section.getInt("piglin_trade_chance", 100);
             if (chance < 0 || chance > 100) {
                 ExceptionHandler.handleError(
-                        "在附属" + addon.getAddonId() + "中加载物品" + id + "时遇到了问题: " + "猪灵交易掉落几率必须在0-100之间");
-                return null;
+                        "在附属" + addon.getAddonId() + "中加载物品" + id + "时遇到了问题: " + "猪灵交易掉落几率必须在0-100之间！已转为100");
+                chance = 100;
             }
 
+            int finalChance = chance;
             Class<? extends CustomItem> clazz = (Class<? extends CustomItem>) ClassUtils.generateClass(
                     instance.getClass(),
                     "PiglinTradeAble",
                     "Item",
                     new Class[] {PiglinBarterDrop.class},
                     builder -> builder.method(ElementMatchers.isDeclaredBy(PiglinBarterDrop.class))
-                            .intercept(FixedValue.value(chance)));
+                            .intercept(FixedValue.value(finalChance)));
 
             instance = (BaseRadiationItem) clazz.getDeclaredConstructors()[0].newInstance(constructorArgs);
         }
