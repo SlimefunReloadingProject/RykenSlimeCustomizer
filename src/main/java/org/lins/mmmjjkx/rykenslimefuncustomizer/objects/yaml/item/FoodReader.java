@@ -63,14 +63,14 @@ public class FoodReader extends YamlReader<CustomFood> {
 
         if (CommonUtils.versionToCode(Bukkit.getMinecraftVersion()) >= 1205) {
             if (Bukkit.getPluginManager().isPluginEnabled("NBTAPI")) {
-                sfis = nbtApply(id, section, sfis);
+                nbtApply(id, section, sfis);
             }
         }
 
         return new CustomFood(group.getSecondValue(), sfis, rt.getSecondValue(), itemStacks, eval);
     }
 
-    private SlimefunItemStack nbtApply(String s, ConfigurationSection section, SlimefunItemStack sfis) {
+    private void nbtApply(String s, ConfigurationSection section, SlimefunItemStack sfis) {
         int nutrition = section.getInt("nutrition");
         float saturation = section.getInt("saturation");
         boolean alwaysEatable = section.getBoolean("always_eatable", false);
@@ -101,8 +101,6 @@ public class FoodReader extends YamlReader<CustomFood> {
             nbt.setBoolean("can_always_eat", alwaysEatable);
             nbt.setFloat("eat_seconds", finalEatSeconds);
         });
-
-        return sfis;
     }
 
     @Override
