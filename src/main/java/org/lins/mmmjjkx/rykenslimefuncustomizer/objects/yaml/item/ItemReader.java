@@ -177,8 +177,7 @@ public class ItemReader extends YamlReader<SlimefunItem> {
         if (section.contains("piglin_trade_chance")) {
             int chance = section.getInt("piglin_trade_chance", 100);
             if (chance < 0 || chance > 100) {
-                ExceptionHandler.handleError(
-                        "Found an error while loading item " + s + "in addon " + addon.getAddonId() + ": " + "Piglin trade chance must be between 0 and 100. Using 100 instead.");
+                ExceptionHandler.handleError("Found an error while loading item " + s + "in addon " + addon.getAddonId() + ": " + "Piglin trade chance must be between 0 and 100. Using 100 instead.");
                 chance = 100;
             }
 
@@ -323,8 +322,7 @@ public class ItemReader extends YamlReader<SlimefunItem> {
         if (piglin) {
             int chance = section.getInt("piglin_trade_chance", 100);
             if (chance < 0 || chance > 100) {
-                ExceptionHandler.handleError(
-                        "Found an error while loading item " + id + "in addon " + addon.getAddonId() + ": " + "Piglin trade chance must be between 0 and 100. Using 100 instead.");
+                ExceptionHandler.handleError("Found an error while loading item " + id + "in addon " + addon.getAddonId() + ": " + "Piglin trade chance must be between 0 and 100. Using 100 instead.");
                 chance = 100;
             }
 
