@@ -258,7 +258,7 @@ public class ItemReader extends YamlReader<SlimefunItem> {
     }
 
     @SneakyThrows
-    @Deprecated(forRemoval = true, since = "RSC 1.4, Slimefun 2024.5+")
+    @Deprecated(forRemoval = true, since = "RSC 1.4")
     private SlimefunItem setupRadiationItem(
             ConfigurationSection section,
             SlimefunItemStack original,

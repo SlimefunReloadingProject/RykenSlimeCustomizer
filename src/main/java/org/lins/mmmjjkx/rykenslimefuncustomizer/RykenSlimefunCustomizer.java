@@ -13,6 +13,7 @@ import org.bukkit.plugin.java.JavaPlugin;
 import org.jetbrains.annotations.NotNull;
 import org.lins.mmmjjkx.rykenslimefuncustomizer.commands.MainCommand;
 import org.lins.mmmjjkx.rykenslimefuncustomizer.listeners.BlockListener;
+import org.lins.mmmjjkx.rykenslimefuncustomizer.listeners.ScriptableEventListener;
 import org.lins.mmmjjkx.rykenslimefuncustomizer.listeners.SingleItemRecipeGuideListener;
 import org.lins.mmmjjkx.rykenslimefuncustomizer.utils.CommonUtils;
 import org.lins.mmmjjkx.rykenslimefuncustomizer.utils.ExceptionHandler;
@@ -38,7 +39,7 @@ public final class RykenSlimefunCustomizer extends JavaPlugin implements Slimefu
 
         CommonUtils.completeFile("config.yml");
 
-        if (getConfig().getBoolean("saveExample")) {
+        if (getConfig().getBoolean("saveExample", false)) {
             saveExample();
         }
 
@@ -48,6 +49,7 @@ public final class RykenSlimefunCustomizer extends JavaPlugin implements Slimefu
 
         new BlockListener();
         new SingleItemRecipeGuideListener();
+        new ScriptableEventListener();
 
         ExceptionHandler.info("RykenSlimeCustomizer加载成功！");
 

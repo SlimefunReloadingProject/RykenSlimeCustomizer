@@ -379,4 +379,24 @@ public class CommonUtils {
             return "&b" + h + "&eh" + (m != 0 ? "&b" + m + "&emin" : "") + (s != 0 ? "&b" + s + "&es" : "");
         }
     }
+
+    public static ItemStack[] removeNulls(ItemStack[] origin) {
+        int count = 0;
+        for (ItemStack element : origin) {
+            if (element != null) {
+                count++;
+            }
+        }
+        ItemStack[] newArray = new ItemStack[count];
+
+        int index = 0;
+        for (ItemStack element : origin) {
+            if (element != null) {
+                newArray[index] = element;
+                index++;
+            }
+        }
+
+        return newArray;
+    }
 }
