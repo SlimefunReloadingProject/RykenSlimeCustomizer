@@ -8,7 +8,10 @@ import org.bukkit.Bukkit;
 import org.bukkit.configuration.file.YamlConfiguration;
 import org.jetbrains.annotations.Nullable;
 import org.lins.mmmjjkx.rykenslimefuncustomizer.RykenSlimefunCustomizer;
+import org.lins.mmmjjkx.rykenslimefuncustomizer.bulit_in.JavaScriptEval;
 import org.lins.mmmjjkx.rykenslimefuncustomizer.objects.global.RecipeTypeMap;
+import org.lins.mmmjjkx.rykenslimefuncustomizer.objects.global.ScriptableListeners;
+import org.lins.mmmjjkx.rykenslimefuncustomizer.objects.script.enhanced.ScriptableListener;
 import org.lins.mmmjjkx.rykenslimefuncustomizer.objects.yaml.ItemGroupReader;
 import org.lins.mmmjjkx.rykenslimefuncustomizer.objects.yaml.MenuReader;
 import org.lins.mmmjjkx.rykenslimefuncustomizer.objects.yaml.RecipeTypesReader;
@@ -99,6 +102,18 @@ public class ProjectAddonLoader {
 
             if (!downloadZipName.isBlank()) {
                 addon.setDownloadZipName(downloadZipName);
+            }
+
+            String scriptListener = info.getString("scriptListener", "");
+            if (!scriptListener.isBlank()) {
+                File file = new File(addon.getScriptsFolder(), scriptListener + ".js");
+                if (file.exists()) {
+                    JavaScriptEval eval = new JavaScriptEval(file, addon);
+                    ScriptableListener listener = new ScriptableListener(eval);
+                    ScriptableListeners.addScriptableListener(listener);
+                } else {
+                    ExceptionHandler.handleWarning("无法找到附属 " + addon.getAddonId() + " 的对应监听脚本文件 " + file.getName() + "！");
+                }
             }
         } else {
             ExceptionHandler.handleError("A folder called " + file.getName() + "contains invalid project information, so the addon cannot be loaded！");

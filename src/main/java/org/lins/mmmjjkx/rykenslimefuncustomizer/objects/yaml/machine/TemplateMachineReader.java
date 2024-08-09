@@ -178,33 +178,12 @@ public class TemplateMachineReader extends YamlReader<CustomTemplateMachine> {
             boolean chooseOne = recipes.getBoolean("chooseOne", false);
             boolean forDisplay = recipes.getBoolean("forDisplay", false);
 
-            input = removeNulls(input);
-            output = removeNulls(output);
+            input = CommonUtils.removeNulls(input);
+            output = CommonUtils.removeNulls(output);
 
             list.add(new CustomMachineRecipe(seconds, input, output, chances, chooseOne, forDisplay));
         }
         return list;
-    }
-
-    private ItemStack[] removeNulls(ItemStack[] origin) {
-        int count = 0;
-        for (ItemStack element : origin) {
-            if (element != null) {
-                count++;
-            }
-        }
-
-        ItemStack[] newArray = new ItemStack[count];
-
-        int index = 0;
-        for (ItemStack element : origin) {
-            if (element != null) {
-                newArray[index] = element;
-                index++;
-            }
-        }
-
-        return newArray;
     }
 
     @Override

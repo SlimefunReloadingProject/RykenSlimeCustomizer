@@ -69,7 +69,7 @@ public class MaterialGeneratorReader extends YamlReader<CustomMaterialGenerator>
             }
         }
 
-        out = removeNulls(out);
+        out = CommonUtils.removeNulls(out);
 
         int tickRate = section.getInt("tickRate");
         if (tickRate < 1) {
@@ -122,25 +122,5 @@ public class MaterialGeneratorReader extends YamlReader<CustomMaterialGenerator>
         }
 
         return List.of(new SlimefunItemStack(s, stack));
-    }
-
-    private ItemStack[] removeNulls(ItemStack[] origin) {
-        int count = 0;
-        for (ItemStack element : origin) {
-            if (element != null) {
-                count++;
-            }
-        }
-        ItemStack[] newArray = new ItemStack[count];
-
-        int index = 0;
-        for (ItemStack element : origin) {
-            if (element != null) {
-                newArray[index] = element;
-                index++;
-            }
-        }
-
-        return newArray;
     }
 }
