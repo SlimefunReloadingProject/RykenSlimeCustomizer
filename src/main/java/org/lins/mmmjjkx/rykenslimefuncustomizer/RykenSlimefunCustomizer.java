@@ -8,7 +8,6 @@ import java.nio.file.Paths;
 import java.util.Objects;
 import net.byteflux.libby.BukkitLibraryManager;
 import net.byteflux.libby.Library;
-import net.guizhanss.guizhanlibplugin.updater.GuizhanUpdater;
 import org.bukkit.plugin.java.JavaPlugin;
 import org.jetbrains.annotations.NotNull;
 import org.lins.mmmjjkx.rykenslimefuncustomizer.commands.MainCommand;
@@ -53,11 +52,14 @@ public final class RykenSlimefunCustomizer extends JavaPlugin implements Slimefu
 
         ExceptionHandler.info("RykenSlimeCustomizer loaded successfully！");
 
+        /*
         if (getConfig().getBoolean("pluginUpdate")
                 && getDescription().getVersion().startsWith("b")
                 && getServer().getPluginManager().isPluginEnabled("GuizhanLibPlugin")) {
             GuizhanUpdater.start(this, getFile(), "SlimefunReloadingProject", "RykenSlimeCustomizer", "main");
         }
+
+         */
 
         getServer().getScheduler().runTaskLater(this, () -> runtime = true, 1);
     }
