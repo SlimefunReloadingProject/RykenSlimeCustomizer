@@ -139,19 +139,21 @@ public class MultiBlockMachineReader extends YamlReader<CustomMultiBlockMachine>
             ItemStack[] input = CommonUtils.readRecipe(inputs, addon);
             if (input == null) {
                 ExceptionHandler.handleError(
-                        "在附属" + addon.getAddonId() + "中加载多方块机器" + s + "的工作配方" + key + "时遇到了问题: " + "输入物品为空或格式错误");
+                        "Found an error while loading multi-block machine " + s + " in addon " + addon.getAddonId() + ": " + "The recipe " + key + " has some invalid input items");
                 continue;
             }
+
             ConfigurationSection outputs = recipe.getConfigurationSection("output");
             if (outputs == null) {
                 ExceptionHandler.handleError(
-                        "在附属" + addon.getAddonId() + "中加载多方块机器" + s + "的工作配方" + key + "时遇到了问题: " + "没有输出物品");
+                        "Found an error while loading multi-block machine " + s + " in addon " + addon.getAddonId() + ": " + "The recipe " + key + " has no output item");
                 continue;
             }
+
             ItemStack output = CommonUtils.readItem(outputs, true, addon);
             if (output == null) {
                 ExceptionHandler.handleError(
-                        "在附属" + addon.getAddonId() + "中加载多方块机器" + s + "的工作配方" + key + "时遇到了问题: " + "输出物品为空或格式错误");
+                        "Found an error while loading multi-block machine " + s + " in addon " + addon.getAddonId() + ": " + "The recipe " + key + "'s output item is null or has an invalid format");
                 continue;
             }
             map.put(input, output);
