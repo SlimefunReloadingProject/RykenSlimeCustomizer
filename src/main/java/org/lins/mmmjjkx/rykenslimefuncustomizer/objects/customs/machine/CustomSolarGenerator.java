@@ -1,10 +1,10 @@
 package org.lins.mmmjjkx.rykenslimefuncustomizer.objects.customs.machine;
 
-import com.xzavier0722.mc.plugin.slimefun4.storage.controller.SlimefunBlockData;
 import io.github.thebusybiscuit.slimefun4.api.items.ItemGroup;
 import io.github.thebusybiscuit.slimefun4.api.items.SlimefunItemStack;
 import io.github.thebusybiscuit.slimefun4.api.recipes.RecipeType;
 import io.github.thebusybiscuit.slimefun4.implementation.items.electric.generators.SolarGenerator;
+import me.mrCookieSlime.CSCoreLibPlugin.Configuration.Config;
 import org.bukkit.Location;
 import org.bukkit.World;
 import org.bukkit.inventory.ItemStack;
@@ -33,7 +33,7 @@ public class CustomSolarGenerator extends SolarGenerator {
         register(RykenSlimefunCustomizer.INSTANCE);
     }
 
-    public int getGeneratedOutput(Location l, SlimefunBlockData data) {
+    public int getGeneratedOutput(Location l, Config data) {
         World world = l.getWorld();
 
         if (world.getEnvironment() != World.Environment.NORMAL) {

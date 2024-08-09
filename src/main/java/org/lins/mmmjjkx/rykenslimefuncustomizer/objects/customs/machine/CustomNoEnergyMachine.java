@@ -1,6 +1,5 @@
 package org.lins.mmmjjkx.rykenslimefuncustomizer.objects.customs.machine;
 
-import com.xzavier0722.mc.plugin.slimefun4.storage.controller.SlimefunBlockData;
 import io.github.thebusybiscuit.slimefun4.api.items.ItemGroup;
 import io.github.thebusybiscuit.slimefun4.api.items.SlimefunItem;
 import io.github.thebusybiscuit.slimefun4.api.items.SlimefunItemStack;
@@ -12,9 +11,12 @@ import java.util.Collections;
 import java.util.List;
 import java.util.function.Consumer;
 import lombok.Getter;
+import me.mrCookieSlime.CSCoreLibPlugin.Configuration.Config;
 import me.mrCookieSlime.CSCoreLibPlugin.general.Inventory.ChestMenu;
 import me.mrCookieSlime.CSCoreLibPlugin.general.Inventory.ClickAction;
 import me.mrCookieSlime.Slimefun.Objects.handlers.BlockTicker;
+import me.mrCookieSlime.Slimefun.api.BlockStorage;
+import me.mrCookieSlime.Slimefun.api.inventory.BlockMenu;
 import org.bukkit.block.Block;
 import org.bukkit.entity.Player;
 import org.bukkit.event.block.BlockPlaceEvent;
@@ -26,7 +28,7 @@ import org.lins.mmmjjkx.rykenslimefuncustomizer.objects.customs.parent.AbstractE
 import org.lins.mmmjjkx.rykenslimefuncustomizer.objects.machine.ScriptedEvalBreakHandler;
 import org.lins.mmmjjkx.rykenslimefuncustomizer.objects.machine.SmallerMachineInfo;
 import org.lins.mmmjjkx.rykenslimefuncustomizer.objects.script.lambda.RSCClickHandler;
-import org.lins.mmmjjkx.rykenslimefuncustomizer.objects.script.parent.ScriptEval;
+import org.lins.mmmjjkx.rykenslimefuncustomizer.objects.script.ScriptEval;
 
 @SuppressWarnings("deprecation")
 public class CustomNoEnergyMachine extends AbstractEmptyMachine<MachineOperation> {
@@ -118,9 +120,10 @@ public class CustomNoEnergyMachine extends AbstractEmptyMachine<MachineOperation
         this.addItemHandler(getBlockTicker());
     }
 
-    protected void tick(Block b, SlimefunItem item, SlimefunBlockData data) {
+    protected void tick(Block b, SlimefunItem item, Config data) {
+        BlockMenu blockMenu = BlockStorage.getInventory(b);
         if (eval != null) {
-            SmallerMachineInfo info = new SmallerMachineInfo(data.getBlockMenu(), data, this, item, b, processor);
+            SmallerMachineInfo info = new SmallerMachineInfo(blockMenu, data, this, item, b, processor);
             eval.evalFunction("tick", info);
         }
     }
@@ -144,7 +147,7 @@ public class CustomNoEnergyMachine extends AbstractEmptyMachine<MachineOperation
             }
 
             @Override
-            public void tick(Block b, SlimefunItem item, SlimefunBlockData data) {
+            public void tick(Block b, SlimefunItem item, Config data) {
                 CustomNoEnergyMachine.this.tick(b, item, data);
             }
         };
