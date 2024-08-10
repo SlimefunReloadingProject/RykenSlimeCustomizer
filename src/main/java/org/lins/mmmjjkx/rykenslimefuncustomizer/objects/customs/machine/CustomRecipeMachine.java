@@ -24,8 +24,8 @@ import org.jetbrains.annotations.NotNull;
 import org.jetbrains.annotations.Nullable;
 import org.lins.mmmjjkx.rykenslimefuncustomizer.RykenSlimefunCustomizer;
 import org.lins.mmmjjkx.rykenslimefuncustomizer.listeners.SingleItemRecipeGuideListener;
-import org.lins.mmmjjkx.rykenslimefuncustomizer.objects.machine.CustomCraftingOperation;
 import org.lins.mmmjjkx.rykenslimefuncustomizer.objects.customs.CustomMenu;
+import org.lins.mmmjjkx.rykenslimefuncustomizer.objects.machine.CustomCraftingOperation;
 import org.lins.mmmjjkx.rykenslimefuncustomizer.objects.machine.CustomMachineRecipe;
 import org.lins.mmmjjkx.rykenslimefuncustomizer.utils.CommonUtils;
 

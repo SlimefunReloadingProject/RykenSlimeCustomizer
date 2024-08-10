@@ -40,11 +40,6 @@ public class ScriptableEventListener implements Listener {
     }
 
     @EventHandler
-    public void onEntityBlockForm(EntityBlockFormEvent e) {
-        ScriptableListeners.getScriptableListeners().forEach(o -> o.doEventEval(e));
-    }
-
-    @EventHandler
     public void onPlayerJoin(PlayerJoinEvent e) {
         ScriptableListeners.getScriptableListeners().forEach(o -> o.doEventEval(e));
     }
@@ -126,11 +121,6 @@ public class ScriptableEventListener implements Listener {
 
     @EventHandler
     public void onPlayerGameModeChange(PlayerGameModeChangeEvent e) {
-        ScriptableListeners.getScriptableListeners().forEach(o -> o.doEventEval(e));
-    }
-
-    @EventHandler
-    public void onPlayerCommandPreprocess(PlayerCommandPreprocessEvent e) {
         ScriptableListeners.getScriptableListeners().forEach(o -> o.doEventEval(e));
     }
 
@@ -275,11 +265,6 @@ public class ScriptableEventListener implements Listener {
     }
 
     @EventHandler
-    public void onBlockMultiPlace(BlockMultiPlaceEvent e) {
-        ScriptableListeners.getScriptableListeners().forEach(o -> o.doEventEval(e));
-    }
-
-    @EventHandler
     public void onLeavesDecay(LeavesDecayEvent e) {
         ScriptableListeners.getScriptableListeners().forEach(o -> o.doEventEval(e));
     }
@@ -310,7 +295,7 @@ public class ScriptableEventListener implements Listener {
     }
 
     @EventHandler
-    public void onBlockPiston(BlockPistonEvent e) {
+    public void onBlockPistonExtend(BlockPistonExtendEvent e) {
         ScriptableListeners.getScriptableListeners().forEach(o -> o.doEventEval(e));
     }
 
