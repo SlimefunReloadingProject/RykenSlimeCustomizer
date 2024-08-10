@@ -318,4 +318,9 @@ public class ScriptableEventListener implements Listener {
     public void onPlayerInteract(PlayerInteractEvent e) {
         ScriptableListeners.getScriptableListeners().forEach(o -> o.doEventEval(e));
     }
+
+    @EventHandler
+    public void onPlayerFish(PlayerFishEvent e) {
+        ScriptableListeners.getScriptableListeners().forEach(o -> o.doEventEval(e));
+    }
 }
