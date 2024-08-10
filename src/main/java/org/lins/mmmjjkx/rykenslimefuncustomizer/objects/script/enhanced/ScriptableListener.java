@@ -9,7 +9,7 @@ import org.lins.mmmjjkx.rykenslimefuncustomizer.objects.script.parent.ScriptEval
 public class ScriptableListener {
     private final @NotNull ScriptEval script;
 
-    public void doEventEval(Event event) {
+    public <T extends Event> void doEventEval(T event) {
         String className = event.getClass().getSimpleName();
         String methodName = "on" + className.replace("Event", "");
         script.evalFunction(className, event);

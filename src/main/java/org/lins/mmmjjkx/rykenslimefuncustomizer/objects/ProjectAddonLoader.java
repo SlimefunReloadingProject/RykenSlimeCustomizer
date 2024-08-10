@@ -112,7 +112,8 @@ public class ProjectAddonLoader {
                     ScriptableListener listener = new ScriptableListener(eval);
                     ScriptableListeners.addScriptableListener(listener);
                 } else {
-                    ExceptionHandler.handleWarning("无法找到附属 " + addon.getAddonId() + " 的对应监听脚本文件 " + file.getName() + "！");
+                    ExceptionHandler.handleWarning(
+                            "无法找到附属 " + addon.getAddonId() + " 的对应监听脚本文件 " + file.getName() + "！");
                 }
             }
         } else {

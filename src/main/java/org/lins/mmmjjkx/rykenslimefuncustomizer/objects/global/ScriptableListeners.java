@@ -1,9 +1,8 @@
 package org.lins.mmmjjkx.rykenslimefuncustomizer.objects.global;
 
+import java.util.List;
 import lombok.Getter;
 import org.lins.mmmjjkx.rykenslimefuncustomizer.objects.script.enhanced.ScriptableListener;
-
-import java.util.List;
 
 public class ScriptableListeners {
     @Getter

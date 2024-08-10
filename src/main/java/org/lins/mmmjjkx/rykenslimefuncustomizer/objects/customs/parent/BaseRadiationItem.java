@@ -7,7 +7,7 @@ import io.github.thebusybiscuit.slimefun4.core.attributes.Radioactivity;
 import io.github.thebusybiscuit.slimefun4.implementation.items.RadioactiveItem;
 import org.bukkit.inventory.ItemStack;
 
-//FUCK YOU https://github.com/Slimefun/Slimefun4/pull/3131
+// FUCK YOU https://github.com/Slimefun/Slimefun4/pull/3131
 public abstract class BaseRadiationItem extends RadioactiveItem {
     public BaseRadiationItem(
             ItemGroup itemGroup,
