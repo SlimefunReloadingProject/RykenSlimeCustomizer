@@ -1,10 +1,9 @@
-package org.lins.mmmjjkx.rykenslimefuncustomizer.objects.customs;
+package org.lins.mmmjjkx.rykenslimefuncustomizer.objects.machine;
 
 import io.github.thebusybiscuit.slimefun4.implementation.operations.CraftingOperation;
 import io.github.thebusybiscuit.slimefun4.libraries.commons.lang.Validate;
 import javax.annotation.Nonnull;
 import lombok.Getter;
-import org.lins.mmmjjkx.rykenslimefuncustomizer.objects.machine.CustomMachineRecipe;
 
 @Getter
 public class CustomCraftingOperation extends CraftingOperation {
