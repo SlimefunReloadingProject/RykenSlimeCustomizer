@@ -30,6 +30,7 @@ import org.lins.mmmjjkx.rykenslimefuncustomizer.objects.customs.machine.*;
 import org.lins.mmmjjkx.rykenslimefuncustomizer.objects.customs.parent.AbstractEmptyMachine;
 import org.lins.mmmjjkx.rykenslimefuncustomizer.objects.global.DropFromBlock;
 import org.lins.mmmjjkx.rykenslimefuncustomizer.objects.global.RecipeTypeMap;
+import org.lins.mmmjjkx.rykenslimefuncustomizer.objects.global.ScriptableListeners;
 
 @RequiredArgsConstructor(access = AccessLevel.PACKAGE)
 @Getter
@@ -163,6 +164,7 @@ public final class ProjectAddon {
         preloadItems.clear();
 
         DropFromBlock.unregisterAddonDrops(this);
+        ScriptableListeners.removeScriptableListener(addonId);
     }
 
     private void unregisterItem(SlimefunItem item) {

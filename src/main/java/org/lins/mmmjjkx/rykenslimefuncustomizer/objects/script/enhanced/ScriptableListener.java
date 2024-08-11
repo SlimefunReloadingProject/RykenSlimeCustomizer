@@ -12,6 +12,6 @@ public class ScriptableListener {
     public <T extends Event> void doEventEval(T event) {
         String className = event.getClass().getSimpleName();
         String methodName = "on" + className.replace("Event", "");
-        script.evalFunction(className, event);
+        script.evalFunction(methodName, event);
     }
 }
