@@ -110,7 +110,7 @@ public class ProjectAddonLoader {
                 if (file.exists()) {
                     JavaScriptEval eval = new JavaScriptEval(file, addon);
                     ScriptableListener listener = new ScriptableListener(eval);
-                    ScriptableListeners.addScriptableListener(listener);
+                    ScriptableListeners.addScriptableListener(id, listener);
                 } else {
                     ExceptionHandler.handleWarning(
                             "无法找到附属 " + addon.getAddonId() + " 的对应监听脚本文件 " + file.getName() + "！");
