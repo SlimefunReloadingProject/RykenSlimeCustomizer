@@ -7,6 +7,7 @@ import com.oracle.truffle.js.runtime.JSRealm;
 import com.oracle.truffle.js.scriptengine.GraalJSScriptEngine;
 import io.github.thebusybiscuit.slimefun4.api.items.SlimefunItem;
 import io.github.thebusybiscuit.slimefun4.implementation.SlimefunItems;
+import io.github.thebusybiscuit.slimefun4.libraries.dough.data.persistent.PersistentDataAPI;
 import io.github.thebusybiscuit.slimefun4.utils.SlimefunUtils;
 import java.io.File;
 import java.io.IOException;
@@ -45,11 +46,13 @@ public class JavaScriptEval extends ScriptEval {
     private void advancedSetup() {
         JSRealm realm = JavaScriptLanguage.getJSRealm(jsEngine.getPolyglotContext());
         TruffleLanguage.Env env = realm.getEnv();
+
         addThing("SlimefunItems", env.asHostSymbol(SlimefunItems.class));
         addThing("SlimefunItem", env.asHostSymbol(SlimefunItem.class));
         addThing("BlockStorage", env.asHostSymbol(BlockStorage.class));
         addThing("SlimefunUtils", env.asHostSymbol(SlimefunUtils.class));
         addThing("BlockMenu", env.asHostSymbol(BlockMenu.class));
+        addThing("PersistentDataAPI", env.asHostSymbol(PersistentDataAPI.class));
     }
 
     private FileHandler createLogFileHandler(ProjectAddon addon) {
