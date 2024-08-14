@@ -308,4 +308,34 @@ public class ScriptableEventListener implements Listener {
     public void onPlayerFish(PlayerFishEvent e) {
         ScriptableListeners.getScriptableListeners().forEach(o -> o.doEventEval(e));
     }
+
+    @EventHandler
+    public void onPlayerHarvestBlock(PlayerHarvestBlockEvent e) {
+        ScriptableListeners.getScriptableListeners().forEach(o -> o.doEventEval(e));
+    }
+
+    @EventHandler
+    public void onArrowBodyCountChange(ArrowBodyCountChangeEvent e) {
+        ScriptableListeners.getScriptableListeners().forEach(o -> o.doEventEval(e));
+    }
+
+    @EventHandler
+    public void onEntityCombust(EntityCombustEvent e) {
+        ScriptableListeners.getScriptableListeners().forEach(o -> o.doEventEval(e));
+    }
+
+    @EventHandler
+    public void onEntityPotionEffect(EntityPotionEffectEvent e) {
+        ScriptableListeners.getScriptableListeners().forEach(o -> o.doEventEval(e));
+    }
+
+    @EventHandler
+    public void onPlayerMove(PlayerMoveEvent e) {
+        ScriptableListeners.getScriptableListeners().forEach(o -> o.doEventEval(e));
+    }
+
+    @EventHandler
+    public void onPlayerSwapHandItems(PlayerSwapHandItemsEvent e) {
+        ScriptableListeners.getScriptableListeners().forEach(o -> o.doEventEval(e));
+    }
 }
