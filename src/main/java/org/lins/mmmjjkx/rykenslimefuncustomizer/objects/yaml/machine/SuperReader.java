@@ -76,8 +76,7 @@ public class SuperReader extends YamlReader<SlimefunItem> {
 
         Constructor<? extends SlimefunItem> ctor =
                 (Constructor<? extends SlimefunItem>) clazz.getConstructors()[ctorIndex];
-        Object[] args =
-                section.getList("args") == null ? null : section.getList("args").toArray();
+        Object[] args = section.getList("args", new ArrayList<>()).toArray();
         List<Object> argTemplate =
                 (List<Object>) section.getList("arg_template", List.of("group", "item", "recipe_type", "recipe"));
         Object[] originArgs = argTemplate.stream()
@@ -92,12 +91,9 @@ public class SuperReader extends YamlReader<SlimefunItem> {
                 .toArray();
         SlimefunItem instance;
         try {
-            if (args == null) instance = ctor.newInstance(originArgs);
-            else {
-                List<Object> newArgs = new ArrayList<>(List.of(originArgs));
-                newArgs.addAll(List.of(args));
-                instance = ctor.newInstance(newArgs.toArray());
-            }
+            List<Object> newArgs = new ArrayList<>(List.of(originArgs));
+            newArgs.addAll(List.of(args));
+            instance = ctor.newInstance(newArgs.toArray());
         } catch (InstantiationException | InvocationTargetException | IllegalAccessException e) {
             ExceptionHandler.handleError("An unexpected error occurred while loading super item " + s + " in addon " + addon.getAddonId() + ": Could not instantiate class", e);
             return null;
@@ -114,22 +110,17 @@ public class SuperReader extends YamlReader<SlimefunItem> {
                     args1 = new Object[] {methodArray.get(methodName)};
                 }
 
-                Method method = null;
-                try {
-                    method = clazz.getDeclaredMethod(
-                            methodName,
-                            Arrays.stream(args1).map(Object::getClass).toArray(Class<?>[]::new));
-                } catch (NoSuchMethodException e) {
-                    ExceptionHandler.handleError("Found an error while loading super item " + s + " in addon " + addon.getAddonId() + ": " + "Could not find method, but item still can be loaded" + methodName, e);
+                Method method = getMethod(clazz, methodName, Arrays.stream(args1).map(Object::getClass).toArray(Class<?>[]::new));
+                if (method == null) {
+                    ExceptionHandler.handleError("Found an error while loading super item " + s + " in addon " + addon.getAddonId() + ": " + "Could not find method, but item still can be loaded" + methodName);
+                    continue;
                 }
 
-                if (method != null) {
-                    try {
-                        method.setAccessible(true);
-                        method.invoke(instance, args1);
-                    } catch (IllegalAccessException | InvocationTargetException e) {
-                        ExceptionHandler.handleError("An unexpected error occurred while loading super item " + s + " in addon " + addon.getAddonId() + ": Could not invoke method, but item still can be loaded", e);
-                    }
+                try {
+                    method.setAccessible(true);
+                    method.invoke(instance, args1);
+                } catch (IllegalAccessException | InvocationTargetException e) {
+                    ExceptionHandler.handleError("An unexpected error occurred while loading super item " + s + " in addon " + addon.getAddonId() + ": Could not invoke method, but item still can be loaded", e);
                 }
             }
         }
@@ -138,15 +129,7 @@ public class SuperReader extends YamlReader<SlimefunItem> {
             ConfigurationSection fieldArray = section.getConfigurationSection("field");
             for (String fieldName : fieldArray.getKeys(false)) {
                 try {
-                    Field[] fields = ReflectionUtils.getAllFields(instance);
-                    Field field = null;
-
-                    for (Field f : fields) {
-                        if (f.getName().equals(fieldName)) {
-                            field = f;
-                            break;
-                        }
-                    }
+                    Field field = getField(clazz, fieldName);
 
                     if (field == null) throw new NoSuchFieldException(fieldName);
                     if (Modifier.isStatic(field.getModifiers()))
@@ -183,5 +166,25 @@ public class SuperReader extends YamlReader<SlimefunItem> {
             return null;
         }
         return List.of(new SlimefunItemStack(s, stack));
+    }
+
+    private Method getMethod(Class<?> clazz, String name, Class<?>... parameterTypes) {
+        for (Method method : ReflectionUtils.getAllMethods(clazz)) {
+            if (method.getName().equals(name) && Arrays.equals(method.getParameterTypes(), parameterTypes)) {
+                return method;
+            }
+        }
+
+        return null;
+    }
+
+    private Field getField(Object obj, String name) {
+        for (Field field : ReflectionUtils.getAllFields(obj.getClass())) {
+            if (field.getName().equals(name)) {
+                return field;
+            }
+        }
+
+        return null;
     }
 }
