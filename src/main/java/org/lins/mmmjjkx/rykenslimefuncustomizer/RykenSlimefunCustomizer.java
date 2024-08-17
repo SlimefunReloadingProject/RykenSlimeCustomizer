@@ -8,7 +8,6 @@ import java.nio.file.Paths;
 import java.util.Objects;
 import net.byteflux.libby.BukkitLibraryManager;
 import net.byteflux.libby.Library;
-import net.guizhanss.guizhanlibplugin.updater.GuizhanUpdater;
 import org.bukkit.plugin.java.JavaPlugin;
 import org.jetbrains.annotations.NotNull;
 import org.lins.mmmjjkx.rykenslimefuncustomizer.commands.MainCommand;
@@ -51,13 +50,16 @@ public final class RykenSlimefunCustomizer extends JavaPlugin implements Slimefu
         new SingleItemRecipeGuideListener();
         new ScriptableEventListener();
 
-        ExceptionHandler.info("RykenSlimeCustomizer加载成功！");
+        ExceptionHandler.info("RykenSlimeCustomizer loaded successfully！");
 
+        /*
         if (getConfig().getBoolean("pluginUpdate")
                 && getDescription().getVersion().startsWith("b")
                 && getServer().getPluginManager().isPluginEnabled("GuizhanLibPlugin")) {
             GuizhanUpdater.start(this, getFile(), "SlimefunReloadingProject", "RykenSlimeCustomizer", "main");
         }
+
+         */
 
         getServer().getScheduler().runTaskLater(this, () -> runtime = true, 1);
     }
@@ -65,7 +67,7 @@ public final class RykenSlimefunCustomizer extends JavaPlugin implements Slimefu
     @Override
     public void onDisable() {
         // Plugin shutdown logic
-        getLogger().info("RykenSlimeCustomizer已卸载!");
+        getLogger().info("RykenSlimeCustomizer disabled!");
     }
 
     public static void reload() {
@@ -90,7 +92,7 @@ public final class RykenSlimefunCustomizer extends JavaPlugin implements Slimefu
     private void setupLibraries() {
         String graalVersion = "24.0.2";
         BukkitLibraryManager libraryManager = new BukkitLibraryManager(this);
-        libraryManager.addRepository("https://maven.aliyun.com/repository/central");
+        libraryManager.addMavenCentral();
         Library byteBuddy = Library.builder()
                 .groupId("net{}bytebuddy")
                 .artifactId("byte-buddy")

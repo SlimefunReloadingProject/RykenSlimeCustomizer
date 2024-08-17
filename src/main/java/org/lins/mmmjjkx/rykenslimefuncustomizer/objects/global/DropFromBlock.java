@@ -20,14 +20,6 @@ public class DropFromBlock {
         return drops.getOrDefault(material, Collections.emptyList());
     }
 
-    public static void removeDrop(Material material, Drop drop) {
-        List<Drop> dropsList = getDrops(material);
-        dropsList.remove(drop);
-        if (dropsList.isEmpty()) {
-            drops.remove(material);
-        }
-    }
-
     public static void unregisterAddonDrops(ProjectAddon addon) {
         for (Material material : new ArrayList<>(drops.keySet())) {
             List<Drop> dropsList = getDrops(material);

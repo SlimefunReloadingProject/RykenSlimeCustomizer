@@ -62,6 +62,7 @@ public class SimpleMachineFactory {
                             group, slimefunItemStack, recipeType, recipe, capacity, radius, consumption, speed);
                     case AUTO_ANVIL -> new AutoAnvil(group, repairFactor, slimefunItemStack, recipeType, recipe);
                 };
+
         if (instance instanceof AContainer aContainer) {
             aContainer.setCapacity(capacity);
             aContainer.setEnergyConsumption(consumption);

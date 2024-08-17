@@ -3,8 +3,6 @@ package org.lins.mmmjjkx.rykenslimefuncustomizer.objects.customs.machine;
 import static org.lins.mmmjjkx.rykenslimefuncustomizer.objects.customs.machine.CustomRecipeMachine.RECIPE_INPUT;
 import static org.lins.mmmjjkx.rykenslimefuncustomizer.objects.customs.machine.CustomRecipeMachine.RECIPE_OUTPUT;
 
-import com.xzavier0722.mc.plugin.slimefun4.storage.controller.SlimefunBlockData;
-import com.xzavier0722.mc.plugin.slimefun4.storage.util.StorageCacheUtils;
 import io.github.thebusybiscuit.slimefun4.api.items.ItemGroup;
 import io.github.thebusybiscuit.slimefun4.api.items.SlimefunItem;
 import io.github.thebusybiscuit.slimefun4.api.items.SlimefunItemStack;
@@ -21,7 +19,9 @@ import io.github.thebusybiscuit.slimefun4.utils.SlimefunUtils;
 import io.github.thebusybiscuit.slimefun4.utils.itemstack.ItemStackWrapper;
 import java.util.*;
 import lombok.Getter;
+import me.mrCookieSlime.CSCoreLibPlugin.Configuration.Config;
 import me.mrCookieSlime.Slimefun.Objects.handlers.BlockTicker;
+import me.mrCookieSlime.Slimefun.api.BlockStorage;
 import me.mrCookieSlime.Slimefun.api.inventory.BlockMenu;
 import org.bukkit.Location;
 import org.bukkit.Material;
@@ -97,7 +97,7 @@ public class CustomTemplateMachine extends AbstractEmptyMachine<CustomTemplateCr
         this.addItemHandler(new SimpleBlockBreakHandler() {
             @Override
             public void onBlockBreak(@NotNull Block block) {
-                BlockMenu inv = StorageCacheUtils.getMenu(block.getLocation());
+                BlockMenu inv = BlockStorage.getInventory(block);
                 if (inv != null) {
                     inv.dropItems(block.getLocation(), templateSlot);
                     inv.dropItems(block.getLocation(), getOutputSlots());
@@ -120,8 +120,8 @@ public class CustomTemplateMachine extends AbstractEmptyMachine<CustomTemplateCr
             }
 
             @Override
-            public void tick(Block b, SlimefunItem item, SlimefunBlockData data) {
-                CustomTemplateMachine.this.tick(b, item, data);
+            public void tick(Block b, SlimefunItem item, Config data) {
+                CustomTemplateMachine.this.tick(b);
             }
         };
     }
@@ -166,8 +166,8 @@ public class CustomTemplateMachine extends AbstractEmptyMachine<CustomTemplateCr
         return displayRecipes;
     }
 
-    private void tick(Block b, SlimefunItem item, SlimefunBlockData data) {
-        BlockMenu inv = data.getBlockMenu();
+    private void tick(Block b) {
+        BlockMenu inv = BlockStorage.getInventory(b);
         if (inv != null) {
             ItemStack templateItem = inv.getItemInSlot(templateSlot);
 
@@ -290,10 +290,8 @@ public class CustomTemplateMachine extends AbstractEmptyMachine<CustomTemplateCr
 
             if (recipe.getInput().length == 0) {
                 if (getInputSlots().length == 0) {
-                    for (ItemStack output : recipe.getOutput()) {
-                        if (!InvUtils.fitAll(inv.toInventory(), recipe.getOutput(), getOutputSlots())) {
-                            return null;
-                        }
+                    if (!InvUtils.fitAll(inv.toInventory(), recipe.getOutput(), getOutputSlots())) {
+                        return null;
                     }
 
                     return recipe;
@@ -307,10 +305,8 @@ public class CustomTemplateMachine extends AbstractEmptyMachine<CustomTemplateCr
                     }
 
                     if (allEmpty) {
-                        for (ItemStack output : recipe.getOutput()) {
-                            if (!InvUtils.fitAll(inv.toInventory(), recipe.getOutput(), getOutputSlots())) {
-                                return null;
-                            }
+                        if (!InvUtils.fitAll(inv.toInventory(), recipe.getOutput(), getOutputSlots())) {
+                            return null;
                         }
 
                         return recipe;
