@@ -27,6 +27,7 @@ import org.jetbrains.annotations.Nullable;
 import org.lins.mmmjjkx.rykenslimefuncustomizer.RykenSlimefunCustomizer;
 import org.lins.mmmjjkx.rykenslimefuncustomizer.libraries.colors.CMIChatColor;
 import org.lins.mmmjjkx.rykenslimefuncustomizer.objects.script.enhanced.NBTAPIIntegration;
+import org.lins.mmmjjkx.rykenslimefuncustomizer.objects.script.lambda.CiConsumer;
 import org.lins.mmmjjkx.rykenslimefuncustomizer.objects.script.lambda.CiFunction;
 
 @Getter(AccessLevel.PROTECTED)

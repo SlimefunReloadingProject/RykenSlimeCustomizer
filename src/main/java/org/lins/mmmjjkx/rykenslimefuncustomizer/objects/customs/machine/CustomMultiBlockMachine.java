@@ -77,6 +77,7 @@ public class CustomMultiBlockMachine extends MultiBlockMachine {
                 Inventory inv = dispenser.getInventory();
 
                 List<ItemStack[]> inputs = RecipeType.getRecipeInputList(this);
+                ItemStack[] contents = inv.getContents();
 
                 for (ItemStack[] input : inputs) {
                     if (isCraftable(inv, input)) {
