@@ -16,5 +16,4 @@ public record MachineInfo(
         Block block,
         MachineProcessor<?> processor,
         MachineOperation operation,
-        CustomMachine machine) {
-}
+        CustomMachine machine) {}

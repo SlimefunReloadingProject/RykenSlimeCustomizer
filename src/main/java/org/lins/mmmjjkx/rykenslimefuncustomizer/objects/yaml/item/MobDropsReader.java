@@ -44,7 +44,10 @@ public class MobDropsReader extends YamlReader<CustomMobDrop> {
             String type = section.getString("entity");
 
             Pair<ExceptionHandler.HandleResult, EntityType> entity = ExceptionHandler.handleEnumValueOf(
-                    "Found an error while loading mob drop " + s + " in " + addon.getAddonId() + ": Invalid entity type " + type, EntityType.class, type);
+                    "Found an error while loading mob drop " + s + " in " + addon.getAddonId()
+                            + ": Invalid entity type " + type,
+                    EntityType.class,
+                    type);
             if (entity.getFirstValue() == ExceptionHandler.HandleResult.FAILED) {
                 return null;
             }
@@ -64,15 +67,16 @@ public class MobDropsReader extends YamlReader<CustomMobDrop> {
             int chance = section.getInt("chance");
 
             if (chance < 1 || chance > 100) {
-                ExceptionHandler.handleError(
-                        "Found an error while loading mob drop " + s + " in " + addon.getAddonId() + ": Chance must be between 1 and 100. Using 1 or 100 instead.");
+                ExceptionHandler.handleError("Found an error while loading mob drop " + s + " in " + addon.getAddonId()
+                        + ": Chance must be between 1 and 100. Using 1 or 100 instead.");
                 chance = chance >= 100 ? 100 : 1;
             }
 
             Component lore = LegacyComponentSerializer.legacyAmpersand()
                     .deserialize("&aKill &b")
                     .append(Component.translatable(entityType.translationKey()))
-                    .append(LegacyComponentSerializer.legacyAmpersand().deserialize(" &awill have a chance of &b" + chance + "% &ato drop"));
+                    .append(LegacyComponentSerializer.legacyAmpersand()
+                            .deserialize(" &awill have a chance of &b" + chance + "% &ato drop"));
 
             ItemStack itemStack = new CustomItemStack(eggMaterial, meta -> {
                 meta.setDisplayName(entityType.toString());
@@ -94,7 +98,8 @@ public class MobDropsReader extends YamlReader<CustomMobDrop> {
         ConfigurationSection item = section.getConfigurationSection("item");
         ItemStack stack = CommonUtils.readItem(item, false, addon);
         if (stack == null) {
-            ExceptionHandler.handleError("Found an error while loading mob drop " + id + " in addon " + addon.getAddonId() + ": " + "The item is null or has an invalid format");
+            ExceptionHandler.handleError("Found an error while loading mob drop " + id + " in addon "
+                    + addon.getAddonId() + ": " + "The item is null or has an invalid format");
             return null;
         }
 

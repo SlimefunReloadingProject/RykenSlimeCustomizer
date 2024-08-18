@@ -41,7 +41,8 @@ public class ArmorReader extends YamlReader<List<CustomArmorPiece>> {
         List<ProtectionType> protectionTypes = new ArrayList<>();
         for (String type : pt) {
             Pair<ExceptionHandler.HandleResult, ProtectionType> result = ExceptionHandler.handleEnumValueOf(
-                    "Found an error while loading armor set " + s + " in addon " + addon.getAddonId() + ": Invalid protection type '" + type + "'!",
+                    "Found an error while loading armor set " + s + " in addon " + addon.getAddonId()
+                            + ": Invalid protection type '" + type + "'!",
                     ProtectionType.class,
                     type);
             if (result.getFirstValue() == ExceptionHandler.HandleResult.FAILED) return null;
@@ -61,7 +62,9 @@ public class ArmorReader extends YamlReader<List<CustomArmorPiece>> {
             String recipeType = pieceSection.getString("recipe_type", "NULL");
 
             Pair<ExceptionHandler.HandleResult, RecipeType> rt = ExceptionHandler.getRecipeType(
-                    "Found an error while loading the armor set " + s + " in addon " + addon.getAddonId() + ": Invalid recipe type '" + recipeType + "'!", recipeType);
+                    "Found an error while loading the armor set " + s + " in addon " + addon.getAddonId()
+                            + ": Invalid recipe type '" + recipeType + "'!",
+                    recipeType);
 
             if (rt.getFirstValue() == ExceptionHandler.HandleResult.FAILED) return null;
 
@@ -77,7 +80,8 @@ public class ArmorReader extends YamlReader<List<CustomArmorPiece>> {
             for (String effect : effects) {
                 String[] split = effect.split(" ");
                 if (split.length != 2) {
-                    ExceptionHandler.handleError("Found an error while loading the armor set " + s + "in addon " + addon.getAddonId() + ": Invalid potion effect format '" + effect + "'!");
+                    ExceptionHandler.handleError("Found an error while loading the armor set " + s + "in addon "
+                            + addon.getAddonId() + ": Invalid potion effect format '" + effect + "'!");
                     return null;
                 }
                 String effectName = split[0];
@@ -85,12 +89,15 @@ public class ArmorReader extends YamlReader<List<CustomArmorPiece>> {
 
                 PotionEffectType type = PotionEffectType.getByName(effectName);
                 if (type == null) {
-                    ExceptionHandler.handleError("Found an error while loading the armor set " + s + "in addon " + addon.getAddonId() + ": Invalid potion effect type '" + effectName + "'!");
+                    ExceptionHandler.handleError("Found an error while loading the armor set " + s + "in addon "
+                            + addon.getAddonId() + ": Invalid potion effect type '" + effectName + "'!");
                     return null;
                 }
 
                 if (amplifier < 0) {
-                    ExceptionHandler.handleError("Found an error while loading the armor set " + s + "in addon " + addon.getAddonId() + ": Potion effect amplifier cannot be negative! But you entered: '" + amplifier + "'!");
+                    ExceptionHandler.handleError("Found an error while loading the armor set " + s + "in addon "
+                            + addon.getAddonId() + ": Potion effect amplifier cannot be negative! But you entered: '"
+                            + amplifier + "'!");
                     return null;
                 }
 
@@ -111,7 +118,8 @@ public class ArmorReader extends YamlReader<List<CustomArmorPiece>> {
         }
 
         if (pieces.isEmpty()) {
-            ExceptionHandler.handleError("Found an error while loading the " + s + " armor set of the " + addon.getAddonId() + " addon: No armor parts found");
+            ExceptionHandler.handleError("Found an error while loading the " + s + " armor set of the "
+                    + addon.getAddonId() + " addon: No armor parts found");
             return null;
         }
 
@@ -132,8 +140,9 @@ public class ArmorReader extends YamlReader<List<CustomArmorPiece>> {
 
             ItemStack stack = CommonUtils.readItem(pieceSection, false, addon);
             if (stack == null) {
-                ExceptionHandler.handleError(
-                        "Found an error while loading the " + check + "  in the " + s + " armor set of the " + addon.getAddonId() + " addon: The item is null or has an invalid format, skipping it");
+                ExceptionHandler.handleError("Found an error while loading the " + check + "  in the " + s
+                        + " armor set of the " + addon.getAddonId()
+                        + " addon: The item is null or has an invalid format, skipping it");
                 continue;
             }
 

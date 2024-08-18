@@ -62,7 +62,7 @@ public class CommonUtils {
 
     @NotNull @Contract("null,_,_ -> new")
     public static ItemStack[] readRecipe(ConfigurationSection section, @NotNull ProjectAddon addon, int size) {
-        if (section == null) return new ItemStack[]{};
+        if (section == null) return new ItemStack[] {};
         ItemStack[] itemStacks = new ItemStack[size];
         for (int i = 0; i < size; i++) {
             ConfigurationSection section1 = section.getConfigurationSection(String.valueOf(i + 1));
@@ -109,7 +109,8 @@ public class CommonUtils {
                 Optional<Material> materialo = Optional.ofNullable(Material.matchMaterial(material));
                 Material mat;
                 if (materialo.isEmpty()) {
-                    ExceptionHandler.handleError("Cannot find material " + material + " in a addon called " + addon.getAddonId() + ", using stone instead");
+                    ExceptionHandler.handleError("Cannot find material " + material + " in a addon called "
+                            + addon.getAddonId() + ", using stone instead");
                     mat = Material.STONE;
                 } else {
                     mat = materialo.get();
@@ -174,7 +175,8 @@ public class CommonUtils {
             case "saveditem" -> {
                 File file = new File(addon.getSavedItemsFolder(), material + ".yml");
                 if (!file.exists()) {
-                    ExceptionHandler.handleError("The saved item file " + material + " is not found, using stone instead");
+                    ExceptionHandler.handleError(
+                            "The saved item file " + material + " is not found, using stone instead");
                     itemStack = new CustomItemStack(Material.STONE, name, lore);
                     break;
                 }
@@ -225,8 +227,8 @@ public class CommonUtils {
 
         if (countable) {
             if (amount > 64 || amount < -1) {
-                ExceptionHandler.handleError(
-                        "Cannot read item in " + section.getCurrentPath() + " in a addon called " + addon.getAddonId() + ": the amount must be between 0 and 64");
+                ExceptionHandler.handleError("Cannot read item in " + section.getCurrentPath() + " in a addon called "
+                        + addon.getAddonId() + ": the amount must be between 0 and 64");
                 return null;
             }
             itemStack.setAmount(amount);
@@ -237,7 +239,8 @@ public class CommonUtils {
             for (String enchant : enchants) {
                 String[] s2 = enchant.split(" ");
                 if (s2.length != 2) {
-                    ExceptionHandler.handleError("Cannot read enchantment " + enchant + " in a addon called " + addon.getAddonId() + ", skip adding this enchantment");
+                    ExceptionHandler.handleError("Cannot read enchantment " + enchant + " in a addon called "
+                            + addon.getAddonId() + ", skip adding this enchantment");
                     continue;
                 }
 
@@ -246,7 +249,8 @@ public class CommonUtils {
 
                 Enchantment enchantment = Enchantment.getByKey(NamespacedKey.minecraft(enchantName.toLowerCase()));
                 if (enchantment == null) {
-                    ExceptionHandler.handleError("Cannot find enchantment " + enchantName + " in a addon called " + addon.getAddonId() + ", skip adding this enchantment");
+                    ExceptionHandler.handleError("Cannot find enchantment " + enchantName + " in a addon called "
+                            + addon.getAddonId() + ", skip adding this enchantment");
                     continue;
                 }
 
@@ -311,7 +315,8 @@ public class CommonUtils {
             return;
         }
         if (stream == null) {
-            ExceptionHandler.handleError("Cannot synchronize " + resourceFile + ", please check the plugin is not corrupted!");
+            ExceptionHandler.handleError(
+                    "Cannot synchronize " + resourceFile + ", please check the plugin is not corrupted!");
             return;
         }
         try {
@@ -336,7 +341,8 @@ public class CommonUtils {
             configuration2.save(file);
         } catch (Exception e) {
             e.printStackTrace();
-            ExceptionHandler.handleError("Cannot synchronize " + resourceFile + ", please check the plugin is not corrupted!");
+            ExceptionHandler.handleError(
+                    "Cannot synchronize " + resourceFile + ", please check the plugin is not corrupted!");
         }
     }
 

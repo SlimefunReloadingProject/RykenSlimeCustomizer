@@ -133,6 +133,21 @@ public final class RykenSlimefunCustomizer extends JavaPlugin implements Slimefu
                 .artifactId("icu4j")
                 .version("75.1")
                 .build();
+        Library httpClient5 = Library.builder()
+                .groupId("org{}apache{}httpcomponents{}httpclient5")
+                .artifactId("httpclient5")
+                .version("5.3.1")
+                .build();
+        Library httpCore5 = Library.builder()
+                .groupId("org{}apache{}httpcomponents{}core5")
+                .artifactId("httpcore5")
+                .version("5.2.5")
+                .build();
+        Library httpCore5_h2 = Library.builder()
+                .groupId("org{}apache{}httpcomponents{}core5")
+                .artifactId("httpcore5-h2")
+                .version("5.2.5")
+                .build();
 
         libraryManager.loadLibrary(byteBuddy);
         libraryManager.loadLibrary(graalJS);
@@ -142,6 +157,9 @@ public final class RykenSlimefunCustomizer extends JavaPlugin implements Slimefu
         libraryManager.loadLibrary(graalSdkCollections);
         libraryManager.loadLibrary(graalSdkNativeImage);
         libraryManager.loadLibrary(icu4j);
+        libraryManager.loadLibrary(httpClient5);
+        libraryManager.loadLibrary(httpCore5);
+        libraryManager.loadLibrary(httpCore5_h2);
     }
 
     public static boolean allowUpdate(String prjId) {

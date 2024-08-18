@@ -21,8 +21,11 @@ public class ExceptionHandler {
     public static HandleResult handleIdConflict(String id) {
         SlimefunItem i = SlimefunItem.getById(id);
         if (i != null) {
-            console.sendMessage(CMIChatColor.translate(
-                    "&4ERROR | ID conflict: " + id + "and the item in addon called " + i.getAddon().getName() + " have the same ID. Please change the ID of the item in the addon or remove the item in the addon. "));
+            console.sendMessage(
+                    CMIChatColor.translate(
+                            "&4ERROR | ID conflict: " + id + "and the item in addon called "
+                                    + i.getAddon().getName()
+                                    + " have the same ID. Please change the ID of the item in the addon or remove the item in the addon. "));
             return HandleResult.FAILED;
         }
         return HandleResult.SUCCESS;
@@ -31,7 +34,8 @@ public class ExceptionHandler {
     public static HandleResult handleMenuConflict(String id, ProjectAddon addon) {
         CustomMenu menu = CommonUtils.getIf(addon.getMenus(), m -> m.getID().equalsIgnoreCase(id));
         if (menu != null) {
-            console.sendMessage(CMIChatColor.translate("&4ERROR | ID conflict: there's already a menu with the ID " + id));
+            console.sendMessage(
+                    CMIChatColor.translate("&4ERROR | ID conflict: there's already a menu with the ID " + id));
             return HandleResult.FAILED;
         }
         return HandleResult.SUCCESS;
@@ -44,14 +48,14 @@ public class ExceptionHandler {
         if (ig != null) {
             if (ig.getAddon() != null) {
                 if (ig.getAddon().getClass() == RykenSlimefunCustomizer.class) {
-                    console.sendMessage(CMIChatColor.translate(
-                            "&4ERROR | ID conflict: " + id + "and the item group " + ig.getKey().getKey() + " has the same key."));
+                    console.sendMessage(CMIChatColor.translate("&4ERROR | ID conflict: " + id + "and the item group "
+                            + ig.getKey().getKey() + " has the same key."));
                     return HandleResult.FAILED;
                 }
                 return HandleResult.SUCCESS;
             }
-            console.sendMessage(CMIChatColor.translate(
-                    "&4ERROR | ID conflict: " + id + "and the item group " + ig.getKey().getKey() + " has the same key."));
+            console.sendMessage(CMIChatColor.translate("&4ERROR | ID conflict: " + id + "and the item group "
+                    + ig.getKey().getKey() + " has the same key."));
             return HandleResult.FAILED;
         }
         return HandleResult.SUCCESS;

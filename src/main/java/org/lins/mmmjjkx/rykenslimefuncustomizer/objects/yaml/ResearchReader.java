@@ -26,8 +26,8 @@ public class ResearchReader extends YamlReader<Research> {
         if (section == null) return null;
 
         if (!VALID_KEY.matcher(s).matches()) {
-            ExceptionHandler.handleError(
-                    "Found errors while reading research " + s + " in " + addon.getAddonId() + " addon: Research ID must only contain [a-z0-9/._-] characters.");
+            ExceptionHandler.handleError("Found errors while reading research " + s + " in " + addon.getAddonId()
+                    + " addon: Research ID must only contain [a-z0-9/._-] characters.");
             return null;
         }
 
@@ -37,32 +37,34 @@ public class ResearchReader extends YamlReader<Research> {
         List<String> items = section.getStringList("items");
 
         if (researchId <= 0) {
-            ExceptionHandler.handleError(
-                    "Found errors while reading research " + s + " in " + addon.getAddonId() + " addon: id must be greater than 0.");
+            ExceptionHandler.handleError("Found errors while reading research " + s + " in " + addon.getAddonId()
+                    + " addon: id must be greater than 0.");
             return null;
         }
 
         if (cost <= 0) {
-            ExceptionHandler.handleError(
-                    "Found errors while reading research " + s + " in " + addon.getAddonId() + " addon: levelCost must be greater than 0.");
+            ExceptionHandler.handleError("Found errors while reading research " + s + " in " + addon.getAddonId()
+                    + " addon: levelCost must be greater than 0.");
             return null;
         }
 
         if (name == null || name.isBlank()) {
-            ExceptionHandler.handleError(
-                    "Found errors while reading research " + s + " in " + addon.getAddonId() + " addon: name must be set.");
+            ExceptionHandler.handleError("Found errors while reading research " + s + " in " + addon.getAddonId()
+                    + " addon: name must be set.");
             return null;
         }
 
         name = CMIChatColor.translate(name);
 
-        Research research = new Research(new NamespacedKey(RykenSlimefunCustomizer.INSTANCE, s), researchId, name, cost);
+        Research research =
+                new Research(new NamespacedKey(RykenSlimefunCustomizer.INSTANCE, s), researchId, name, cost);
 
         for (String item : items) {
             SlimefunItem sfItem = SlimefunItem.getById(item);
             if (sfItem == null) {
-                ExceptionHandler.handleWarning(
-                        "Found errors while reading research " + s + " in " + addon.getAddonId() + " addon: " + item + " is not a Slimefun item. Skipping adding to the research.");;
+                ExceptionHandler.handleWarning("Found errors while reading research " + s + " in " + addon.getAddonId()
+                        + " addon: " + item + " is not a Slimefun item. Skipping adding to the research.");
+                ;
                 continue;
             }
             research.addItems(sfItem);

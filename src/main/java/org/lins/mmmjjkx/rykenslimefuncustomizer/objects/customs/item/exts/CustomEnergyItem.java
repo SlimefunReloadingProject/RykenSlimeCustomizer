@@ -46,11 +46,11 @@ public class CustomEnergyItem extends CustomItem implements Rechargeable, NotPla
 
         this.constructorArgs = new Object[] {itemGroup, item, recipeType, recipe, capacity, eval};
     }
-    
+
     public void setItemCharge(ItemStack item, int charge) {
         Rechargeable.super.setItemCharge(item, charge);
     }
-    
+
     public void setItemCharge(ItemStack item, double charge) {
         Rechargeable.super.setItemCharge(item, (float) charge);
     }
@@ -70,7 +70,7 @@ public class CustomEnergyItem extends CustomItem implements Rechargeable, NotPla
     public void removeItemCharge(ItemStack item, double charge) {
         Rechargeable.super.addItemCharge(item, (float) charge);
     }
-    
+
     public float getItemCharge(ItemStack item) {
         return Rechargeable.super.getItemCharge(item);
     }

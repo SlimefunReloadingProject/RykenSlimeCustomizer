@@ -67,7 +67,8 @@ public class ProjectAddonLoader {
             }
 
             if (name == null || name.isBlank()) {
-                ExceptionHandler.handleError("A folder called " + file.getName() + "contains invalid project information, so the addon cannot be loaded！");
+                ExceptionHandler.handleError("A folder called " + file.getName()
+                        + "contains invalid project information, so the addon cannot be loaded！");
                 return null;
             }
 
@@ -76,8 +77,9 @@ public class ProjectAddonLoader {
                 if (!RykenSlimefunCustomizer.addonManager.isLoaded(depends.toArray(new String[0]))) {
                     boolean loadResult = loadDependencies(depends);
                     if (!loadResult) {
-                        ExceptionHandler.handleError("A addon called " + name + " (Addon id：" + id + ") needs the dependencies " + depends
-                                + "，because some of them are not loaded or installed, so the addon cannot be loaded! ");
+                        ExceptionHandler.handleError(
+                                "A addon called " + name + " (Addon id：" + id + ") needs the dependencies " + depends
+                                        + "，because some of them are not loaded or installed, so the addon cannot be loaded! ");
                         return null;
                     }
                 }
@@ -87,8 +89,9 @@ public class ProjectAddonLoader {
                 pluginDepends = info.getStringList("pluginDepends");
                 for (String pluginDepend : pluginDepends) {
                     if (!Bukkit.getPluginManager().isPluginEnabled(pluginDepend)) {
-                        ExceptionHandler.handleError("A addon called " + name + " (Addon id：" + id + ") needs the plugin " + pluginDepends
-                                + "，because it is not loaded or installed, so the addon cannot be loaded! ");
+                        ExceptionHandler.handleError(
+                                "A addon called " + name + " (Addon id：" + id + ") needs the plugin " + pluginDepends
+                                        + "，because it is not loaded or installed, so the addon cannot be loaded! ");
                         return null;
                     }
                 }
@@ -117,7 +120,8 @@ public class ProjectAddonLoader {
                 }
             }
         } else {
-            ExceptionHandler.handleError("A folder called " + file.getName() + "contains invalid project information, so the addon cannot be loaded！");
+            ExceptionHandler.handleError("A folder called " + file.getName()
+                    + "contains invalid project information, so the addon cannot be loaded！");
             return null;
         }
 

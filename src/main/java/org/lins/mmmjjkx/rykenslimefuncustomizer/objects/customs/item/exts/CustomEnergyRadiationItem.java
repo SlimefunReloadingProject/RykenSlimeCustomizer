@@ -63,7 +63,7 @@ public class CustomEnergyRadiationItem extends BaseRadiationItem implements NotP
     public void addItemCharge(ItemStack item, double charge) {
         Rechargeable.super.addItemCharge(item, (float) charge);
     }
-    
+
     public void removeItemCharge(ItemStack item, int charge) {
         Rechargeable.super.removeItemCharge(item, charge);
     }

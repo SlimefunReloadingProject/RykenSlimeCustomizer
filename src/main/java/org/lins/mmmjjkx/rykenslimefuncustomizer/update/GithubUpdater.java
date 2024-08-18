@@ -10,11 +10,11 @@ import java.util.Objects;
 import java.util.logging.Level;
 import java.util.zip.ZipEntry;
 import java.util.zip.ZipInputStream;
-import org.apache.http.HttpResponse;
-import org.apache.http.client.methods.HttpGet;
-import org.apache.http.impl.client.CloseableHttpClient;
-import org.apache.http.impl.client.HttpClients;
-import org.apache.http.util.EntityUtils;
+import org.apache.hc.client5.http.classic.methods.HttpGet;
+import org.apache.hc.client5.http.impl.classic.CloseableHttpClient;
+import org.apache.hc.client5.http.impl.classic.CloseableHttpResponse;
+import org.apache.hc.client5.http.impl.classic.HttpClients;
+import org.apache.hc.core5.http.io.entity.EntityUtils;
 import org.bukkit.configuration.file.YamlConfiguration;
 import org.jetbrains.annotations.NotNull;
 import org.lins.mmmjjkx.rykenslimefuncustomizer.ProjectAddonManager;
@@ -35,7 +35,7 @@ public class GithubUpdater {
         try (CloseableHttpClient client = HttpClients.createDefault()) {
             String url = "https://api.github.com/repos/" + author + "/" + repo + "/releases/latest";
             HttpGet get = new HttpGet(url);
-            HttpResponse response = client.execute(get);
+            CloseableHttpResponse response = client.execute(get);
             String entity = EntityUtils.toString(response.getEntity());
 
             GitHubRelease release = new Gson().fromJson(entity, GitHubRelease.class);
@@ -45,7 +45,10 @@ public class GithubUpdater {
             if (releaseName == null) {
                 RykenSlimefunCustomizer.INSTANCE
                         .getLogger()
-                        .log(Level.WARNING, "Cannot check an update in addon with ID " + prjId + ": reached Github API limit(60 requests per hour)");
+                        .log(
+                                Level.WARNING,
+                                "Cannot check an update in addon with ID " + prjId
+                                        + ": reached Github API limit(60 requests per hour)");
                 return false;
             }
 
@@ -110,8 +113,8 @@ public class GithubUpdater {
                     String id = infoYml.getString("id", "");
 
                     if (!id.equals(prjId)) {
-                        ExceptionHandler.info(
-                                "&aSuccessfully updated addon " + prjId + "!" + "\n" + "&bNote: the original ID is &e" + prjId + " &b, now it's &d" + id);
+                        ExceptionHandler.info("&aSuccessfully updated addon " + prjId + "!" + "\n"
+                                + "&bNote: the original ID is &e" + prjId + " &b, now it's &d" + id);
                     } else {
                         ExceptionHandler.info("&aSuccessfully updated addon " + prjId + "!");
                     }
@@ -122,7 +125,9 @@ public class GithubUpdater {
             }
             return true;
         } catch (Exception e) {
-            RykenSlimefunCustomizer.INSTANCE.getLogger().log(Level.WARNING, "Failed to check update for addon with ID " + prjId, e);
+            RykenSlimefunCustomizer.INSTANCE
+                    .getLogger()
+                    .log(Level.WARNING, "Failed to check update for addon with ID " + prjId, e);
             return false;
         }
     }
@@ -163,7 +168,8 @@ public class GithubUpdater {
                         }
 
                         if (zipEntry.getSize() != -1 && totalBytesRead != zipEntry.getSize()) {
-                            throw new IOException("The bytes number while reading the zip entry is not equal to the entry size");
+                            throw new IOException(
+                                    "The bytes number while reading the zip entry is not equal to the entry size");
                         }
                     }
                 }

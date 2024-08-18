@@ -46,7 +46,9 @@ public class FoodReader extends YamlReader<CustomFood> {
         String recipeType = section.getString("recipe_type", "NULL");
 
         Pair<ExceptionHandler.HandleResult, RecipeType> rt = ExceptionHandler.getRecipeType(
-                "Found an error while loading capacitor " + s + " in addon " + addon.getAddonId() + ": Invalid recipe type '" + recipeType + "'!", recipeType);
+                "Found an error while loading capacitor " + s + " in addon " + addon.getAddonId()
+                        + ": Invalid recipe type '" + recipeType + "'!",
+                recipeType);
 
         if (rt.getFirstValue() == ExceptionHandler.HandleResult.FAILED) return null;
 
@@ -55,7 +57,8 @@ public class FoodReader extends YamlReader<CustomFood> {
             String script = section.getString("script", "");
             File file = new File(addon.getScriptsFolder(), script + ".js");
             if (!file.exists()) {
-                ExceptionHandler.handleWarning("There was an error while loading food " + s + " in addon " + addon.getAddonId() + ": " + "Could not find script file " + file.getName());
+                ExceptionHandler.handleWarning("There was an error while loading food " + s + " in addon "
+                        + addon.getAddonId() + ": " + "Could not find script file " + file.getName());
             } else {
                 eval = new JavaScriptEval(file, addon);
             }
@@ -76,18 +79,18 @@ public class FoodReader extends YamlReader<CustomFood> {
         boolean alwaysEatable = section.getBoolean("always_eatable", false);
         float eatseconds = section.getInt("eat_seconds", 0);
         if (nutrition < 1) {
-            ExceptionHandler.handleError(
-                    "Found an error while loading food " + s + " in addon " + addon.getAddonId() + ": " + "Nutrition value " + nutrition + " is less than 1! Value has been set to 1.");
+            ExceptionHandler.handleError("Found an error while loading food " + s + " in addon " + addon.getAddonId()
+                    + ": " + "Nutrition value " + nutrition + " is less than 1! Value has been set to 1.");
             nutrition = 1;
         }
         if (saturation < 0f) {
-            ExceptionHandler.handleError(
-                    "Found an error while loading food " + s + " in addon " + addon.getAddonId() + ": " + "Saturation value " + saturation + " is less than 0! Value has been set to 0.");
+            ExceptionHandler.handleError("Found an error while loading food " + s + " in addon " + addon.getAddonId()
+                    + ": " + "Saturation value " + saturation + " is less than 0! Value has been set to 0.");
             saturation = 0f;
         }
         if (eatseconds < 0) {
-            ExceptionHandler.handleError(
-                    "Found an error while loading food " + s + " in addon " + addon.getAddonId() + ": " + "Eat seconds value " + eatseconds + " is less than 0! Value has been set to 1.6.");
+            ExceptionHandler.handleError("Found an error while loading food " + s + " in addon " + addon.getAddonId()
+                    + ": " + "Eat seconds value " + eatseconds + " is less than 0! Value has been set to 1.6.");
             eatseconds = 1.6f;
         }
 
@@ -112,7 +115,8 @@ public class FoodReader extends YamlReader<CustomFood> {
         ConfigurationSection item = section.getConfigurationSection("item");
         ItemStack stack = CommonUtils.readItem(item, false, addon);
         if (stack == null) {
-            ExceptionHandler.handleError("Found an error while loading food " + id + " in addon " + addon.getAddonId() + ": " + "The item is null or has an invalid format");
+            ExceptionHandler.handleError("Found an error while loading food " + id + " in addon " + addon.getAddonId()
+                    + ": " + "The item is null or has an invalid format");
             return null;
         }
 

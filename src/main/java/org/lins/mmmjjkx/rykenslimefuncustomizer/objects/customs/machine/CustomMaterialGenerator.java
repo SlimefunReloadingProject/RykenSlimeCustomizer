@@ -14,7 +14,6 @@ import java.util.ArrayList;
 import java.util.Collections;
 import java.util.List;
 import java.util.Objects;
-
 import me.mrCookieSlime.CSCoreLibPlugin.Configuration.Config;
 import me.mrCookieSlime.Slimefun.Objects.SlimefunItem.interfaces.InventoryBlock;
 import me.mrCookieSlime.Slimefun.Objects.handlers.BlockTicker;
@@ -126,7 +125,8 @@ public class CustomMaterialGenerator extends SlimefunItem
     private int getProgress(Block b) {
         int progress;
         try {
-            progress = Integer.parseInt(Objects.requireNonNull(BlockStorage.getLocationInfo(b.getLocation(), "progress")));
+            progress =
+                    Integer.parseInt(Objects.requireNonNull(BlockStorage.getLocationInfo(b.getLocation(), "progress")));
         } catch (NumberFormatException | NullPointerException ex) {
             BlockStorage.addBlockInfo(b.getLocation(), "progress", "1");
             progress = 0;

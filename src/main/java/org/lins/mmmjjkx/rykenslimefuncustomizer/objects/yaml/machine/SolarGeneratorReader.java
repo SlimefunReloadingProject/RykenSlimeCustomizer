@@ -42,7 +42,9 @@ public class SolarGeneratorReader extends YamlReader<CustomSolarGenerator> {
         String recipeType = section.getString("recipe_type", "NULL");
 
         Pair<ExceptionHandler.HandleResult, RecipeType> rt = ExceptionHandler.getRecipeType(
-                "Found an error while loading solar generator " + s + " in addon " + addon.getAddonId() + ": Invalid recipe type '" + recipeType + "'!", recipeType);
+                "Found an error while loading solar generator " + s + " in addon " + addon.getAddonId()
+                        + ": Invalid recipe type '" + recipeType + "'!",
+                recipeType);
 
         if (rt.getFirstValue() == ExceptionHandler.HandleResult.FAILED) return null;
 
@@ -50,12 +52,14 @@ public class SolarGeneratorReader extends YamlReader<CustomSolarGenerator> {
         int nightEnergy = section.getInt("nightEnergy");
 
         if (dayEnergy < 1) {
-            ExceptionHandler.handleError("Found an error while loading solar generator " + s + " in addon " + addon.getAddonId() + ": " + "The day energy must be greater than 0");
+            ExceptionHandler.handleError("Found an error while loading solar generator " + s + " in addon "
+                    + addon.getAddonId() + ": " + "The day energy must be greater than 0");
             return null;
         }
 
         if (nightEnergy < 1) {
-            ExceptionHandler.handleError("Found an error while loading solar generator " + s + " in addon " + addon.getAddonId() + ": " + "The night energy must be greater than 0");
+            ExceptionHandler.handleError("Found an error while loading solar generator " + s + " in addon "
+                    + addon.getAddonId() + ": " + "The night energy must be greater than 0");
             return null;
         }
 
@@ -63,8 +67,8 @@ public class SolarGeneratorReader extends YamlReader<CustomSolarGenerator> {
         int lightLevel = section.getInt("lightLevel", 15);
 
         if (lightLevel < 0 || lightLevel > 15) {
-            ExceptionHandler.handleError(
-                    "Found an error while loading solar generator " + s + " in addon " + addon.getAddonId() + ": " + "The required light level is not between 0 and 15, using 15 instead");
+            ExceptionHandler.handleError("Found an error while loading solar generator " + s + " in addon "
+                    + addon.getAddonId() + ": " + "The required light level is not between 0 and 15, using 15 instead");
             lightLevel = 15;
         }
 
@@ -88,7 +92,8 @@ public class SolarGeneratorReader extends YamlReader<CustomSolarGenerator> {
         ItemStack stack = CommonUtils.readItem(item, false, addon);
 
         if (stack == null) {
-            ExceptionHandler.handleError("Found an error while loading solar generator " + s + " in addon " + addon.getAddonId() + ": " + "The item is null or has an invalid format");
+            ExceptionHandler.handleError("Found an error while loading solar generator " + s + " in addon "
+                    + addon.getAddonId() + ": " + "The item is null or has an invalid format");
             return null;
         }
 

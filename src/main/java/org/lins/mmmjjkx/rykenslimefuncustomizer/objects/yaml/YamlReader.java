@@ -115,7 +115,8 @@ public abstract class YamlReader<T> {
             String head = splits[0];
             if (head.equalsIgnoreCase("hasplugin")) {
                 if (splits.length != 2) {
-                    ExceptionHandler.handleError("Found invalid condition while reading register conditions in " + key + ": hasplugin only takes one argument");
+                    ExceptionHandler.handleError("Found invalid condition while reading register conditions in " + key
+                            + ": hasplugin only takes one argument");
                     continue;
                 }
                 boolean b = Bukkit.getPluginManager().isPluginEnabled(splits[1]);
@@ -127,19 +128,22 @@ public abstract class YamlReader<T> {
                 }
             } else if (head.equalsIgnoreCase("!hasplugin")) {
                 if (splits.length != 2) {
-                    ExceptionHandler.handleError("Found invalid condition while reading register conditions in " + key + ": !hasplugin only takes one argument");
+                    ExceptionHandler.handleError("Found invalid condition while reading register conditions in " + key
+                            + ": !hasplugin only takes one argument");
                     continue;
                 }
                 boolean b = Bukkit.getPluginManager().isPluginEnabled(splits[1]);
                 if (b) {
                     if (warn) {
-                        ExceptionHandler.handleError(key + "needs removing server plugin " + splits[1] + " to be registered(may have conflicts?)");
+                        ExceptionHandler.handleError(key + "needs removing server plugin " + splits[1]
+                                + " to be registered(may have conflicts?)");
                     }
                     return false;
                 }
             } else if (head.equalsIgnoreCase("version")) {
                 if (splits.length != 3) {
-                    ExceptionHandler.handleError("Found invalid condition while reading register conditions in " + key + ": version needs two arguments");
+                    ExceptionHandler.handleError("Found invalid condition while reading register conditions in " + key
+                            + ": version needs two arguments");
                     continue;
                 }
 
@@ -166,14 +170,16 @@ public abstract class YamlReader<T> {
                         match = current <= destination;
                     }
                     default -> {
-                        ExceptionHandler.handleError("Found invalid condition while reading register conditions in " + key + ": version needs a valid operator character!(>, <, >=, <=)");
+                        ExceptionHandler.handleError("Found invalid condition while reading register conditions in "
+                                + key + ": version needs a valid operator character!(>, <, >=, <=)");
                         continue;
                     }
                 }
 
                 if (!match) {
                     if (warn) {
-                        ExceptionHandler.handleError(key + "needs Minecraft version " + operation + splits[2] + " to be registered");
+                        ExceptionHandler.handleError(
+                                key + "needs Minecraft version " + operation + splits[2] + " to be registered");
                     }
                     return false;
                 }

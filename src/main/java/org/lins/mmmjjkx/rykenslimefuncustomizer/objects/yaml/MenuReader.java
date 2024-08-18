@@ -44,7 +44,8 @@ public class MenuReader extends YamlReader<CustomMenu> {
         int size = section.getInt("size", NOT_SET);
 
         if (section.contains("size") && size != NOT_SET && size % 9 != 0) {
-            ExceptionHandler.handleError("Found error in menu " + s + "in " + addon.getAddonId() + "addon: size must be a multiple of 9");
+            ExceptionHandler.handleError(
+                    "Found error in menu " + s + "in " + addon.getAddonId() + "addon: size must be a multiple of 9");
             return null;
         }
 
@@ -53,8 +54,8 @@ public class MenuReader extends YamlReader<CustomMenu> {
             String script = section.getString("script", "");
             File file = new File(addon.getScriptsFolder(), script + ".js");
             if (!file.exists()) {
-                ExceptionHandler.handleWarning(
-                        "Found error in menu " + s + "in " + addon.getAddonId() + "addon: cannot find script file " + file.getName() + "skipping script evaluation");
+                ExceptionHandler.handleWarning("Found error in menu " + s + "in " + addon.getAddonId()
+                        + "addon: cannot find script file " + file.getName() + "skipping script evaluation");
             } else {
                 eval = new JavaScriptEval(file, addon);
             }
@@ -67,8 +68,8 @@ public class MenuReader extends YamlReader<CustomMenu> {
                 CustomMenu menu =
                         CommonUtils.getIf(addon.getMenus(), m -> m.getId().equals(menuId));
                 if (menu == null) {
-                    ExceptionHandler.handleError(
-                            "Found error in menu " + s + "in " + addon.getAddonId() + "addon: cannot find menu " + menuId + " to import");
+                    ExceptionHandler.handleError("Found error in menu " + s + "in " + addon.getAddonId()
+                            + "addon: cannot find menu " + menuId + " to import");
                     return null;
                 } else {
                     return new CustomMenu(s, title, menu);
@@ -82,7 +83,8 @@ public class MenuReader extends YamlReader<CustomMenu> {
         Map<Integer, ItemStack> slotMap = new HashMap<>();
         ConfigurationSection slots = section.getConfigurationSection("slots");
         if (slots == null) {
-            ExceptionHandler.handleError("Found error in menu " + s + "in " + addon.getAddonId() + "addon: slots section is missing");
+            ExceptionHandler.handleError(
+                    "Found error in menu " + s + "in " + addon.getAddonId() + "addon: slots section is missing");
             return null;
         }
 
@@ -92,14 +94,15 @@ public class MenuReader extends YamlReader<CustomMenu> {
             try {
                 int realSlot = Integer.parseInt(slot);
                 if (realSlot > 53 || realSlot < 0) {
-                    ExceptionHandler.handleWarning(
-                            "There's a slot in menu " + s + "in " + addon.getAddonId() + "addon that is out of range(0-53), skipping it.");
+                    ExceptionHandler.handleWarning("There's a slot in menu " + s + "in " + addon.getAddonId()
+                            + "addon that is out of range(0-53), skipping it.");
                     continue;
                 }
                 ConfigurationSection item = slots.getConfigurationSection(slot);
                 ItemStack itemStack = CommonUtils.readItem(item, true, addon);
                 if (itemStack == null) {
-                    ExceptionHandler.handleWarning("Found error in menu " + s + "in " + addon.getAddonId() + "addon: cannot read item in slot " + slot + ", skipping it.");
+                    ExceptionHandler.handleWarning("Found error in menu " + s + "in " + addon.getAddonId()
+                            + "addon: cannot read item in slot " + slot + ", skipping it.");
                     continue;
                 }
                 if (item.getBoolean("progressbar", false)) {
@@ -121,26 +124,27 @@ public class MenuReader extends YamlReader<CustomMenu> {
             } catch (NumberFormatException e) {
                 String[] range = slot.split("-");
                 if (range.length != 2) {
-                    ExceptionHandler.handleError(
-                            "Found error in menu " + s + "in " + addon.getAddonId() + "addon: invalid slot number range " + slot + ", skipping it.");
+                    ExceptionHandler.handleError("Found error in menu " + s + "in " + addon.getAddonId()
+                            + "addon: invalid slot number range " + slot + ", skipping it.");
                     continue;
                 }
                 if (Integer.parseInt(range[0]) > Integer.parseInt(range[1])) {
-                    ExceptionHandler.handleError(
-                            "Found error in menu " + s + "in " + addon.getAddonId() + "addon: invalid slot number range " + slot + ", skipping it.");
+                    ExceptionHandler.handleError("Found error in menu " + s + "in " + addon.getAddonId()
+                            + "addon: invalid slot number range " + slot + ", skipping it.");
                     continue;
                 }
                 ConfigurationSection item = slots.getConfigurationSection(slot);
                 ItemStack stack = CommonUtils.readItem(item, true, addon);
                 if (stack == null) {
-                    ExceptionHandler.handleWarning("Found error in menu " + s + "in " + addon.getAddonId() + "addon: cannot read item in slot " + slot + ", skipping it.");
+                    ExceptionHandler.handleWarning("Found error in menu " + s + "in " + addon.getAddonId()
+                            + "addon: cannot read item in slot " + slot + ", skipping it.");
                     continue;
                 }
                 IntStream intStream = IntStream.rangeClosed(Integer.parseInt(range[0]), Integer.parseInt(range[1]));
                 intStream.forEach(i -> {
                     if (i > 53 || i < 0) {
-                        ExceptionHandler.handleWarning(
-                                "There's a slot in menu " + s + "in " + addon.getAddonId() + "addon that is out of range(0-53), skipping it.");
+                        ExceptionHandler.handleWarning("There's a slot in menu " + s + "in " + addon.getAddonId()
+                                + "addon that is out of range(0-53), skipping it.");
                         return;
                     }
                     slotMap.put(i, stack);

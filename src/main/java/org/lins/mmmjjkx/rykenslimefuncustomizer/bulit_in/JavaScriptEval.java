@@ -13,7 +13,6 @@ import java.io.File;
 import java.io.IOException;
 import java.util.logging.FileHandler;
 import javax.script.ScriptException;
-
 import me.mrCookieSlime.Slimefun.api.BlockStorage;
 import me.mrCookieSlime.Slimefun.api.inventory.BlockMenu;
 import org.graalvm.polyglot.Context;
@@ -112,7 +111,8 @@ public class JavaScriptEval extends ScriptEval {
         try {
             return jsEngine.invokeFunction(funName, args);
         } catch (ScriptException e) {
-            ExceptionHandler.handleError("Exception occurred while evaluating file: " + getFile().getName());
+            ExceptionHandler.handleError(
+                    "Exception occurred while evaluating file: " + getFile().getName());
             e.printStackTrace();
         } catch (NoSuchMethodException ignored) {
         }

@@ -43,13 +43,16 @@ public class CapacitorsReader extends YamlReader<Capacitor> {
         String recipeType = section.getString("recipe_type", "NULL");
 
         Pair<ExceptionHandler.HandleResult, RecipeType> rt = ExceptionHandler.getRecipeType(
-                "Found an error while loading capacitor " + s + " in addon " + addon.getAddonId() + ": Invalid recipe type '" + recipeType + "'!", recipeType);
+                "Found an error while loading capacitor " + s + " in addon " + addon.getAddonId()
+                        + ": Invalid recipe type '" + recipeType + "'!",
+                recipeType);
 
         if (rt.getFirstValue() == ExceptionHandler.HandleResult.FAILED) return null;
 
         int capacity = section.getInt("capacity");
         if (capacity < 1) {
-            ExceptionHandler.handleError("Found an error while loading capacitor " + s + " in addon " + addon.getAddonId() + ": " + "Capacity must be at least 1");
+            ExceptionHandler.handleError("Found an error while loading capacitor " + s + " in addon "
+                    + addon.getAddonId() + ": " + "Capacity must be at least 1");
             return null;
         }
 
@@ -73,12 +76,14 @@ public class CapacitorsReader extends YamlReader<Capacitor> {
         ItemStack stack = CommonUtils.readItem(item, false, addon);
 
         if (stack == null) {
-            ExceptionHandler.handleError("Found an error while loading capacitor " + id + " in addon " + addon.getAddonId() + ": " + "The item is null or has an invalid format");
+            ExceptionHandler.handleError("Found an error while loading capacitor " + id + " in addon "
+                    + addon.getAddonId() + ": " + "The item is null or has an invalid format");
             return null;
         }
 
         if (!stack.getType().isBlock()) {
-            ExceptionHandler.handleError("Found an error while loading capacitor " + id + " in addon " + addon.getAddonId() + ": " + "The item's material type must be a placeable block");
+            ExceptionHandler.handleError("Found an error while loading capacitor " + id + " in addon "
+                    + addon.getAddonId() + ": " + "The item's material type must be a placeable block");
             return null;
         }
 

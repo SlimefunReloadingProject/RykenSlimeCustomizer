@@ -56,14 +56,16 @@ public final class ProjectAddonManager {
         for (File folder : folders) {
             File info = new File(folder, Constants.INFO_FILE);
             if (!info.exists()) {
-                ExceptionHandler.handleError("A folder called " + folder.getName() + " contains invalid addon information，The addon will not be loaded！");
+                ExceptionHandler.handleError("A folder called " + folder.getName()
+                        + " contains invalid addon information，The addon will not be loaded！");
                 notMatchTemplate.add(folder.getName());
                 continue;
             }
             YamlConfiguration infoConfig = YamlConfiguration.loadConfiguration(info);
             String id = infoConfig.getString("id");
             if (id == null || id.isBlank()) {
-                ExceptionHandler.handleError("A folder called " + folder.getName() + " contains invalid addon information that does not have an ID，The addon will not be loaded！");
+                ExceptionHandler.handleError("A folder called " + folder.getName()
+                        + " contains invalid addon information that does not have an ID，The addon will not be loaded！");
                 notMatchTemplate.add(folder.getName());
                 continue;
             }
@@ -71,7 +73,8 @@ public final class ProjectAddonManager {
             if (projectIds.containsKey(id)) {
                 ProjectAddon addon = projectAddons.get(id);
                 if (addon == null) {
-                    ExceptionHandler.handleError("Cannot load addon with ID " + id + " normally! Please check the addon's configuration file！");
+                    ExceptionHandler.handleError("Cannot load addon with ID " + id
+                            + " normally! Please check the addon's configuration file！");
                     continue;
                 }
 
@@ -79,7 +82,8 @@ public final class ProjectAddonManager {
                     continue;
                 }
 
-                ExceptionHandler.handleError("A folder called " + folder.getName() + "has the same ID with " + addon.getFolder().getName() + "，The addon will not be loaded！");
+                ExceptionHandler.handleError("A folder called " + folder.getName() + "has the same ID with "
+                        + addon.getFolder().getName() + "，The addon will not be loaded！");
                 notMatchTemplate.add(folder.getName());
                 continue;
             }

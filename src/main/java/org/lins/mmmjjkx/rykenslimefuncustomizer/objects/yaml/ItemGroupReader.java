@@ -37,7 +37,8 @@ public class ItemGroupReader extends YamlReader<ItemGroup> {
         ConfigurationSection item = section.getConfigurationSection("item");
         ItemStack stack = CommonUtils.readItem(item, false, addon);
         if (stack == null) {
-            ExceptionHandler.handleError("Found error while loading recipe type " + s + " in " + addon.getAddonId() + " addon: Item is null or has invalid format.");
+            ExceptionHandler.handleError("Found error while loading recipe type " + s + " in " + addon.getAddonId()
+                    + " addon: Item is null or has invalid format.");
             return null;
         }
 
@@ -57,14 +58,14 @@ public class ItemGroupReader extends YamlReader<ItemGroup> {
                                 .equals(parent));
                         if (raw == null) {
                             ExceptionHandler.handleError(
-                                    "Found error while loading item group " + s + " in " + addon.getAddonId() + " addon: " + "the parent group " + parent.getKey() + " not found."
-                            );
+                                    "Found error while loading item group " + s + " in " + addon.getAddonId()
+                                            + " addon: " + "the parent group " + parent.getKey() + " not found.");
                             yield null;
                         }
                         if (!(raw instanceof NestedItemGroup nig)) {
-                            ExceptionHandler.handleError(
-                                    "Found error while loading item group " + s + " in " + addon.getAddonId() + " addon: " + "the parent group " + parent.getKey() + " is not a nested group."
-                            );
+                            ExceptionHandler.handleError("Found error while loading item group " + s + " in "
+                                    + addon.getAddonId() + " addon: " + "the parent group " + parent.getKey()
+                                    + " is not a nested group.");
                             yield null;
                         }
 
@@ -75,9 +76,9 @@ public class ItemGroupReader extends YamlReader<ItemGroup> {
                         for (String ig : section.getStringList("parents")) {
                             NamespacedKey nk = NamespacedKey.fromString(ig);
                             if (nk == null) {
-                                ExceptionHandler.handleWarning(
-                                        "Found error while loading item group " + s + " in " + addon.getAddonId() + " addon: " + "the parent group " + ig + " is not a valid NamespacedKey. Skipping."
-                                );
+                                ExceptionHandler.handleWarning("Found error while loading item group " + s + " in "
+                                        + addon.getAddonId() + " addon: " + "the parent group " + ig
+                                        + " is not a valid NamespacedKey. Skipping.");
                                 continue;
                             }
                             parents.add(nk);
@@ -98,15 +99,15 @@ public class ItemGroupReader extends YamlReader<ItemGroup> {
                                 .equals(parent));
                         if (raw == null) {
                             ExceptionHandler.handleError(
-                                    "Found error while loading item group " + s + " in " + addon.getAddonId() + " addon: " + "the parent group " + parent.getKey() + " not found."
-                            );
+                                    "Found error while loading item group " + s + " in " + addon.getAddonId()
+                                            + " addon: " + "the parent group " + parent.getKey() + " not found.");
                             yield null;
                         }
 
                         if (!(raw instanceof AdvancedNestedItemGroup nig)) {
-                            ExceptionHandler.handleError(
-                                    "Found error while loading item group " + s + " in " + addon.getAddonId() + " addon: " + "the parent group " + parent.getKey() + " is not a nested group from RykenSlimeCustomizer."
-                            );
+                            ExceptionHandler.handleError("Found error while loading item group " + s + " in "
+                                    + addon.getAddonId() + " addon: " + "the parent group " + parent.getKey()
+                                    + " is not a nested group from RykenSlimeCustomizer.");
                             yield null;
                         }
 

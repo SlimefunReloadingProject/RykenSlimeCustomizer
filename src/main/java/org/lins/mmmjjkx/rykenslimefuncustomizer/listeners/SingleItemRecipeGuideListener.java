@@ -185,7 +185,11 @@ public class SingleItemRecipeGuideListener implements Listener {
 
                 profile.ifPresent(prof -> addItem(
                         0,
-                        ChestMenuUtils.getBackButton(p, "", "&fLeft click: &7back to previous page", "&fShift + left click: &7back to the main menu"),
+                        ChestMenuUtils.getBackButton(
+                                p,
+                                "",
+                                "&fLeft click: &7back to previous page",
+                                "&fShift + left click: &7back to the main menu"),
                         (pl, s, is, action) -> {
                             SurvivalSlimefunGuide guide = new SurvivalSlimefunGuide(false, false);
                             GuideHistory history = prof.getGuideHistory();
@@ -233,7 +237,10 @@ public class SingleItemRecipeGuideListener implements Listener {
                             ItemStack chanceOutput = originalOutput.clone();
                             if (chance < 100) {
                                 CommonUtils.addLore(
-                                        chanceOutput, true, CMIChatColor.translate("&aThere's a &b " + chance + "% &aprobability of producing"));
+                                        chanceOutput,
+                                        true,
+                                        CMIChatColor.translate(
+                                                "&aThere's a &b " + chance + "% &aprobability of producing"));
                             }
 
                             if (chance > 0) {
@@ -274,7 +281,8 @@ public class SingleItemRecipeGuideListener implements Listener {
 
         private ItemStack tagOutputChance(ItemStack item, int chance) {
             item = item.clone();
-            CommonUtils.addLore(item, true, CMIChatColor.translate("&aThere's a &b " + chance + "% &aprobability of producing"));
+            CommonUtils.addLore(
+                    item, true, CMIChatColor.translate("&aThere's a &b " + chance + "% &aprobability of producing"));
             return item;
         }
     }
@@ -360,7 +368,10 @@ public class SingleItemRecipeGuideListener implements Listener {
                         ItemStack chanceOutput = originalOutput.clone();
                         if (chance < 100) {
                             CommonUtils.addLore(
-                                    chanceOutput, true, CMIChatColor.translate("&aThere's a &b " + chance + "% &aprobability of producing"));
+                                    chanceOutput,
+                                    true,
+                                    CMIChatColor.translate(
+                                            "&aThere's a &b " + chance + "% &aprobability of producing"));
                         }
 
                         if (chance > 0) {
@@ -394,7 +405,8 @@ public class SingleItemRecipeGuideListener implements Listener {
 
         private ItemStack tagOutputChance(ItemStack item, int chance) {
             item = item.clone();
-            CommonUtils.addLore(item, true, CMIChatColor.translate("&aThere's a &b " + chance + "% &aprobability of producing"));
+            CommonUtils.addLore(
+                    item, true, CMIChatColor.translate("&aThere's a &b " + chance + "% &aprobability of producing"));
             return item;
         }
     }

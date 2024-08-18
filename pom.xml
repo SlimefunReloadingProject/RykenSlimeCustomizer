@@ -133,6 +133,7 @@
 			<version>2.11.5</version>
 			<scope>provided</scope>
 		</dependency>
+
 		<dependency>
 			<groupId>org.graalvm.js</groupId>
 			<artifactId>js-scriptengine</artifactId>
@@ -151,6 +152,13 @@
 			<version>1.14.6</version>
 			<scope>provided</scope>
 		</dependency>
+		<dependency>
+			<groupId>org.apache.httpcomponents.client5</groupId>
+			<artifactId>httpclient5</artifactId>
+			<version>5.3.1</version>
+			<scope>provided</scope>
+		</dependency>
+
 		<dependency>
 			<groupId>io.papermc.paper</groupId>
 			<artifactId>paper-api</artifactId>

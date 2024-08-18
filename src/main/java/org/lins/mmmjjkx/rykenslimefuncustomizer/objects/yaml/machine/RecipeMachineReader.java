@@ -43,7 +43,9 @@ public class RecipeMachineReader extends YamlReader<CustomRecipeMachine> {
         String recipeType = section.getString("recipe_type", "NULL");
 
         Pair<ExceptionHandler.HandleResult, RecipeType> rt = ExceptionHandler.getRecipeType(
-                "Found an error while loading recipe machine " + s + " in addon " + addon.getAddonId() + ": Invalid recipe type '" + recipeType + "'!", recipeType);
+                "Found an error while loading recipe machine " + s + " in addon " + addon.getAddonId()
+                        + ": Invalid recipe type '" + recipeType + "'!",
+                recipeType);
 
         if (rt.getFirstValue() == ExceptionHandler.HandleResult.FAILED) return null;
 
@@ -53,12 +55,14 @@ public class RecipeMachineReader extends YamlReader<CustomRecipeMachine> {
         List<Integer> output = section.getIntegerList("output");
 
         if (input.isEmpty()) {
-            ExceptionHandler.handleError("Found an error while loading recipe machine " + s + " in addon " + addon.getAddonId() + ": There's must be at least one input slots!");
+            ExceptionHandler.handleError("Found an error while loading recipe machine " + s + " in addon "
+                    + addon.getAddonId() + ": There's must be at least one input slots!");
             return null;
         }
 
         if (output.isEmpty()) {
-            ExceptionHandler.handleError("Found an error while loading recipe machine " + s + " in addon " + addon.getAddonId() + ": There's must be at least one output slot!");
+            ExceptionHandler.handleError("Found an error while loading recipe machine " + s + " in addon "
+                    + addon.getAddonId() + ": There's must be at least one output slot!");
             return null;
         }
 
@@ -67,23 +71,24 @@ public class RecipeMachineReader extends YamlReader<CustomRecipeMachine> {
         int capacity = section.getInt("capacity");
 
         if (capacity < 0) {
-            ExceptionHandler.handleError("Found an error while loading recipe machine " + s + " in addon " + addon.getAddonId() + ": Capacity must be greater than or equal to 0!");
+            ExceptionHandler.handleError("Found an error while loading recipe machine " + s + " in addon "
+                    + addon.getAddonId() + ": Capacity must be greater than or equal to 0!");
             return null;
         }
 
         int energy = section.getInt("energyPerCraft");
 
         if (energy <= 0) {
-            ExceptionHandler.handleError(
-                    "Found an error while loading recipe machine " + s + "in addon " + addon.getAddonId() + ": Energy per craft must be greater than 0!");
+            ExceptionHandler.handleError("Found an error while loading recipe machine " + s + "in addon "
+                    + addon.getAddonId() + ": Energy per craft must be greater than 0!");
             return null;
         }
 
         int speed = section.getInt("speed");
 
         if (speed <= 0) {
-            ExceptionHandler.handleError(
-                    "Found an error while loading recipe machine " + s + " in addon " + addon.getAddonId() + ": Speed must be greater than 0!");
+            ExceptionHandler.handleError("Found an error while loading recipe machine " + s + " in addon "
+                    + addon.getAddonId() + ": Speed must be greater than 0!");
             return null;
         }
 
@@ -112,7 +117,8 @@ public class RecipeMachineReader extends YamlReader<CustomRecipeMachine> {
         ItemStack stack = CommonUtils.readItem(item, false, addon);
 
         if (stack == null) {
-            ExceptionHandler.handleError("Found an error while loading recipe machine " + s + " in addon " + addon.getAddonId() + ": " + "The item is null or has an invalid format");
+            ExceptionHandler.handleError("Found an error while loading recipe machine " + s + " in addon "
+                    + addon.getAddonId() + ": " + "The item is null or has an invalid format");
             return null;
         }
 
@@ -131,26 +137,26 @@ public class RecipeMachineReader extends YamlReader<CustomRecipeMachine> {
             if (recipes == null) continue;
             int seconds = recipes.getInt("seconds");
             if (seconds < 0) {
-                ExceptionHandler.handleError(
-                        "Found an error while loading recipe machine " + s + "'s recipe " + key + " in addon " + addon.getAddonId() + ": " + "Seconds must be greater than or equal to 0!");
+                ExceptionHandler.handleError("Found an error while loading recipe machine " + s + "'s recipe " + key
+                        + " in addon " + addon.getAddonId() + ": " + "Seconds must be greater than or equal to 0!");
                 continue;
             }
             ConfigurationSection inputs = recipes.getConfigurationSection("input");
             if (inputs == null) {
-                ExceptionHandler.handleError(
-                        "Found an error while loading recipe machine " + s + "'s recipe " + key + " in addon " + addon.getAddonId() + ": " + "There's must be at least one input!");
+                ExceptionHandler.handleError("Found an error while loading recipe machine " + s + "'s recipe " + key
+                        + " in addon " + addon.getAddonId() + ": " + "There's must be at least one input!");
                 continue;
             }
             ItemStack[] input = CommonUtils.readRecipe(inputs, addon, inputSize);
             if (input == null) {
-                ExceptionHandler.handleError(
-                        "Found an error while loading recipe machine " + s + "'s recipe " + key + " in addon " + addon.getAddonId() + ": " + "Input items is null or has an invalid format!");
+                ExceptionHandler.handleError("Found an error while loading recipe machine " + s + "'s recipe " + key
+                        + " in addon " + addon.getAddonId() + ": " + "Input items is null or has an invalid format!");
                 continue;
             }
             ConfigurationSection outputs = recipes.getConfigurationSection("output");
             if (outputs == null) {
-                ExceptionHandler.handleError(
-                        "Found an error while loading recipe machine " + s + "'s recipe " + key + " in addon " + addon.getAddonId() + ": " + "There's must be at least one output!");
+                ExceptionHandler.handleError("Found an error while loading recipe machine " + s + "'s recipe " + key
+                        + " in addon " + addon.getAddonId() + ": " + "There's must be at least one output!");
                 continue;
             }
 
@@ -164,7 +170,9 @@ public class RecipeMachineReader extends YamlReader<CustomRecipeMachine> {
                     int chance = section1.getInt("chance", 100);
 
                     if (chance < 1) {
-                        ExceptionHandler.handleError("Found an error while loading recipe machine " + s + "'s recipe " + key + " in addon " + addon.getAddonId() + ": " + "Chance must be greater than or equal to 1! Using 1 instead.");
+                        ExceptionHandler.handleError("Found an error while loading recipe machine " + s + "'s recipe "
+                                + key + " in addon " + addon.getAddonId() + ": "
+                                + "Chance must be greater than or equal to 1! Using 1 instead.");
                         chance = 1;
                     }
 

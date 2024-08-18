@@ -92,7 +92,8 @@ public class MainCommand implements TabExecutor {
 
                 YamlConfiguration forId = YamlConfiguration.loadConfiguration(new File(file, "info.yml"));
                 if (forId.getString("id", null) == null) {
-                    sender.sendMessage(CMIChatColor.translate("&4Couldn't find the id in the info.yml! Check if the addon is valid!"));
+                    sender.sendMessage(CMIChatColor.translate(
+                            "&4Couldn't find the id in the info.yml! Check if the addon is valid!"));
                     return false;
                 }
 
@@ -267,7 +268,8 @@ public class MainCommand implements TabExecutor {
                 YamlConfiguration config = YamlConfiguration.loadConfiguration(file);
                 ItemStack item = config.getItemStack("item");
                 if (item == null) {
-                    sender.sendMessage(CMIChatColor.translate("&4Couldn't find the item in the file! Check if the file is valid!"));
+                    sender.sendMessage(CMIChatColor.translate(
+                            "&4Couldn't find the item in the file! Check if the file is valid!"));
                     return false;
                 }
 

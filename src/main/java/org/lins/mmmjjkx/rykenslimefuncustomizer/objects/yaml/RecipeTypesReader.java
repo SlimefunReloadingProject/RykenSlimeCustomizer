@@ -24,7 +24,8 @@ public class RecipeTypesReader extends YamlReader<RecipeType> {
 
         ItemStack item = CommonUtils.readItem(configurationSection, false, addon);
         if (item == null) {
-            ExceptionHandler.handleError("Found error while loading recipe type " + s + " in " + addon.getAddonId() + " addon: Item is null or has invalid format.");
+            ExceptionHandler.handleError("Found error while loading recipe type " + s + " in " + addon.getAddonId()
+                    + " addon: Item is null or has invalid format.");
             return null;
         }
 
