@@ -11,8 +11,10 @@ import org.bukkit.event.player.*;
 import org.bukkit.event.weather.LightningStrikeEvent;
 import org.bukkit.event.weather.ThunderChangeEvent;
 import org.bukkit.event.weather.WeatherChangeEvent;
+import org.bukkit.event.world.PortalCreateEvent;
 import org.lins.mmmjjkx.rykenslimefuncustomizer.RykenSlimefunCustomizer;
 import org.lins.mmmjjkx.rykenslimefuncustomizer.objects.global.ScriptableListeners;
+import org.spigotmc.event.entity.EntityMountEvent;
 
 public class ScriptableEventListener implements Listener {
     public ScriptableEventListener() {
@@ -336,6 +338,71 @@ public class ScriptableEventListener implements Listener {
 
     @EventHandler
     public void onPlayerSwapHandItems(PlayerSwapHandItemsEvent e) {
+        ScriptableListeners.getScriptableListeners().forEach(o -> o.doEventEval(e));
+    }
+
+    @EventHandler
+    public void onEntityDamage(EntityDamageEvent e) {
+        ScriptableListeners.getScriptableListeners().forEach(o -> o.doEventEval(e));
+    }
+
+    @EventHandler
+    public void onCreeperPower(CreeperPowerEvent e) {
+        ScriptableListeners.getScriptableListeners().forEach(o -> o.doEventEval(e));
+    }
+
+    @EventHandler
+    public void onEntityTarget(EntityTargetEvent e) {
+        ScriptableListeners.getScriptableListeners().forEach(o -> o.doEventEval(e));
+    }
+
+    @EventHandler
+    public void onEntityRegainHealth(EntityRegainHealthEvent e) {
+        ScriptableListeners.getScriptableListeners().forEach(o -> o.doEventEval(e));
+    }
+
+    @EventHandler
+    public void onEntityResurrect(EntityResurrectEvent e) {
+        ScriptableListeners.getScriptableListeners().forEach(o -> o.doEventEval(e));
+    }
+
+    @EventHandler
+    public void onEntityInteract(EntityInteractEvent e) {
+        ScriptableListeners.getScriptableListeners().forEach(o -> o.doEventEval(e));
+    }
+
+    @EventHandler
+    public void onEntityTame(EntityTameEvent e) {
+        ScriptableListeners.getScriptableListeners().forEach(o -> o.doEventEval(e));
+    }
+
+    @EventHandler
+    public void onEntityAirChange(EntityAirChangeEvent e) {
+        ScriptableListeners.getScriptableListeners().forEach(o -> o.doEventEval(e));
+    }
+
+    @EventHandler
+    public void onPortalCreate(PortalCreateEvent e) {
+        ScriptableListeners.getScriptableListeners().forEach(o -> o.doEventEval(e));
+    }
+
+    @EventHandler
+    public void onEntityMount(EntityMountEvent e) {
+        ScriptableListeners.getScriptableListeners().forEach(o -> o.doEventEval(e));
+    }
+
+    @EventHandler
+    public void onExpBottle(ExpBottleEvent e) {
+        ScriptableListeners.getScriptableListeners().forEach(o -> o.doEventEval(e));
+    }
+
+    @EventHandler
+    public void onFoodLevelChange(FoodLevelChangeEvent e) {
+        ScriptableListeners.getScriptableListeners().forEach(o -> o.doEventEval(e));
+    }
+
+    @EventHandler
+    public void onPiglinBarter(PiglinBarterEvent e) {
         ScriptableListeners.getScriptableListeners().forEach(o -> o.doEventEval(e));
     }
 }
