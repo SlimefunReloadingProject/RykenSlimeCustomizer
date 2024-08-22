@@ -6,7 +6,7 @@
 
 	<groupId>org.lins.mmmjjkx</groupId>
 	<artifactId>RykenSlimefunCustomizer</artifactId>
-	<version>1.4.2</version>
+	<version>1.4.3-SNAPSHOT</version>
 	<packaging>jar</packaging>
 
 	<name>RykenSlimefunCustomizer</name>
@@ -79,14 +79,13 @@
 
 	<repositories>
 		<repository>
-			<id>jitpack</id>
-			<url>https://jitpack.io</url>
-		</repository>
-		<repository>
 			<id>AlessioDP</id>
 			<url>https://repo.alessiodp.com/releases/</url>
 		</repository>
-
+		<repository>
+			<id>jitpack</id>
+			<url>https://jitpack.io</url>
+		</repository>
 		<repository>
 			<id>minebench-repo</id>
 			<url>https://repo.minebench.de/</url>
@@ -128,24 +127,27 @@
 		</dependency>
 
 		<dependency>
+			<groupId>net.guizhanss</groupId>
+			<artifactId>GuizhanLibPlugin</artifactId>
+			<version>1.7.6</version>
+			<scope>provided</scope>
+		</dependency>
+
+		<dependency>
 			<groupId>me.clip</groupId>
 			<artifactId>placeholderapi</artifactId>
 			<version>2.11.5</version>
 			<scope>provided</scope>
 		</dependency>
 
+		<!-- 49MB heavy thing-->
 		<dependency>
-			<groupId>org.graalvm.js</groupId>
-			<artifactId>js-scriptengine</artifactId>
-			<version>24.0.2</version>
+			<groupId>com.caoccao.javet</groupId>
+			<artifactId>javet</artifactId>
+			<version>3.1.4</version>
 			<scope>provided</scope>
 		</dependency>
-		<dependency>
-			<groupId>org.graalvm.js</groupId>
-			<artifactId>js</artifactId>
-			<version>23.0.5</version>
-			<scope>provided</scope>
-		</dependency>
+
 		<dependency>
 			<groupId>net.bytebuddy</groupId>
 			<artifactId>byte-buddy</artifactId>
@@ -174,7 +176,7 @@
 		<dependency>
 			<groupId>de.tr7zw</groupId>
 			<artifactId>item-nbt-api-plugin</artifactId>
-			<version>2.13.1</version>
+			<version>2.13.2</version>
 			<scope>provided</scope>
 		</dependency>
 	</dependencies>

@@ -3,6 +3,7 @@ package org.lins.mmmjjkx.rykenslimefuncustomizer.utils;
 import java.util.HashMap;
 import java.util.Map;
 import java.util.function.Function;
+
 import net.bytebuddy.ByteBuddy;
 import net.bytebuddy.dynamic.DynamicType;
 import org.jetbrains.annotations.Nullable;

@@ -1,5 +1,8 @@
 package org.lins.mmmjjkx.rykenslimefuncustomizer.objects.customs.machine;
 
+import com.caoccao.javet.annotations.V8Function;
+import com.caoccao.javet.annotations.V8Property;
+import com.caoccao.javet.exceptions.JavetException;
 import io.github.thebusybiscuit.slimefun4.api.items.ItemGroup;
 import io.github.thebusybiscuit.slimefun4.api.items.SlimefunItem;
 import io.github.thebusybiscuit.slimefun4.api.items.SlimefunItemStack;
@@ -9,7 +12,7 @@ import io.github.thebusybiscuit.slimefun4.core.machines.MachineOperation;
 import io.github.thebusybiscuit.slimefun4.core.machines.MachineProcessor;
 import java.util.Collections;
 import java.util.List;
-import java.util.function.Consumer;
+
 import lombok.Getter;
 import me.mrCookieSlime.CSCoreLibPlugin.Configuration.Config;
 import me.mrCookieSlime.CSCoreLibPlugin.general.Inventory.ChestMenu;
@@ -23,6 +26,7 @@ import org.bukkit.event.block.BlockPlaceEvent;
 import org.bukkit.inventory.ItemStack;
 import org.jetbrains.annotations.NotNull;
 import org.jetbrains.annotations.Nullable;
+import org.lins.mmmjjkx.rykenslimefuncustomizer.bulit_in.JavaScriptEval;
 import org.lins.mmmjjkx.rykenslimefuncustomizer.objects.customs.CustomMenu;
 import org.lins.mmmjjkx.rykenslimefuncustomizer.objects.customs.parent.AbstractEmptyMachine;
 import org.lins.mmmjjkx.rykenslimefuncustomizer.objects.machine.ScriptedEvalBreakHandler;
@@ -30,7 +34,6 @@ import org.lins.mmmjjkx.rykenslimefuncustomizer.objects.machine.SmallerMachineIn
 import org.lins.mmmjjkx.rykenslimefuncustomizer.objects.script.ScriptEval;
 import org.lins.mmmjjkx.rykenslimefuncustomizer.objects.script.lambda.RSCClickHandler;
 
-@SuppressWarnings("deprecation")
 public class CustomNoEnergyMachine extends AbstractEmptyMachine<MachineOperation> {
     private final List<Integer> input;
     private final List<Integer> output;
@@ -72,8 +75,11 @@ public class CustomNoEnergyMachine extends AbstractEmptyMachine<MachineOperation
         this.menu = menu;
 
         if (eval != null) {
-            this.eval.addThing("setWorking", (Consumer<Boolean>) b -> eval.addThing("working", b));
-            this.eval.addThing("working", false);
+            try {
+                ((JavaScriptEval) eval).getGlobalObject().bind(this);
+            } catch (JavetException e) {
+                throw new RuntimeException(e);
+            }
 
             eval.doInit();
 
@@ -95,7 +101,7 @@ public class CustomNoEnergyMachine extends AbstractEmptyMachine<MachineOperation
                         @Override
                         public void mainFunction(Player player, int slot, ItemStack itemStack, ClickAction action) {
                             if (eval != null) {
-                                eval.addThing("working", true);
+                                setWorking(true);
                             }
                         }
 
@@ -112,6 +118,18 @@ public class CustomNoEnergyMachine extends AbstractEmptyMachine<MachineOperation
 
             createPreset(this, menu::apply);
         }
+    }
+
+    private boolean working = false;
+
+    @V8Function(name = "setWorking")
+    public void setWorking(boolean working) {
+        this.working = working;
+    }
+
+    @V8Property(name = "working")
+    public boolean isWorking() {
+        return working;
     }
 
     @Override

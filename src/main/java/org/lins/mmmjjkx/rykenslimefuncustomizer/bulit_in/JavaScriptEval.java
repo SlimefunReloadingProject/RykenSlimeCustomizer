@@ -1,23 +1,16 @@
 package org.lins.mmmjjkx.rykenslimefuncustomizer.bulit_in;
 
+import com.caoccao.javet.interop.V8Runtime;
 import com.google.errorprone.annotations.CanIgnoreReturnValue;
-import com.oracle.truffle.api.TruffleLanguage;
-import com.oracle.truffle.js.lang.JavaScriptLanguage;
-import com.oracle.truffle.js.runtime.JSRealm;
-import com.oracle.truffle.js.scriptengine.GraalJSScriptEngine;
 import io.github.thebusybiscuit.slimefun4.api.items.SlimefunItem;
 import io.github.thebusybiscuit.slimefun4.implementation.SlimefunItems;
 import io.github.thebusybiscuit.slimefun4.libraries.dough.data.persistent.PersistentDataAPI;
 import io.github.thebusybiscuit.slimefun4.utils.SlimefunUtils;
 import java.io.File;
-import java.io.IOException;
-import java.util.logging.FileHandler;
-import javax.script.ScriptException;
+
 import me.mrCookieSlime.Slimefun.api.BlockStorage;
+
 import me.mrCookieSlime.Slimefun.api.inventory.BlockMenu;
-import org.graalvm.polyglot.Context;
-import org.graalvm.polyglot.PolyglotAccess;
-import org.graalvm.polyglot.io.IOAccess;
 import org.jetbrains.annotations.NotNull;
 import org.jetbrains.annotations.Nullable;
 import org.lins.mmmjjkx.rykenslimefuncustomizer.objects.ProjectAddon;
@@ -25,64 +18,64 @@ import org.lins.mmmjjkx.rykenslimefuncustomizer.objects.script.ScriptEval;
 import org.lins.mmmjjkx.rykenslimefuncustomizer.utils.ExceptionHandler;
 
 public class JavaScriptEval extends ScriptEval {
-    private final ProjectAddon addon;
 
-    private GraalJSScriptEngine jsEngine;
-    private FileHandler log;
+    private V8Runtime jsEngine;
 
     public JavaScriptEval(@NotNull File js, ProjectAddon addon) {
         super(js);
 
-        this.addon = addon;
-
         reSetup();
-        setup();
+        //setup();
         contextInit();
 
         addon.getScriptEvals().add(this);
     }
 
     private void advancedSetup() {
-        JSRealm realm = JavaScriptLanguage.getJSRealm(jsEngine.getPolyglotContext());
-        TruffleLanguage.Env env = realm.getEnv();
-
-        addThing("SlimefunItems", env.asHostSymbol(SlimefunItems.class));
-        addThing("SlimefunItem", env.asHostSymbol(SlimefunItem.class));
-        addThing("BlockStorage", env.asHostSymbol(BlockStorage.class));
-        addThing("SlimefunUtils", env.asHostSymbol(SlimefunUtils.class));
-        addThing("BlockMenu", env.asHostSymbol(BlockMenu.class));
-        addThing("PersistentDataAPI", env.asHostSymbol(PersistentDataAPI.class));
-    }
-
-    private FileHandler createLogFileHandler(ProjectAddon addon) {
-        File dir = new File(addon.getScriptsFolder(), "logs");
-        if (!dir.exists()) {
-            dir.mkdirs();
-        }
-
-        File dest = new File(dir, getFile().getName() + "-%g.log");
-
-        try {
-            return new FileHandler(dest.getAbsolutePath());
-        } catch (IOException e) {
-            throw new RuntimeException(e);
-        }
+        addThing("BlockStorage", BlockStorage.class);
+        addThing("SlimefunItems", SlimefunItems.class);
+        addThing("SlimefunItem", SlimefunItem.class);
+        addThing("SlimefunUtils", SlimefunUtils.class);
+        addThing("BlockMenu", BlockMenu.class);
+        addThing("PersistentDataAPI", PersistentDataAPI.class);
     }
 
     @Override
     public void close() {
         try {
+            jsEngine.lowMemoryNotification();
             jsEngine.close();
-            log.close();
 
             reSetup();
         } catch (IllegalStateException ignored) {
+        } catch (JavetException e) {
+            throw new RuntimeException(e);
+        }
+    }
+
+    public V8ValueGlobalObject getGlobalObject() {
+        try {
+            return jsEngine.getGlobalObject();
+        } catch (JavetException e) {
+            throw new RuntimeException(e);
+        }
+    }
+
+    public void executeContextVoid(String context) {
+        try {
+            jsEngine.getExecutor(context).executeVoid();
+        } catch (JavetException e) {
+            throw new RuntimeException(e);
         }
     }
 
     @Override
     public void addThing(String name, Object value) {
-        jsEngine.put(name, value);
+        try {
+            jsEngine.getGlobalObject().set(name, value);
+        } catch (JavetException e) {
+            throw new RuntimeException("Error adding thing to JavaScript global object", e);
+        }
     }
 
     @Override
@@ -92,56 +85,67 @@ public class JavaScriptEval extends ScriptEval {
 
     protected final void contextInit() {
         super.contextInit();
-        if (jsEngine != null) {
-            try {
-                jsEngine.eval(getFileContext());
-            } catch (ScriptException e) {
-                e.printStackTrace();
-            }
-        }
     }
 
     @Nullable @CanIgnoreReturnValue
     @Override
     public Object evalFunction(String funName, Object... args) {
+        return this.evalFunction(funName, true, args);
+    }
+
+    @Nullable @CanIgnoreReturnValue
+    public Object evalFunction(String funName, boolean voidRunning, Object... args) {
         if (getFileContext() == null || getFileContext().isBlank()) {
             contextInit();
         }
 
         try {
-            return jsEngine.invokeFunction(funName, args);
-        } catch (ScriptException e) {
-            ExceptionHandler.handleError(
-                    "Exception occurred while evaluating file: " + getFile().getName());
+            V8Value exists = jsEngine.getGlobalObject().get(funName);
+            if (exists == null || exists instanceof V8ValueUndefined) {
+                return null;
+            }
+        } catch (JavetException e) {
+            return null;
+        }
+
+        try {
+            try (V8ValueGlobalObject obj = jsEngine.getGlobalObject()) {
+                if (voidRunning) {
+                    obj.invokeExtended(funName, false, args);
+                    return null;
+                } else {
+                    return obj.invokeObject(funName, args);
+                }
+            }
+        } catch (JavetException e) {
+            ExceptionHandler.handleError("在运行" + getFile().getName() + "时发生错误");
             e.printStackTrace();
-        } catch (NoSuchMethodException ignored) {
         }
 
         return null;
     }
 
     private void reSetup() {
-        log = createLogFileHandler(addon);
+        try {
+            JavetProxyConverter converter = new JavetProxyConverter();
+            converter.getConfig().setReflectionObjectFactory(JavetReflectionObjectFactory.getInstance());
+            jsEngine = V8Host.getV8Instance().createV8Runtime();
+            jsEngine.setConverter(converter);
 
-        jsEngine = GraalJSScriptEngine.create(
-                null,
-                Context.newBuilder("js")
-                        .allowAllAccess(true)
-                        .allowHostAccess(UNIVERSAL_HOST_ACCESS)
-                        .allowNativeAccess(false)
-                        .allowExperimentalOptions(true)
-                        .allowPolyglotAccess(PolyglotAccess.ALL)
-                        .allowCreateProcess(true)
-                        .allowIO(IOAccess.NONE)
-                        .allowHostClassLookup(s -> {
-                            if (s.equalsIgnoreCase("org.bukkit.Bukkit")) {
-                                return false;
-                            } else if (s.contains("org.bukkit.craftbukkit") && s.endsWith("CraftServer")) {
-                                return false;
-                            }
-                            return !s.equalsIgnoreCase("net.minecraft.server.MinecraftServer");
-                        })
-                        .logHandler(log));
+            JavetJVMInterceptor interceptor = new JavetJVMInterceptor(jsEngine);
+            interceptor.register(jsEngine.getGlobalObject());
+
+            JavetStandardConsoleInterceptor consoleInterceptor = new JavetStandardConsoleInterceptor(jsEngine);
+            consoleInterceptor.register(jsEngine.getGlobalObject());
+
+            jsEngine.getExecutor(getFileContext()).execute();
+
+            jsEngine.getGlobalObject().bind(new FunctionBinds(jsEngine));
+            jsEngine.getGlobalObject().set("RunnableCreator", FunctionBinds.RunnableGetter.class);
+            jsEngine.getGlobalObject().set("Java", FunctionBinds.JavaObject.class);
+        } catch (JavetException e) {
+            throw new RuntimeException(e);
+        }
 
         advancedSetup();
     }

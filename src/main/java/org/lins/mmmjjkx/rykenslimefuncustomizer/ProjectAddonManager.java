@@ -51,14 +51,14 @@ public final class ProjectAddonManager {
         File[] folders = addons.listFiles();
         if (folders == null) return;
 
-        List<String> notMatchTemplate = new ArrayList<>();
+        List<String> skip = new ArrayList<>();
 
         for (File folder : folders) {
             File info = new File(folder, Constants.INFO_FILE);
             if (!info.exists()) {
                 ExceptionHandler.handleError("A folder called " + folder.getName()
                         + " contains invalid addon information，The addon will not be loaded！");
-                notMatchTemplate.add(folder.getName());
+                skip.add(folder.getName());
                 continue;
             }
             YamlConfiguration infoConfig = YamlConfiguration.loadConfiguration(info);
@@ -66,7 +66,7 @@ public final class ProjectAddonManager {
             if (id == null || id.isBlank()) {
                 ExceptionHandler.handleError("A folder called " + folder.getName()
                         + " contains invalid addon information that does not have an ID，The addon will not be loaded！");
-                notMatchTemplate.add(folder.getName());
+                skip.add(folder.getName());
                 continue;
             }
 
@@ -84,7 +84,7 @@ public final class ProjectAddonManager {
 
                 ExceptionHandler.handleError("A folder called " + folder.getName() + "has the same ID with "
                         + addon.getFolder().getName() + "，The addon will not be loaded！");
-                notMatchTemplate.add(folder.getName());
+                skip.add(folder.getName());
                 continue;
             }
 
@@ -92,7 +92,7 @@ public final class ProjectAddonManager {
         }
 
         for (File folder : folders) {
-            if (notMatchTemplate.contains(folder.getName())) continue;
+            if (skip.contains(folder.getName())) continue;
 
             YamlConfiguration infoConfig = YamlConfiguration.loadConfiguration(new File(folder, Constants.INFO_FILE));
             String id = infoConfig.getString("id");
