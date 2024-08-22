@@ -9,8 +9,9 @@ import org.bukkit.entity.Entity;
 import org.bukkit.inventory.ItemStack;
 
 public class NBTAPIIntegration {
+    public static NBTAPIIntegration instance = new NBTAPIIntegration();
 
-    public NBTAPIIntegration() {}
+    private NBTAPIIntegration() {}
 
     public NBTItem readItem(ItemStack item) {
         return new NBTItem(item.clone());

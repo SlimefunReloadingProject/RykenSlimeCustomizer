@@ -51,20 +51,20 @@ public final class ProjectAddonManager {
         File[] folders = addons.listFiles();
         if (folders == null) return;
 
-        List<String> notMatchTemplate = new ArrayList<>();
+        List<String> skip = new ArrayList<>();
 
         for (File folder : folders) {
             File info = new File(folder, Constants.INFO_FILE);
             if (!info.exists()) {
                 ExceptionHandler.handleError("在名称为 " + folder.getName() + "的文件夹中有无效的附属信息，导致此附属无法加载！");
-                notMatchTemplate.add(folder.getName());
+                skip.add(folder.getName());
                 continue;
             }
             YamlConfiguration infoConfig = YamlConfiguration.loadConfiguration(info);
             String id = infoConfig.getString("id");
             if (id == null || id.isBlank()) {
                 ExceptionHandler.handleError("在名称为 " + folder.getName() + "的文件夹中有无效的附属ID，导致此附属无法加载！");
-                notMatchTemplate.add(folder.getName());
+                skip.add(folder.getName());
                 continue;
             }
 
@@ -80,7 +80,7 @@ public final class ProjectAddonManager {
                 }
 
                 ExceptionHandler.handleError("在名称为 " + folder.getName() + "的文件夹中有重复的附属ID，导致此附属无法加载！");
-                notMatchTemplate.add(folder.getName());
+                skip.add(folder.getName());
                 continue;
             }
 
@@ -88,7 +88,7 @@ public final class ProjectAddonManager {
         }
 
         for (File folder : folders) {
-            if (notMatchTemplate.contains(folder.getName())) continue;
+            if (skip.contains(folder.getName())) continue;
 
             YamlConfiguration infoConfig = YamlConfiguration.loadConfiguration(new File(folder, Constants.INFO_FILE));
             String id = infoConfig.getString("id");

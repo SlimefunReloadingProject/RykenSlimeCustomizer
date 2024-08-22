@@ -11,7 +11,6 @@ import io.github.thebusybiscuit.slimefun4.core.handlers.ItemUseHandler;
 import io.github.thebusybiscuit.slimefun4.core.handlers.ToolUseHandler;
 import io.github.thebusybiscuit.slimefun4.core.handlers.WeaponUseHandler;
 import org.bukkit.inventory.ItemStack;
-import org.graalvm.polyglot.HostAccess;
 import org.jetbrains.annotations.NotNull;
 import org.lins.mmmjjkx.rykenslimefuncustomizer.objects.customs.parent.BaseRadiationItem;
 import org.lins.mmmjjkx.rykenslimefuncustomizer.objects.script.parent.ScriptEval;
@@ -48,38 +47,31 @@ public class CustomEnergyRadiationItem extends BaseRadiationItem implements NotP
             this.addItemHandler((ItemUseHandler) PlayerRightClickEvent::cancel);
         }
     }
-
-    @HostAccess.Export
+    
     public void setItemCharge(ItemStack item, int charge) {
         Rechargeable.super.setItemCharge(item, charge);
     }
-
-    @HostAccess.Export
+    
     public void setItemCharge(ItemStack item, double charge) {
         Rechargeable.super.setItemCharge(item, (float) charge);
     }
 
-    @HostAccess.Export
     public void addItemCharge(ItemStack item, int charge) {
         Rechargeable.super.addItemCharge(item, charge);
     }
-
-    @HostAccess.Export
+    
     public void addItemCharge(ItemStack item, double charge) {
         Rechargeable.super.addItemCharge(item, (float) charge);
     }
 
-    @HostAccess.Export
     public void removeItemCharge(ItemStack item, int charge) {
         Rechargeable.super.removeItemCharge(item, charge);
     }
 
-    @HostAccess.Export
     public void removeItemCharge(ItemStack item, double charge) {
         Rechargeable.super.addItemCharge(item, (float) charge);
     }
 
-    @HostAccess.Export
     public float getItemCharge(ItemStack item) {
         return Rechargeable.super.getItemCharge(item);
     }
