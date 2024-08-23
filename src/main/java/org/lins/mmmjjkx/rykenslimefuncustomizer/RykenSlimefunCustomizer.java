@@ -88,7 +88,6 @@ public final class RykenSlimefunCustomizer extends JavaPlugin implements Slimefu
     }
 
     private void setupLibraries() {
-        String graalVersion = "24.0.2";
         BukkitLibraryManager libraryManager = new BukkitLibraryManager(this);
         libraryManager.addRepository("https://maven.aliyun.com/repository/central");
         Library byteBuddy = Library.builder()
@@ -99,7 +98,7 @@ public final class RykenSlimefunCustomizer extends JavaPlugin implements Slimefu
         Library javet = Library.builder()
                 .groupId("com{}caoccao{}javet")
                 .artifactId("javet")
-                .version("3.1.4")
+                .version("3.1.5")
                 .build();
 
         libraryManager.loadLibrary(byteBuddy);

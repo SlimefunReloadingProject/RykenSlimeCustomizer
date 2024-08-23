@@ -2,7 +2,9 @@ package org.lins.mmmjjkx.rykenslimefuncustomizer.bulit_in;
 
 import com.caoccao.javet.annotations.V8Function;
 import com.caoccao.javet.annotations.V8Property;
+import com.caoccao.javet.exceptions.JavetException;
 import com.caoccao.javet.interop.V8Runtime;
+import com.caoccao.javet.values.reference.V8ValueProxy;
 import com.xzavier0722.mc.plugin.slimefun4.storage.controller.SlimefunBlockData;
 import com.xzavier0722.mc.plugin.slimefun4.storage.util.StorageCacheUtils;
 import io.github.thebusybiscuit.slimefun4.api.items.SlimefunItem;
@@ -22,11 +24,7 @@ import org.lins.mmmjjkx.rykenslimefuncustomizer.objects.script.enhanced.NBTAPIIn
 import java.util.Random;
 
 public class FunctionBinds {
-    private final V8Runtime runtime;
-
-    public FunctionBinds(V8Runtime runtime) {
-        this.runtime = runtime;
-    }
+    public FunctionBinds() {}
 
     @V8Function(name = "sendMessage")
     public void sendMessage(Player player, String message) {
@@ -163,6 +161,30 @@ public class FunctionBinds {
     @V8Function(name = "runRepeatingAsync")
     public void runRepeatingAsync(Runnable runnable, int delay, int period) {
         Bukkit.getScheduler().runTaskTimerAsynchronously(RykenSlimefunCustomizer.INSTANCE, runnable, delay, period);
+    }
+
+    @V8Function(name = "isInstanceOf")
+    public boolean isInstance(Object obj, Class<?> clazz) {
+        if (obj instanceof V8ValueProxy v8p) {
+            V8Runtime runtime = v8p.getV8Runtime();
+            try {
+                obj = runtime.getConverter().toObject(v8p);
+            } catch (JavetException ignored) {
+            }
+        }
+        return clazz.isInstance(obj);
+    }
+
+    @V8Function(name = "cast")
+    public Object cast(Object obj, Class<?> clazz) {
+        if (obj instanceof V8ValueProxy v8p) {
+            V8Runtime runtime = v8p.getV8Runtime();
+            try {
+                obj = runtime.getConverter().toObject(v8p);
+            } catch (JavetException ignored) {
+            }
+        }
+        return clazz.cast(obj);
     }
 
     @V8Property(name = "NBTAPI")

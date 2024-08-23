@@ -2,6 +2,7 @@ package org.lins.mmmjjkx.rykenslimefuncustomizer.bulit_in;
 
 import com.caoccao.javet.exceptions.JavetException;
 import com.caoccao.javet.interception.jvm.JavetJVMInterceptor;
+import com.caoccao.javet.interception.jvm.VirtualPackage;
 import com.caoccao.javet.interception.logging.JavetStandardConsoleInterceptor;
 import com.caoccao.javet.interop.V8Host;
 import com.caoccao.javet.interop.V8Runtime;
@@ -16,6 +17,10 @@ import io.github.thebusybiscuit.slimefun4.implementation.SlimefunItems;
 import io.github.thebusybiscuit.slimefun4.libraries.dough.data.persistent.PersistentDataAPI;
 import io.github.thebusybiscuit.slimefun4.utils.SlimefunUtils;
 import java.io.File;
+import java.lang.reflect.Constructor;
+import java.lang.reflect.InvocationTargetException;
+import java.lang.reflect.Method;
+import java.util.List;
 
 import me.mrCookieSlime.Slimefun.api.inventory.BlockMenu;
 import org.jetbrains.annotations.NotNull;
@@ -25,6 +30,7 @@ import org.lins.mmmjjkx.rykenslimefuncustomizer.objects.script.parent.ScriptEval
 import org.lins.mmmjjkx.rykenslimefuncustomizer.utils.ExceptionHandler;
 
 public class JavaScriptEval extends ScriptEval {
+    private static final List<String> packages = List.of("java", "javax", "net", "org", "com", "io", "me", "de");
 
     private V8Runtime jsEngine;
 
@@ -145,9 +151,13 @@ public class JavaScriptEval extends ScriptEval {
             JavetStandardConsoleInterceptor consoleInterceptor = new JavetStandardConsoleInterceptor(jsEngine);
             consoleInterceptor.register(jsEngine.getGlobalObject());
 
+            for (String packageName : packages) {
+                jsEngine.getGlobalObject().set(packageName, VirtualPackage.getPackage(jsEngine, packageName));
+            }
+
             jsEngine.getExecutor(getFileContext()).execute();
 
-            jsEngine.getGlobalObject().bind(new FunctionBinds(jsEngine));
+            jsEngine.getGlobalObject().bind(new FunctionBinds());
             jsEngine.getGlobalObject().set("RunnableCreator", FunctionBinds.RunnableGetter.class);
             jsEngine.getGlobalObject().set("Java", FunctionBinds.JavaObject.class);
         } catch (JavetException e) {
