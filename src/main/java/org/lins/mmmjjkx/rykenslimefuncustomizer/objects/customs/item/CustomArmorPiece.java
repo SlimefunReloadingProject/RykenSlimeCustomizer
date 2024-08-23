@@ -40,7 +40,7 @@ public class CustomArmorPiece extends SlimefunArmorPiece implements ProtectiveAr
     }
 
     @Override
-    public @NotNull ProtectionType[] getProtectionTypes() {
+    public @NotNull ProtectionType @NotNull [] getProtectionTypes() {
         return protectionTypes;
     }
 

@@ -11,7 +11,6 @@ import com.caoccao.javet.values.V8Value;
 import com.caoccao.javet.values.primitive.V8ValueUndefined;
 import com.caoccao.javet.values.reference.V8ValueGlobalObject;
 import com.google.errorprone.annotations.CanIgnoreReturnValue;
-import com.xzavier0722.mc.plugin.slimefun4.storage.util.StorageCacheUtils;
 import io.github.thebusybiscuit.slimefun4.api.items.SlimefunItem;
 import io.github.thebusybiscuit.slimefun4.implementation.SlimefunItems;
 import io.github.thebusybiscuit.slimefun4.libraries.dough.data.persistent.PersistentDataAPI;
@@ -22,11 +21,13 @@ import java.lang.reflect.InvocationTargetException;
 import java.lang.reflect.Method;
 import java.util.List;
 
+import me.mrCookieSlime.Slimefun.api.BlockStorage;
+
 import me.mrCookieSlime.Slimefun.api.inventory.BlockMenu;
 import org.jetbrains.annotations.NotNull;
 import org.jetbrains.annotations.Nullable;
 import org.lins.mmmjjkx.rykenslimefuncustomizer.objects.ProjectAddon;
-import org.lins.mmmjjkx.rykenslimefuncustomizer.objects.script.parent.ScriptEval;
+import org.lins.mmmjjkx.rykenslimefuncustomizer.objects.script.ScriptEval;
 import org.lins.mmmjjkx.rykenslimefuncustomizer.utils.ExceptionHandler;
 
 public class JavaScriptEval extends ScriptEval {
@@ -45,9 +46,9 @@ public class JavaScriptEval extends ScriptEval {
     }
 
     private void advancedSetup() {
+        addThing("BlockStorage", BlockStorage.class);
         addThing("SlimefunItems", SlimefunItems.class);
         addThing("SlimefunItem", SlimefunItem.class);
-        addThing("StorageCacheUtils", StorageCacheUtils.class);
         addThing("SlimefunUtils", SlimefunUtils.class);
         addThing("BlockMenu", BlockMenu.class);
         addThing("PersistentDataAPI", PersistentDataAPI.class);

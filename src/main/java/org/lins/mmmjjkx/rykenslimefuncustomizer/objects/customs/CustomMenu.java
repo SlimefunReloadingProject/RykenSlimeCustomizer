@@ -189,7 +189,7 @@ public class CustomMenu {
         Inventory inventory =
                 Bukkit.createInventory(null, preset.toInventory().getSize(), CMIChatColor.translate(title));
 
-        for (int i = 0; i < preset.getInventory().getSize(); i++) {
+        for (int i = 0; i < preset.toInventory().getSize(); i++) {
             ItemStack item = preset.getItemInSlot(i);
             if (item != null) {
                 this.addItem(i, item.clone());

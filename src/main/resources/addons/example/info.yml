@@ -1,8 +1,8 @@
 id: example
-name: "示例附属"
+name: "example addon"
 depends: []
 pluginDepends: []
 version: "1.0"
-description: "RSC示例附属"
+description: "RSC example addon"
 authors: ["mmmjjkx"]
-repo: "SlimefunReloadingProject/rsc-example"
+repo: "SlimefunReloadingProject/rsc-example-EN"

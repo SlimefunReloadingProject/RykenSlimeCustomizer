@@ -44,7 +44,9 @@ public class SimpleMachineReader extends YamlReader<SlimefunItem> {
         String recipeType = section.getString("recipe_type", "NULL");
 
         Pair<ExceptionHandler.HandleResult, RecipeType> resultRecipeTypePair = ExceptionHandler.getRecipeType(
-                "在附属" + addon.getAddonId() + "中加载简单机器" + s + "时遇到了问题: " + "错误的配方类型" + recipeType + "!", recipeType);
+                "Found an error while loading recipe machine " + s + " in addon " + addon.getAddonId()
+                        + ": Invalid recipe type '" + recipeType + "'!",
+                recipeType);
 
         if (resultRecipeTypePair.getFirstValue() == ExceptionHandler.HandleResult.FAILED
                 || resultRecipeTypePair.getSecondValue() == null) return null;
@@ -52,7 +54,10 @@ public class SimpleMachineReader extends YamlReader<SlimefunItem> {
         String machineTypeStr = section.getString("type");
 
         Pair<ExceptionHandler.HandleResult, SimpleMachineType> machineTypePair = ExceptionHandler.handleEnumValueOf(
-                "错误的简单机器类型 " + machineTypeStr, SimpleMachineType.class, machineTypeStr);
+                "Found an error while loading simple machine " + s + " in addon " + addon.getAddonId()
+                        + ": Invalid simple machine type: " + machineTypeStr,
+                SimpleMachineType.class,
+                machineTypeStr);
         if (machineTypePair.getFirstValue() == ExceptionHandler.HandleResult.FAILED
                 || machineTypePair.getSecondValue() == null) {
             return null;
@@ -62,7 +67,8 @@ public class SimpleMachineReader extends YamlReader<SlimefunItem> {
         ConfigurationSection settings = section.getConfigurationSection("settings");
 
         if (settings == null) {
-            ExceptionHandler.handleError("在附属" + addon.getAddonId() + "中加载简单机器" + s + "时遇到了问题: " + "机器没有设置");
+            ExceptionHandler.handleError("Found an error while loading simple machine " + s + " in addon "
+                    + addon.getAddonId() + ": Machine has no settings");
             return null;
         }
 
@@ -75,34 +81,38 @@ public class SimpleMachineReader extends YamlReader<SlimefunItem> {
         if (machineType.isEnergy()) {
             capacity = settings.getInt("capacity");
             if (capacity < 1) {
-                ExceptionHandler.handleError("在附属" + addon.getAddonId() + "中加载简单机器" + s + "时遇到了问题: " + "容量小于1");
+                ExceptionHandler.handleError("Found an error while loading simple machine " + s + " in addon "
+                        + addon.getAddonId() + ": Energy capacity is less than 1");
                 return null;
             }
 
             consumption = settings.getInt("consumption");
             if (consumption < 1) {
-                ExceptionHandler.handleError("在附属" + addon.getAddonId() + "中加载简单机器" + s + "时遇到了问题: " + "消耗能量小于1");
+                ExceptionHandler.handleError("Found an error while loading simple machine " + s + " in addon "
+                        + addon.getAddonId() + ": Energy consumption is less than 1");
                 return null;
             }
 
             if (!isAccelerator(machineType)) {
                 speed = settings.getInt("speed", 1);
                 if (speed < 1) {
-                    ExceptionHandler.handleError("在附属" + addon.getAddonId() + "中加载简单机器" + s + "时遇到了问题: " + "处理速度小于1");
+                    ExceptionHandler.handleError("Found an error while loading simple machine " + s + " in addon "
+                            + addon.getAddonId() + ": Speed is less than 1");
                     return null;
                 }
             } else {
                 radius = settings.getInt("radius", 1);
                 if (radius < 1) {
-                    ExceptionHandler.handleError("在附属" + addon.getAddonId() + "中加载简单机器" + s + "时遇到了问题: " + "范围小于1");
+                    ExceptionHandler.handleError("Found an error while loading simple machine " + s + " in addon "
+                            + addon.getAddonId() + ": Radius is less than 1");
                     return null;
                 }
 
                 if (machineType == SimpleMachineType.CROP_GROWTH_ACCELERATOR) {
                     speed = settings.getInt("speed", 1);
                     if (speed < 1) {
-                        ExceptionHandler.handleError(
-                                "在附属" + addon.getAddonId() + "中加载简单机器" + s + "时遇到了问题: " + "处理速度小于1");
+                        ExceptionHandler.handleError("Found an error while loading simple machine " + s + " in addon "
+                                + addon.getAddonId() + ": Speed is less than 1");
                         return null;
                     }
                 }
@@ -111,7 +121,8 @@ public class SimpleMachineReader extends YamlReader<SlimefunItem> {
             if (machineType == SimpleMachineType.AUTO_ANVIL) {
                 repairFactor = settings.getInt("repair_factor", 10);
                 if (repairFactor < 1) {
-                    ExceptionHandler.handleError("在附属" + addon.getAddonId() + "中加载简单机器" + s + "时遇到了问题: " + "修理因子小于1");
+                    ExceptionHandler.handleError("Found an error while loading simple machine " + s + " in addon "
+                            + addon.getAddonId() + ": Repair factor is less than 1");
                     return null;
                 }
             }
@@ -143,7 +154,8 @@ public class SimpleMachineReader extends YamlReader<SlimefunItem> {
         ItemStack stack = CommonUtils.readItem(item, false, addon);
 
         if (stack == null) {
-            ExceptionHandler.handleError("在附属" + addon.getAddonId() + "中加载简单机器" + s + "时遇到了问题: " + "物品为空或格式错误导致无法加载");
+            ExceptionHandler.handleError("Found an error while loading simple machine " + s + " in addon "
+                    + addon.getAddonId() + ": " + "The item is null or has an invalid format");
             return null;
         }
 

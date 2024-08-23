@@ -44,7 +44,9 @@ public class TemplateMachineReader extends YamlReader<CustomTemplateMachine> {
         String recipeType = section.getString("recipe_type", "NULL");
 
         Pair<ExceptionHandler.HandleResult, RecipeType> rt = ExceptionHandler.getRecipeType(
-                "在附属" + addon.getAddonId() + "中加载模板机器" + s + "时遇到了问题: " + "错误的配方类型" + recipeType + "!", recipeType);
+                "Found an error while loading super item " + s + " in addon " + addon.getAddonId()
+                        + ": Invalid recipe type '" + recipeType + "'!",
+                recipeType);
         if (rt.getFirstValue() == ExceptionHandler.HandleResult.FAILED) return null;
 
         boolean fasterIfMoreTemplates = section.getBoolean("fasterIfMoreTemplates", false);
@@ -54,19 +56,22 @@ public class TemplateMachineReader extends YamlReader<CustomTemplateMachine> {
         List<Integer> output = section.getIntegerList("output");
 
         if (output.isEmpty()) {
-            ExceptionHandler.handleError("在附属" + addon.getAddonId() + "中加载模板机器" + s + "时遇到了问题: " + "输出槽为空");
+            ExceptionHandler.handleError("Found an error while loading template machine " + s + " in addon "
+                    + addon.getAddonId() + ": " + "There must be at least one output slot!");
             return null;
         }
 
         CustomMenu menu = CommonUtils.getIf(addon.getMenus(), m -> m.getID().equalsIgnoreCase(s));
 
         if (menu == null) {
-            ExceptionHandler.handleError("在附属" + addon.getAddonId() + "中加载模板机器" + s + "时遇到了问题: " + "未找到菜单");
+            ExceptionHandler.handleError("Found an error while loading template machine " + s + " in addon "
+                    + addon.getAddonId() + ": The corresponding menu is not found");
             return null;
         }
 
         if (menu.getProgressSlot() < 0) {
-            ExceptionHandler.handleError("在附属" + addon.getAddonId() + "中加载模板机器" + s + "时遇到了问题: " + "进度槽位未设置");
+            ExceptionHandler.handleError("Found an error while loading template machine " + s + " in addon "
+                    + addon.getAddonId() + ": " + "The progress slot is not set");
             return null;
         }
 
@@ -76,21 +81,24 @@ public class TemplateMachineReader extends YamlReader<CustomTemplateMachine> {
         int templateSlot = section.getInt("templateSlot");
 
         if (templateSlot < 0 || templateSlot >= 54) {
-            ExceptionHandler.handleError("在附属" + addon.getAddonId() + "中加载模板机器" + s + "时遇到了问题: " + "模板槽位不合法");
+            ExceptionHandler.handleError("Found an error while loading template machine " + s + " in addon "
+                    + addon.getAddonId() + ": " + "The template slot is not set or is out of range(0-53)");
             return null;
         }
 
         int capacity = section.getInt("capacity");
 
         if (capacity < 0) {
-            ExceptionHandler.handleError("在附属" + addon.getAddonId() + "中加载模板机器" + s + "时遇到了问题: " + "能源容量小于0");
+            ExceptionHandler.handleError("Found an error while loading template machine " + s + " in addon "
+                    + addon.getAddonId() + ": " + "The capacity is not set or is less than 0");
             return null;
         }
 
         int energy = section.getInt("consumption");
 
         if (energy <= 0) {
-            ExceptionHandler.handleError("在附属" + addon.getAddonId() + "中加载模板机器" + s + "时遇到了问题: " + "消耗能量未设置或小于等于0");
+            ExceptionHandler.handleError("Found an error while loading template machine " + s + " in addon "
+                    + addon.getAddonId() + ": The energy consumption is not set or is less than or equal to 0");
             return null;
         }
 
@@ -120,7 +128,9 @@ public class TemplateMachineReader extends YamlReader<CustomTemplateMachine> {
         for (String key : section.getKeys(false)) {
             SlimefunItemStack item = getPreloadItem(key);
             if (item == null) {
-                ExceptionHandler.handleError("在附属" + addon.getAddonId() + "中加载模板机器" + s + "时遇到了问题: 无法找到作为模板的物品" + key);
+                ExceptionHandler.handleError("Found an error while loading template machine " + s + " in addon "
+                        + addon.getAddonId() + ": " + "Cannot find the item " + key
+                        + " as a template item. You should input an Slimefun item id here.");
                 continue;
             }
             List<CustomMachineRecipe> recipes =
@@ -143,8 +153,9 @@ public class TemplateMachineReader extends YamlReader<CustomTemplateMachine> {
             if (recipes == null) continue;
             int seconds = recipes.getInt("seconds");
             if (seconds < 0) {
-                ExceptionHandler.handleError(
-                        "在附属" + addon.getAddonId() + "中加载模板机器" + s + "的工作配方" + key + "时遇到了问题: " + "间隔时间未设置或不能小于0");
+                ExceptionHandler.handleError("Found an error while loading template machine " + s + "'s recipe " + key
+                        + " in addon " + addon.getAddonId() + ": " + "The seconds of the recipe " + seconds
+                        + " is less than 0");
                 continue;
             }
 
@@ -153,7 +164,8 @@ public class TemplateMachineReader extends YamlReader<CustomTemplateMachine> {
             ConfigurationSection outputs = recipes.getConfigurationSection("output");
             if (outputs == null) {
                 ExceptionHandler.handleError(
-                        "在附属" + addon.getAddonId() + "中加载模板机器" + s + "的工作配方" + key + "时遇到了问题: " + "没有输出物品");
+                        "Found an error while loading template machine " + s + "'s recipe " + key + " in addon "
+                                + addon.getAddonId() + ": " + "The output section is null or has an invalid format");
                 continue;
             }
 
@@ -167,8 +179,9 @@ public class TemplateMachineReader extends YamlReader<CustomTemplateMachine> {
                     int chance = section1.getInt("chance", 100);
 
                     if (chance < 1) {
-                        ExceptionHandler.handleError("在附属" + addon.getAddonId() + "中加载模板机器" + s + "的工作配方" + key
-                                + "时遇到了问题: " + "概率不应该小于1，已转为1");
+                        ExceptionHandler.handleError(
+                                "Found an error while loading template machine " + s + " in addon " + addon.getAddonId()
+                                        + ": " + "The chance of output " + chance + " is less than 1. Using 1 instead");
                         chance = 1;
                     }
 
@@ -197,7 +210,8 @@ public class TemplateMachineReader extends YamlReader<CustomTemplateMachine> {
         ItemStack stack = CommonUtils.readItem(item, false, addon);
 
         if (stack == null) {
-            ExceptionHandler.handleError("在附属" + addon.getAddonId() + "中加载模板机器" + s + "时遇到了问题: " + "物品为空或格式错误导致无法加载");
+            ExceptionHandler.handleError("Found an error while loading template machine " + s + " in addon "
+                    + addon.getAddonId() + ": " + "The item is null or has an invalid format");
             return null;
         }
 

@@ -12,7 +12,7 @@ import io.github.thebusybiscuit.slimefun4.core.handlers.WeaponUseHandler;
 import org.bukkit.inventory.ItemStack;
 import org.jetbrains.annotations.Nullable;
 import org.lins.mmmjjkx.rykenslimefuncustomizer.objects.customs.parent.CustomItem;
-import org.lins.mmmjjkx.rykenslimefuncustomizer.objects.script.parent.ScriptEval;
+import org.lins.mmmjjkx.rykenslimefuncustomizer.objects.script.ScriptEval;
 
 public class CustomEnergyItem extends CustomItem implements Rechargeable, NotPlaceable {
     private final float capacity;
@@ -50,7 +50,7 @@ public class CustomEnergyItem extends CustomItem implements Rechargeable, NotPla
     public void setItemCharge(ItemStack item, int charge) {
         Rechargeable.super.setItemCharge(item, charge);
     }
-    
+
     public void setItemCharge(ItemStack item, double charge) {
         Rechargeable.super.setItemCharge(item, (float) charge);
     }
@@ -66,7 +66,7 @@ public class CustomEnergyItem extends CustomItem implements Rechargeable, NotPla
     public void removeItemCharge(ItemStack item, int charge) {
         Rechargeable.super.removeItemCharge(item, charge);
     }
-    
+
     public void removeItemCharge(ItemStack item, double charge) {
         Rechargeable.super.addItemCharge(item, (float) charge);
     }

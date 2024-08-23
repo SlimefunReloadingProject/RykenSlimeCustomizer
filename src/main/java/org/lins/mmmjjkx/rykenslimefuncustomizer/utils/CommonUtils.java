@@ -81,7 +81,7 @@ public class CommonUtils {
         String type = section.getString("material_type", "mc");
 
         if (!type.equalsIgnoreCase("none") && !section.contains("material")) {
-            ExceptionHandler.handleError("你设置了材料类型，但没有设置对应的材料！");
+            ExceptionHandler.handleError("You need to specify a material for the item in " + section.getCurrentPath());
             return null;
         }
 
@@ -109,7 +109,8 @@ public class CommonUtils {
                 Optional<Material> materialo = Optional.ofNullable(Material.matchMaterial(material));
                 Material mat;
                 if (materialo.isEmpty()) {
-                    ExceptionHandler.handleError("无法在附属" + addon.getAddonId() + "中读取材料" + material + "，已转为石头");
+                    ExceptionHandler.handleError("Cannot find material " + material + " in a addon called "
+                            + addon.getAddonId() + ", using stone instead");
                     mat = Material.STONE;
                 } else {
                     mat = materialo.get();
@@ -166,7 +167,7 @@ public class CommonUtils {
                             }
                         });
                     } else {
-                        ExceptionHandler.handleError("无法找到粘液物品" + material + "，已转为石头");
+                        ExceptionHandler.handleError("Cannot find Slimefun item " + material + ", using stone instead");
                         itemStack = new CustomItemStack(Material.STONE, name, lore);
                     }
                 }
@@ -174,7 +175,8 @@ public class CommonUtils {
             case "saveditem" -> {
                 File file = new File(addon.getSavedItemsFolder(), material + ".yml");
                 if (!file.exists()) {
-                    ExceptionHandler.handleError("保存物品的文件" + material + "不存在，已转为石头");
+                    ExceptionHandler.handleError(
+                            "The saved item file " + material + " is not found, using stone instead");
                     itemStack = new CustomItemStack(Material.STONE, name, lore);
                     break;
                 }
@@ -225,8 +227,8 @@ public class CommonUtils {
 
         if (countable) {
             if (amount > 64 || amount < -1) {
-                ExceptionHandler.handleError(
-                        "无法在附属" + addon.getAddonId() + "中读取" + section.getCurrentPath() + "的物品: 物品数量不能大于64或小于-1");
+                ExceptionHandler.handleError("Cannot read item in " + section.getCurrentPath() + " in a addon called "
+                        + addon.getAddonId() + ": the amount must be between 0 and 64");
                 return null;
             }
             itemStack.setAmount(amount);
@@ -237,7 +239,8 @@ public class CommonUtils {
             for (String enchant : enchants) {
                 String[] s2 = enchant.split(" ");
                 if (s2.length != 2) {
-                    ExceptionHandler.handleError("无法在附属" + addon.getAddonId() + "中读取物品附魔" + enchant + ", 跳过添加此附魔");
+                    ExceptionHandler.handleError("Cannot read enchantment " + enchant + " in a addon called "
+                            + addon.getAddonId() + ", skip adding this enchantment");
                     continue;
                 }
 
@@ -246,7 +249,8 @@ public class CommonUtils {
 
                 Enchantment enchantment = Enchantment.getByKey(NamespacedKey.minecraft(enchantName.toLowerCase()));
                 if (enchantment == null) {
-                    ExceptionHandler.handleError("无法在附属" + addon.getAddonId() + "中读取物品附魔" + enchant + ", 跳过添加此附魔");
+                    ExceptionHandler.handleError("Cannot find enchantment " + enchantName + " in a addon called "
+                            + addon.getAddonId() + ", skip adding this enchantment");
                     continue;
                 }
 
@@ -298,17 +302,6 @@ public class CommonUtils {
         }
     }
 
-    public static boolean isArmor(Material material) {
-        if (material == null) return false;
-
-        final String typeNameString = material.toString();
-
-        return typeNameString.endsWith("_HELMET")
-                || typeNameString.endsWith("_CHESTPLATE")
-                || typeNameString.endsWith("_LEGGINGS")
-                || typeNameString.endsWith("_BOOTS");
-    }
-
     public static void completeFile(String resourceFile) {
         JavaPlugin plugin = RykenSlimefunCustomizer.INSTANCE;
 
@@ -322,7 +315,8 @@ public class CommonUtils {
             return;
         }
         if (stream == null) {
-            ExceptionHandler.handleError("无法找到文件" + resourceFile + "，请检查插件文件是否损坏！");
+            ExceptionHandler.handleError(
+                    "Cannot synchronize " + resourceFile + ", please check the plugin is not corrupted!");
             return;
         }
         try {
@@ -347,7 +341,8 @@ public class CommonUtils {
             configuration2.save(file);
         } catch (Exception e) {
             e.printStackTrace();
-            ExceptionHandler.handleError("无法完成文件" + resourceFile + "的同步，请检查插件文件是否损坏！");
+            ExceptionHandler.handleError(
+                    "Cannot synchronize " + resourceFile + ", please check the plugin is not corrupted!");
         }
     }
 

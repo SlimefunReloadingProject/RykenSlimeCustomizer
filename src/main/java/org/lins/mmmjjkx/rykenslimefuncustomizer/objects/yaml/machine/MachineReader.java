@@ -50,7 +50,9 @@ public class MachineReader extends YamlReader<AbstractEmptyMachine<?>> {
         String recipeType = section.getString("recipe_type", "NULL");
 
         Pair<ExceptionHandler.HandleResult, RecipeType> rt = ExceptionHandler.getRecipeType(
-                "在附属" + addon.getAddonId() + "中加载机器" + s + "时遇到了问题: " + "错误的配方类型" + recipeType + "!", recipeType);
+                "Found an error while loading machine " + s + " in addon " + addon.getAddonId()
+                        + ": Invalid recipe type '" + recipeType + "'!",
+                recipeType);
 
         if (rt.getFirstValue() == ExceptionHandler.HandleResult.FAILED) return null;
 
@@ -59,8 +61,8 @@ public class MachineReader extends YamlReader<AbstractEmptyMachine<?>> {
             String script = section.getString("script", "");
             File file = new File(addon.getScriptsFolder(), script + ".js");
             if (!file.exists()) {
-                ExceptionHandler.handleWarning(
-                        "在附属" + addon.getAddonId() + "中加载机器" + s + "时遇到了问题: " + "找不到脚本文件 " + file.getName());
+                ExceptionHandler.handleWarning("There was an error while loading machine " + s + " in addon "
+                        + addon.getAddonId() + ": " + "Could not find script file " + file.getName());
             } else {
                 eval = new JavaScriptEval(file, addon);
             }
@@ -75,7 +77,9 @@ public class MachineReader extends YamlReader<AbstractEmptyMachine<?>> {
         if (section.contains("energy")) {
             ConfigurationSection energySettings = section.getConfigurationSection("energy");
             if (energySettings == null) {
-                ExceptionHandler.handleWarning("无法读取在附属" + addon.getAddonId() + "中的机器" + s + "的能源设置，已转为无电机器");
+                ExceptionHandler.handleWarning(
+                        "There was an error while loading machine " + s + " in addon " + addon.getAddonId() + ": "
+                                + "Could not find energy settings! The machine will be treated as a no-energy machine.");
                 machine = new CustomNoEnergyMachine(
                         group.getSecondValue(),
                         slimefunItemStack,
@@ -90,7 +94,9 @@ public class MachineReader extends YamlReader<AbstractEmptyMachine<?>> {
             }
             int capacity = energySettings.getInt("capacity");
             if (capacity < 0) {
-                ExceptionHandler.handleError("无法读取在附属" + addon.getAddonId() + "中的机器" + s + "的能源设置，已转为无电机器，原因: 容量不能小于0");
+                ExceptionHandler.handleError(
+                        "There was an error while loading machine " + s + " in addon " + addon.getAddonId() + ": "
+                                + "Capacity cannot be negative! The machine will be treated as a no-energy machine.");
                 machine = new CustomNoEnergyMachine(
                         group.getSecondValue(),
                         slimefunItemStack,
@@ -106,7 +112,9 @@ public class MachineReader extends YamlReader<AbstractEmptyMachine<?>> {
             MachineRecord record = new MachineRecord(capacity);
             String encType = energySettings.getString("type");
             Pair<ExceptionHandler.HandleResult, EnergyNetComponentType> enc = ExceptionHandler.handleEnumValueOf(
-                    "无法读取在附属" + addon.getAddonId() + "中的机器" + s + "的能源设置，已转为无电机器，原因: 错误的能源网络组件类型" + encType,
+                    "Found an error while loading machine " + s + " in addon " + addon.getAddonId()
+                            + ": Invalid energy network component type '" + encType
+                            + "'! The machine will be treated as a no-energy machine.",
                     EnergyNetComponentType.class,
                     encType);
             if (enc.getFirstValue() == ExceptionHandler.HandleResult.FAILED) {
@@ -166,7 +174,8 @@ public class MachineReader extends YamlReader<AbstractEmptyMachine<?>> {
         ItemStack stack = CommonUtils.readItem(item, false, addon);
 
         if (stack == null) {
-            ExceptionHandler.handleError("在附属" + addon.getAddonId() + "中加载机器" + s + "时遇到了问题: " + "物品为空或格式错误导致无法加载");
+            ExceptionHandler.handleError("Found an error while loading machine " + s + " in addon " + addon.getAddonId()
+                    + ": " + "The item is null or has an invalid format");
             return null;
         }
 

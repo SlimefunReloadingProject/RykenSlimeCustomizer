@@ -3,7 +3,7 @@ package org.lins.mmmjjkx.rykenslimefuncustomizer.objects.script.enhanced;
 import lombok.AllArgsConstructor;
 import org.bukkit.event.Event;
 import org.jetbrains.annotations.NotNull;
-import org.lins.mmmjjkx.rykenslimefuncustomizer.objects.script.parent.ScriptEval;
+import org.lins.mmmjjkx.rykenslimefuncustomizer.objects.script.ScriptEval;
 
 @AllArgsConstructor
 public class ScriptableListener {

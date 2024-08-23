@@ -113,7 +113,6 @@ public final class ProjectAddon {
     public void unregister() {
         scriptEvals.forEach(JavaScriptEval::close);
         itemGroups.forEach(ig -> Slimefun.getRegistry().getAllItemGroups().remove(ig));
-        researches.forEach(Research::disable);
         menus.forEach(m -> Slimefun.getRegistry().getMenuPresets().remove(m.getID()));
         items.forEach(this::unregisterItem);
         mobDrops.forEach(md -> {

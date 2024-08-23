@@ -1,8 +1,6 @@
-package org.lins.mmmjjkx.rykenslimefuncustomizer.objects.script.parent;
+package org.lins.mmmjjkx.rykenslimefuncustomizer.objects.script;
 
 import com.google.errorprone.annotations.CanIgnoreReturnValue;
-import com.xzavier0722.mc.plugin.slimefun4.storage.controller.SlimefunBlockData;
-import com.xzavier0722.mc.plugin.slimefun4.storage.util.StorageCacheUtils;
 import io.github.thebusybiscuit.slimefun4.api.items.SlimefunItem;
 
 import java.io.File;
@@ -17,13 +15,18 @@ import java.util.function.Function;
 
 import lombok.AccessLevel;
 import lombok.Getter;
+import me.clip.placeholderapi.PlaceholderAPI;
 import me.mrCookieSlime.Slimefun.api.inventory.BlockMenu;
 import org.bukkit.Bukkit;
+import org.bukkit.entity.Player;
+import org.bukkit.inventory.ItemStack;
 import org.bukkit.Location;
 import org.jetbrains.annotations.Nullable;
 import org.lins.mmmjjkx.rykenslimefuncustomizer.RykenSlimefunCustomizer;
+import org.lins.mmmjjkx.rykenslimefuncustomizer.libraries.colors.CMIChatColor;
 import org.lins.mmmjjkx.rykenslimefuncustomizer.objects.script.enhanced.NBTAPIIntegration;
 import org.lins.mmmjjkx.rykenslimefuncustomizer.objects.script.lambda.CiConsumer;
+import org.lins.mmmjjkx.rykenslimefuncustomizer.objects.script.lambda.CiFunction;
 
 @Getter(AccessLevel.PROTECTED)
 public abstract class ScriptEval {
@@ -57,27 +60,6 @@ public abstract class ScriptEval {
 
     @Deprecated
     protected final void setup() {
-        // StorageCacheUtils functions
-        // removal
-        addThing("setData", (CiConsumer<Location, String, String>) StorageCacheUtils::setData);
-        addThing("getData", (BiFunction<Location, String, String>) StorageCacheUtils::getData);
-        addThing("getBlockMenu", (Function<Location, BlockMenu>) StorageCacheUtils::getMenu);
-        addThing("getBlockData", (Function<Location, SlimefunBlockData>) StorageCacheUtils::getBlock);
-        addThing("isSlimefunBlock", (Function<Location, Boolean>) StorageCacheUtils::hasBlock);
-        addThing("isBlock", (BiFunction<Location, String, Boolean>) StorageCacheUtils::isBlock);
-        addThing("getSfItemByBlock", (Function<Location, SlimefunItem>) StorageCacheUtils::getSfItem);
-
-        // bukkit scheduler functions
-        addThing("runLater", (BiConsumer<Runnable, Long>) (r, l) -> Bukkit.getScheduler().runTaskLater(RykenSlimefunCustomizer.INSTANCE, r, l));
-        addThing("runRepeating", (CiConsumer<Runnable, Long, Long>) (r, l, t) -> Bukkit.getScheduler().runTaskTimer(RykenSlimefunCustomizer.INSTANCE, r, l, t));
-        addThing("runAsync", (Consumer<Runnable>) r -> Bukkit.getScheduler().runTaskAsynchronously(RykenSlimefunCustomizer.INSTANCE, r));
-        addThing("runLaterAsync", (BiConsumer<Runnable, Long>) (r, l) -> Bukkit.getScheduler().runTaskLaterAsynchronously(RykenSlimefunCustomizer.INSTANCE, r, l));
-        addThing("runRepeatingAsync", (CiConsumer<Runnable, Long, Long>) (r, l, t) -> Bukkit.getScheduler().runTaskTimerAsynchronously(RykenSlimefunCustomizer.INSTANCE, r, l, t));
-
-        // NBTAPI integration
-        if (Bukkit.getPluginManager().isPluginEnabled("NBTAPI")) {
-            addThing("NBTAPI", NBTAPIIntegration.instance);
-        }
     }
 
     public abstract void addThing(String name, Object value);

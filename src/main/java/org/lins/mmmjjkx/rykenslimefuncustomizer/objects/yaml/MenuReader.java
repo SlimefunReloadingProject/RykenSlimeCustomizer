@@ -44,7 +44,8 @@ public class MenuReader extends YamlReader<CustomMenu> {
         int size = section.getInt("size", NOT_SET);
 
         if (section.contains("size") && size != NOT_SET && size % 9 != 0) {
-            ExceptionHandler.handleError("在附属" + addon.getAddonId() + "中加载菜单" + s + "时遇到了问题: " + "菜单大小必须是9的倍数。");
+            ExceptionHandler.handleError(
+                    "Found error in menu " + s + "in " + addon.getAddonId() + "addon: size must be a multiple of 9");
             return null;
         }
 
@@ -53,8 +54,8 @@ public class MenuReader extends YamlReader<CustomMenu> {
             String script = section.getString("script", "");
             File file = new File(addon.getScriptsFolder(), script + ".js");
             if (!file.exists()) {
-                ExceptionHandler.handleWarning(
-                        "在附属" + addon.getAddonId() + "中加载菜单" + s + "时遇到了问题: " + "找不到脚本文件 " + file.getName());
+                ExceptionHandler.handleWarning("Found error in menu " + s + "in " + addon.getAddonId()
+                        + "addon: cannot find script file " + file.getName() + "skipping script evaluation");
             } else {
                 eval = new JavaScriptEval(file, addon);
             }
@@ -67,8 +68,8 @@ public class MenuReader extends YamlReader<CustomMenu> {
                 CustomMenu menu =
                         CommonUtils.getIf(addon.getMenus(), m -> m.getId().equals(menuId));
                 if (menu == null) {
-                    ExceptionHandler.handleError(
-                            "在附属" + addon.getAddonId() + "中加载菜单" + s + "时遇到了问题: " + "无法加载机器菜单" + s + ": 无法找到要导入的菜单");
+                    ExceptionHandler.handleError("Found error in menu " + s + "in " + addon.getAddonId()
+                            + "addon: cannot find menu " + menuId + " to import");
                     return null;
                 } else {
                     return new CustomMenu(s, title, menu);
@@ -82,7 +83,8 @@ public class MenuReader extends YamlReader<CustomMenu> {
         Map<Integer, ItemStack> slotMap = new HashMap<>();
         ConfigurationSection slots = section.getConfigurationSection("slots");
         if (slots == null) {
-            ExceptionHandler.handleError("在附属" + addon.getAddonId() + "中加载菜单" + s + "时遇到了问题: " + "没有设置物品。");
+            ExceptionHandler.handleError(
+                    "Found error in menu " + s + "in " + addon.getAddonId() + "addon: slots section is missing");
             return null;
         }
 
@@ -92,15 +94,15 @@ public class MenuReader extends YamlReader<CustomMenu> {
             try {
                 int realSlot = Integer.parseInt(slot);
                 if (realSlot > 53 || realSlot < 0) {
-                    ExceptionHandler.handleWarning(
-                            "在附属" + addon.getAddonId() + "中加载菜单" + s + "时遇到了问题: " + "位于槽位大于53或小于0的物品，跳过对此物品的读取。");
+                    ExceptionHandler.handleWarning("There's a slot in menu " + s + "in " + addon.getAddonId()
+                            + "addon that is out of range(0-53), skipping it.");
                     continue;
                 }
                 ConfigurationSection item = slots.getConfigurationSection(slot);
                 ItemStack itemStack = CommonUtils.readItem(item, true, addon);
                 if (itemStack == null) {
-                    ExceptionHandler.handleWarning("在附属" + addon.getAddonId() + "中加载菜单" + s + "时遇到了问题: " + "位于槽位"
-                            + realSlot + "的物品格式错误或输入了错误的数据无法读取，跳过对此物品的读取。");
+                    ExceptionHandler.handleWarning("Found error in menu " + s + "in " + addon.getAddonId()
+                            + "addon: cannot read item in slot " + slot + ", skipping it.");
                     continue;
                 }
                 if (item.getBoolean("progressbar", false)) {
@@ -122,22 +124,27 @@ public class MenuReader extends YamlReader<CustomMenu> {
             } catch (NumberFormatException e) {
                 String[] range = slot.split("-");
                 if (range.length != 2) {
-                    ExceptionHandler.handleError(
-                            "在附属" + addon.getAddonId() + "中加载菜单" + s + "时遇到了问题: " + "有错误的槽位区间表达式" + slot);
+                    ExceptionHandler.handleError("Found error in menu " + s + "in " + addon.getAddonId()
+                            + "addon: invalid slot number range " + slot + ", skipping it.");
+                    continue;
+                }
+                if (Integer.parseInt(range[0]) > Integer.parseInt(range[1])) {
+                    ExceptionHandler.handleError("Found error in menu " + s + "in " + addon.getAddonId()
+                            + "addon: invalid slot number range " + slot + ", skipping it.");
                     continue;
                 }
                 ConfigurationSection item = slots.getConfigurationSection(slot);
                 ItemStack stack = CommonUtils.readItem(item, true, addon);
                 if (stack == null) {
-                    ExceptionHandler.handleWarning("在附属" + addon.getAddonId() + "中加载菜单" + s + "时遇到了问题: " + "位于区间槽位"
-                            + slot + "的物品格式错误或输入了错误的数据无法读取，跳过对此物品的读取。");
+                    ExceptionHandler.handleWarning("Found error in menu " + s + "in " + addon.getAddonId()
+                            + "addon: cannot read item in slot " + slot + ", skipping it.");
                     continue;
                 }
                 IntStream intStream = IntStream.rangeClosed(Integer.parseInt(range[0]), Integer.parseInt(range[1]));
                 intStream.forEach(i -> {
                     if (i > 53 || i < 0) {
-                        ExceptionHandler.handleWarning(
-                                "在附属" + addon.getAddonId() + "中加载菜单" + s + "时遇到了问题: " + "位于区间槽位大于53或小于0，跳过对此槽位放置物品。");
+                        ExceptionHandler.handleWarning("There's a slot in menu " + s + "in " + addon.getAddonId()
+                                + "addon that is out of range(0-53), skipping it.");
                         return;
                     }
                     slotMap.put(i, stack);
@@ -148,7 +155,6 @@ public class MenuReader extends YamlReader<CustomMenu> {
         return new CustomMenu(s, title, slotMap, playerInvClickable, progress, progressItem, eval).setSize(size);
     }
 
-    // 菜单不需要预加载物品
     @Override
     public List<SlimefunItemStack> preloadItems(String s) {
         return List.of();

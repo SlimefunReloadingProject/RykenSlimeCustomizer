@@ -21,8 +21,11 @@ public class ExceptionHandler {
     public static HandleResult handleIdConflict(String id) {
         SlimefunItem i = SlimefunItem.getById(id);
         if (i != null) {
-            console.sendMessage(CMIChatColor.translate(
-                    "&4ERROR | ID冲突：" + id + "与" + i.getAddon().getName() + "中的物品发生了ID冲突"));
+            console.sendMessage(
+                    CMIChatColor.translate(
+                            "&4ERROR | ID conflict: " + id + "and the item in addon called "
+                                    + i.getAddon().getName()
+                                    + " have the same ID. Please change the ID of the item in the addon or remove the item in the addon. "));
             return HandleResult.FAILED;
         }
         return HandleResult.SUCCESS;
@@ -31,7 +34,8 @@ public class ExceptionHandler {
     public static HandleResult handleMenuConflict(String id, ProjectAddon addon) {
         CustomMenu menu = CommonUtils.getIf(addon.getMenus(), m -> m.getID().equalsIgnoreCase(id));
         if (menu != null) {
-            console.sendMessage(CMIChatColor.translate("&4ERROR | ID冲突：已存在菜单ID为" + id + "的菜单"));
+            console.sendMessage(
+                    CMIChatColor.translate("&4ERROR | ID conflict: there's already a menu with the ID " + id));
             return HandleResult.FAILED;
         }
         return HandleResult.SUCCESS;
@@ -44,14 +48,14 @@ public class ExceptionHandler {
         if (ig != null) {
             if (ig.getAddon() != null) {
                 if (ig.getAddon().getClass() == RykenSlimefunCustomizer.class) {
-                    console.sendMessage(CMIChatColor.translate(
-                            "&4ERROR | ID冲突：" + id + "与物品组 " + ig.getKey().getKey() + "发生ID冲突"));
+                    console.sendMessage(CMIChatColor.translate("&4ERROR | ID conflict: " + id + "and the item group "
+                            + ig.getKey().getKey() + " has the same key."));
                     return HandleResult.FAILED;
                 }
                 return HandleResult.SUCCESS;
             }
-            console.sendMessage(CMIChatColor.translate(
-                    "&4ERROR | ID冲突：" + id + "与物品组 " + ig.getKey().getKey() + "发生ID冲突"));
+            console.sendMessage(CMIChatColor.translate("&4ERROR | ID conflict: " + id + "and the item group "
+                    + ig.getKey().getKey() + " has the same key."));
             return HandleResult.FAILED;
         }
         return HandleResult.SUCCESS;
@@ -122,7 +126,7 @@ public class ExceptionHandler {
                     Slimefun.getRegistry().getAllItemGroups(),
                     i -> i.getKey().toString().equalsIgnoreCase(id));
             if (ig2 == null) {
-                handleError("无法在附属" + addon.getAddonName() + "中找到该物品组 " + id);
+                handleError("Cannot find item group with ID " + id + " in addon called " + addon.getAddonName());
                 return new Pair<>(HandleResult.FAILED, null);
             }
             return new Pair<>(HandleResult.SUCCESS, ig2);
