@@ -100,7 +100,7 @@ public final class RykenSlimefunCustomizer extends JavaPlugin implements Slimefu
         Library javet = Library.builder()
                 .groupId("com{}caoccao{}javet")
                 .artifactId("javet")
-                .version("3.1.4")
+                .version("3.1.5")
                 .build();
 
         libraryManager.loadLibrary(byteBuddy);
