@@ -85,8 +85,6 @@ public class CustomRecipeMachine extends AContainer implements RecipeDisplayItem
         setCapacity(capacity);
         setEnergyConsumption(energyPerCraft);
 
-        registerDefaultRecipes();
-
         register(RykenSlimefunCustomizer.INSTANCE);
     }
 
