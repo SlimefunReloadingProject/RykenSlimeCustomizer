@@ -5,11 +5,7 @@ import io.github.thebusybiscuit.slimefun4.api.items.SlimefunItem;
 import io.github.thebusybiscuit.slimefun4.api.items.SlimefunItemStack;
 import io.github.thebusybiscuit.slimefun4.api.recipes.RecipeType;
 import io.github.thebusybiscuit.slimefun4.libraries.dough.collections.Pair;
-import java.lang.reflect.Constructor;
-import java.lang.reflect.Field;
-import java.lang.reflect.InvocationTargetException;
-import java.lang.reflect.Method;
-import java.lang.reflect.Modifier;
+import java.lang.reflect.*;
 import java.util.ArrayList;
 import java.util.Arrays;
 import java.util.List;
@@ -108,9 +104,13 @@ public class SuperReader extends YamlReader<SlimefunItem> {
                     args1 = new Object[] {methodArray.get(methodName)};
                 }
 
-                Method method = getMethod(clazz, methodName, Arrays.stream(args1).map(Object::getClass).toArray(Class<?>[]::new));
+                Method method = getMethod(
+                        clazz,
+                        methodName,
+                        Arrays.stream(args1).map(Object::getClass).toArray(Class<?>[]::new));
                 if (method == null) {
-                    ExceptionHandler.handleError("在附属" + addon.getAddonId() + "中加载继承物品" + s + "时遇到了问题: " + "没有找到方法" + methodName);
+                    ExceptionHandler.handleError(
+                            "在附属" + addon.getAddonId() + "中加载继承物品" + s + "时遇到了问题: " + "没有找到方法" + methodName);
                     continue;
                 }
 
@@ -118,8 +118,7 @@ public class SuperReader extends YamlReader<SlimefunItem> {
                     method.setAccessible(true);
                     method.invoke(instance, args1);
                 } catch (IllegalAccessException | InvocationTargetException e) {
-                    ExceptionHandler.handleError(
-                            "在附属" + addon.getAddonId() + "中加载继承物品" + s + "时遇到了问题: " + "方法调用异常", e);
+                    ExceptionHandler.handleError("在附属" + addon.getAddonId() + "中加载继承物品" + s + "时遇到了问题: " + "方法调用异常", e);
                 }
             }
         }

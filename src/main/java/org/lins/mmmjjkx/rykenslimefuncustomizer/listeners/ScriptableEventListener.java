@@ -405,7 +405,7 @@ public class ScriptableEventListener implements Listener {
     public void onPiglinBarter(PiglinBarterEvent e) {
         ScriptableListeners.getScriptableListeners().forEach(o -> o.doEventEval(e));
     }
-    
+
     @EventHandler
     public void onEntityExhaustion(EntityExhaustionEvent e) {
         ScriptableListeners.getScriptableListeners().forEach(o -> o.doEventEval(e));
@@ -413,11 +413,6 @@ public class ScriptableEventListener implements Listener {
 
     @EventHandler
     public void onEntityUnleash(EntityUnleashEvent e) {
-        ScriptableListeners.getScriptableListeners().forEach(o -> o.doEventEval(e));
-    }
-
-    @EventHandler
-    public void onEntityCreatePortal(EntityCreatePortalEvent e) {
         ScriptableListeners.getScriptableListeners().forEach(o -> o.doEventEval(e));
     }
 

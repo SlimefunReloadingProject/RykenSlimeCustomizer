@@ -6,7 +6,7 @@ import com.caoccao.javet.interception.jvm.VirtualPackage;
 import com.caoccao.javet.interception.logging.JavetStandardConsoleInterceptor;
 import com.caoccao.javet.interop.V8Host;
 import com.caoccao.javet.interop.V8Runtime;
-import com.caoccao.javet.interop.converters.JavetProxyConverter;
+import com.caoccao.javet.interop.converters.JavetBridgeConverter;
 import com.caoccao.javet.values.V8Value;
 import com.caoccao.javet.values.primitive.V8ValueUndefined;
 import com.caoccao.javet.values.reference.V8ValueGlobalObject;
@@ -17,11 +17,7 @@ import io.github.thebusybiscuit.slimefun4.implementation.SlimefunItems;
 import io.github.thebusybiscuit.slimefun4.libraries.dough.data.persistent.PersistentDataAPI;
 import io.github.thebusybiscuit.slimefun4.utils.SlimefunUtils;
 import java.io.File;
-import java.lang.reflect.Constructor;
-import java.lang.reflect.InvocationTargetException;
-import java.lang.reflect.Method;
 import java.util.List;
-
 import me.mrCookieSlime.Slimefun.api.inventory.BlockMenu;
 import org.jetbrains.annotations.NotNull;
 import org.jetbrains.annotations.Nullable;
@@ -38,7 +34,7 @@ public class JavaScriptEval extends ScriptEval {
         super(js);
 
         reSetup();
-        //setup();
+        // setup();
         contextInit();
 
         addon.getScriptEvals().add(this);
@@ -56,7 +52,6 @@ public class JavaScriptEval extends ScriptEval {
     @Override
     public void close() {
         try {
-            jsEngine.lowMemoryNotification();
             jsEngine.close();
 
             reSetup();
@@ -140,7 +135,7 @@ public class JavaScriptEval extends ScriptEval {
 
     private void reSetup() {
         try {
-            JavetProxyConverter converter = new JavetProxyConverter();
+            JavetBridgeConverter converter = new JavetBridgeConverter();
             converter.getConfig().setReflectionObjectFactory(JavetReflectionObjectFactory.getInstance());
             jsEngine = V8Host.getV8Instance().createV8Runtime();
             jsEngine.setConverter(converter);

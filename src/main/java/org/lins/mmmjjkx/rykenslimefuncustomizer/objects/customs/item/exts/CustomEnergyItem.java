@@ -50,7 +50,7 @@ public class CustomEnergyItem extends CustomItem implements Rechargeable, NotPla
     public void setItemCharge(ItemStack item, int charge) {
         Rechargeable.super.setItemCharge(item, charge);
     }
-    
+
     public void setItemCharge(ItemStack item, double charge) {
         Rechargeable.super.setItemCharge(item, (float) charge);
     }
@@ -66,7 +66,7 @@ public class CustomEnergyItem extends CustomItem implements Rechargeable, NotPla
     public void removeItemCharge(ItemStack item, int charge) {
         Rechargeable.super.removeItemCharge(item, charge);
     }
-    
+
     public void removeItemCharge(ItemStack item, double charge) {
         Rechargeable.super.addItemCharge(item, (float) charge);
     }
