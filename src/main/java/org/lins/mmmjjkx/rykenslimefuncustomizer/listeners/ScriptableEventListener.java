@@ -405,4 +405,39 @@ public class ScriptableEventListener implements Listener {
     public void onPiglinBarter(PiglinBarterEvent e) {
         ScriptableListeners.getScriptableListeners().forEach(o -> o.doEventEval(e));
     }
+    
+    @EventHandler
+    public void onEntityExhaustion(EntityExhaustionEvent e) {
+        ScriptableListeners.getScriptableListeners().forEach(o -> o.doEventEval(e));
+    }
+
+    @EventHandler
+    public void onEntityUnleash(EntityUnleashEvent e) {
+        ScriptableListeners.getScriptableListeners().forEach(o -> o.doEventEval(e));
+    }
+
+    @EventHandler
+    public void onEntityCreatePortal(EntityCreatePortalEvent e) {
+        ScriptableListeners.getScriptableListeners().forEach(o -> o.doEventEval(e));
+    }
+
+    @EventHandler
+    public void onEntityChangeBlock(EntityChangeBlockEvent e) {
+        ScriptableListeners.getScriptableListeners().forEach(o -> o.doEventEval(e));
+    }
+
+    @EventHandler
+    public void onEntityBreakDoor(EntityBreakDoorEvent e) {
+        ScriptableListeners.getScriptableListeners().forEach(o -> o.doEventEval(e));
+    }
+
+    @EventHandler
+    public void onEntityEnterLoveMode(EntityEnterLoveModeEvent e) {
+        ScriptableListeners.getScriptableListeners().forEach(o -> o.doEventEval(e));
+    }
+
+    @EventHandler
+    public void onBatToggleSleep(BatToggleSleepEvent e) {
+        ScriptableListeners.getScriptableListeners().forEach(o -> o.doEventEval(e));
+    }
 }
