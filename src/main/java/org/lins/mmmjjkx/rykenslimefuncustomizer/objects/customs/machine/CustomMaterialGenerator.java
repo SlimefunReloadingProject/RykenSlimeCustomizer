@@ -100,7 +100,7 @@ public class CustomMaterialGenerator extends SlimefunItem
             } else {
                 if (statusSlot > -1) {
                     blockMenu.replaceExistingItem(
-                            statusSlot, new CustomItemStack(Material.RED_STAINED_GLASS_PANE, "&4电力不足"));
+                            statusSlot, new CustomItemStack(Material.RED_STAINED_GLASS_PANE, "&4No enough energy"));
                 }
             }
         }
@@ -169,8 +169,8 @@ public class CustomMaterialGenerator extends SlimefunItem
     public List<ItemStack> getDisplayRecipes() {
         ItemStack speed = new CustomItemStack(
                 Material.KNOWLEDGE_BOOK,
-                "&a&l速度",
-                Collections.singletonList("&a&l每 &b&l" + tickRate + " &a&l个粘液刻生成一次"));
+                "&a&lSpeed",
+                Collections.singletonList("&a&lGenerates per &b&l" + tickRate + " &a&lticks once"));
         List<ItemStack> list = new ArrayList<>();
         for (ItemStack gen : generation) {
             list.add(speed);
@@ -191,7 +191,7 @@ public class CustomMaterialGenerator extends SlimefunItem
             if (blockMenu.fits(item, getOutputSlots())) {
                 if (blockMenu.hasViewer() && statusSlot > -1) {
                     blockMenu.replaceExistingItem(
-                            statusSlot, new CustomItemStack(Material.LIME_STAINED_GLASS_PANE, "&a生产中"));
+                            statusSlot, new CustomItemStack(Material.LIME_STAINED_GLASS_PANE, "&aProducing"));
                 }
                 blockMenu.pushItem(item.clone(), getOutputSlots());
                 removeCharge(b.getLocation(), per);
@@ -200,7 +200,7 @@ public class CustomMaterialGenerator extends SlimefunItem
                     if (statusSlot > -1) {
                         blockMenu.replaceExistingItem(
                                 statusSlot,
-                                new CustomItemStack(Material.ORANGE_STAINED_GLASS_PANE, "&c空间不足"));
+                                new CustomItemStack(Material.ORANGE_STAINED_GLASS_PANE, "&cNot enough space"));
                     }
                 }
             }
