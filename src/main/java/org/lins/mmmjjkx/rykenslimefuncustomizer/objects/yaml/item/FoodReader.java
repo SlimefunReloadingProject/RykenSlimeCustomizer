@@ -1,7 +1,6 @@
 package org.lins.mmmjjkx.rykenslimefuncustomizer.objects.yaml.item;
 
-import de.tr7zw.nbtapi.NBTCompound;
-import de.tr7zw.nbtapi.NBTItem;
+import de.tr7zw.nbtapi.NBT;
 import io.github.thebusybiscuit.slimefun4.api.items.ItemGroup;
 import io.github.thebusybiscuit.slimefun4.api.items.SlimefunItemStack;
 import io.github.thebusybiscuit.slimefun4.api.recipes.RecipeType;
@@ -47,7 +46,9 @@ public class FoodReader extends YamlReader<CustomFood> {
         String recipeType = section.getString("recipe_type", "NULL");
 
         Pair<ExceptionHandler.HandleResult, RecipeType> rt = ExceptionHandler.getRecipeType(
-                "在附属" + addon.getAddonId() + "中加载食物" + s + "时遇到了问题: " + "错误的配方类型" + recipeType + "!", recipeType);
+                "Found an error while loading capacitor " + s + " in addon " + addon.getAddonId()
+                        + ": Invalid recipe type '" + recipeType + "'!",
+                recipeType);
 
         if (rt.getFirstValue() == ExceptionHandler.HandleResult.FAILED) return null;
 
@@ -56,8 +57,8 @@ public class FoodReader extends YamlReader<CustomFood> {
             String script = section.getString("script", "");
             File file = new File(addon.getScriptsFolder(), script + ".js");
             if (!file.exists()) {
-                ExceptionHandler.handleWarning(
-                        "在附属" + addon.getAddonId() + "中加载食物" + s + "时遇到了问题: " + "找不到脚本文件 " + file.getName());
+                ExceptionHandler.handleWarning("There was an error while loading food " + s + " in addon "
+                        + addon.getAddonId() + ": " + "Could not find script file " + file.getName());
             } else {
                 eval = new JavaScriptEval(file, addon);
             }
@@ -65,41 +66,44 @@ public class FoodReader extends YamlReader<CustomFood> {
 
         if (CommonUtils.versionToCode(Bukkit.getMinecraftVersion()) >= 1205) {
             if (Bukkit.getPluginManager().isPluginEnabled("NBTAPI")) {
-                sfis = nbtApply(id, section, sfis);
+                nbtApply(id, section, sfis);
             }
         }
 
         return new CustomFood(group.getSecondValue(), sfis, rt.getSecondValue(), itemStacks, eval);
     }
 
-    private SlimefunItemStack nbtApply(String s, ConfigurationSection section, SlimefunItemStack sfis) {
-        NBTItem nbti = new NBTItem(sfis);
-        NBTCompound food = nbti.getOrCreateCompound("food");
+    private void nbtApply(String s, ConfigurationSection section, SlimefunItemStack sfis) {
         int nutrition = section.getInt("nutrition");
         float saturation = section.getInt("saturation");
         boolean alwaysEatable = section.getBoolean("always_eatable", false);
         float eatseconds = section.getInt("eat_seconds", 0);
         if (nutrition < 1) {
-            ExceptionHandler.handleError(
-                    "在附属" + addon.getAddonId() + "中加载食物" + s + "时遇到了问题: " + "饥饿值 " + nutrition + "小于1! 已转为1");
+            ExceptionHandler.handleError("Found an error while loading food " + s + " in addon " + addon.getAddonId()
+                    + ": " + "Nutrition value " + nutrition + " is less than 1! Value has been set to 1.");
             nutrition = 1;
         }
         if (saturation < 0f) {
-            ExceptionHandler.handleError(
-                    "在附属" + addon.getAddonId() + "中加载食物" + s + "时遇到了问题: " + "饱和度 " + saturation + "小于0! 已转为0");
+            ExceptionHandler.handleError("Found an error while loading food " + s + " in addon " + addon.getAddonId()
+                    + ": " + "Saturation value " + saturation + " is less than 0! Value has been set to 0.");
             saturation = 0f;
         }
         if (eatseconds < 0) {
-            ExceptionHandler.handleError(
-                    "在附属" + addon.getAddonId() + "中加载食物" + s + "时遇到了问题: " + "食用时间 " + eatseconds + "小于0! 已转为1.6");
+            ExceptionHandler.handleError("Found an error while loading food " + s + " in addon " + addon.getAddonId()
+                    + ": " + "Eat seconds value " + eatseconds + " is less than 0! Value has been set to 1.6.");
             eatseconds = 1.6f;
         }
-        food.setInteger("nutrition", nutrition);
-        food.setFloat("saturation", saturation);
-        food.setBoolean("can_always_eat", alwaysEatable);
-        food.setFloat("eat_seconds", eatseconds);
 
-        return new SlimefunItemStack(sfis.getItemId(), nbti.getItem());
+        final int finalNutrition = nutrition;
+        final float finalSaturation = saturation;
+        final float finalEatSeconds = eatseconds;
+
+        NBT.modify(sfis, nbt -> {
+            nbt.setInteger("nutrition", finalNutrition);
+            nbt.setFloat("saturation", finalSaturation);
+            nbt.setBoolean("can_always_eat", alwaysEatable);
+            nbt.setFloat("eat_seconds", finalEatSeconds);
+        });
     }
 
     @Override
@@ -111,7 +115,8 @@ public class FoodReader extends YamlReader<CustomFood> {
         ConfigurationSection item = section.getConfigurationSection("item");
         ItemStack stack = CommonUtils.readItem(item, false, addon);
         if (stack == null) {
-            ExceptionHandler.handleError("在附属" + addon.getAddonId() + "中加载食物" + id + "时遇到了问题: " + "物品为空或格式错误导致无法加载");
+            ExceptionHandler.handleError("Found an error while loading food " + id + " in addon " + addon.getAddonId()
+                    + ": " + "The item is null or has an invalid format");
             return null;
         }
 

@@ -45,7 +45,9 @@ public class GeneratorReader extends YamlReader<CustomGenerator> {
         String recipeType = section.getString("recipe_type", "NULL");
 
         Pair<ExceptionHandler.HandleResult, RecipeType> rt = ExceptionHandler.getRecipeType(
-                "在附属" + addon.getAddonId() + "中加载发电机" + s + "时遇到了问题: " + "错误的配方类型" + recipeType + "!", recipeType);
+                "Found an error while loading generator " + s + " in addon " + addon.getAddonId()
+                        + ": Invalid recipe type '" + recipeType + "'!",
+                recipeType);
 
         if (rt.getFirstValue() == ExceptionHandler.HandleResult.FAILED) return null;
 
@@ -60,7 +62,8 @@ public class GeneratorReader extends YamlReader<CustomGenerator> {
         int production = section.getInt("production");
 
         if (production < 1) {
-            ExceptionHandler.handleError("在附属" + addon.getAddonId() + "中加载发电机" + s + "时遇到了问题: " + "产电量不能小于1");
+            ExceptionHandler.handleError("Found an error while loading generator " + s + " in addon "
+                    + addon.getAddonId() + ": Production cannot be less than 1!");
             return null;
         }
 
@@ -86,7 +89,8 @@ public class GeneratorReader extends YamlReader<CustomGenerator> {
         ItemStack stack = CommonUtils.readItem(item, false, addon);
 
         if (stack == null) {
-            ExceptionHandler.handleError("在附属" + addon.getAddonId() + "中加载发电机" + id + "时遇到了问题: " + "物品为空或格式错误导致无法加载");
+            ExceptionHandler.handleError("Found an error while loading generator " + id + " in addon "
+                    + addon.getAddonId() + ": " + "The item is null or has an invalid format");
             return null;
         }
         return List.of(new SlimefunItemStack(id, stack));
@@ -104,14 +108,16 @@ public class GeneratorReader extends YamlReader<CustomGenerator> {
             ItemStack stack = CommonUtils.readItem(item, true, addon);
             if (stack == null) {
                 ExceptionHandler.handleError(
-                        "在附属" + addon.getAddonId() + "中加载发电机" + s + "的燃料" + key + "时遇到了问题: " + "输入物品为空或格式错误，已跳过加载");
+                        "Found an error while loading generator " + s + " in addon " + addon.getAddonId() + ": "
+                                + "The fuel " + key + "'s item is null or has an invalid format. Skipping...");
                 continue;
             }
             int seconds = section1.getInt("seconds");
 
             if (seconds < 1) {
                 ExceptionHandler.handleError(
-                        "在附属" + addon.getAddonId() + "中加载发电机" + s + "的燃料" + key + "时遇到了问题: " + "秒数不能小于1，已跳过加载");
+                        "Found an error while loading generator " + s + " in addon " + addon.getAddonId() + ": "
+                                + "The fuel " + key + "'s production seconds is less than 1. Skipping...");
                 continue;
             }
 
@@ -120,8 +126,9 @@ public class GeneratorReader extends YamlReader<CustomGenerator> {
                 ConfigurationSection outputSet = section1.getConfigurationSection("output");
                 output = CommonUtils.readItem(outputSet, true, addon);
                 if (output == null) {
-                    ExceptionHandler.handleError(
-                            "在附属" + addon.getAddonId() + "中加载发电机" + s + "的燃料" + key + "时遇到了问题: " + "输出物品为空或格式错误，已转为空");
+                    ExceptionHandler.handleError("Found an error while loading generator " + s + " in addon "
+                            + addon.getAddonId() + ": " + "The fuel " + key
+                            + "'s output item is null or has an invalid format. It will output nothing!");
                 }
             }
 

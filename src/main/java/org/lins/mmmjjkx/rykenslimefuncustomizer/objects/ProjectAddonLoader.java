@@ -41,7 +41,7 @@ public class ProjectAddonLoader {
         ProjectAddon addon;
         YamlConfiguration info = doFileLoad(file, Constants.INFO_FILE);
 
-        ExceptionHandler.debugLog("开始读取文件夹 " + file.getName() + " 中的项目信息...");
+        ExceptionHandler.debugLog("Start reading project info from folder called " + file.getName() + " ...");
 
         if (info.contains("name") && info.contains("version") && info.contains("id")) {
             String name = info.getString("name");
@@ -70,7 +70,8 @@ public class ProjectAddonLoader {
             }
 
             if (name == null || name.isBlank()) {
-                ExceptionHandler.handleError("在名称为 " + file.getName() + "的文件夹中有无效的项目名称，导致此附属无法加载！");
+                ExceptionHandler.handleError("A folder called " + file.getName()
+                        + "contains invalid project information, so the addon cannot be loaded！");
                 return null;
             }
 
@@ -79,8 +80,9 @@ public class ProjectAddonLoader {
                 if (!RykenSlimefunCustomizer.addonManager.isLoaded(depends.toArray(new String[0]))) {
                     boolean loadResult = loadDependencies(depends);
                     if (!loadResult) {
-                        ExceptionHandler.handleError("在名称为 " + name + " 的附属(附属id：" + id + ")中需要依赖项 " + depends
-                                + "，由于部分依赖项在加载时出错或未安装，导致此附属无法加载！");
+                        ExceptionHandler.handleError(
+                                "A addon called " + name + " (Addon id：" + id + ") needs the dependencies " + depends
+                                        + "，because some of them are not loaded or installed, so the addon cannot be loaded! ");
                         return null;
                     }
                 }
@@ -90,8 +92,9 @@ public class ProjectAddonLoader {
                 pluginDepends = info.getStringList("pluginDepends");
                 for (String pluginDepend : pluginDepends) {
                     if (!Bukkit.getPluginManager().isPluginEnabled(pluginDepend)) {
-                        ExceptionHandler.handleError("在名称为 " + name + " 的附属(附属id：" + id + ")中需要插件依赖项 " + pluginDepends
-                                + "，由于部分依赖项在加载时出错或未安装，导致此附属无法加载！");
+                        ExceptionHandler.handleError(
+                                "A addon called " + name + " (Addon id：" + id + ") needs the plugin " + pluginDepends
+                                        + "，because it is not loaded or installed, so the addon cannot be loaded! ");
                         return null;
                     }
                 }
@@ -120,11 +123,12 @@ public class ProjectAddonLoader {
                 }
             }
         } else {
-            ExceptionHandler.handleError("在名称为 " + file.getName() + "的文件夹中有无效的项目信息，导致此附属无法加载！");
+            ExceptionHandler.handleError("A folder called " + file.getName()
+                    + "contains invalid project information, so the addon cannot be loaded！");
             return null;
         }
 
-        ExceptionHandler.debugLog("读取完成，开始加载附属 " + addon.getAddonId() + " 中的内容...");
+        ExceptionHandler.debugLog("Read finished, start reading contents from addon " + addon.getAddonId() + "...");
 
         YamlConfiguration groups = doFileLoad(file, Constants.GROUPS_FILE);
         ItemGroupReader groupReader = new ItemGroupReader(groups, addon);
@@ -169,7 +173,7 @@ public class ProjectAddonLoader {
         SuperReader superReader = new SuperReader(supers, addon);
         TemplateMachineReader templateMachineReader = new TemplateMachineReader(templateMachines, addon);
 
-        ExceptionHandler.debugLog("开始加载 " + file.getName() + " 中的物品内容...");
+        ExceptionHandler.debugLog("Start preloading items from addon " + addon.getAddonId() + "...");
 
         mobDropsReader.preload();
         resourceReader.preload();
@@ -187,7 +191,7 @@ public class ProjectAddonLoader {
         superReader.preload();
         templateMachineReader.preload();
 
-        ExceptionHandler.debugLog("开始注册 " + file.getName() + " 存放的内容...");
+        ExceptionHandler.debugLog("Start registering contents from addon " + addon.getAddonId() + "...");
 
         addon.setMobDrops(mobDropsReader.readAll());
         addon.setGeoResources(resourceReader.readAll());
@@ -206,7 +210,7 @@ public class ProjectAddonLoader {
         addon.setSupers(superReader.readAll());
         addon.setTemplateMachines(templateMachineReader.readAll());
 
-        ExceptionHandler.debugLog("开始加载要求延迟加载的内容...");
+        ExceptionHandler.debugLog("Start late init contents from addon " + addon.getAddonId() + "...");
 
         // late inits
         addon.getMobDrops().addAll(mobDropsReader.loadLateInits());
@@ -232,7 +236,7 @@ public class ProjectAddonLoader {
         researchesList.addAll(researchReader.loadLateInits());
         addon.setResearches(researchesList);
 
-        ExceptionHandler.debugLog("加载附属 " + addon.getAddonId() + " 成功!");
+        ExceptionHandler.debugLog("Loaded addon " + addon.getAddonId() + " successfully!");
 
         return addon;
     }

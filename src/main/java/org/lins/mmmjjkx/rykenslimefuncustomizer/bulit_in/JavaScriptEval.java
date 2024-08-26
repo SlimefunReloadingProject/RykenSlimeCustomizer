@@ -6,23 +6,23 @@ import com.caoccao.javet.interception.jvm.VirtualPackage;
 import com.caoccao.javet.interception.logging.JavetStandardConsoleInterceptor;
 import com.caoccao.javet.interop.V8Host;
 import com.caoccao.javet.interop.V8Runtime;
-import com.caoccao.javet.interop.converters.JavetBridgeConverter;
+import com.caoccao.javet.interop.converters.JavetProxyConverter;
 import com.caoccao.javet.values.V8Value;
 import com.caoccao.javet.values.primitive.V8ValueUndefined;
 import com.caoccao.javet.values.reference.V8ValueGlobalObject;
 import com.google.errorprone.annotations.CanIgnoreReturnValue;
-import com.xzavier0722.mc.plugin.slimefun4.storage.util.StorageCacheUtils;
 import io.github.thebusybiscuit.slimefun4.api.items.SlimefunItem;
 import io.github.thebusybiscuit.slimefun4.implementation.SlimefunItems;
 import io.github.thebusybiscuit.slimefun4.libraries.dough.data.persistent.PersistentDataAPI;
 import io.github.thebusybiscuit.slimefun4.utils.SlimefunUtils;
 import java.io.File;
 import java.util.List;
+import me.mrCookieSlime.Slimefun.api.BlockStorage;
 import me.mrCookieSlime.Slimefun.api.inventory.BlockMenu;
 import org.jetbrains.annotations.NotNull;
 import org.jetbrains.annotations.Nullable;
 import org.lins.mmmjjkx.rykenslimefuncustomizer.objects.ProjectAddon;
-import org.lins.mmmjjkx.rykenslimefuncustomizer.objects.script.parent.ScriptEval;
+import org.lins.mmmjjkx.rykenslimefuncustomizer.objects.script.ScriptEval;
 import org.lins.mmmjjkx.rykenslimefuncustomizer.utils.ExceptionHandler;
 
 public class JavaScriptEval extends ScriptEval {
@@ -41,9 +41,9 @@ public class JavaScriptEval extends ScriptEval {
     }
 
     private void advancedSetup() {
+        addThing("BlockStorage", BlockStorage.class);
         addThing("SlimefunItems", SlimefunItems.class);
         addThing("SlimefunItem", SlimefunItem.class);
-        addThing("StorageCacheUtils", StorageCacheUtils.class);
         addThing("SlimefunUtils", SlimefunUtils.class);
         addThing("BlockMenu", BlockMenu.class);
         addThing("PersistentDataAPI", PersistentDataAPI.class);
@@ -52,6 +52,7 @@ public class JavaScriptEval extends ScriptEval {
     @Override
     public void close() {
         try {
+            jsEngine.lowMemoryNotification();
             jsEngine.close();
 
             reSetup();
@@ -135,7 +136,7 @@ public class JavaScriptEval extends ScriptEval {
 
     private void reSetup() {
         try {
-            JavetBridgeConverter converter = new JavetBridgeConverter();
+            JavetProxyConverter converter = new JavetProxyConverter();
             converter.getConfig().setReflectionObjectFactory(JavetReflectionObjectFactory.getInstance());
             jsEngine = V8Host.getV8Instance().createV8Runtime();
             jsEngine.setConverter(converter);

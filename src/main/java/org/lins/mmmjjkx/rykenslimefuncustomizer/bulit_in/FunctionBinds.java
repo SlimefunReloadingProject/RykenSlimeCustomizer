@@ -5,12 +5,12 @@ import com.caoccao.javet.annotations.V8Property;
 import com.caoccao.javet.exceptions.JavetException;
 import com.caoccao.javet.interop.V8Runtime;
 import com.caoccao.javet.values.reference.V8ValueProxy;
-import com.xzavier0722.mc.plugin.slimefun4.storage.controller.SlimefunBlockData;
-import com.xzavier0722.mc.plugin.slimefun4.storage.util.StorageCacheUtils;
 import io.github.thebusybiscuit.slimefun4.api.items.SlimefunItem;
 import io.github.thebusybiscuit.slimefun4.utils.SlimefunUtils;
 import java.util.Random;
 import me.clip.placeholderapi.PlaceholderAPI;
+import me.mrCookieSlime.CSCoreLibPlugin.Configuration.Config;
+import me.mrCookieSlime.Slimefun.api.BlockStorage;
 import me.mrCookieSlime.Slimefun.api.inventory.BlockMenu;
 import org.bukkit.Bukkit;
 import org.bukkit.Location;
@@ -104,37 +104,37 @@ public class FunctionBinds {
 
     @V8Function(name = "setData")
     public void setData(Location location, String key, String value) {
-        StorageCacheUtils.setData(location, key, value);
+        BlockStorage.addBlockInfo(location, key, value);
     }
 
     @V8Function(name = "getData")
     public String getData(Location location, String key) {
-        return StorageCacheUtils.getData(location, key);
+        return BlockStorage.getLocationInfo(location, key);
     }
 
     @V8Function(name = "getBlockMenu")
     public BlockMenu getBlockMenu(Location loc) {
-        return StorageCacheUtils.getMenu(loc);
+        return BlockStorage.getInventory(loc);
     }
 
     @V8Function(name = "getBlockData")
-    public SlimefunBlockData getBlockData(Location loc) {
-        return StorageCacheUtils.getBlock(loc);
+    public Config getBlockData(Location loc) {
+        return BlockStorage.getLocationInfo(loc);
     }
 
     @V8Function(name = "isSlimefunBlock")
     public boolean isSlimefunBlock(Location loc) {
-        return StorageCacheUtils.hasBlock(loc);
+        return BlockStorage.hasBlockInfo(loc);
     }
 
     @V8Function(name = "isBlock")
     public boolean isBlock(Location loc, String id) {
-        return StorageCacheUtils.isBlock(loc, id);
+        return BlockStorage.check(loc, id);
     }
 
     @V8Function(name = "getSfItemByBlock")
     public SlimefunItem getSfItemByBlock(Location loc) {
-        return StorageCacheUtils.getSfItem(loc);
+        return BlockStorage.check(loc);
     }
 
     @V8Function(name = "runLater")

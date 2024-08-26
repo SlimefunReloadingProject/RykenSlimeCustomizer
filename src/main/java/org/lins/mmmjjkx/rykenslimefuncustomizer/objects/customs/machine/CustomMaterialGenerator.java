@@ -1,7 +1,5 @@
 package org.lins.mmmjjkx.rykenslimefuncustomizer.objects.customs.machine;
 
-import com.xzavier0722.mc.plugin.slimefun4.storage.controller.SlimefunBlockData;
-import com.xzavier0722.mc.plugin.slimefun4.storage.util.StorageCacheUtils;
 import io.github.thebusybiscuit.slimefun4.api.items.ItemGroup;
 import io.github.thebusybiscuit.slimefun4.api.items.SlimefunItem;
 import io.github.thebusybiscuit.slimefun4.api.items.SlimefunItemStack;
@@ -15,8 +13,10 @@ import io.github.thebusybiscuit.slimefun4.utils.ChestMenuUtils;
 
 import java.util.*;
 
+import me.mrCookieSlime.CSCoreLibPlugin.Configuration.Config;
 import me.mrCookieSlime.Slimefun.Objects.SlimefunItem.interfaces.InventoryBlock;
 import me.mrCookieSlime.Slimefun.Objects.handlers.BlockTicker;
+import me.mrCookieSlime.Slimefun.api.BlockStorage;
 import me.mrCookieSlime.Slimefun.api.inventory.BlockMenu;
 import org.bukkit.Material;
 import org.bukkit.block.Block;
@@ -70,7 +70,7 @@ public class CustomMaterialGenerator extends SlimefunItem
         this.addItemHandler(new SimpleBlockBreakHandler() {
             @Override
             public void onBlockBreak(@NotNull Block block) {
-                BlockMenu bm = StorageCacheUtils.getMenu(block.getLocation());
+                BlockMenu bm = BlockStorage.getInventory(block.getLocation());
                 if (bm != null) {
                     bm.dropItems(block.getLocation(), getOutputSlots());
                 }
@@ -87,7 +87,7 @@ public class CustomMaterialGenerator extends SlimefunItem
     private void tick(Block b) {
         int progress = getProgress(b);
 
-        BlockMenu blockMenu = StorageCacheUtils.getMenu(b.getLocation());
+        BlockMenu blockMenu = BlockStorage.getInventory(b.getLocation());
 
         if (blockMenu != null) {
             if (getCharge(b.getLocation()) >= per) {
@@ -111,15 +111,16 @@ public class CustomMaterialGenerator extends SlimefunItem
     }
 
     private void setProgress(Block b, int progress) {
-        StorageCacheUtils.setData(b.getLocation(), "progress", String.valueOf(progress));
+        BlockStorage.addBlockInfo(b.getLocation(), "progress", String.valueOf(progress));
     }
 
     private int getProgress(Block b) {
         int progress;
         try {
-            progress = Integer.parseInt(Objects.requireNonNull(StorageCacheUtils.getData(b.getLocation(), "progress")));
+            progress =
+                    Integer.parseInt(Objects.requireNonNull(BlockStorage.getLocationInfo(b.getLocation(), "progress")));
         } catch (NumberFormatException | NullPointerException ex) {
-            StorageCacheUtils.setData(b.getLocation(), "progress", "1");
+            BlockStorage.addBlockInfo(b.getLocation(), "progress", "1");
             progress = 0;
         }
         return progress;
@@ -158,7 +159,7 @@ public class CustomMaterialGenerator extends SlimefunItem
             }
 
             @Override
-            public void tick(Block b, SlimefunItem item, SlimefunBlockData data) {
+            public void tick(Block b, SlimefunItem item, Config data) {
                 CustomMaterialGenerator.this.tick(b);
             }
         };
