@@ -5,6 +5,8 @@ import io.github.thebusybiscuit.slimefun4.api.items.SlimefunItemStack;
 import io.github.thebusybiscuit.slimefun4.api.recipes.RecipeType;
 import io.github.thebusybiscuit.slimefun4.libraries.dough.collections.Pair;
 import io.github.thebusybiscuit.slimefun4.utils.ChestMenuUtils;
+
+import java.util.ArrayList;
 import java.util.Arrays;
 import java.util.List;
 import org.bukkit.configuration.ConfigurationSection;
@@ -54,10 +56,12 @@ public class MaterialGeneratorReader extends YamlReader<CustomMaterialGenerator>
         }
 
         List<Integer> output = section.getIntegerList("output");
-
         int capacity = section.getInt("capacity", 0);
         ConfigurationSection outputItems = section.getConfigurationSection("outputs");
         ItemStack[] out = CommonUtils.readRecipe(outputItems, addon, output.size());
+        List<Integer> chances = new ArrayList<>();
+        boolean chooseOne = section.getBoolean("chooseOne", false);
+
         if (out.length == 0) {
             ConfigurationSection outputItem = section.getConfigurationSection("outputItem");
             ItemStack outItem = CommonUtils.readItem(outputItem, true, addon);
@@ -67,6 +71,17 @@ public class MaterialGeneratorReader extends YamlReader<CustomMaterialGenerator>
                 return null;
             } else {
                 out = new ItemStack[] {outItem};
+                chances = List.of(outputItem.getInt("chance", 100));
+            }
+        }
+
+        if (out.length > 1) {
+            for (String key : outputItems.getKeys(false)) {
+                ConfigurationSection chanceItem = outputItems.getConfigurationSection(key);
+                if (CommonUtils.readItem(chanceItem, true, addon) == null) {
+                    continue;
+                }
+                chances.add(chanceItem.getInt("chance", 100));
             }
         }
 
@@ -102,7 +117,9 @@ public class MaterialGeneratorReader extends YamlReader<CustomMaterialGenerator>
                 tickRate,
                 Arrays.asList(out),
                 menu,
-                per);
+                per,
+                chances,
+                chooseOne);
 
         menu.addMenuClickHandler(status, ChestMenuUtils.getEmptyClickHandler());
 
