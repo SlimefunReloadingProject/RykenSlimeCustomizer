@@ -10,10 +10,9 @@ import io.github.thebusybiscuit.slimefun4.core.networks.energy.EnergyNetComponen
 import io.github.thebusybiscuit.slimefun4.implementation.handlers.SimpleBlockBreakHandler;
 import io.github.thebusybiscuit.slimefun4.libraries.dough.items.CustomItemStack;
 import io.github.thebusybiscuit.slimefun4.utils.ChestMenuUtils;
-import java.util.ArrayList;
-import java.util.Collections;
-import java.util.List;
-import java.util.Objects;
+
+import java.util.*;
+
 import me.mrCookieSlime.CSCoreLibPlugin.Configuration.Config;
 import me.mrCookieSlime.Slimefun.Objects.SlimefunItem.interfaces.InventoryBlock;
 import me.mrCookieSlime.Slimefun.Objects.handlers.BlockTicker;
@@ -35,6 +34,10 @@ public class CustomMaterialGenerator extends SlimefunItem
     private final int statusSlot;
     private final List<ItemStack> generation;
     private final int per;
+    private final List<Integer> chances;
+    private final boolean chooseOne;
+
+    private final Random RNG;
 
     public CustomMaterialGenerator(
             ItemGroup itemGroup,
@@ -47,7 +50,9 @@ public class CustomMaterialGenerator extends SlimefunItem
             int tickRate,
             List<ItemStack> generation,
             CustomMenu menu,
-            int per) {
+            int per,
+            List<Integer> chances,
+            boolean chooseOne) {
         super(itemGroup, item, recipeType, recipe);
 
         this.capacity = capacity;
@@ -56,6 +61,10 @@ public class CustomMaterialGenerator extends SlimefunItem
         this.tickRate = tickRate;
         this.generation = generation;
         this.per = per;
+        this.chances = chances;
+        this.chooseOne = chooseOne;
+
+        this.RNG = new Random();
 
         this.addItemHandler(getBlockTicker());
         this.addItemHandler(new SimpleBlockBreakHandler() {
@@ -84,24 +93,7 @@ public class CustomMaterialGenerator extends SlimefunItem
             if (getCharge(b.getLocation()) >= per) {
                 if (progress >= tickRate) {
                     setProgress(b, 1);
-                    for (ItemStack item : generation) {
-                        if (blockMenu.fits(item, getOutputSlots())) {
-                            if (blockMenu.hasViewer() && statusSlot > -1) {
-                                blockMenu.replaceExistingItem(
-                                        statusSlot, new CustomItemStack(Material.LIME_STAINED_GLASS_PANE, "&a生产中"));
-                            }
-                            blockMenu.pushItem(item.clone(), getOutputSlots());
-                            removeCharge(b.getLocation(), per);
-                        } else {
-                            if (blockMenu.hasViewer()) {
-                                if (statusSlot > -1) {
-                                    blockMenu.replaceExistingItem(
-                                            statusSlot,
-                                            new CustomItemStack(Material.ORANGE_STAINED_GLASS_PANE, "&c空间不足"));
-                                }
-                            }
-                        }
-                    }
+                    pushItems(blockMenu);
                 } else {
                     addProgress(b);
                 }
@@ -185,5 +177,56 @@ public class CustomMaterialGenerator extends SlimefunItem
             list.add(gen.clone());
         }
         return list;
+    }
+
+    private void pushItems(BlockMenu blockMenu) {
+        Block b = blockMenu.getBlock();
+
+        List<ItemStack> generations = getMatchChanceResult();
+        if (chooseOne && !generations.isEmpty()) {
+            generations = Collections.singletonList(generations.get(RNG.nextInt(generations.size())));
+        }
+
+        for (ItemStack item : generations) {
+            if (blockMenu.fits(item, getOutputSlots())) {
+                if (blockMenu.hasViewer() && statusSlot > -1) {
+                    blockMenu.replaceExistingItem(
+                            statusSlot, new CustomItemStack(Material.LIME_STAINED_GLASS_PANE, "&a生产中"));
+                }
+                blockMenu.pushItem(item.clone(), getOutputSlots());
+                removeCharge(b.getLocation(), per);
+            } else {
+                if (blockMenu.hasViewer()) {
+                    if (statusSlot > -1) {
+                        blockMenu.replaceExistingItem(
+                                statusSlot,
+                                new CustomItemStack(Material.ORANGE_STAINED_GLASS_PANE, "&c空间不足"));
+                    }
+                }
+            }
+        }
+    }
+
+    private List<ItemStack> getMatchChanceResult() {
+        List<ItemStack> itemStacks = new ArrayList<>();
+
+        for (int i = 0; i < generation.size(); i++) {
+            ItemStack output = generation.get(i);
+            int chance = chances.get(i);
+            if (matchChance(chance)) {
+                itemStacks.add(output);
+            }
+        }
+
+        return itemStacks;
+    }
+
+    private boolean matchChance(Integer chance) {
+        if (chance == null) return false;
+        if (chance >= 100) return true;
+        if (chance < 1) return false;
+
+        int result = RNG.nextInt(100);
+        return result < chance;
     }
 }
