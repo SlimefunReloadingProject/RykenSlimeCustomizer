@@ -23,6 +23,10 @@ import com.caoccao.javet.utils.JavetResourceUtils;
 import com.caoccao.javet.values.V8Value;
 import com.caoccao.javet.values.reference.V8ValueFunction;
 import com.caoccao.javet.values.reference.V8ValueObject;
+import java.lang.reflect.InvocationTargetException;
+import java.lang.reflect.Method;
+import java.util.Locale;
+import java.util.concurrent.Callable;
 import lombok.Getter;
 import net.bytebuddy.ByteBuddy;
 import net.bytebuddy.dynamic.DynamicType;
@@ -33,11 +37,6 @@ import net.bytebuddy.implementation.bind.annotation.Origin;
 import net.bytebuddy.implementation.bind.annotation.RuntimeType;
 import net.bytebuddy.implementation.bind.annotation.SuperCall;
 import net.bytebuddy.matcher.ElementMatchers;
-
-import java.lang.reflect.InvocationTargetException;
-import java.lang.reflect.Method;
-import java.util.Locale;
-import java.util.concurrent.Callable;
 
 /**
  * The type Javet dynamic object factory.
@@ -52,6 +51,7 @@ public final class JavetReflectionObjectFactory implements IJavetReflectionObjec
      */
     @Getter
     private static final JavetReflectionObjectFactory instance = new JavetReflectionObjectFactory();
+
     private final IJavetLogger logger;
 
     private JavetReflectionObjectFactory() {
@@ -106,7 +106,7 @@ public final class JavetReflectionObjectFactory implements IJavetReflectionObjec
          * -- GETTER --
          *  Gets a dynamic object.
          *
-         @since 2.0.1
+         * @since 2.0.1
          *
          */
         @Getter
@@ -163,8 +163,8 @@ public final class JavetReflectionObjectFactory implements IJavetReflectionObjec
          * @since 2.0.1
          */
         public void initialize()
-                throws NoSuchMethodException, InvocationTargetException,
-                InstantiationException, IllegalAccessException {
+                throws NoSuchMethodException, InvocationTargetException, InstantiationException,
+                        IllegalAccessException {
             Class<?> objectClass;
             try (DynamicType.Unloaded<?> unloadedType = new ByteBuddy()
                     .subclass(type, CONSTRUCTOR_STRATEGY)
@@ -188,9 +188,8 @@ public final class JavetReflectionObjectFactory implements IJavetReflectionObjec
          */
         @RuntimeType
         public Object intercept(
-                @Origin Method method,
-                @AllArguments Object[] arguments,
-                @SuperCall Callable<Object> callable) throws Exception {
+                @Origin Method method, @AllArguments Object[] arguments, @SuperCall Callable<Object> callable)
+                throws Exception {
             if (v8ValueObject != null) {
                 String methodName = method.getName();
                 final int argumentLength = arguments.length;
@@ -217,8 +216,8 @@ public final class JavetReflectionObjectFactory implements IJavetReflectionObjec
                         propertyName = methodName.substring(V8ValueObject.METHOD_PREFIX_GET.length());
                     }
                     if (propertyName != null && !propertyName.isEmpty()) {
-                        propertyName = propertyName.substring(0, 1).toLowerCase(Locale.ROOT)
-                                + propertyName.substring(1);
+                        propertyName =
+                                propertyName.substring(0, 1).toLowerCase(Locale.ROOT) + propertyName.substring(1);
                         if (v8ValueObject.has(propertyName)) {
                             return v8ValueObject.getObject(propertyName);
                         }
@@ -230,8 +229,8 @@ public final class JavetReflectionObjectFactory implements IJavetReflectionObjec
                         propertyName = methodName.substring(V8ValueObject.METHOD_PREFIX_SET.length());
                     }
                     if (propertyName != null && !propertyName.isEmpty()) {
-                        propertyName = propertyName.substring(0, 1).toLowerCase(Locale.ROOT)
-                                + propertyName.substring(1);
+                        propertyName =
+                                propertyName.substring(0, 1).toLowerCase(Locale.ROOT) + propertyName.substring(1);
                         if (v8ValueObject.has(propertyName)) {
                             return v8ValueObject.set(propertyName, arguments[0]);
                         }
@@ -247,8 +246,7 @@ public final class JavetReflectionObjectFactory implements IJavetReflectionObjec
      *
      * @since 2.0.1
      */
-    public static class DynamicObjectForceCloseableInvocationHandler
-            extends DynamicObjectAutoCloseableInvocationHandler
+    public static class DynamicObjectForceCloseableInvocationHandler extends DynamicObjectAutoCloseableInvocationHandler
             implements AutoCloseable {
 
         /**
@@ -270,8 +268,8 @@ public final class JavetReflectionObjectFactory implements IJavetReflectionObjec
 
         @Override
         public void initialize()
-                throws NoSuchMethodException, InvocationTargetException,
-                InstantiationException, IllegalAccessException {
+                throws NoSuchMethodException, InvocationTargetException, InstantiationException,
+                        IllegalAccessException {
             Class<?> objectClass;
             try (DynamicType.Unloaded<?> unloadedType = new ByteBuddy()
                     .subclass(type, CONSTRUCTOR_STRATEGY)
@@ -287,9 +285,8 @@ public final class JavetReflectionObjectFactory implements IJavetReflectionObjec
         @RuntimeType
         @Override
         public Object intercept(
-                @Origin Method method,
-                @AllArguments Object[] arguments,
-                @SuperCall Callable<Object> callable) throws Exception {
+                @Origin Method method, @AllArguments Object[] arguments, @SuperCall Callable<Object> callable)
+                throws Exception {
             return super.intercept(method, arguments, callable);
         }
     }

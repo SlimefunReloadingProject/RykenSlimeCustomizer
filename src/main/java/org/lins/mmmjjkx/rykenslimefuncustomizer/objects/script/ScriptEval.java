@@ -1,32 +1,14 @@
 package org.lins.mmmjjkx.rykenslimefuncustomizer.objects.script;
 
 import com.google.errorprone.annotations.CanIgnoreReturnValue;
-import io.github.thebusybiscuit.slimefun4.api.items.SlimefunItem;
-
 import java.io.File;
 import java.io.FileNotFoundException;
 import java.io.IOException;
 import java.nio.charset.StandardCharsets;
 import java.nio.file.Files;
-import java.util.function.BiConsumer;
-import java.util.function.BiFunction;
-import java.util.function.Consumer;
-import java.util.function.Function;
-
 import lombok.AccessLevel;
 import lombok.Getter;
-import me.clip.placeholderapi.PlaceholderAPI;
-import me.mrCookieSlime.Slimefun.api.inventory.BlockMenu;
-import org.bukkit.Bukkit;
-import org.bukkit.entity.Player;
-import org.bukkit.inventory.ItemStack;
-import org.bukkit.Location;
 import org.jetbrains.annotations.Nullable;
-import org.lins.mmmjjkx.rykenslimefuncustomizer.RykenSlimefunCustomizer;
-import org.lins.mmmjjkx.rykenslimefuncustomizer.libraries.colors.CMIChatColor;
-import org.lins.mmmjjkx.rykenslimefuncustomizer.objects.script.enhanced.NBTAPIIntegration;
-import org.lins.mmmjjkx.rykenslimefuncustomizer.objects.script.lambda.CiConsumer;
-import org.lins.mmmjjkx.rykenslimefuncustomizer.objects.script.lambda.CiFunction;
 
 @Getter(AccessLevel.PROTECTED)
 public abstract class ScriptEval {
@@ -59,8 +41,7 @@ public abstract class ScriptEval {
     }
 
     @Deprecated
-    protected final void setup() {
-    }
+    protected final void setup() {}
 
     public abstract void addThing(String name, Object value);
 
