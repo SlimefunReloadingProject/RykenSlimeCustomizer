@@ -67,7 +67,7 @@ softdepend:
   - CrystamaeHistoria
   - DankTech
   - DankTech2
-  - Networks
+  - Networks-Changed
   - VillagerUtil
   - MissileWarfare
   - SensibleToolbox
@@ -126,6 +126,7 @@ softdepend:
   - OreGeneration
   - Huolaiy
   - EnchanterLimit
+  - LogiTech
   - SlimeAE
   - SlimeChem
   - WilderNether
@@ -135,15 +136,39 @@ softdepend:
   - Drugfun
   - SlimefunNukes
   - SlimeCustomizer
-  - SlimefunAdvancements
   - HardcoreSlimefun
   - SfChunkInfo
   - SlimefunTranslation
   - FinalTECH-Changed
-  -
+  - Blueprint
+  - SlimefunMobDrops
+  - BearFluidTanks
+  - SCrafter
+  - EquivalencyTech
+  - LuckyPandas
+  - FasterTools
+  - Beyond_Horizons
+  - BloodAlchemy
+  - ExtraUtils
+  - BlueSlime
+  - XpCreator
+  - BetterFarming
+  - Automation
+  - Ex-Limus
+  - EzMiner
+  - NetherEnough
+  - magic-powder
+  - BoxOfChocolates
+  - AdditionalWeaponry
+  - DisguiseCookies
+  - MagicXpansion
+  - Tofu-Addons
   # Other plugins
   - PlaceholderAPI
   - NBTAPI
+loadBefore:
+- SaneCrafting
+- SlimefunAdvancements
 authors: [mmmjjkx]
 description: An advanced Slimefun customize plugin
 commands:
