@@ -25,7 +25,7 @@ import org.lins.mmmjjkx.rykenslimefuncustomizer.objects.customs.parent.AbstractE
 import org.lins.mmmjjkx.rykenslimefuncustomizer.objects.machine.MachineInfo;
 import org.lins.mmmjjkx.rykenslimefuncustomizer.objects.machine.MachineRecord;
 import org.lins.mmmjjkx.rykenslimefuncustomizer.objects.machine.ScriptedEvalBreakHandler;
-import org.lins.mmmjjkx.rykenslimefuncustomizer.objects.script.parent.ScriptEval;
+import org.lins.mmmjjkx.rykenslimefuncustomizer.objects.script.ScriptEval;
 
 public class CustomMachine extends AbstractEmptyMachine<MachineOperation> implements EnergyNetComponent {
     private final MachineRecord theRecord;

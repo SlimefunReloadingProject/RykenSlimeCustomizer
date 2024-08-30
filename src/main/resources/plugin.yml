@@ -140,7 +140,6 @@ softdepend:
   - SfChunkInfo
   - SlimefunTranslation
   - FinalTECH-Changed
-  -
   # Other plugins
   - PlaceholderAPI
   - NBTAPI
