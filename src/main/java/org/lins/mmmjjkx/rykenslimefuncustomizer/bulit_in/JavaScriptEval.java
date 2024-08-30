@@ -30,7 +30,7 @@ import org.lins.mmmjjkx.rykenslimefuncustomizer.utils.ExceptionHandler;
 
 public class JavaScriptEval extends ScriptEval {
     private static final File PLUGINS_FOLDER = RykenSlimefunCustomizer.INSTANCE.getDataFolder().getParentFile();
-    private static final String[] packages = {"io", "net", "com"};
+    private static final String[] packages = {"io", "net"};
 
     private GraalJSScriptEngine jsEngine;
 
