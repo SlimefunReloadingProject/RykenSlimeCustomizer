@@ -3,17 +3,19 @@ package org.lins.mmmjjkx.rykenslimefuncustomizer.bulit_in;
 import com.google.errorprone.annotations.CanIgnoreReturnValue;
 import com.oracle.truffle.api.TruffleFile;
 import com.oracle.truffle.api.TruffleLanguage;
+import com.oracle.truffle.api.strings.TruffleString;
 import com.oracle.truffle.js.lang.JavaScriptLanguage;
 import com.oracle.truffle.js.runtime.JSRealm;
+import com.oracle.truffle.js.runtime.java.JavaPackage;
+import com.oracle.truffle.js.runtime.objects.JSAttributes;
+import com.oracle.truffle.js.runtime.objects.JSObjectUtil;
 import com.oracle.truffle.js.scriptengine.GraalJSScriptEngine;
 import com.xzavier0722.mc.plugin.slimefun4.storage.util.StorageCacheUtils;
 import io.github.thebusybiscuit.slimefun4.api.items.SlimefunItem;
 import io.github.thebusybiscuit.slimefun4.implementation.SlimefunItems;
 import io.github.thebusybiscuit.slimefun4.utils.SlimefunUtils;
 import java.io.File;
-import java.io.IOException;
 import java.util.Objects;
-import java.util.logging.FileHandler;
 import javax.script.ScriptException;
 import me.mrCookieSlime.Slimefun.api.inventory.BlockMenu;
 import org.graalvm.polyglot.Context;
@@ -28,17 +30,12 @@ import org.lins.mmmjjkx.rykenslimefuncustomizer.utils.ExceptionHandler;
 
 public class JavaScriptEval extends ScriptEval {
     private static final File PLUGINS_FOLDER = RykenSlimefunCustomizer.INSTANCE.getDataFolder().getParentFile();
-
-    private final ProjectAddon addon;
+    private static final String[] packages = {"io", "net", "com"};
 
     private GraalJSScriptEngine jsEngine;
-    private FileHandler log;
 
     public JavaScriptEval(@NotNull File js, ProjectAddon addon) {
         super(js);
-
-        this.addon = addon;
-
         reSetup();
 
         setup();
@@ -59,24 +56,14 @@ public class JavaScriptEval extends ScriptEval {
 
         for (File file : Objects.requireNonNull(PLUGINS_FOLDER.listFiles())) {
             TruffleFile truffleFile = env.getPublicTruffleFile(file.toURI());
-            if (!truffleFile.isDirectory() && truffleFile.endsWith(".jar")) {
+            if (!truffleFile.isDirectory() && truffleFile.getName().endsWith(".jar")) {
                 env.addToHostClassPath(truffleFile);
             }
         }
-    }
 
-    private FileHandler createLogFileHandler(ProjectAddon addon) {
-        File dir = new File(addon.getScriptsFolder(), "logs");
-        if (!dir.exists()) {
-            dir.mkdirs();
-        }
-
-        File dest = new File(dir, getFile().getName() + "-%g.log");
-
-        try {
-            return new FileHandler(dest.getAbsolutePath());
-        } catch (IOException e) {
-            throw new RuntimeException(e);
+        for (String packageName : packages) {
+            TruffleString str = TruffleString.fromConstant(packageName, TruffleString.Encoding.UTF_8);
+            JSObjectUtil.putDataProperty(realm.getGlobalObject(), str, JavaPackage.createInit(realm, str), JSAttributes.getDefaultNotEnumerable());
         }
     }
 
@@ -84,9 +71,6 @@ public class JavaScriptEval extends ScriptEval {
     public void close() {
         try {
             jsEngine.close();
-            log.close();
-
-            reSetup();
         } catch (IllegalStateException ignored) {
         }
     }
@@ -131,8 +115,6 @@ public class JavaScriptEval extends ScriptEval {
     }
 
     private void reSetup() {
-        log = createLogFileHandler(addon);
-
         jsEngine = GraalJSScriptEngine.create(
                 null,
                 Context.newBuilder("js")
@@ -143,15 +125,7 @@ public class JavaScriptEval extends ScriptEval {
                         .allowPolyglotAccess(PolyglotAccess.ALL)
                         .allowCreateProcess(true)
                         .allowIO(IOAccess.ALL)
-                        .allowHostClassLookup(s -> {
-                            if (s.equalsIgnoreCase("org.bukkit.Bukkit")) {
-                                return false;
-                            } else if (s.contains("org.bukkit.craftbukkit") && s.endsWith("CraftServer")) {
-                                return false;
-                            }
-                            return !s.equalsIgnoreCase("net.minecraft.server.MinecraftServer");
-                        })
-                        .logHandler(log));
+                        .allowHostClassLookup(s -> true));
 
         advancedSetup();
     }

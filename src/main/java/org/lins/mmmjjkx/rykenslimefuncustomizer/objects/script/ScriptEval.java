@@ -29,7 +29,6 @@ import org.bukkit.inventory.ItemStack;
 import org.graalvm.polyglot.HostAccess;
 import org.jetbrains.annotations.Nullable;
 import org.lins.mmmjjkx.rykenslimefuncustomizer.libraries.colors.CMIChatColor;
-import org.lins.mmmjjkx.rykenslimefuncustomizer.objects.ProjectAddon;
 import org.lins.mmmjjkx.rykenslimefuncustomizer.objects.script.enhanced.NBTAPIIntegration;
 import org.lins.mmmjjkx.rykenslimefuncustomizer.objects.script.lambda.CiConsumer;
 import org.lins.mmmjjkx.rykenslimefuncustomizer.objects.script.lambda.CiFunction;
@@ -42,7 +41,7 @@ public abstract class ScriptEval {
             .allowAllClassImplementations(true)
             .allowArrayAccess(true)
             .allowListAccess(true)
-            .allowBufferAccess(false)
+            .allowBufferAccess(true)
             .allowIterableAccess(true)
             .allowIteratorAccess(true)
             .allowMapAccess(true)
@@ -60,7 +59,6 @@ public abstract class ScriptEval {
             .denyAccess(Process.class)
             .denyAccess(Runtime.class)
             .denyAccess(ProcessBuilder.class)
-            .denyAccess(Class.class)
             .denyAccess(ClassLoader.class)
             .denyAccess(Permission.class)
             .denyAccess(Permissions.class)
