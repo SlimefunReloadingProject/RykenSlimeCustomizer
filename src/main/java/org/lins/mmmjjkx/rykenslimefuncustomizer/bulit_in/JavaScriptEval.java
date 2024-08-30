@@ -1,90 +1,83 @@
 package org.lins.mmmjjkx.rykenslimefuncustomizer.bulit_in;
 
-import com.caoccao.javet.exceptions.JavetException;
-import com.caoccao.javet.interception.jvm.JavetJVMInterceptor;
-import com.caoccao.javet.interception.jvm.VirtualPackage;
-import com.caoccao.javet.interception.logging.JavetStandardConsoleInterceptor;
-import com.caoccao.javet.interop.V8Host;
-import com.caoccao.javet.interop.V8Runtime;
-import com.caoccao.javet.interop.converters.JavetProxyConverter;
-import com.caoccao.javet.values.V8Value;
-import com.caoccao.javet.values.primitive.V8ValueUndefined;
-import com.caoccao.javet.values.reference.V8ValueGlobalObject;
 import com.google.errorprone.annotations.CanIgnoreReturnValue;
+import com.oracle.truffle.api.TruffleFile;
+import com.oracle.truffle.api.TruffleLanguage;
+import com.oracle.truffle.api.strings.TruffleString;
+import com.oracle.truffle.js.lang.JavaScriptLanguage;
+import com.oracle.truffle.js.runtime.JSRealm;
+import com.oracle.truffle.js.runtime.java.JavaPackage;
+import com.oracle.truffle.js.runtime.objects.JSAttributes;
+import com.oracle.truffle.js.runtime.objects.JSObjectUtil;
+import com.oracle.truffle.js.scriptengine.GraalJSScriptEngine;
+import com.xzavier0722.mc.plugin.slimefun4.storage.util.StorageCacheUtils;
 import io.github.thebusybiscuit.slimefun4.api.items.SlimefunItem;
 import io.github.thebusybiscuit.slimefun4.implementation.SlimefunItems;
-import io.github.thebusybiscuit.slimefun4.libraries.dough.data.persistent.PersistentDataAPI;
 import io.github.thebusybiscuit.slimefun4.utils.SlimefunUtils;
 import java.io.File;
-import java.util.List;
-import me.mrCookieSlime.Slimefun.api.BlockStorage;
+import java.util.Objects;
+import javax.script.ScriptException;
 import me.mrCookieSlime.Slimefun.api.inventory.BlockMenu;
+import org.graalvm.polyglot.Context;
+import org.graalvm.polyglot.PolyglotAccess;
+import org.graalvm.polyglot.io.IOAccess;
 import org.jetbrains.annotations.NotNull;
 import org.jetbrains.annotations.Nullable;
+import org.lins.mmmjjkx.rykenslimefuncustomizer.RykenSlimefunCustomizer;
 import org.lins.mmmjjkx.rykenslimefuncustomizer.objects.ProjectAddon;
 import org.lins.mmmjjkx.rykenslimefuncustomizer.objects.script.ScriptEval;
 import org.lins.mmmjjkx.rykenslimefuncustomizer.utils.ExceptionHandler;
 
 public class JavaScriptEval extends ScriptEval {
-    private static final List<String> packages = List.of("java", "javax", "net", "org", "com", "io", "me", "de");
+    private static final File PLUGINS_FOLDER = RykenSlimefunCustomizer.INSTANCE.getDataFolder().getParentFile();
+    private static final String[] packages = {"io", "net"};
 
-    private V8Runtime jsEngine;
+    private GraalJSScriptEngine jsEngine;
 
     public JavaScriptEval(@NotNull File js, ProjectAddon addon) {
         super(js);
-
         reSetup();
-        // setup();
+
+        setup();
+
         contextInit();
 
         addon.getScriptEvals().add(this);
     }
 
     private void advancedSetup() {
-        addThing("BlockStorage", BlockStorage.class);
-        addThing("SlimefunItems", SlimefunItems.class);
-        addThing("SlimefunItem", SlimefunItem.class);
-        addThing("SlimefunUtils", SlimefunUtils.class);
-        addThing("BlockMenu", BlockMenu.class);
-        addThing("PersistentDataAPI", PersistentDataAPI.class);
+        JSRealm realm = JavaScriptLanguage.getJSRealm(jsEngine.getPolyglotContext());
+        TruffleLanguage.Env env = realm.getEnv();
+        addThing("SlimefunItems", env.asHostSymbol(SlimefunItems.class));
+        addThing("SlimefunItem", env.asHostSymbol(SlimefunItem.class));
+        addThing("StorageCacheUtils", env.asHostSymbol(StorageCacheUtils.class));
+        addThing("SlimefunUtils", env.asHostSymbol(SlimefunUtils.class));
+        addThing("BlockMenu", env.asHostSymbol(BlockMenu.class));
+
+        for (File file : Objects.requireNonNull(PLUGINS_FOLDER.listFiles())) {
+            TruffleFile truffleFile = env.getPublicTruffleFile(file.toURI());
+            if (!truffleFile.isDirectory() && truffleFile.getName().endsWith(".jar")) {
+                env.addToHostClassPath(truffleFile);
+            }
+        }
+
+        for (String packageName : packages) {
+            TruffleString str = TruffleString.fromConstant(packageName, TruffleString.Encoding.UTF_8);
+            JSObjectUtil.putDataProperty(realm.getGlobalObject(), str, JavaPackage.createInit(realm, str), JSAttributes.getDefaultNotEnumerable());
+        }
     }
 
     @Override
     public void close() {
         try {
-            jsEngine.lowMemoryNotification();
             jsEngine.close();
-
-            reSetup();
         } catch (IllegalStateException ignored) {
-        } catch (JavetException e) {
-            throw new RuntimeException(e);
-        }
-    }
-
-    public V8ValueGlobalObject getGlobalObject() {
-        try {
-            return jsEngine.getGlobalObject();
-        } catch (JavetException e) {
-            throw new RuntimeException(e);
-        }
-    }
-
-    public void executeContextVoid(String context) {
-        try {
-            jsEngine.getExecutor(context).executeVoid();
-        } catch (JavetException e) {
-            throw new RuntimeException(e);
         }
     }
 
     @Override
     public void addThing(String name, Object value) {
-        try {
-            jsEngine.getGlobalObject().set(name, value);
-        } catch (JavetException e) {
-            throw new RuntimeException("Error adding thing to JavaScript global object", e);
-        }
+        jsEngine.put(name, value);
     }
 
     @Override
@@ -94,71 +87,45 @@ public class JavaScriptEval extends ScriptEval {
 
     protected final void contextInit() {
         super.contextInit();
+        if (jsEngine != null) {
+            try {
+                jsEngine.eval(getFileContext());
+            } catch (ScriptException e) {
+                e.printStackTrace();
+            }
+        }
     }
 
     @Nullable @CanIgnoreReturnValue
     @Override
     public Object evalFunction(String funName, Object... args) {
-        return this.evalFunction(funName, true, args);
-    }
-
-    @Nullable @CanIgnoreReturnValue
-    public Object evalFunction(String funName, boolean voidRunning, Object... args) {
         if (getFileContext() == null || getFileContext().isBlank()) {
             contextInit();
         }
 
         try {
-            V8Value exists = jsEngine.getGlobalObject().get(funName);
-            if (exists == null || exists instanceof V8ValueUndefined) {
-                return null;
-            }
-        } catch (JavetException e) {
-            return null;
-        }
-
-        try {
-            try (V8ValueGlobalObject obj = jsEngine.getGlobalObject()) {
-                if (voidRunning) {
-                    obj.invokeExtended(funName, false, args);
-                    return null;
-                } else {
-                    return obj.invokeObject(funName, args);
-                }
-            }
-        } catch (JavetException e) {
+            return jsEngine.invokeFunction(funName, args);
+        } catch (ScriptException e) {
             ExceptionHandler.handleError("在运行" + getFile().getName() + "时发生错误");
             e.printStackTrace();
+        } catch (NoSuchMethodException ignored) {
         }
 
         return null;
     }
 
     private void reSetup() {
-        try {
-            JavetProxyConverter converter = new JavetProxyConverter();
-            converter.getConfig().setReflectionObjectFactory(JavetReflectionObjectFactory.getInstance());
-            jsEngine = V8Host.getV8Instance().createV8Runtime();
-            jsEngine.setConverter(converter);
-
-            JavetJVMInterceptor interceptor = new JavetJVMInterceptor(jsEngine);
-            interceptor.register(jsEngine.getGlobalObject());
-
-            JavetStandardConsoleInterceptor consoleInterceptor = new JavetStandardConsoleInterceptor(jsEngine);
-            consoleInterceptor.register(jsEngine.getGlobalObject());
-
-            for (String packageName : packages) {
-                jsEngine.getGlobalObject().set(packageName, VirtualPackage.getPackage(jsEngine, packageName));
-            }
-
-            jsEngine.getExecutor(getFileContext()).execute();
-
-            jsEngine.getGlobalObject().bind(new FunctionBinds());
-            jsEngine.getGlobalObject().set("RunnableCreator", FunctionBinds.RunnableGetter.class);
-            jsEngine.getGlobalObject().set("Java", FunctionBinds.JavaObject.class);
-        } catch (JavetException e) {
-            throw new RuntimeException(e);
-        }
+        jsEngine = GraalJSScriptEngine.create(
+                null,
+                Context.newBuilder("js")
+                        .allowAllAccess(true)
+                        .allowHostAccess(UNIVERSAL_HOST_ACCESS)
+                        .allowNativeAccess(false)
+                        .allowExperimentalOptions(true)
+                        .allowPolyglotAccess(PolyglotAccess.ALL)
+                        .allowCreateProcess(true)
+                        .allowIO(IOAccess.ALL)
+                        .allowHostClassLookup(s -> true));
 
         advancedSetup();
     }

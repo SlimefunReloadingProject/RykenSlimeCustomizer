@@ -1,8 +1,6 @@
 package org.lins.mmmjjkx.rykenslimefuncustomizer.objects.customs.machine;
 
-import com.caoccao.javet.annotations.V8Function;
-import com.caoccao.javet.annotations.V8Property;
-import com.caoccao.javet.exceptions.JavetException;
+import com.xzavier0722.mc.plugin.slimefun4.storage.controller.SlimefunBlockData;
 import io.github.thebusybiscuit.slimefun4.api.items.ItemGroup;
 import io.github.thebusybiscuit.slimefun4.api.items.SlimefunItem;
 import io.github.thebusybiscuit.slimefun4.api.items.SlimefunItemStack;
@@ -12,27 +10,27 @@ import io.github.thebusybiscuit.slimefun4.core.machines.MachineOperation;
 import io.github.thebusybiscuit.slimefun4.core.machines.MachineProcessor;
 import java.util.Collections;
 import java.util.List;
+import java.util.function.Consumer;
+
 import lombok.Getter;
-import me.mrCookieSlime.CSCoreLibPlugin.Configuration.Config;
+import lombok.Setter;
 import me.mrCookieSlime.CSCoreLibPlugin.general.Inventory.ChestMenu;
 import me.mrCookieSlime.CSCoreLibPlugin.general.Inventory.ClickAction;
 import me.mrCookieSlime.Slimefun.Objects.handlers.BlockTicker;
-import me.mrCookieSlime.Slimefun.api.BlockStorage;
-import me.mrCookieSlime.Slimefun.api.inventory.BlockMenu;
 import org.bukkit.block.Block;
 import org.bukkit.entity.Player;
 import org.bukkit.event.block.BlockPlaceEvent;
 import org.bukkit.inventory.ItemStack;
 import org.jetbrains.annotations.NotNull;
 import org.jetbrains.annotations.Nullable;
-import org.lins.mmmjjkx.rykenslimefuncustomizer.bulit_in.JavaScriptEval;
 import org.lins.mmmjjkx.rykenslimefuncustomizer.objects.customs.CustomMenu;
 import org.lins.mmmjjkx.rykenslimefuncustomizer.objects.customs.parent.AbstractEmptyMachine;
 import org.lins.mmmjjkx.rykenslimefuncustomizer.objects.machine.ScriptedEvalBreakHandler;
 import org.lins.mmmjjkx.rykenslimefuncustomizer.objects.machine.SmallerMachineInfo;
-import org.lins.mmmjjkx.rykenslimefuncustomizer.objects.script.ScriptEval;
 import org.lins.mmmjjkx.rykenslimefuncustomizer.objects.script.lambda.RSCClickHandler;
+import org.lins.mmmjjkx.rykenslimefuncustomizer.objects.script.ScriptEval;
 
+@SuppressWarnings("deprecation")
 public class CustomNoEnergyMachine extends AbstractEmptyMachine<MachineOperation> {
     private final List<Integer> input;
     private final List<Integer> output;
@@ -74,11 +72,8 @@ public class CustomNoEnergyMachine extends AbstractEmptyMachine<MachineOperation
         this.menu = menu;
 
         if (eval != null) {
-            try {
-                ((JavaScriptEval) eval).getGlobalObject().bind(this);
-            } catch (JavetException e) {
-                throw new RuntimeException(e);
-            }
+            eval.addThing("setWorking", (Consumer<Boolean>) this::setWorking);
+            eval.addThing("working", false);
 
             eval.doInit();
 
@@ -100,7 +95,7 @@ public class CustomNoEnergyMachine extends AbstractEmptyMachine<MachineOperation
                         @Override
                         public void mainFunction(Player player, int slot, ItemStack itemStack, ClickAction action) {
                             if (eval != null) {
-                                setWorking(true);
+                                eval.addThing("working", true);
                             }
                         }
 
@@ -119,17 +114,8 @@ public class CustomNoEnergyMachine extends AbstractEmptyMachine<MachineOperation
         }
     }
 
+    @Setter
     private boolean working = false;
-
-    @V8Function(name = "setWorking")
-    public void setWorking(boolean working) {
-        this.working = working;
-    }
-
-    @V8Property(name = "working")
-    public boolean isWorking() {
-        return working;
-    }
 
     @Override
     public void preRegister() {
@@ -137,10 +123,9 @@ public class CustomNoEnergyMachine extends AbstractEmptyMachine<MachineOperation
         this.addItemHandler(getBlockTicker());
     }
 
-    protected void tick(Block b, SlimefunItem item, Config data) {
-        BlockMenu blockMenu = BlockStorage.getInventory(b);
+    protected void tick(Block b, SlimefunItem item, SlimefunBlockData data) {
         if (eval != null) {
-            SmallerMachineInfo info = new SmallerMachineInfo(blockMenu, data, this, item, b, processor);
+            SmallerMachineInfo info = new SmallerMachineInfo(data.getBlockMenu(), data, this, item, b, processor);
             eval.evalFunction("tick", info);
         }
     }
@@ -164,7 +149,7 @@ public class CustomNoEnergyMachine extends AbstractEmptyMachine<MachineOperation
             }
 
             @Override
-            public void tick(Block b, SlimefunItem item, Config data) {
+            public void tick(Block b, SlimefunItem item, SlimefunBlockData data) {
                 CustomNoEnergyMachine.this.tick(b, item, data);
             }
         };

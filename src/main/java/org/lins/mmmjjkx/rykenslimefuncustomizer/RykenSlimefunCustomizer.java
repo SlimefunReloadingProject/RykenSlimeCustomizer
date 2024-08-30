@@ -26,17 +26,16 @@ public final class RykenSlimefunCustomizer extends JavaPlugin implements Slimefu
     @Override
     public void onLoad() {
         setupLibraries();
+        INSTANCE = this;
+        System.setProperty("polyglot.engine.WarnInterpreterOnly", "false");
     }
 
     @Override
     public void onEnable() {
         // Plugin startup logic
-        System.setProperty("polyglot.engine.WarnInterpreterOnly", "false");
-
-        INSTANCE = this;
-        addonManager = new ProjectAddonManager();
-
         CommonUtils.completeFile("config.yml");
+
+        addonManager = new ProjectAddonManager();
 
         if (getConfig().getBoolean("saveExample", false)) {
             saveExample();
@@ -90,6 +89,7 @@ public final class RykenSlimefunCustomizer extends JavaPlugin implements Slimefu
     }
 
     private void setupLibraries() {
+        String graalVersion = "24.0.2";
         BukkitLibraryManager libraryManager = new BukkitLibraryManager(this);
         libraryManager.addMavenCentral();
         Library byteBuddy = Library.builder()
@@ -97,14 +97,50 @@ public final class RykenSlimefunCustomizer extends JavaPlugin implements Slimefu
                 .artifactId("byte-buddy")
                 .version("1.14.18")
                 .build();
-        Library javet = Library.builder()
-                .groupId("com{}caoccao{}javet")
-                .artifactId("javet")
-                .version("3.1.5")
+        Library graalJS = Library.builder()
+                .groupId("org{}graalvm{}js")
+                .artifactId("js")
+                .version("23.0.5")
+                .build();
+        Library graalJSEngine = Library.builder()
+                .groupId("org{}graalvm{}js")
+                .artifactId("js-scriptengine")
+                .version(graalVersion)
+                .build();
+        Library truffleAPI = Library.builder()
+                .groupId("org{}graalvm{}truffle")
+                .artifactId("truffle-api")
+                .version(graalVersion)
+                .build();
+        Library polyglot = Library.builder()
+                .groupId("org.graalvm.polyglot")
+                .artifactId("polyglot")
+                .version(graalVersion)
+                .build();
+        Library graalSdkCollections = Library.builder()
+                .groupId("org{}graalvm{}sdk")
+                .artifactId("collections")
+                .version(graalVersion)
+                .build();
+        Library graalSdkNativeImage = Library.builder()
+                .groupId("org{}graalvm{}sdk")
+                .artifactId("nativeimage")
+                .version(graalVersion)
+                .build();
+        Library icu4j = Library.builder()
+                .groupId("com{}ibm{}icu")
+                .artifactId("icu4j")
+                .version("75.1")
                 .build();
 
         libraryManager.loadLibrary(byteBuddy);
-        libraryManager.loadLibrary(javet);
+        libraryManager.loadLibrary(graalJS);
+        libraryManager.loadLibrary(graalJSEngine);
+        libraryManager.loadLibrary(truffleAPI);
+        libraryManager.loadLibrary(polyglot);
+        libraryManager.loadLibrary(graalSdkCollections);
+        libraryManager.loadLibrary(graalSdkNativeImage);
+        libraryManager.loadLibrary(icu4j);
     }
 
     public static boolean allowUpdate(String prjId) {
