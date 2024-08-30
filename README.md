@@ -1,7 +1,6 @@
 # RykenSlimeCustomizer
 <div style="font-size: 17px">
-An advanced Slimefun customizer plugin.
+An advanced Slimefun custom addon maker plugin.
 
-Wiki: <https://rsc.hiworldmc.com> (Chinese)  
-If you want help, you can join our discord server: <https://discord.gg/M2yRf7VV3X>
+Wiki: <https://rsc.hiworldmc.com>
 </div>
