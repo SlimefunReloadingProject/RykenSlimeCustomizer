@@ -106,7 +106,7 @@ public class JavaScriptEval extends ScriptEval {
         try {
             return jsEngine.invokeFunction(funName, args);
         } catch (ScriptException e) {
-            ExceptionHandler.handleError("Error occurred while executing script file " + getFile().getName());
+            ExceptionHandler.handleError("An error occurred while executing script file " + getFile().getName());
             e.printStackTrace();
         } catch (NoSuchMethodException ignored) {
         }
