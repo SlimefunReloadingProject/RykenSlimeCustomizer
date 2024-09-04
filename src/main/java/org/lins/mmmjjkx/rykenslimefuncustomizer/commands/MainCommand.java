@@ -37,16 +37,16 @@ public class MainCommand implements TabExecutor {
                 return true;
             } else if (args[0].equalsIgnoreCase("reload")) {
                 if (!sender.hasPermission("rsc.command") || !sender.hasPermission("rsc.command.reload")) {
-                    sender.sendMessage(CMIChatColor.translate("&4你没有权限去做这些！"));
+                    sender.sendMessage(CMIChatColor.translate("&4You don't have permission to do that!"));
                     return false;
                 }
 
                 RykenSlimefunCustomizer.reload();
-                sender.sendMessage(CMIChatColor.translate("&a重载成功！"));
+                sender.sendMessage(CMIChatColor.translate("&aReloaded successfully！"));
                 return true;
             } else if (args[0].equalsIgnoreCase("list")) {
                 if (!sender.hasPermission("rsc.command") || !sender.hasPermission("rsc.command.list")) {
-                    sender.sendMessage(CMIChatColor.translate("&4你没有权限去做这些！"));
+                    sender.sendMessage(CMIChatColor.translate("&4You don't have permission to do that!"));
                     return false;
                 }
 
@@ -54,7 +54,7 @@ public class MainCommand implements TabExecutor {
                 List<String> nameWithId = addons.stream()
                         .map(a -> a.getAddonName() + "(id: " + a.getAddonId() + ")")
                         .toList();
-                String component = CMIChatColor.translate("&a已加载的附属: ");
+                String component = CMIChatColor.translate("&aLoaded addons: ");
                 for (String nwi : nameWithId) {
                     component = component.concat(CMIChatColor.translate("&a" + nwi));
                     if (nameWithId.indexOf(nwi) != (nameWithId.size() - 1)) {
@@ -65,7 +65,7 @@ public class MainCommand implements TabExecutor {
                 return true;
             } else if (args[0].equalsIgnoreCase("reloadPlugin")) {
                 if (!sender.hasPermission("rsc.command") || !sender.hasPermission("rsc.command.reloadPlugin")) {
-                    sender.sendMessage(CMIChatColor.translate("&4你没有权限去做这些！"));
+                    sender.sendMessage(CMIChatColor.translate("&4You don't have permission to do that!"));
                     return false;
                 }
 
@@ -73,32 +73,33 @@ public class MainCommand implements TabExecutor {
                 if (RykenSlimefunCustomizer.INSTANCE.getConfig().getBoolean("saveExample")) {
                     RykenSlimefunCustomizer.saveExample();
                 }
-                sender.sendMessage(CMIChatColor.translate("&a重载插件成功！"));
+                sender.sendMessage(CMIChatColor.translate("&aReloaded the plugin successfully！"));
                 return true;
             }
         } else if (args.length == 2) {
             if (args[0].equalsIgnoreCase("enable")) {
                 if (!sender.hasPermission("rsc.command") || !sender.hasPermission("rsc.command.enable")) {
-                    sender.sendMessage(CMIChatColor.translate("&4你没有权限去做这些！"));
+                    sender.sendMessage(CMIChatColor.translate("&4You don't have permission to do that!"));
                     return false;
                 }
 
                 File file = new File(ProjectAddonManager.ADDONS_DIRECTORY, args[1]);
 
                 if (!file.exists() || !file.isDirectory()) {
-                    sender.sendMessage(CMIChatColor.translate("&4没有这个文件夹！"));
+                    sender.sendMessage(CMIChatColor.translate("&4The folder doesn't exist or is not a directory!"));
                     return false;
                 }
 
                 YamlConfiguration forId = YamlConfiguration.loadConfiguration(new File(file, "info.yml"));
                 if (forId.getString("id", null) == null) {
-                    sender.sendMessage(CMIChatColor.translate("&4没有在info.yml里找到ID，无法加载！"));
+                    sender.sendMessage(CMIChatColor.translate(
+                            "&4Couldn't find the id in the info.yml! Check if the addon is valid!"));
                     return false;
                 }
 
                 String id = forId.getString("id");
                 if (RykenSlimefunCustomizer.addonManager.isLoaded(id)) {
-                    sender.sendMessage(CMIChatColor.translate("&4此附属已经被加载了！"));
+                    sender.sendMessage(CMIChatColor.translate("&4This addon is already loaded!"));
                     return false;
                 }
 
@@ -107,36 +108,36 @@ public class MainCommand implements TabExecutor {
                 ProjectAddon addon = loader.load();
                 RykenSlimefunCustomizer.addonManager.pushProjectAddon(addon);
 
-                sender.sendMessage(CMIChatColor.translate("&a加载此附属成功！"));
+                sender.sendMessage(CMIChatColor.translate("&aLoaded the addon successfully！"));
                 return true;
             } else if (args[0].equalsIgnoreCase("disable")) {
                 if (!sender.hasPermission("rsc.command") || !sender.hasPermission("rsc.command.disable")) {
-                    sender.sendMessage(CMIChatColor.translate("&4你没有权限去做这些！"));
+                    sender.sendMessage(CMIChatColor.translate("&4You don't have permission to do that!"));
                     return false;
                 }
 
                 String id = args[1];
                 ProjectAddon addon = RykenSlimefunCustomizer.addonManager.get(id);
                 if (addon == null) {
-                    sender.sendMessage(CMIChatColor.translate("&4没有这个附属！"));
+                    sender.sendMessage(CMIChatColor.translate("&4The addon is not exists!"));
                     return false;
                 }
 
                 addon.unregister();
                 RykenSlimefunCustomizer.addonManager.removeProjectAddon(addon);
 
-                sender.sendMessage(CMIChatColor.translate("&a卸载此附属成功！"));
+                sender.sendMessage(CMIChatColor.translate("&aDisabled the addon successfully！"));
                 return true;
             } else if (args[0].equalsIgnoreCase("info")) {
                 if (!sender.hasPermission("rsc.command") || !sender.hasPermission("rsc.command.info")) {
-                    sender.sendMessage(CMIChatColor.translate("&4你没有权限去做这些！"));
+                    sender.sendMessage(CMIChatColor.translate("&4You don't have permission to do that!"));
                     return false;
                 }
 
                 String id = args[1];
                 ProjectAddon addon = RykenSlimefunCustomizer.addonManager.get(id);
                 if (addon == null) {
-                    sender.sendMessage(CMIChatColor.translate("&4没有这个附属！"));
+                    sender.sendMessage(CMIChatColor.translate("&4The addon is not exists!"));
                     return false;
                 }
 
@@ -144,62 +145,62 @@ public class MainCommand implements TabExecutor {
                 String authorsRemoveBrackets = authors.substring(1, authors.length() - 1);
 
                 StringBuilder builder = new StringBuilder()
-                        .append("名称: &a")
+                        .append("Name: &a")
                         .append(addon.getAddonName())
                         .append("\n&f")
                         .append("ID: &a")
                         .append(addon.getAddonId())
                         .append("\n&f")
-                        .append("作者(们): &a")
+                        .append("Author(s): &a")
                         .append(authorsRemoveBrackets)
                         .append("\n&f")
-                        .append("版本: &a")
+                        .append("Version: &a")
                         .append(addon.getAddonVersion())
                         .append("\n&f")
-                        .append("依赖: &a")
+                        .append("Depends: &a")
                         .append(addon.getDepends())
                         .append("\n&f")
-                        .append("插件依赖: &a")
+                        .append("Plugin Depends: &a")
                         .append(addon.getPluginDepends())
                         .append("\n&f")
-                        .append("描述: &a")
+                        .append("Description: &a")
                         .append(addon.getDescription());
 
                 if (addon.getGithubRepo() != null && !addon.getGithubRepo().isBlank()) {
-                    builder.append("\n&f").append("Github仓库: &e").append(addon.getGithubRepo());
+                    builder.append("\n&f").append("Github Repo: &e").append(addon.getGithubRepo());
                 }
 
                 sender.sendMessage(CMIChatColor.translate(builder.toString()));
                 return true;
             } else if (args[0].equalsIgnoreCase("menupreview")) {
                 if (!sender.hasPermission("rsc.command") || !sender.hasPermission("rsc.command.menupreview")) {
-                    sender.sendMessage(CMIChatColor.translate("&4你没有权限去做这些！"));
+                    sender.sendMessage(CMIChatColor.translate("&4You don't have permission to do that!"));
                     return false;
                 }
 
                 String menuPresetId = args[1];
                 BlockMenuPreset bmp = Slimefun.getRegistry().getMenuPresets().get(menuPresetId);
                 if (bmp == null) {
-                    sender.sendMessage(CMIChatColor.translate("&4没有这个菜单！"));
+                    sender.sendMessage(CMIChatColor.translate("&4The menu is not exists!"));
                     return false;
                 }
                 if (sender instanceof Player p) {
                     bmp.open(p);
                     return true;
                 } else {
-                    sender.sendMessage(CMIChatColor.translate("&4你不能在控制台使用此指令！"));
+                    sender.sendMessage(CMIChatColor.translate("&4You cannot use this command in console!"));
                     return false;
                 }
             } else if (args[0].equalsIgnoreCase("reload")) {
                 if (!sender.hasPermission("rsc.command") || !sender.hasPermission("rsc.command.reload")) {
-                    sender.sendMessage(CMIChatColor.translate("&4你没有权限去做这些！"));
+                    sender.sendMessage(CMIChatColor.translate("&4You don't have permission to do that!"));
                     return false;
                 }
 
                 String prjId = args[1];
                 ProjectAddon addon = RykenSlimefunCustomizer.addonManager.get(prjId);
                 if (addon == null) {
-                    sender.sendMessage(CMIChatColor.translate("&4没有这个附属！"));
+                    sender.sendMessage(CMIChatColor.translate("&4The addon is not exists!"));
                     return false;
                 }
 
@@ -213,13 +214,13 @@ public class MainCommand implements TabExecutor {
 
                 RykenSlimefunCustomizer.addonManager.pushProjectAddon(addonNew);
 
-                sender.sendMessage(CMIChatColor.translate("&a重载成功！"));
+                sender.sendMessage(CMIChatColor.translate("&aReloaded the addon successfully！"));
                 return true;
             }
         } else if (args.length == 3) {
             if (args[0].equalsIgnoreCase("saveitem")) {
                 if (!sender.hasPermission("rsc.command") || !sender.hasPermission("rsc.command.saveitem")) {
-                    sender.sendMessage(CMIChatColor.translate("&4你没有权限去做这些！"));
+                    sender.sendMessage(CMIChatColor.translate("&4You don't have permission to do that!"));
                     return false;
                 }
 
@@ -227,25 +228,25 @@ public class MainCommand implements TabExecutor {
                 String itemId = args[2];
                 ProjectAddon addon = RykenSlimefunCustomizer.addonManager.get(prjId);
                 if (addon == null) {
-                    sender.sendMessage(CMIChatColor.translate("&4没有这个附属！"));
+                    sender.sendMessage(CMIChatColor.translate("&4The addon is not exists!"));
                     return false;
                 }
                 if (sender instanceof Player p) {
                     ItemStack itemStack = p.getInventory().getItemInMainHand();
                     if (itemStack.getType() == Material.AIR) {
-                        sender.sendMessage(CMIChatColor.translate("&4你不能保存空气！"));
+                        sender.sendMessage(CMIChatColor.translate("&4You cannot save an air item!"));
                         return false;
                     }
                     CommonUtils.saveItem(itemStack, itemId, addon);
-                    sender.sendMessage(CMIChatColor.translate("&a保存成功！"));
+                    sender.sendMessage(CMIChatColor.translate("&aItem saved successfully！"));
                     return true;
                 } else {
-                    sender.sendMessage(CMIChatColor.translate("&4你不能在控制台使用此指令！"));
+                    sender.sendMessage(CMIChatColor.translate("&4You cannot use this command in console!"));
                     return false;
                 }
             } else if (args[0].equalsIgnoreCase("getsaveitem")) {
                 if (!sender.hasPermission("rsc.command") || !sender.hasPermission("rsc.command.getsaveitem")) {
-                    sender.sendMessage(CMIChatColor.translate("&4你没有权限去做这些！"));
+                    sender.sendMessage(CMIChatColor.translate("&4You don't have permission to do that!"));
                     return false;
                 }
 
@@ -253,21 +254,22 @@ public class MainCommand implements TabExecutor {
                 String itemId = args[2];
                 ProjectAddon addon = RykenSlimefunCustomizer.addonManager.get(prjId);
                 if (addon == null) {
-                    sender.sendMessage(CMIChatColor.translate("&4没有这个附属！"));
+                    sender.sendMessage(CMIChatColor.translate("&4The addon is not exists!"));
                     return false;
                 }
 
                 File file = new File(
                         RykenSlimefunCustomizer.addonManager.getAddonFolder(prjId), "items/" + itemId + ".yml");
                 if (!file.exists() || file.length() == 0) {
-                    sender.sendMessage(CMIChatColor.translate("&4指向的物品文件没有内容！"));
+                    sender.sendMessage(CMIChatColor.translate("&4The item file doesn't exist or is empty!"));
                     return false;
                 }
 
                 YamlConfiguration config = YamlConfiguration.loadConfiguration(file);
                 ItemStack item = config.getItemStack("item");
                 if (item == null) {
-                    sender.sendMessage(CMIChatColor.translate("&4无法读取此物品文件！"));
+                    sender.sendMessage(CMIChatColor.translate(
+                            "&4Couldn't find the item in the file! Check if the file is valid!"));
                     return false;
                 }
 
@@ -275,19 +277,19 @@ public class MainCommand implements TabExecutor {
                     ItemStack itemStack = p.getInventory().getItemInMainHand();
                     if (itemStack.getType() == Material.AIR) {
                         p.getInventory().setItemInMainHand(item);
-                        sender.sendMessage(CMIChatColor.translate("&a物品已放入你的手中！"));
+                        sender.sendMessage(CMIChatColor.translate("&aThe item has been added to your hand!"));
                         return true;
                     }
                     p.getInventory().addItem(item);
-                    sender.sendMessage(CMIChatColor.translate("&a物品已放入你的背包中！"));
+                    sender.sendMessage(CMIChatColor.translate("&aThe item has been added to your inventory!"));
                     return true;
                 } else {
-                    sender.sendMessage(CMIChatColor.translate("&4你不能在控制台使用此指令！"));
+                    sender.sendMessage(CMIChatColor.translate("&4You cannot use this command in console!"));
                     return false;
                 }
             }
         } else {
-            sender.sendMessage(CMIChatColor.translate("&4找不到此子指令！"));
+            sender.sendMessage(CMIChatColor.translate("&4Subcommand not found!"));
             return false;
         }
         return false;
@@ -323,21 +325,21 @@ public class MainCommand implements TabExecutor {
 
     private void sendHelp(CommandSender sender) {
         if (!sender.hasPermission("rsc.command") || !sender.hasPermission("rsc.command.help")) {
-            sender.sendMessage(CMIChatColor.translate("&4你没有权限去做这些！"));
+            sender.sendMessage(CMIChatColor.translate("&4You don't have permission to do that!"));
             return;
         }
         sender.sendMessage(
                 CMIChatColor.translate(
                         """
-                        &aRykenSlimeCustomizer帮助
-                        &e/rsc (help) 显示帮助
-                        &e/rsc reload 重载插件及附属
-                        &e/rsc reloadPlugin 重载插件
-                        &e/rsc list 显示加载成功的附属
-                        &e/rsc enable <addons里的文件夹名称> 加载某个附属
-                        &e/rsc disable <附属ID> 卸载某个附属
-                        &e/rsc saveitem <附属ID> <ID> 保存物品
-                        &e/rsc menupreview <ID> 预览机器菜单
-                        &e/rsc getsaveitem <附属ID> <ID> 获取保存的物品"""));
+                        &aRykenSlimeCustomizer Help:
+                        &e/rsc (help) show this help message
+                        &e/rsc reload [addonID] reload the plugin and specified addon or all addons
+                        &e/rsc reloadPlugin reload the plugin config
+                        &e/rsc list show loaded addons
+                        &e/rsc enable <the folder name in addons folder> load an addon
+                        &e/rsc disable <Addon ID> disable an addon
+                        &e/rsc saveitem <Addon ID> <ID> save item
+                        &e/rsc menupreview <ID> preview a menu preset
+                        &e/rsc getsaveitem <Addon ID> <ID> get saved item"""));
     }
 }

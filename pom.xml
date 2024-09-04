@@ -6,7 +6,7 @@
 
 	<groupId>org.lins.mmmjjkx</groupId>
 	<artifactId>RykenSlimefunCustomizer</artifactId>
-	<version>1.4.3</version>
+	<version>1.4.5</version>
 	<packaging>jar</packaging>
 
 	<name>RykenSlimefunCustomizer</name>
@@ -154,15 +154,21 @@
 			<scope>provided</scope>
 		</dependency>
 		<dependency>
+			<groupId>org.apache.httpcomponents.client5</groupId>
+			<artifactId>httpclient5</artifactId>
+			<version>5.3.1</version>
+			<scope>provided</scope>
+		</dependency>
+		<dependency>
 			<groupId>io.papermc.paper</groupId>
 			<artifactId>paper-api</artifactId>
 			<version>1.18.2-R0.1-SNAPSHOT</version>
 			<scope>provided</scope>
 		</dependency>
 		<dependency>
-			<groupId>com.github.SlimefunGuguProject</groupId>
+			<groupId>com.github.Slimefun</groupId>
 			<artifactId>Slimefun4</artifactId>
-			<version>2024.3</version>
+			<version>master-SNAPSHOT</version>
 			<scope>provided</scope>
 		</dependency>
 		<dependency>

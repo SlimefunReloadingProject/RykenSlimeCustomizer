@@ -48,12 +48,14 @@ public class MultiBlockMachineReader extends YamlReader<CustomMultiBlockMachine>
 
         int workSlot = section.getInt("work");
         if (workSlot < 1) {
-            ExceptionHandler.handleError("在附属" + addon.getAddonId() + "中加载多方块机器" + s + "时遇到了问题: " + "没有设置工作槽");
+            ExceptionHandler.handleError("Found an error while loading multi-block machine " + s + " in addon "
+                    + addon.getAddonId() + ": The work slot must be greater than 0");
             return null;
         }
 
         if (recipe == null) {
-            ExceptionHandler.handleError("在附属" + addon.getAddonId() + "中加载多方块机器" + s + "时遇到了问题: " + "放置配方为空");
+            ExceptionHandler.handleError("Found an error while loading multi-block machine " + s + " in addon "
+                    + addon.getAddonId() + ": The recipe is null");
             return null;
         }
 
@@ -69,12 +71,14 @@ public class MultiBlockMachineReader extends YamlReader<CustomMultiBlockMachine>
         }
 
         if (!hasDispenser) {
-            ExceptionHandler.handleError("在附属" + addon.getAddonId() + "中加载多方块机器" + s + "时遇到了问题: " + "放置配方里没有发射器");
+            ExceptionHandler.handleError("Found an error while loading multi-block machine " + s + " in addon "
+                    + addon.getAddonId() + ": The recipe must contain a dispenser");
             return null;
         }
 
         if (recipe[workSlot - 1] == null) {
-            ExceptionHandler.handleError("在附属" + addon.getAddonId() + "中加载多方块机器" + s + "时遇到了问题: " + "对应工作方块不存在");
+            ExceptionHandler.handleError("Found an error while loading multi-block machine " + s + " in addon "
+                    + addon.getAddonId() + ": Corresponding work block does not exist");
             return null;
         }
 
@@ -83,7 +87,8 @@ public class MultiBlockMachineReader extends YamlReader<CustomMultiBlockMachine>
         if (section.contains("sound")) {
             String soundString = section.getString("sound");
             Pair<ExceptionHandler.HandleResult, SoundEffect> soundEffectPair = ExceptionHandler.handleEnumValueOf(
-                    "在附属" + addon.getAddonId() + "中加载多方块机器" + s + "无法获取声音类型" + soundString,
+                    "Found an error while loading multi-block machine " + s + " in addon " + addon.getAddonId()
+                            + ": Invalid sound effect " + soundString,
                     SoundEffect.class,
                     soundString);
             ExceptionHandler.HandleResult result1 = soundEffectPair.getFirstValue();
@@ -97,8 +102,8 @@ public class MultiBlockMachineReader extends YamlReader<CustomMultiBlockMachine>
             String script = section.getString("script", "");
             File file = new File(addon.getScriptsFolder(), script + ".js");
             if (!file.exists()) {
-                ExceptionHandler.handleWarning(
-                        "在附属" + addon.getAddonId() + "中加载多方块机器" + s + "时遇到了问题: " + "找不到脚本文件 " + file.getName());
+                ExceptionHandler.handleWarning("There was an error while loading multi-block machine " + s
+                        + " in addon " + addon.getAddonId() + ": " + "Could not find script file " + file.getName());
             } else {
                 eval = new JavaScriptEval(file, addon);
             }
@@ -117,7 +122,8 @@ public class MultiBlockMachineReader extends YamlReader<CustomMultiBlockMachine>
         ItemStack stack = CommonUtils.readItem(item, false, addon);
 
         if (stack == null) {
-            ExceptionHandler.handleError("在附属" + addon.getAddonId() + "中加载多方块机器" + s + "时遇到了问题: " + "物品为空或格式错误导致无法加载");
+            ExceptionHandler.handleError("Found an error while loading multi-block machine " + s + " in addon "
+                    + addon.getAddonId() + ": " + "The item is null or has an invalid format");
             return null;
         }
 
@@ -133,26 +139,29 @@ public class MultiBlockMachineReader extends YamlReader<CustomMultiBlockMachine>
             if (recipe == null) continue;
             ConfigurationSection inputs = recipe.getConfigurationSection("input");
             if (inputs == null) {
-                ExceptionHandler.handleError(
-                        "在附属" + addon.getAddonId() + "中加载多方块机器" + s + "的工作配方" + key + "时遇到了问题: " + "没有输入物品");
+                ExceptionHandler.handleError("Found an error while loading multi-block machine " + s + " in addon "
+                        + addon.getAddonId() + ": " + "The recipe " + key + " has no input items");
                 continue;
             }
             ItemStack[] input = CommonUtils.readRecipe(inputs, addon);
             if (input == null) {
-                ExceptionHandler.handleError(
-                        "在附属" + addon.getAddonId() + "中加载多方块机器" + s + "的工作配方" + key + "时遇到了问题: " + "输入物品为空或格式错误");
+                ExceptionHandler.handleError("Found an error while loading multi-block machine " + s + " in addon "
+                        + addon.getAddonId() + ": " + "The recipe " + key + " has some invalid input items");
                 continue;
             }
+
             ConfigurationSection outputs = recipe.getConfigurationSection("output");
             if (outputs == null) {
-                ExceptionHandler.handleError(
-                        "在附属" + addon.getAddonId() + "中加载多方块机器" + s + "的工作配方" + key + "时遇到了问题: " + "没有输出物品");
+                ExceptionHandler.handleError("Found an error while loading multi-block machine " + s + " in addon "
+                        + addon.getAddonId() + ": " + "The recipe " + key + " has no output item");
                 continue;
             }
+
             ItemStack output = CommonUtils.readItem(outputs, true, addon);
             if (output == null) {
                 ExceptionHandler.handleError(
-                        "在附属" + addon.getAddonId() + "中加载多方块机器" + s + "的工作配方" + key + "时遇到了问题: " + "输出物品为空或格式错误");
+                        "Found an error while loading multi-block machine " + s + " in addon " + addon.getAddonId()
+                                + ": " + "The recipe " + key + "'s output item is null or has an invalid format");
                 continue;
             }
             map.put(input, output);

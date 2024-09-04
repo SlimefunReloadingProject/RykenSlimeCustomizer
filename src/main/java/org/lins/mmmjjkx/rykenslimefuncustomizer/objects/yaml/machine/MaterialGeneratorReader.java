@@ -45,13 +45,16 @@ public class MaterialGeneratorReader extends YamlReader<CustomMaterialGenerator>
         String recipeType = section.getString("recipe_type", "NULL");
 
         Pair<ExceptionHandler.HandleResult, RecipeType> rt = ExceptionHandler.getRecipeType(
-                "在附属" + addon.getAddonId() + "中加载材料生成器" + s + "时遇到了问题: " + "错误的配方类型" + recipeType + "!", recipeType);
+                "Found an error while loading material generator " + s + " in addon " + addon.getAddonId()
+                        + ": Invalid recipe type '" + recipeType + "'!",
+                recipeType);
 
         if (rt.getFirstValue() == ExceptionHandler.HandleResult.FAILED) return null;
 
         CustomMenu menu = CommonUtils.getIf(addon.getMenus(), m -> m.getID().equalsIgnoreCase(s));
         if (menu == null) {
-            ExceptionHandler.handleError("在附属" + addon.getAddonId() + "中加载材料生成器" + s + "时遇到了问题: " + "对应菜单不存在");
+            ExceptionHandler.handleError("Found an error while loading material generator " + s + " in addon "
+                    + addon.getAddonId() + ": Corresponding menu does not exist!");
             return null;
         }
 
@@ -66,8 +69,8 @@ public class MaterialGeneratorReader extends YamlReader<CustomMaterialGenerator>
             ConfigurationSection outputItem = section.getConfigurationSection("outputItem");
             ItemStack outItem = CommonUtils.readItem(outputItem, true, addon);
             if (outItem == null) {
-                ExceptionHandler.handleError(
-                        "在附属" + addon.getAddonId() + "中加载材料生成器" + s + "时遇到了问题: " + "输出物品为空或格式错误导致无法加载");
+                ExceptionHandler.handleError("Found an error while loading material generator " + s + " in addon "
+                        + addon.getAddonId() + ": " + "The output item is null or has an invalid format");
                 return null;
             } else {
                 out = new ItemStack[] {outItem};
@@ -89,15 +92,15 @@ public class MaterialGeneratorReader extends YamlReader<CustomMaterialGenerator>
 
         int tickRate = section.getInt("tickRate");
         if (tickRate < 1) {
-            ExceptionHandler.handleError(
-                    "在附属" + addon.getAddonId() + "中加载材料生成器" + s + "时遇到了问题: " + "tickRate未设置或不能小于1");
+            ExceptionHandler.handleError("Found an error while loading material generator " + s + " in addon "
+                    + addon.getAddonId() + ": " + "tickRate must be at least 1");
             return null;
         }
 
         int per = section.getInt("per");
         if (per < 1) {
-            ExceptionHandler.handleError(
-                    "在附属" + addon.getAddonId() + "中加载材料生成器" + s + "时遇到了问题: " + "单次生成能量花费未设置或不能小于1");
+            ExceptionHandler.handleError("Found an error while loading material generator " + s + " in addon "
+                    + addon.getAddonId() + ": " + "energy per generation(per) must be at least 1");
             return null;
         }
 
@@ -135,7 +138,8 @@ public class MaterialGeneratorReader extends YamlReader<CustomMaterialGenerator>
         ItemStack stack = CommonUtils.readItem(item, false, addon);
 
         if (stack == null) {
-            ExceptionHandler.handleError("在附属" + addon.getAddonId() + "中加载材料生成器" + s + "时遇到了问题: " + "物品为空或格式错误导致无法加载");
+            ExceptionHandler.handleError("Found an error while loading material generator " + s + " in addon "
+                    + addon.getAddonId() + ": " + "The item is null or has an invalid format");
             return null;
         }
 

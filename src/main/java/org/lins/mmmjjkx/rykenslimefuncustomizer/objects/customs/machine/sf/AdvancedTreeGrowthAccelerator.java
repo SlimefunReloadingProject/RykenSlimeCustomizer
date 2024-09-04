@@ -1,6 +1,5 @@
 package org.lins.mmmjjkx.rykenslimefuncustomizer.objects.customs.machine.sf;
 
-import com.xzavier0722.mc.plugin.slimefun4.storage.util.StorageCacheUtils;
 import io.github.thebusybiscuit.slimefun4.api.MinecraftVersion;
 import io.github.thebusybiscuit.slimefun4.api.items.ItemGroup;
 import io.github.thebusybiscuit.slimefun4.api.items.SlimefunItemStack;
@@ -13,6 +12,7 @@ import io.github.thebusybiscuit.slimefun4.utils.itemstack.ItemStackWrapper;
 import javax.annotation.Nonnull;
 import javax.annotation.Nullable;
 import javax.annotation.ParametersAreNonnullByDefault;
+import me.mrCookieSlime.Slimefun.api.BlockStorage;
 import me.mrCookieSlime.Slimefun.api.inventory.BlockMenu;
 import org.bukkit.Particle;
 import org.bukkit.Tag;
@@ -49,7 +49,7 @@ public class AdvancedTreeGrowthAccelerator extends AbstractGrowthAccelerator {
     }
 
     protected void tick(@Nonnull Block b) {
-        BlockMenu inv = StorageCacheUtils.getMenu(b.getLocation());
+        BlockMenu inv = BlockStorage.getInventory(b);
         if (inv != null) {
             if (this.getCharge(b.getLocation()) >= energy_consumption) {
                 for (int x = -radius; x <= radius; ++x) {

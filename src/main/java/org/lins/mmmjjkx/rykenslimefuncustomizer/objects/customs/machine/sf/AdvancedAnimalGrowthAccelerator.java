@@ -1,6 +1,5 @@
 package org.lins.mmmjjkx.rykenslimefuncustomizer.objects.customs.machine.sf;
 
-import com.xzavier0722.mc.plugin.slimefun4.storage.util.StorageCacheUtils;
 import io.github.thebusybiscuit.slimefun4.api.items.ItemGroup;
 import io.github.thebusybiscuit.slimefun4.api.items.SlimefunItemStack;
 import io.github.thebusybiscuit.slimefun4.api.recipes.RecipeType;
@@ -8,6 +7,7 @@ import io.github.thebusybiscuit.slimefun4.implementation.SlimefunItems;
 import io.github.thebusybiscuit.slimefun4.implementation.items.electric.machines.accelerators.AbstractGrowthAccelerator;
 import io.github.thebusybiscuit.slimefun4.utils.SlimefunUtils;
 import io.github.thebusybiscuit.slimefun4.utils.itemstack.ItemStackWrapper;
+import me.mrCookieSlime.Slimefun.api.BlockStorage;
 import me.mrCookieSlime.Slimefun.api.inventory.BlockMenu;
 import org.bukkit.Particle;
 import org.bukkit.block.Block;
@@ -39,13 +39,12 @@ public class AdvancedAnimalGrowthAccelerator extends AbstractGrowthAccelerator {
     }
 
     protected void tick(Block b) {
-        BlockMenu inv = StorageCacheUtils.getMenu(b.getLocation());
+        BlockMenu inv = BlockStorage.getInventory(b);
 
         if (inv != null) {
             for (Entity n :
                     b.getWorld().getNearbyEntities(b.getLocation(), radius, radius, radius, this::isReadyToGrow)) {
                 int[] var5 = this.getInputSlots();
-                int var6 = var5.length;
 
                 for (int slot : var5) {
                     if (SlimefunUtils.isItemSimilar(inv.getItemInSlot(slot), organicFood, false, false)) {

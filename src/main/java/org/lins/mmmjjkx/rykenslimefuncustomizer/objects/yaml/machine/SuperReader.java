@@ -46,7 +46,10 @@ public class SuperReader extends YamlReader<SlimefunItem> {
         String recipeType = section.getString("recipe_type", "NULL");
 
         Pair<ExceptionHandler.HandleResult, RecipeType> rt = ExceptionHandler.getRecipeType(
-                "在附属" + addon.getAddonId() + "中加载继承物品" + s + "时遇到了问题: " + "错误的配方类型" + recipeType + "!", recipeType);
+                "Found an error while loading super item " + s + " in addon " + addon.getAddonId()
+                        + ": Invalid recipe type '" + recipeType + "'!",
+                recipeType);
+
         if (rt.getFirstValue() == ExceptionHandler.HandleResult.FAILED) return null;
 
         String className = section.getString("class", "");
@@ -54,20 +57,26 @@ public class SuperReader extends YamlReader<SlimefunItem> {
         try {
             clazz = Class.forName(className);
         } catch (ClassNotFoundException e) {
-            ExceptionHandler.handleError("在附属" + addon.getAddonId() + "中加载继承物品" + s + "时遇到了问题: " + "未找到基类", e);
+            ExceptionHandler.handleError(
+                    "Found an error while loading super item " + s + " in addon " + addon.getAddonId() + ": "
+                            + "Could not find class " + className,
+                    e);
             return null;
         }
 
         if (!SlimefunItem.class.isAssignableFrom(clazz)) {
-            ExceptionHandler.handleError("在附属" + addon.getAddonId() + "中加载继承物品" + s + "时遇到了问题: " + "基类不是粘液物品");
+            ExceptionHandler.handleError("Found an error while loading super item " + s + " in addon "
+                    + addon.getAddonId() + ": " + "Class " + className + " is not a SlimefunItem");
             return null;
         }
         // a zero-based number
         int ctorIndex = section.getInt("ctor", 0);
         if (clazz.getConstructors().length < ctorIndex + 1) {
-            ExceptionHandler.handleError("在附属" + addon.getAddonId() + "中加载继承物品" + s + "时遇到了问题: " + "无效的构造函数");
+            ExceptionHandler.handleError("Found an error while loading super item " + s + " in addon "
+                    + addon.getAddonId() + ": " + "Invalid constructor at index " + ctorIndex);
             return null;
         }
+
         Constructor<? extends SlimefunItem> ctor =
                 (Constructor<? extends SlimefunItem>) clazz.getConstructors()[ctorIndex];
         Object[] args = section.getList("args", new ArrayList<>()).toArray();
@@ -89,7 +98,10 @@ public class SuperReader extends YamlReader<SlimefunItem> {
             newArgs.addAll(List.of(args));
             instance = ctor.newInstance(newArgs.toArray());
         } catch (InstantiationException | InvocationTargetException | IllegalAccessException e) {
-            ExceptionHandler.handleError("在附属" + addon.getAddonId() + "中加载继承物品" + s + "时遇到了问题: " + "无法创建类", e);
+            ExceptionHandler.handleError(
+                    "An unexpected error occurred while loading super item " + s + " in addon " + addon.getAddonId()
+                            + ": Could not instantiate class",
+                    e);
             return null;
         }
 
@@ -110,7 +122,8 @@ public class SuperReader extends YamlReader<SlimefunItem> {
                         Arrays.stream(args1).map(Object::getClass).toArray(Class<?>[]::new));
                 if (method == null) {
                     ExceptionHandler.handleError(
-                            "在附属" + addon.getAddonId() + "中加载继承物品" + s + "时遇到了问题: " + "没有找到方法" + methodName);
+                            "Found an error while loading super item " + s + " in addon " + addon.getAddonId() + ": "
+                                    + "Could not find method, but item still can be loaded" + methodName);
                     continue;
                 }
 
@@ -118,7 +131,10 @@ public class SuperReader extends YamlReader<SlimefunItem> {
                     method.setAccessible(true);
                     method.invoke(instance, args1);
                 } catch (IllegalAccessException | InvocationTargetException e) {
-                    ExceptionHandler.handleError("在附属" + addon.getAddonId() + "中加载继承物品" + s + "时遇到了问题: " + "方法调用异常", e);
+                    ExceptionHandler.handleError(
+                            "An unexpected error occurred while loading super item " + s + " in addon "
+                                    + addon.getAddonId() + ": Could not invoke method, but item still can be loaded",
+                            e);
                 }
             }
         }
@@ -131,17 +147,22 @@ public class SuperReader extends YamlReader<SlimefunItem> {
 
                     if (field == null) throw new NoSuchFieldException(fieldName);
                     if (Modifier.isStatic(field.getModifiers()))
-                        throw new IllegalAccessException(
-                                "在附属" + addon.getAddonId() + "中加载继承物品" + s + "时遇到了问题: " + "字段" + fieldName + "为static");
+                        throw new IllegalAccessException("Found an error while loading super item " + s + " in addon "
+                                + addon.getAddonId() + ": Field " + fieldName + "'s value cannot be modified");
+
                     if (Modifier.isFinal(field.getModifiers()))
-                        throw new IllegalAccessException(
-                                "在附属" + addon.getAddonId() + "中加载继承物品" + s + "时遇到了问题: " + "字段" + fieldName + "为final");
+                        throw new IllegalAccessException("Found an error while loading super item " + s + " in addon "
+                                + addon.getAddonId() + ": Field " + fieldName + "'s value cannot be modified");
 
                     field.setAccessible(true);
                     Object object = fieldArray.getObject(fieldName, field.getType());
                     field.set(instance, object);
                 } catch (Exception e) {
-                    ExceptionHandler.handleError("在附属" + addon.getAddonId() + "中加载继承物品" + s + "时遇到了问题: " + "字段修改异常", e);
+                    ExceptionHandler.handleError(
+                            "An unexpected error occurred while loading super item " + s + " in addon "
+                                    + addon.getAddonId()
+                                    + ": Could not modify field's value, but item still can be loaded",
+                            e);
                 }
             }
         }
@@ -159,7 +180,8 @@ public class SuperReader extends YamlReader<SlimefunItem> {
         ItemStack stack = CommonUtils.readItem(item, false, addon);
 
         if (stack == null) {
-            ExceptionHandler.handleError("在附属" + addon.getAddonId() + "中加载继承物品" + s + "时遇到了问题: " + "物品为空或格式错误导致无法加载");
+            ExceptionHandler.handleError("Found an error while loading super item " + s + " in addon "
+                    + addon.getAddonId() + ": " + "The item is null or has an invalid format");
             return null;
         }
         return List.of(new SlimefunItemStack(s, stack));

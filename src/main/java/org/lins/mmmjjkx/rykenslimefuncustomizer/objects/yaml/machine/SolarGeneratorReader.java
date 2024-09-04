@@ -42,7 +42,9 @@ public class SolarGeneratorReader extends YamlReader<CustomSolarGenerator> {
         String recipeType = section.getString("recipe_type", "NULL");
 
         Pair<ExceptionHandler.HandleResult, RecipeType> rt = ExceptionHandler.getRecipeType(
-                "在附属" + addon.getAddonId() + "中加载太阳能发电机" + s + "时遇到了问题: " + "错误的配方类型" + recipeType + "!", recipeType);
+                "Found an error while loading solar generator " + s + " in addon " + addon.getAddonId()
+                        + ": Invalid recipe type '" + recipeType + "'!",
+                recipeType);
 
         if (rt.getFirstValue() == ExceptionHandler.HandleResult.FAILED) return null;
 
@@ -50,12 +52,14 @@ public class SolarGeneratorReader extends YamlReader<CustomSolarGenerator> {
         int nightEnergy = section.getInt("nightEnergy");
 
         if (dayEnergy < 1) {
-            ExceptionHandler.handleError("在附属" + addon.getAddonId() + "中加载太阳能发电机" + s + "时遇到了问题: " + "白天产电量不能小于1");
+            ExceptionHandler.handleError("Found an error while loading solar generator " + s + " in addon "
+                    + addon.getAddonId() + ": " + "The day energy must be greater than 0");
             return null;
         }
 
         if (nightEnergy < 1) {
-            ExceptionHandler.handleError("在附属" + addon.getAddonId() + "中加载太阳能发电机" + s + "时遇到了问题: " + "夜晚产电量不能小于1");
+            ExceptionHandler.handleError("Found an error while loading solar generator " + s + " in addon "
+                    + addon.getAddonId() + ": " + "The night energy must be greater than 0");
             return null;
         }
 
@@ -63,8 +67,8 @@ public class SolarGeneratorReader extends YamlReader<CustomSolarGenerator> {
         int lightLevel = section.getInt("lightLevel", 15);
 
         if (lightLevel < 0 || lightLevel > 15) {
-            ExceptionHandler.handleError(
-                    "在附属" + addon.getAddonId() + "中加载太阳能发电机" + s + "时遇到了问题: " + "所需光照等级不能小于0或大于15，已转为15");
+            ExceptionHandler.handleError("Found an error while loading solar generator " + s + " in addon "
+                    + addon.getAddonId() + ": " + "The required light level is not between 0 and 15, using 15 instead");
             lightLevel = 15;
         }
 
@@ -88,7 +92,8 @@ public class SolarGeneratorReader extends YamlReader<CustomSolarGenerator> {
         ItemStack stack = CommonUtils.readItem(item, false, addon);
 
         if (stack == null) {
-            ExceptionHandler.handleError("在附属" + addon.getAddonId() + "中加载太阳能发电机" + s + "时遇到了问题: " + "物品为空或格式错误导致无法加载");
+            ExceptionHandler.handleError("Found an error while loading solar generator " + s + " in addon "
+                    + addon.getAddonId() + ": " + "The item is null or has an invalid format");
             return null;
         }
 

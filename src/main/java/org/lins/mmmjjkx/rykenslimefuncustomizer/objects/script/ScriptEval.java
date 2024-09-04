@@ -1,8 +1,6 @@
 package org.lins.mmmjjkx.rykenslimefuncustomizer.objects.script;
 
 import com.google.errorprone.annotations.CanIgnoreReturnValue;
-import com.xzavier0722.mc.plugin.slimefun4.storage.controller.SlimefunBlockData;
-import com.xzavier0722.mc.plugin.slimefun4.storage.util.StorageCacheUtils;
 import io.github.thebusybiscuit.slimefun4.api.items.SlimefunItem;
 import io.github.thebusybiscuit.slimefun4.utils.SlimefunUtils;
 import java.io.File;
@@ -21,9 +19,7 @@ import java.util.stream.IntStream;
 import lombok.AccessLevel;
 import lombok.Getter;
 import me.clip.placeholderapi.PlaceholderAPI;
-import me.mrCookieSlime.Slimefun.api.inventory.BlockMenu;
 import org.bukkit.Bukkit;
-import org.bukkit.Location;
 import org.bukkit.entity.Player;
 import org.bukkit.inventory.ItemStack;
 import org.graalvm.polyglot.HostAccess;
@@ -138,22 +134,12 @@ public abstract class ScriptEval {
             int[] arr = stream.toArray();
             return arr[random.nextInt(arr.length)];
         });
-
-        // StorageCacheUtils functions
-        // removal
-        addThing("setData", (CiConsumer<Location, String, String>) StorageCacheUtils::setData);
-        addThing("getData", (BiFunction<Location, String, String>) StorageCacheUtils::getData);
-        addThing("getBlockMenu", (Function<Location, BlockMenu>) StorageCacheUtils::getMenu);
-        addThing("getBlockData", (Function<Location, SlimefunBlockData>) StorageCacheUtils::getBlock);
-        addThing("isSlimefunBlock", (Function<Location, Boolean>) StorageCacheUtils::hasBlock);
-        addThing("isBlock", (BiFunction<Location, String, Boolean>) StorageCacheUtils::isBlock);
-        addThing("getSfItemByBlock", (Function<Location, SlimefunItem>) StorageCacheUtils::getSfItem);
-
-        addThing("runLater", (BiConsumer<Function<?, ?>, Integer>) (r, l) -> Bukkit.getScheduler().runTaskLater(RykenSlimefunCustomizer.INSTANCE, () -> r.apply(null), l));
-        addThing("runRepeating", (CiConsumer<Function<?, ?>, Integer, Integer>) (r, l, t) -> Bukkit.getScheduler().runTaskTimer(RykenSlimefunCustomizer.INSTANCE, () -> r.apply(null), l, t));
-        addThing("runAsync", (Consumer<Function<?, ?>>) r -> Bukkit.getScheduler().runTaskAsynchronously(RykenSlimefunCustomizer.INSTANCE, () -> r.apply(null)));
-        addThing("runLaterAsync", (BiConsumer<Function<?, ?>, Integer>) (r, l) -> Bukkit.getScheduler().runTaskLaterAsynchronously(RykenSlimefunCustomizer.INSTANCE, () -> r.apply(null), l));
-        addThing("runRepeatingAsync", (CiConsumer<Function<?, ?>, Integer, Integer>) (r, l, t) -> Bukkit.getScheduler().runTaskTimerAsynchronously(RykenSlimefunCustomizer.INSTANCE, () -> r.apply(null), l, t));
+      
+        addThing("runLater", (BiConsumer<Runnable, Long>) (r, l) -> Bukkit.getScheduler().runTaskLater(RykenSlimefunCustomizer.INSTANCE, r, l));
+        addThing("runRepeating", (CiConsumer<Runnable, Long, Long>) (r, l, t) -> Bukkit.getScheduler().runTaskTimer(RykenSlimefunCustomizer.INSTANCE, r, l, t));
+        addThing("runAsync", (Consumer<Runnable>) r -> Bukkit.getScheduler().runTaskAsynchronously(RykenSlimefunCustomizer.INSTANCE, r));
+        addThing("runLaterAsync", (BiConsumer<Runnable, Long>) (r, l) -> Bukkit.getScheduler().runTaskLaterAsynchronously(RykenSlimefunCustomizer.INSTANCE, r, l));
+        addThing("runRepeatingAsync", (CiConsumer<Runnable, Long, Long>) (r, l, t) -> Bukkit.getScheduler().runTaskTimerAsynchronously(RykenSlimefunCustomizer.INSTANCE, r, l, t));
 
         if (Bukkit.getPluginManager().isPluginEnabled("NBTAPI")) {
             addThing("NBTAPI", NBTAPIIntegration.instance);

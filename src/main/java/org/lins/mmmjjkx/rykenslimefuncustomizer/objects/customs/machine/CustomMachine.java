@@ -1,7 +1,5 @@
 package org.lins.mmmjjkx.rykenslimefuncustomizer.objects.customs.machine;
 
-import com.xzavier0722.mc.plugin.slimefun4.storage.controller.SlimefunBlockData;
-import com.xzavier0722.mc.plugin.slimefun4.storage.util.StorageCacheUtils;
 import io.github.thebusybiscuit.slimefun4.api.items.ItemGroup;
 import io.github.thebusybiscuit.slimefun4.api.items.SlimefunItem;
 import io.github.thebusybiscuit.slimefun4.api.items.SlimefunItemStack;
@@ -13,7 +11,9 @@ import io.github.thebusybiscuit.slimefun4.core.machines.MachineProcessor;
 import io.github.thebusybiscuit.slimefun4.core.networks.energy.EnergyNetComponentType;
 import java.util.List;
 import lombok.Getter;
+import me.mrCookieSlime.CSCoreLibPlugin.Configuration.Config;
 import me.mrCookieSlime.Slimefun.Objects.handlers.BlockTicker;
+import me.mrCookieSlime.Slimefun.api.BlockStorage;
 import me.mrCookieSlime.Slimefun.api.inventory.BlockMenu;
 import org.bukkit.block.Block;
 import org.bukkit.event.block.BlockPlaceEvent;
@@ -86,9 +86,9 @@ public class CustomMachine extends AbstractEmptyMachine<MachineOperation> implem
         this.addItemHandler(getBlockTicker());
     }
 
-    protected void tick(Block b, SlimefunItem item, SlimefunBlockData data) {
+    protected void tick(Block b, SlimefunItem item, Config data) {
         if (eval != null) {
-            BlockMenu blockMenu = StorageCacheUtils.getMenu(b.getLocation());
+            BlockMenu blockMenu = BlockStorage.getInventory(b.getLocation());
             MachineInfo info = new MachineInfo(blockMenu, data, item, b, processor, null, this);
             eval.evalFunction("tick", info);
         }
@@ -103,7 +103,7 @@ public class CustomMachine extends AbstractEmptyMachine<MachineOperation> implem
             }
 
             @Override
-            public void tick(Block b, SlimefunItem item, SlimefunBlockData data) {
+            public void tick(Block b, SlimefunItem item, Config data) {
                 CustomMachine.this.tick(b, item, data);
             }
         };
