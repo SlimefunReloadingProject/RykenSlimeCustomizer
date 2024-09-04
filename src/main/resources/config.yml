@@ -14,3 +14,7 @@ update:
   # 请填写附属ID，而不是附属名字
   blocks:
     - ""
+#依赖下载仓库
+repositories:
+  - https://maven.aliyun.com/repository/public
+  - https://repo1.maven.org/maven2
