@@ -125,6 +125,11 @@ public final class RykenSlimefunCustomizer extends JavaPlugin implements Slimefu
                 .artifactId("nativeimage")
                 .version(graalVersion)
                 .build();
+        Library graalSdkWord = Library.builder()
+                .groupId("org{}graalvm{}sdk")
+                .artifactId("word")
+                .version(graalVersion)
+                .build();
         Library icu4j = Library.builder()
                 .groupId("com{}ibm{}icu")
                 .artifactId("icu4j")
@@ -138,6 +143,7 @@ public final class RykenSlimefunCustomizer extends JavaPlugin implements Slimefu
         libraryManager.loadLibrary(polyglot);
         libraryManager.loadLibrary(graalSdkCollections);
         libraryManager.loadLibrary(graalSdkNativeImage);
+        libraryManager.loadLibrary(graalSdkWord);
         libraryManager.loadLibrary(icu4j);
     }
 
