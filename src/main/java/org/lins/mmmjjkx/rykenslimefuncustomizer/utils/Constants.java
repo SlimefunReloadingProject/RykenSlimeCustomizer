@@ -21,4 +21,5 @@ public class Constants {
     public static final String ARMORS_FILE = "armors.yml";
     public static final String SUPERS_FILE = "supers.yml";
     public static final String TEMPLATE_MACHINES_FILE = "template_machines.yml";
+    public static final String ADDON_CONFIG_FILE = "default_config.yml";
 }

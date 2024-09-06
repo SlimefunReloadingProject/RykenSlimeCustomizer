@@ -16,6 +16,7 @@ import org.lins.mmmjjkx.rykenslimefuncustomizer.RykenSlimefunCustomizer;
 import org.lins.mmmjjkx.rykenslimefuncustomizer.bulit_in.JavaScriptEval;
 import org.lins.mmmjjkx.rykenslimefuncustomizer.objects.ProjectAddon;
 import org.lins.mmmjjkx.rykenslimefuncustomizer.objects.customs.CustomMenu;
+import org.lins.mmmjjkx.rykenslimefuncustomizer.objects.customs.machine.CustomEnergyGenerator;
 import org.lins.mmmjjkx.rykenslimefuncustomizer.objects.customs.machine.CustomMachine;
 import org.lins.mmmjjkx.rykenslimefuncustomizer.objects.customs.machine.CustomNoEnergyMachine;
 import org.lins.mmmjjkx.rykenslimefuncustomizer.objects.customs.parent.AbstractEmptyMachine;
@@ -71,37 +72,27 @@ public class MachineReader extends YamlReader<AbstractEmptyMachine<?>> {
         CustomMenu menu = CommonUtils.getIf(addon.getMenus(), m -> m.getID().equalsIgnoreCase(s));
 
         AbstractEmptyMachine<?> machine;
+        CustomNoEnergyMachine defaultNoEnergyMachine = new CustomNoEnergyMachine(
+                group.getSecondValue(),
+                slimefunItemStack,
+                rt.getSecondValue(),
+                recipe,
+                menu,
+                input,
+                output,
+                eval,
+                -1);
 
         if (section.contains("energy")) {
             ConfigurationSection energySettings = section.getConfigurationSection("energy");
             if (energySettings == null) {
                 ExceptionHandler.handleWarning("无法读取在附属" + addon.getAddonId() + "中的机器" + s + "的能源设置，已转为无电机器");
-                machine = new CustomNoEnergyMachine(
-                        group.getSecondValue(),
-                        slimefunItemStack,
-                        rt.getSecondValue(),
-                        recipe,
-                        menu,
-                        input,
-                        output,
-                        eval,
-                        -1);
-                return machine;
+                return defaultNoEnergyMachine;
             }
             int capacity = energySettings.getInt("capacity");
             if (capacity < 0) {
                 ExceptionHandler.handleError("无法读取在附属" + addon.getAddonId() + "中的机器" + s + "的能源设置，已转为无电机器，原因: 容量不能小于0");
-                machine = new CustomNoEnergyMachine(
-                        group.getSecondValue(),
-                        slimefunItemStack,
-                        rt.getSecondValue(),
-                        recipe,
-                        menu,
-                        input,
-                        output,
-                        eval,
-                        -1);
-                return machine;
+                return defaultNoEnergyMachine;
             }
             MachineRecord record = new MachineRecord(capacity);
             String encType = energySettings.getString("type");
@@ -110,7 +101,41 @@ public class MachineReader extends YamlReader<AbstractEmptyMachine<?>> {
                     EnergyNetComponentType.class,
                     encType);
             if (enc.getFirstValue() == ExceptionHandler.HandleResult.FAILED) {
-                machine = new CustomNoEnergyMachine(
+                return defaultNoEnergyMachine;
+            }
+            
+            if (section.contains("energyOutput")) {
+                int energyOutput = section.getInt("energyOutput");
+                if (energyOutput < 0) {
+                    ExceptionHandler.handleError("无法读取在附属" + addon.getAddonId() + "中的自定义发电机" + s + "的能源设置，已转为普通有电机器，原因: 能量输出不能小于0");
+                    machine = new CustomMachine(
+                            group.getSecondValue(),
+                            slimefunItemStack,
+                            rt.getSecondValue(),
+                            recipe,
+                            menu,
+                            input,
+                            output,
+                            record,
+                            enc.getSecondValue(),
+                            eval);
+                    return machine;
+                } else {
+                    machine = new CustomEnergyGenerator(
+                            group.getSecondValue(),
+                            slimefunItemStack,
+                            rt.getSecondValue(),
+                            recipe,
+                            menu,
+                            input,
+                            output,
+                            record,
+                            enc.getSecondValue(),
+                            eval,
+                            energyOutput);
+                }
+            } else {
+                machine = new CustomMachine(
                         group.getSecondValue(),
                         slimefunItemStack,
                         rt.getSecondValue(),
@@ -118,21 +143,10 @@ public class MachineReader extends YamlReader<AbstractEmptyMachine<?>> {
                         menu,
                         input,
                         output,
-                        eval,
-                        -1);
-                return machine;
+                        record,
+                        enc.getSecondValue(),
+                        eval);
             }
-            machine = new CustomMachine(
-                    group.getSecondValue(),
-                    slimefunItemStack,
-                    rt.getSecondValue(),
-                    recipe,
-                    menu,
-                    input,
-                    output,
-                    record,
-                    enc.getSecondValue(),
-                    eval);
         } else {
             List<Integer> workSlots = new ArrayList<>();
             if (section.isInt("work")) {

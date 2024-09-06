@@ -17,6 +17,8 @@ import org.lins.mmmjjkx.rykenslimefuncustomizer.utils.ExceptionHandler;
 
 public final class ProjectAddonManager {
     public static File ADDONS_DIRECTORY;
+    public static File CONFIGS_DIRECTORY;
+
     private final Map<String, ProjectAddon> projectAddons = new HashMap<>();
 
     @Getter
@@ -24,6 +26,11 @@ public final class ProjectAddonManager {
 
     public ProjectAddonManager() {
         ADDONS_DIRECTORY = new File(RykenSlimefunCustomizer.INSTANCE.getDataFolder(), "addons");
+        CONFIGS_DIRECTORY = new File(RykenSlimefunCustomizer.INSTANCE.getDataFolder(), "addon_configs");
+
+        if (!CONFIGS_DIRECTORY.exists()) {
+            CONFIGS_DIRECTORY.mkdirs();
+        }
     }
 
     public void pushProjectAddon(ProjectAddon addon) {

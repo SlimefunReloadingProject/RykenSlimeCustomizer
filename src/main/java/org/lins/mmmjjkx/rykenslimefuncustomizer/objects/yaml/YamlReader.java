@@ -3,11 +3,15 @@ package org.lins.mmmjjkx.rykenslimefuncustomizer.objects.yaml;
 import io.github.thebusybiscuit.slimefun4.api.items.SlimefunItemStack;
 import java.util.ArrayList;
 import java.util.List;
+import java.util.Objects;
+import java.util.function.Function;
+
 import org.bukkit.Bukkit;
 import org.bukkit.configuration.ConfigurationSection;
 import org.bukkit.configuration.file.YamlConfiguration;
 import org.jetbrains.annotations.Nullable;
 import org.lins.mmmjjkx.rykenslimefuncustomizer.objects.ProjectAddon;
+import org.lins.mmmjjkx.rykenslimefuncustomizer.objects.customs.CustomAddonConfig;
 import org.lins.mmmjjkx.rykenslimefuncustomizer.utils.CommonUtils;
 import org.lins.mmmjjkx.rykenslimefuncustomizer.utils.ExceptionHandler;
 
@@ -146,39 +150,102 @@ public abstract class YamlReader<T> {
                 int current = CommonUtils.versionToCode(Bukkit.getMinecraftVersion());
                 int destination = CommonUtils.versionToCode(splits[2]);
 
-                String operation;
-                boolean match;
-                switch (splits[1]) {
-                    case ">" -> {
-                        operation = "大于";
-                        match = current > destination;
-                    }
-                    case "<" -> {
-                        operation = "小于";
-                        match = current < destination;
-                    }
-                    case ">=" -> {
-                        operation = "大于或等于";
-                        match = current >= destination;
-                    }
-                    case "<=" -> {
-                        operation = "小于或等于";
-                        match = current <= destination;
-                    }
-                    default -> {
-                        ExceptionHandler.handleError("读取" + key + "的注册条件时发现问题: version需要合法的比较符！");
-                        continue;
-                    }
+                if (!intCheck(splits[1], key, "version", current, destination, (op) -> "需要版本" + op + splits[2] + "才能被注册", warn)) {
+                    return false;
+                }
+            } else if (head.contains("config")) {
+                CustomAddonConfig config = addon.getConfig();
+                if (config == null) {
+                    ExceptionHandler.handleError("读取" + key + "的注册条件时发现问题: 无法获取配置");
+                    continue;
                 }
 
-                if (!match) {
-                    if (warn) {
-                        ExceptionHandler.handleError(key + "需要版本" + operation + splits[2] + "才能被注册");
+                switch (head) {
+                    case "config.boolean" -> {
+                        if (splits.length != 2) {
+                            ExceptionHandler.handleError("读取" + key + "的注册条件时发现问题: config.boolean需要一个参数");
+                            continue;
+                        }
+
+                        if (!config.config().getBoolean(splits[1])) {
+                            if (warn) {
+                                ExceptionHandler.handleError(key + "需要配置选项" + splits[1] + "为true才能被注册");
+                            }
+                            return false;
+                        }
                     }
-                    return false;
+                    case "config.string" -> {
+                        if (splits.length != 3) {
+                            ExceptionHandler.handleError("读取" + key + "的注册条件时发现问题: config.string需要两个参数");
+                            continue;
+                        }
+
+                        if (!Objects.equals(config.config().getString(splits[1]), splits[2])) {
+                            if (warn) {
+                                ExceptionHandler.handleError(key + "需要配置选项" + splits[1] + "为" + splits[2] + "才能被注册");
+                            }
+                            return false;
+                        }
+                    }
+                    case "config.int" -> {
+                        if (splits.length != 4) {
+                            ExceptionHandler.handleError("读取" + key + "的注册条件时发现问题: config.int需要三个参数");
+                            continue;
+                        }
+
+                        String configKey = splits[1];
+                        int current = config.config().getInt(splits[2]);
+                        int destination = Integer.parseInt(splits[3]);
+
+                        if (!intCheck(splits[1], key, "config.int", current, destination, (op) -> "需要配置选项" + configKey + op + splits[3] + "才能被注册", warn)) {
+                            return false;
+                        }
+                    }
                 }
             }
         }
         return true;
+    }
+
+    private boolean intCheck(String operator, String key, String regParam, int current, int destination, Function<String, String> msg, boolean warn) {
+        String operation = "";
+        boolean b = switch (operator) {
+            case ">" -> {
+                operation = "大于";
+                yield current > destination;
+            }
+            case "<" -> {
+                operation = "小于";
+                yield current < destination;
+            }
+            case ">=" -> {
+                operation = "大于或等于";
+                yield current >= destination;
+            }
+            case "<=" -> {
+                operation = "小于或等于";
+                yield current <= destination;
+            }
+            case "==" -> {
+                operation = "等于";
+                yield current == destination;
+            }
+            case "!=" -> {
+                operation = "不等于";
+                yield current != destination;
+            }
+            default -> {
+                ExceptionHandler.handleError("读取" + key + "的注册条件时发现问题: " + regParam + "需要合法的比较符！");
+                yield true;
+            }
+        };
+
+        if (!b) {
+            if (warn) {
+                ExceptionHandler.handleError(key + msg.apply(operation));
+            }
+        }
+
+        return b;
     }
 }

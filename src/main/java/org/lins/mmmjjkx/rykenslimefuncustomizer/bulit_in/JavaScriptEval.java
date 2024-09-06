@@ -35,7 +35,7 @@ public class JavaScriptEval extends ScriptEval {
     private GraalJSScriptEngine jsEngine;
 
     public JavaScriptEval(@NotNull File js, ProjectAddon addon) {
-        super(js);
+        super(js, addon);
         reSetup();
 
         setup();
@@ -124,6 +124,9 @@ public class JavaScriptEval extends ScriptEval {
                         .allowExperimentalOptions(true)
                         .allowPolyglotAccess(PolyglotAccess.ALL)
                         .allowCreateProcess(true)
+                        .allowCreateThread(true)
+                        .allowValueSharing(true)
+                        .allowHostClassLoading(true)
                         .allowIO(IOAccess.ALL)
                         .allowHostClassLookup(s -> true));
 

@@ -2,7 +2,6 @@ package org.lins.mmmjjkx.rykenslimefuncustomizer.objects.customs.machine;
 
 import io.github.thebusybiscuit.slimefun4.api.events.MultiBlockCraftEvent;
 import io.github.thebusybiscuit.slimefun4.api.items.ItemGroup;
-import io.github.thebusybiscuit.slimefun4.api.items.SlimefunItem;
 import io.github.thebusybiscuit.slimefun4.api.items.SlimefunItemStack;
 import io.github.thebusybiscuit.slimefun4.api.recipes.RecipeType;
 import io.github.thebusybiscuit.slimefun4.core.multiblocks.MultiBlockMachine;
@@ -89,7 +88,6 @@ public class CustomMultiBlockMachine extends MultiBlockMachine {
                             Inventory fakeInv = this.createVirtualInventory(inv);
                             Inventory outputInv = this.findOutputInventory(output, disBlock, inv, fakeInv);
                             if (outputInv != null) {
-                                SlimefunItem sfItem = SlimefunItem.getByItem(output);
                                 boolean waitCallback = false;
 
                                 for (int j = 0; j < input.length; ++j) {

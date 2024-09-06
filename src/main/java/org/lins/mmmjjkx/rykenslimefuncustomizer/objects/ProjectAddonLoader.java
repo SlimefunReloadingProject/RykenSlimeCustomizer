@@ -3,17 +3,24 @@ package org.lins.mmmjjkx.rykenslimefuncustomizer.objects;
 import io.github.thebusybiscuit.slimefun4.api.researches.Research;
 import io.github.thebusybiscuit.slimefun4.libraries.commons.lang.Validate;
 import java.io.File;
+import java.io.IOException;
+import java.nio.file.Files;
 import java.util.ArrayList;
 import java.util.List;
 import java.util.Map;
 import java.util.Objects;
+
+import io.github.thebusybiscuit.slimefun4.utils.FileUtils;
 import org.bukkit.Bukkit;
 import org.bukkit.configuration.file.YamlConfiguration;
 import org.jetbrains.annotations.Nullable;
+import org.lins.mmmjjkx.rykenslimefuncustomizer.ProjectAddonManager;
 import org.lins.mmmjjkx.rykenslimefuncustomizer.RykenSlimefunCustomizer;
 import org.lins.mmmjjkx.rykenslimefuncustomizer.bulit_in.JavaScriptEval;
+import org.lins.mmmjjkx.rykenslimefuncustomizer.objects.customs.CustomAddonConfig;
 import org.lins.mmmjjkx.rykenslimefuncustomizer.objects.global.RecipeTypeMap;
 import org.lins.mmmjjkx.rykenslimefuncustomizer.objects.global.ScriptableListeners;
+import org.lins.mmmjjkx.rykenslimefuncustomizer.objects.script.ScriptEval;
 import org.lins.mmmjjkx.rykenslimefuncustomizer.objects.script.enhanced.ScriptableListener;
 import org.lins.mmmjjkx.rykenslimefuncustomizer.objects.yaml.ItemGroupReader;
 import org.lins.mmmjjkx.rykenslimefuncustomizer.objects.yaml.MenuReader;
@@ -118,6 +125,30 @@ public class ProjectAddonLoader {
                     ExceptionHandler.handleWarning(
                             "无法找到附属 " + addon.getAddonId() + " 的对应监听脚本文件 " + file.getName() + "！");
                 }
+            }
+
+            File customConfigFolder = new File(ProjectAddonManager.CONFIGS_DIRECTORY, id);
+            YamlConfiguration customConfigYaml = doFileLoad(file, Constants.ADDON_CONFIG_FILE);
+            if (!customConfigYaml.getKeys(false).isEmpty()) {
+                File configFile = new File(file, Constants.ADDON_CONFIG_FILE);
+
+                File customConfig = new File(customConfigFolder, "config.yml");
+                if (!customConfigFolder.exists()) {
+                    customConfigFolder.mkdirs();
+                }
+
+                try {
+                    Files.copy(configFile.toPath(), customConfig.toPath());
+                    customConfigYaml = doFileLoad(customConfigFolder, "config.yml");
+                } catch (IOException e) {
+                    ExceptionHandler.handleError("无法复制配置文件 " + configFile.getName() + " 到 " + customConfigFolder.getName() + "，附属可能不按预期工作！");
+                }
+
+                File scriptHandler = new File(addon.getScriptsFolder(), "configHandler.js");
+                ScriptEval eval = scriptHandler.exists() ? new JavaScriptEval(scriptHandler, addon) : null;
+                CustomAddonConfig customConfigObj = new CustomAddonConfig(customConfig, customConfigYaml, eval);
+                addon.setConfig(customConfigObj);
+                customConfigObj.tryReload();
             }
         } else {
             ExceptionHandler.handleError("在名称为 " + file.getName() + "的文件夹中有无效的项目信息，导致此附属无法加载！");
