@@ -135,6 +135,9 @@ public class ProjectAddonLoader {
                 File customConfig = new File(customConfigFolder, "config.yml");
                 if (!customConfigFolder.exists()) {
                     customConfigFolder.mkdirs();
+                }
+
+                if (!customConfig.exists()) {
                     try {
                         Files.copy(configFile.toPath(), customConfig.toPath());
                     } catch (IOException e) {
