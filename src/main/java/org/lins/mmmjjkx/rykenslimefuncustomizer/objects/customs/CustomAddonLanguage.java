@@ -23,7 +23,7 @@ public class CustomAddonLanguage {
     }
 
     private void setupLanguage() {
-        String language = RykenSlimefunCustomizer.INSTANCE.getConfig().getString("language");
+        String language = RykenSlimefunCustomizer.INSTANCE.getConfig().getString("addon_language");
         File languageFileFolder = new File(addon.getFolder(), "languages");
         File languageFile = new File(languageFileFolder, language + ".yml");
         File defaultLanguageFile = new File(languageFileFolder, addon.getDefaultLanguage() + ".yml");

@@ -135,14 +135,14 @@ public class ProjectAddonLoader {
                 File customConfig = new File(customConfigFolder, "config.yml");
                 if (!customConfigFolder.exists()) {
                     customConfigFolder.mkdirs();
+                    try {
+                        Files.copy(configFile.toPath(), customConfig.toPath());
+                    } catch (IOException e) {
+                        ExceptionHandler.handleError("无法复制配置文件 " + configFile.getName() + " 到 " + customConfigFolder.getName() + "，附属可能不按预期工作！", e);
+                    }
                 }
 
-                try {
-                    Files.copy(configFile.toPath(), customConfig.toPath());
-                    customConfigYaml = doFileLoad(customConfigFolder, "config.yml");
-                } catch (IOException e) {
-                    ExceptionHandler.handleError("无法复制配置文件 " + configFile.getName() + " 到 " + customConfigFolder.getName() + "，附属可能不按预期工作！");
-                }
+                customConfigYaml = doFileLoad(customConfigFolder, "config.yml");
 
                 File scriptHandler = new File(addon.getScriptsFolder(), "configHandler.js");
                 ScriptEval eval = scriptHandler.exists() ? new JavaScriptEval(scriptHandler, addon) : null;
