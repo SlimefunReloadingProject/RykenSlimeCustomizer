@@ -58,9 +58,9 @@ public final class ProjectAddon {
     //
     //These aren't used yet, but they will be in the future.
     @Beta
-    private @NotNull String defaultLanguage;
+    private String defaultLanguage;
     @Beta
-    private @NotNull CustomAddonLanguage languageManager;
+    private CustomAddonLanguage languageManager;
     //
     private @Nullable CustomAddonConfig config;
     //
