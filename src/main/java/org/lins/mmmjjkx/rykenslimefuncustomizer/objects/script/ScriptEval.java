@@ -156,9 +156,13 @@ public abstract class ScriptEval {
         addThing("runLaterAsync", (BiConsumer<Function<?, ?>, Integer>) (r, l) -> Bukkit.getScheduler().runTaskLaterAsynchronously(RykenSlimefunCustomizer.INSTANCE, () -> r.apply(null), l));
         addThing("runRepeatingAsync", (CiConsumer<Function<?, ?>, Integer, Integer>) (r, l, t) -> Bukkit.getScheduler().runTaskTimerAsynchronously(RykenSlimefunCustomizer.INSTANCE, () -> r.apply(null), l, t));
 
-        if (addon.getConfig() != null) {
-            addThing("getAddonConfig", (Supplier<YamlConfiguration>) addon.getConfig()::config);
-        }
+        addThing("getAddonConfig", (Supplier<YamlConfiguration>) () -> {
+            if (addon.getConfig() == null) {
+                throw new RuntimeException("The addon hasn't config file!");
+            }
+
+            return addon.getConfig().config();
+        });
 
         if (Bukkit.getPluginManager().isPluginEnabled("NBTAPI")) {
             addThing("NBTAPI", NBTAPIIntegration.instance);

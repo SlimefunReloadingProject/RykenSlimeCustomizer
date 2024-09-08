@@ -330,24 +330,32 @@ public class CommonUtils {
             YamlConfiguration configuration2 = new YamlConfiguration();
             configuration2.load(file);
 
-            for (String key : configuration.getKeys(true)) {
-                Object value = configuration.get(key);
-                if (value instanceof List<?>) {
-                    List<?> list2 = configuration2.getList(key);
-                    if (list2 == null) {
-                        configuration2.set(key, value);
-                        continue;
-                    }
-                }
-
-                if (!configuration2.contains(key)) {
-                    configuration2.set(key, value);
-                }
-            }
+            completeFile0(configuration, configuration2);
             configuration2.save(file);
         } catch (Exception e) {
             e.printStackTrace();
             ExceptionHandler.handleError("无法完成文件" + resourceFile + "的同步，请检查插件文件是否损坏！");
+        }
+    }
+
+    public static void completeFile(YamlConfiguration origin, YamlConfiguration dest) {
+        completeFile0(origin, dest);
+    }
+
+    private static void completeFile0(YamlConfiguration origin, YamlConfiguration dest) {
+        for (String key : origin.getKeys(true)) {
+            Object value = origin.get(key);
+            if (value instanceof List<?>) {
+                List<?> list2 = dest.getList(key);
+                if (list2 == null) {
+                    dest.set(key, value);
+                    continue;
+                }
+            }
+
+            if (!dest.contains(key)) {
+                dest.set(key, value);
+            }
         }
     }
 

@@ -10,7 +10,6 @@ import java.util.List;
 import java.util.Map;
 import java.util.Objects;
 
-import io.github.thebusybiscuit.slimefun4.utils.FileUtils;
 import org.bukkit.Bukkit;
 import org.bukkit.configuration.file.YamlConfiguration;
 import org.jetbrains.annotations.Nullable;
@@ -29,6 +28,7 @@ import org.lins.mmmjjkx.rykenslimefuncustomizer.objects.yaml.ResearchReader;
 import org.lins.mmmjjkx.rykenslimefuncustomizer.objects.yaml.item.*;
 import org.lins.mmmjjkx.rykenslimefuncustomizer.objects.yaml.machine.*;
 import org.lins.mmmjjkx.rykenslimefuncustomizer.update.GithubUpdater;
+import org.lins.mmmjjkx.rykenslimefuncustomizer.utils.CommonUtils;
 import org.lins.mmmjjkx.rykenslimefuncustomizer.utils.Constants;
 import org.lins.mmmjjkx.rykenslimefuncustomizer.utils.ExceptionHandler;
 
@@ -147,6 +147,14 @@ public class ProjectAddonLoader {
                 File scriptHandler = new File(addon.getScriptsFolder(), "configHandler.js");
                 ScriptEval eval = scriptHandler.exists() ? new JavaScriptEval(scriptHandler, addon) : null;
                 CustomAddonConfig customConfigObj = new CustomAddonConfig(customConfig, customConfigYaml, eval);
+
+                YamlConfiguration dest = YamlConfiguration.loadConfiguration(customConfig);
+                CommonUtils.completeFile(customConfigYaml, dest);
+                try {
+                    dest.save(customConfig);
+                } catch (IOException ignored) {
+                }
+
                 addon.setConfig(customConfigObj);
                 customConfigObj.tryReload();
             }
