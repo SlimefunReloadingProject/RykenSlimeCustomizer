@@ -11,9 +11,11 @@ import io.github.thebusybiscuit.slimefun4.implementation.handlers.SimpleBlockBre
 import io.github.thebusybiscuit.slimefun4.implementation.operations.CraftingOperation;
 import io.github.thebusybiscuit.slimefun4.libraries.dough.items.CustomItemStack;
 import io.github.thebusybiscuit.slimefun4.utils.ChestMenuUtils;
+
+import java.security.SecureRandom;
 import java.util.ArrayList;
 import java.util.List;
-import java.util.Random;
+
 import lombok.Getter;
 import me.mrCookieSlime.Slimefun.Objects.SlimefunItem.abstractItems.AContainer;
 import me.mrCookieSlime.Slimefun.Objects.SlimefunItem.abstractItems.MachineRecipe;
@@ -39,6 +41,7 @@ public class CustomRecipeMachine extends AContainer implements RecipeDisplayItem
     private final List<CustomMachineRecipe> recipes;
     private final int energyPerCraft;
     private final int capacity;
+    private final boolean hideAllRecipes;
 
     public static final ItemStack RECIPE_INPUT =
             new CustomItemStack(Material.GREEN_STAINED_GLASS_PANE, "&a多物品输入", "", "&2> &a点击查看");
@@ -59,7 +62,8 @@ public class CustomRecipeMachine extends AContainer implements RecipeDisplayItem
             int energyPerCraft,
             int capacity,
             @Nullable CustomMenu menu,
-            int speed) {
+            int speed,
+            boolean hideAllRecipes) {
         super(itemGroup, item, recipeType, recipe);
 
         this.processor = new MachineProcessor<>(this);
@@ -71,6 +75,7 @@ public class CustomRecipeMachine extends AContainer implements RecipeDisplayItem
         this.energyPerCraft = energyPerCraft;
         this.capacity = capacity;
         this.menu = menu;
+        this.hideAllRecipes = hideAllRecipes;
 
         if (menu == null) {
             this.createPreset(this, this.getInventoryTitle(), super::constructMenu);
@@ -134,8 +139,16 @@ public class CustomRecipeMachine extends AContainer implements RecipeDisplayItem
     @NotNull public List<ItemStack> getDisplayRecipes() {
         List<ItemStack> displayRecipes = new ArrayList<>();
 
+        if (hideAllRecipes) {
+            return displayRecipes;
+        }
+
         int i = 0;
         for (CustomMachineRecipe recipe : raw_recipes) {
+            if (recipe.isHide()) {
+                continue;
+            }
+
             ItemStack[] input = recipe.getInput();
             ItemStack[] output = recipe.getOutput();
 
@@ -214,7 +227,7 @@ public class CustomRecipeMachine extends AContainer implements RecipeDisplayItem
                                 }
                             } else {
                                 if (outputs.length > 0) {
-                                    int index = new Random().nextInt(outputs.length);
+                                    int index = new SecureRandom().nextInt(outputs.length);
                                     ItemStack is = outputs[index];
                                     if (is != null) {
                                         inv.pushItem(is.clone(), this.getOutputSlots());

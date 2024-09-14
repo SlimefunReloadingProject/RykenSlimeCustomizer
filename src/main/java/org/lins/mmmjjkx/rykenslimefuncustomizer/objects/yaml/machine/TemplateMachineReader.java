@@ -94,6 +94,8 @@ public class TemplateMachineReader extends YamlReader<CustomTemplateMachine> {
             return null;
         }
 
+        boolean hideAllRecipes = section.getBoolean("hideAllRecipes", false);
+
         return new CustomTemplateMachine(
                 group.getSecondValue(),
                 sfis,
@@ -107,7 +109,8 @@ public class TemplateMachineReader extends YamlReader<CustomTemplateMachine> {
                 energy,
                 capacity,
                 fasterIfMoreTemplates,
-                moreOutputIfMoreTemplates);
+                moreOutputIfMoreTemplates,
+                hideAllRecipes);
     }
 
     private List<MachineTemplate> readTemplates(
@@ -179,11 +182,12 @@ public class TemplateMachineReader extends YamlReader<CustomTemplateMachine> {
 
             boolean chooseOne = recipes.getBoolean("chooseOne", false);
             boolean forDisplay = recipes.getBoolean("forDisplay", false);
+            boolean hide = recipes.getBoolean("hide", false);
 
             input = CommonUtils.removeNulls(input);
             output = CommonUtils.removeNulls(output);
 
-            list.add(new CustomMachineRecipe(seconds, input, output, chances, chooseOne, forDisplay));
+            list.add(new CustomMachineRecipe(seconds, input, output, chances, chooseOne, forDisplay, hide));
         }
         return list;
     }

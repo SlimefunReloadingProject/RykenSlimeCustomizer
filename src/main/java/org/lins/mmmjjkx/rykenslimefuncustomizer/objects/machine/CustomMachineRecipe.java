@@ -1,23 +1,20 @@
 package org.lins.mmmjjkx.rykenslimefuncustomizer.objects.machine;
 
+import java.security.SecureRandom;
 import java.util.ArrayList;
 import java.util.List;
-import java.util.Random;
+
 import lombok.Getter;
 import me.mrCookieSlime.Slimefun.Objects.SlimefunItem.abstractItems.MachineRecipe;
 import org.bukkit.inventory.ItemStack;
 
+@Getter
 public class CustomMachineRecipe extends MachineRecipe {
-    @Getter
     private final List<Integer> chances;
 
-    @Getter
     private final boolean chooseOneIfHas;
-
-    @Getter
     private final boolean forDisplay;
-
-    private final Random RNG = new Random();
+    private final boolean hide;
 
     public CustomMachineRecipe(
             int seconds,
@@ -25,12 +22,14 @@ public class CustomMachineRecipe extends MachineRecipe {
             ItemStack[] output,
             List<Integer> chances,
             boolean chooseOneIfHas,
-            boolean forDisplay) {
+            boolean forDisplay,
+            boolean hide) {
         super(seconds, input.clone(), output.clone());
 
         this.chances = chances;
         this.chooseOneIfHas = chooseOneIfHas;
         this.forDisplay = forDisplay;
+        this.hide = hide;
     }
 
     public List<ItemStack> getMatchChanceResult() {
@@ -52,7 +51,7 @@ public class CustomMachineRecipe extends MachineRecipe {
         if (chance >= 100) return true;
         if (chance < 1) return false;
 
-        int result = RNG.nextInt(100);
+        int result = new SecureRandom().nextInt(100);
         return result < chance;
     }
 }

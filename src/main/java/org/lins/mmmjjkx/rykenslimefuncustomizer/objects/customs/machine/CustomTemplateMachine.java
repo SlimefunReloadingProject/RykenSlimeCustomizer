@@ -61,6 +61,7 @@ public class CustomTemplateMachine extends AbstractEmptyMachine<CustomTemplateCr
     private final int capacity;
     private final boolean fasterIfMoreTemplates;
     private final boolean moreOutputIfMoreTemplates;
+    private final boolean hideAllRecipes;
 
     public CustomTemplateMachine(
             ItemGroup itemGroup,
@@ -75,7 +76,8 @@ public class CustomTemplateMachine extends AbstractEmptyMachine<CustomTemplateCr
             int consumption,
             int capacity,
             boolean fasterIfMoreTemplates,
-            boolean moreOutputIfMoreTemplates) {
+            boolean moreOutputIfMoreTemplates,
+            boolean hideAllRecipes) {
         super(itemGroup, item, recipeType, recipe);
 
         this.processor = new MachineProcessor<>(this);
@@ -88,6 +90,7 @@ public class CustomTemplateMachine extends AbstractEmptyMachine<CustomTemplateCr
         this.capacity = capacity;
         this.fasterIfMoreTemplates = fasterIfMoreTemplates;
         this.moreOutputIfMoreTemplates = moreOutputIfMoreTemplates;
+        this.hideAllRecipes = hideAllRecipes;
 
         createPreset(this, bmp -> {
             menu.apply(bmp);
@@ -133,9 +136,17 @@ public class CustomTemplateMachine extends AbstractEmptyMachine<CustomTemplateCr
     @NotNull public List<ItemStack> getDisplayRecipes() {
         List<ItemStack> displayRecipes = new ArrayList<>();
 
+        if (hideAllRecipes) {
+            return displayRecipes;
+        }
+
         int templateIndex = 0, recipeIndex = 0;
         for (MachineTemplate template : templates) {
             for (CustomMachineRecipe recipe : template.recipes()) {
+                if (recipe.isHide()) {
+                    continue;
+                }
+
                 if (recipe.getInput().length == 0) {
                     ItemStack templateItem = template.template().clone();
                     CommonUtils.addLore(templateItem, true, "&d&l&o*模板物品不消耗*");

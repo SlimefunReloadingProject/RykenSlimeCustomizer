@@ -30,8 +30,10 @@ public class ClassUtils {
 
         builder = builder.implement(interfaces).name(finalClassName);
 
-        DynamicType.Unloaded<?> unloaded = builder.make();
-        Class<?> clazz = unloaded.load(extendClass.getClassLoader()).getLoaded();
+        Class<?> clazz;
+        try (DynamicType.Unloaded<?> unloaded = builder.make()) {
+            clazz = unloaded.load(extendClass.getClassLoader()).getLoaded();
+        }
         cache.put(finalClassName, clazz);
         return clazz;
     }
