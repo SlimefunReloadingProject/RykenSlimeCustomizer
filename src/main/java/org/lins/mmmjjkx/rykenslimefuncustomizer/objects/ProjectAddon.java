@@ -176,7 +176,9 @@ public final class ProjectAddon {
         ScriptableListeners.removeScriptableListener(addonId);
 
         if (config != null) {
-            config.onReloadHandler().close();
+            if (config.onReloadHandler() != null) {
+                config.onReloadHandler().close();
+            }
         }
     }
 
