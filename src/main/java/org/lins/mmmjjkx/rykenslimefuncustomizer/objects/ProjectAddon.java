@@ -1,6 +1,5 @@
 package org.lins.mmmjjkx.rykenslimefuncustomizer.objects;
 
-import com.google.common.annotations.Beta;
 import io.github.thebusybiscuit.slimefun4.api.geo.GEOResource;
 import io.github.thebusybiscuit.slimefun4.api.items.ItemGroup;
 import io.github.thebusybiscuit.slimefun4.api.items.SlimefunItem;
@@ -23,7 +22,6 @@ import org.jetbrains.annotations.NotNull;
 import org.jetbrains.annotations.Nullable;
 import org.lins.mmmjjkx.rykenslimefuncustomizer.bulit_in.JavaScriptEval;
 import org.lins.mmmjjkx.rykenslimefuncustomizer.objects.customs.CustomAddonConfig;
-import org.lins.mmmjjkx.rykenslimefuncustomizer.objects.customs.CustomAddonLanguage;
 import org.lins.mmmjjkx.rykenslimefuncustomizer.objects.customs.CustomMenu;
 import org.lins.mmmjjkx.rykenslimefuncustomizer.objects.customs.item.CustomArmorPiece;
 import org.lins.mmmjjkx.rykenslimefuncustomizer.objects.customs.item.CustomFood;
@@ -55,12 +53,6 @@ public final class ProjectAddon {
     //
     private @Nullable String githubRepo;
     private @Nullable String downloadZipName;
-    //
-    //These aren't used yet, but they will be in the future.
-    @Beta
-    private String defaultLanguage;
-    @Beta
-    private CustomAddonLanguage languageManager;
     //
     private @Nullable CustomAddonConfig config;
     //
