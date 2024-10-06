@@ -254,7 +254,7 @@ public class ItemReader extends YamlReader<SlimefunItem> {
             return null;
         }
 
-        return List.of(new SlimefunItemStack(id, stack));
+        return List.of(new SlimefunItemStack(id.toUpperCase(), stack));
     }
 
     @SneakyThrows

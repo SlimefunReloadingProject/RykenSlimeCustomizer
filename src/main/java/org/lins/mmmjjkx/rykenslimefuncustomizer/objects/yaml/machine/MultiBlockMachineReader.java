@@ -121,7 +121,7 @@ public class MultiBlockMachineReader extends YamlReader<CustomMultiBlockMachine>
             return null;
         }
 
-        return List.of(new SlimefunItemStack(s, stack));
+        return List.of(new SlimefunItemStack(s.toUpperCase(), stack));
     }
 
     private Map<ItemStack[], ItemStack> readRecipes(String s, ConfigurationSection section, ProjectAddon addon) {
