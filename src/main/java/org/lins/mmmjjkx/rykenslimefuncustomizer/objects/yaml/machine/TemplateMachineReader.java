@@ -28,7 +28,7 @@ public class TemplateMachineReader extends YamlReader<CustomTemplateMachine> {
         ConfigurationSection section = configuration.getConfigurationSection(s);
         if (section == null) return null;
 
-        String id = section.getString("id_alias", s);
+        String id = section.getString("id_alias", s).toUpperCase();
         ExceptionHandler.HandleResult result = ExceptionHandler.handleIdConflict(id);
 
         if (result == ExceptionHandler.HandleResult.FAILED) return null;
