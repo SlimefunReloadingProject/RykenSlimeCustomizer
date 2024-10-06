@@ -48,7 +48,6 @@ import org.bukkit.event.block.BlockGrowEvent;
 import org.bukkit.event.block.BlockIgniteEvent;
 import org.bukkit.event.block.BlockMultiPlaceEvent;
 import org.bukkit.event.block.BlockPhysicsEvent;
-import org.bukkit.event.block.BlockPistonEvent;
 import org.bukkit.event.block.BlockPistonExtendEvent;
 import org.bukkit.event.block.BlockPistonRetractEvent;
 import org.bukkit.event.block.BlockPlaceEvent;
@@ -148,7 +147,6 @@ import org.bukkit.event.inventory.InventoryClickEvent;
 import org.bukkit.event.inventory.InventoryCloseEvent;
 import org.bukkit.event.inventory.InventoryCreativeEvent;
 import org.bukkit.event.inventory.InventoryDragEvent;
-import org.bukkit.event.inventory.InventoryInteractEvent;
 import org.bukkit.event.inventory.InventoryMoveItemEvent;
 import org.bukkit.event.inventory.InventoryOpenEvent;
 import org.bukkit.event.inventory.InventoryPickupItemEvent;
@@ -170,7 +168,6 @@ import org.bukkit.event.player.PlayerBucketEntityEvent;
 import org.bukkit.event.player.PlayerBucketFillEvent;
 import org.bukkit.event.player.PlayerChangedMainHandEvent;
 import org.bukkit.event.player.PlayerChangedWorldEvent;
-import org.bukkit.event.player.PlayerChannelEvent;
 import org.bukkit.event.player.PlayerChatEvent;
 import org.bukkit.event.player.PlayerChatTabCompleteEvent;
 import org.bukkit.event.player.PlayerCommandPreprocessEvent;
@@ -235,7 +232,6 @@ import org.bukkit.event.server.ServiceRegisterEvent;
 import org.bukkit.event.server.ServiceUnregisterEvent;
 import org.bukkit.event.server.TabCompleteEvent;
 import org.bukkit.event.vehicle.VehicleBlockCollisionEvent;
-import org.bukkit.event.vehicle.VehicleCollisionEvent;
 import org.bukkit.event.vehicle.VehicleCreateEvent;
 import org.bukkit.event.vehicle.VehicleDamageEvent;
 import org.bukkit.event.vehicle.VehicleDestroyEvent;
@@ -288,7 +284,6 @@ public class ScriptableEventListener implements Listener {
      * {@link BlockIgniteEvent}
      * {@link BlockMultiPlaceEvent}
      * {@link BlockPhysicsEvent}
-     * {@link BlockPistonEvent}
      * {@link BlockPistonExtendEvent}
      * {@link BlockPistonRetractEvent}
      * {@link BlockPlaceEvent}
@@ -393,7 +388,6 @@ public class ScriptableEventListener implements Listener {
      * {@link InventoryCloseEvent}
      * {@link InventoryCreativeEvent}
      * {@link InventoryDragEvent}
-     * {@link InventoryInteractEvent}
      * {@link InventoryMoveItemEvent}
      * {@link InventoryOpenEvent}
      * {@link InventoryPickupItemEvent}
@@ -416,7 +410,6 @@ public class ScriptableEventListener implements Listener {
      * {@link PlayerBucketFillEvent}
      * {@link PlayerChangedMainHandEvent}
      * {@link PlayerChangedWorldEvent}
-     * {@link PlayerChannelEvent}
      * {@link PlayerChatEvent}
      * {@link PlayerChatTabCompleteEvent}
      * {@link PlayerCommandPreprocessEvent}
@@ -484,7 +477,6 @@ public class ScriptableEventListener implements Listener {
      * {@link TabCompleteEvent}
      * vehicle events:
      * {@link VehicleBlockCollisionEvent}
-     * {@link VehicleCollisionEvent}
      * {@link VehicleCreateEvent}
      * {@link VehicleDamageEvent}
      * {@link VehicleDestroyEvent}
@@ -637,11 +629,6 @@ public class ScriptableEventListener implements Listener {
     }
 
     @EventHandler
-    public void onBlockPiston(BlockPistonEvent e) {
-        ScriptableListeners.getScriptableListeners().forEach(o -> o.doEventEval(e));
-    }
-
-    @EventHandler
     public void onBlockPistonExtend(BlockPistonExtendEvent e) {
         ScriptableListeners.getScriptableListeners().forEach(o -> o.doEventEval(e));
     }
@@ -767,11 +754,6 @@ public class ScriptableEventListener implements Listener {
     }
 
     @EventHandler
-    public void onInventoryInteract(InventoryInteractEvent e) {
-        ScriptableListeners.getScriptableListeners().forEach(o -> o.doEventEval(e));
-    }
-
-    @EventHandler
     public void onInventoryMoveItem(InventoryMoveItemEvent e) {
         ScriptableListeners.getScriptableListeners().forEach(o -> o.doEventEval(e));
     }
@@ -848,11 +830,6 @@ public class ScriptableEventListener implements Listener {
 
     @EventHandler
     public void onPlayerChangedWorld(PlayerChangedWorldEvent e) {
-        ScriptableListeners.getScriptableListeners().forEach(o -> o.doEventEval(e));
-    }
-
-    @EventHandler
-    public void onPlayerChannel(PlayerChannelEvent e) {
         ScriptableListeners.getScriptableListeners().forEach(o -> o.doEventEval(e));
     }
 
