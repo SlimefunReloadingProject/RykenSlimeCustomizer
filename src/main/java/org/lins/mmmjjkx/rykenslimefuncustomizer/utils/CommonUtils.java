@@ -204,12 +204,50 @@ public class CommonUtils {
             }
             default -> {
                 Optional<Material> materialo = Optional.ofNullable(Material.matchMaterial(material));
-                Material mat;
-                if (materialo.isEmpty()) {
+                Material mat = Material.STONE;
+                for (int i = 0; i < 1; i++) {
+                    if (materialo.isPresent()) {
+                        mat = materialo.get();
+                        break;
+                    }
+
+                    if ("GRASS".equals(material)) {
+                        materialo = Optional.ofNullable(Material.matchMaterial("SHORT_GRASS"));
+                    }
+
+                    if (materialo.isPresent()) {
+                        mat = materialo.get();
+                        break;
+                    }
+
+                    if ("SHORT_GRASS".equals(material)) {
+                        materialo = Optional.ofNullable(Material.matchMaterial("GRASS"));
+                    }
+
+                    if (materialo.isPresent()) {
+                        mat = materialo.get();
+                        break;
+                    }
+
+                    if ("SCUTE".equals(material)) {
+                        materialo = Optional.ofNullable(Material.matchMaterial("TURTLE_SCUTE"));
+                    }
+
+                    if (materialo.isPresent()) {
+                        mat = materialo.get();
+                        break;
+                    }
+
+                    if ("TURTLE_SCUTE".equals(material)) {
+                        materialo = Optional.ofNullable(Material.matchMaterial("SCUTE"));
+                    }
+
+                    if (materialo.isPresent()) {
+                        mat = materialo.get();
+                        break;
+                    }
+
                     ExceptionHandler.handleError("无法在附属" + addon.getAddonId() + "中读取材料" + material + "，已转为石头");
-                    mat = Material.STONE;
-                } else {
-                    mat = materialo.get();
                 }
 
                 itemStack = new CustomItemStack(mat, name, lore);
