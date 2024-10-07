@@ -57,7 +57,7 @@ public class ItemReader extends YamlReader<SlimefunItem> {
         Pair<ExceptionHandler.HandleResult, ItemGroup> group = ExceptionHandler.handleItemGroupGet(addon, igId);
         if (group.getFirstValue() == ExceptionHandler.HandleResult.FAILED) return null;
 
-        SlimefunItemStack sfis = getPreloadItem(id);
+        SlimefunItemStack sfis = getPreloadItem(s);
         if (sfis == null) return null;
 
         ItemStack[] itemStacks = CommonUtils.readRecipe(section.getConfigurationSection("recipe"), addon);
