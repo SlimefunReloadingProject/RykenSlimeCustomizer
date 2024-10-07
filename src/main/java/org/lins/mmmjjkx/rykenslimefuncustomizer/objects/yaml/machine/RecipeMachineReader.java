@@ -118,7 +118,7 @@ public class RecipeMachineReader extends YamlReader<CustomRecipeMachine> {
             return null;
         }
 
-        return List.of(new SlimefunItemStack(s.toUpperCase(), stack));
+        return List.of(new SlimefunItemStack(section.getString("id_alias", s).toUpperCase(), stack));
     }
 
     private List<CustomMachineRecipe> readRecipes(

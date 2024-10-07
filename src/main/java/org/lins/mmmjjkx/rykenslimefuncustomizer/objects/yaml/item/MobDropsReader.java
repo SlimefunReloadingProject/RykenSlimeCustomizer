@@ -101,8 +101,6 @@ public class MobDropsReader extends YamlReader<CustomMobDrop> {
             return null;
         }
 
-        SlimefunItemStack sfis = new SlimefunItemStack(id.toUpperCase(), stack);
-
-        return List.of(sfis);
+        return List.of(new SlimefunItemStack(section.getString("id_alias", id).toUpperCase(), stack));
     }
 }
