@@ -108,16 +108,13 @@ public class CommonUtils {
             case "none" -> {
                 return new ItemStack(Material.AIR, 1);
             }
-            case "skull_hash", " skull" -> {
-                if (material.startsWith("SKULL")) {
-                    material = material.replaceFirst("SKULL", "");
-                }
+            case "skull_hash" -> {
                 PlayerSkin playerSkin = PlayerSkin.fromHashCode(material);
                 ItemStack head = PlayerHead.getItemStack(playerSkin);
 
                 itemStack = new RSCItemStack(head, name, lore);
             }
-            case "skull_base64" -> {
+            case "skull_base64", "skull" -> {
                 PlayerSkin playerSkin = PlayerSkin.fromBase64(material);
                 ItemStack head = PlayerHead.getItemStack(playerSkin);
 
