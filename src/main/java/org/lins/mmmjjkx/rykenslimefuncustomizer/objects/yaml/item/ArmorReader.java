@@ -53,7 +53,7 @@ public class ArmorReader extends YamlReader<List<CustomArmorPiece>> {
             ConfigurationSection pieceSection = section.getConfigurationSection(check);
             if (pieceSection == null) continue;
 
-            String pieceId = pieceSection.getString("id_alias", pieceSection.getString("id", ""));
+            String pieceId = pieceSection.getString("id_alias", pieceSection.getString("id", "")).toUpperCase();
 
             ExceptionHandler.HandleResult result = ExceptionHandler.handleIdConflict(s);
             if (result == ExceptionHandler.HandleResult.FAILED) return null;
