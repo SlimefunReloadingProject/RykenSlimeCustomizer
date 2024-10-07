@@ -162,7 +162,7 @@ public class SuperReader extends YamlReader<SlimefunItem> {
             ExceptionHandler.handleError("在附属" + addon.getAddonId() + "中加载继承物品" + s + "时遇到了问题: " + "物品为空或格式错误导致无法加载");
             return null;
         }
-        return List.of(new SlimefunItemStack(s.toUpperCase(), stack));
+        return List.of(new SlimefunItemStack(section.getString("id_alias", s).toUpperCase(), stack));
     }
 
     private Method getMethod(Class<?> clazz, String name, Class<?>... parameterTypes) {

@@ -49,7 +49,7 @@ public class GeneratorReader extends YamlReader<CustomGenerator> {
 
         if (rt.getFirstValue() == ExceptionHandler.HandleResult.FAILED) return null;
 
-        CustomMenu menu = CommonUtils.getIf(addon.getMenus(), m -> m.getID().equalsIgnoreCase(s));
+        CustomMenu menu = CommonUtils.getIf(addon.getMenus(), m -> m.getID().equalsIgnoreCase(id));
 
         List<Integer> input = section.getIntegerList("input");
         List<Integer> output = section.getIntegerList("output");
@@ -89,7 +89,7 @@ public class GeneratorReader extends YamlReader<CustomGenerator> {
             ExceptionHandler.handleError("在附属" + addon.getAddonId() + "中加载发电机" + id + "时遇到了问题: " + "物品为空或格式错误导致无法加载");
             return null;
         }
-        return List.of(new SlimefunItemStack(id.toUpperCase(), stack));
+        return List.of(new SlimefunItemStack(section.getString("id_alias", id).toUpperCase(), stack));
     }
 
     private List<MachineFuel> readFuels(String s, ConfigurationSection section, ProjectAddon addon) {

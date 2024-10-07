@@ -41,6 +41,7 @@ public abstract class YamlReader<T> {
 
             for (SlimefunItemStack item : items) {
                 addon.getPreloadItems().put(item.getItemId(), item);
+                ExceptionHandler.debugLog("已预加载物品: " + item.getItemId());
             }
         }
     }
