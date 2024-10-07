@@ -114,16 +114,13 @@ public class CommonUtils {
 
                 itemStack = new RSCItemStack(head, name, lore);
             }
-            case "skull_base64" -> {
+            case "skull_base64", "skull" -> {
                 PlayerSkin playerSkin = PlayerSkin.fromBase64(material);
                 ItemStack head = PlayerHead.getItemStack(playerSkin);
 
                 itemStack = new RSCItemStack(head, name, lore);
             }
-            case "skull_url", "skull" -> {
-                if (material.startsWith("SKULL")) {
-                    material = material.replaceFirst("SKULL", "");
-                }
+            case "skull_url" -> {
                 PlayerSkin playerSkin = PlayerSkin.fromURL(material);
                 ItemStack head = PlayerHead.getItemStack(playerSkin);
 
