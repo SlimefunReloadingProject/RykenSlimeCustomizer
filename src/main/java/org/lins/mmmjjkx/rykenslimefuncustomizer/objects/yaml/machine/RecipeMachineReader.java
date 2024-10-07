@@ -47,7 +47,10 @@ public class RecipeMachineReader extends YamlReader<CustomRecipeMachine> {
 
         if (rt.getFirstValue() == ExceptionHandler.HandleResult.FAILED) return null;
 
-        CustomMenu menu = CommonUtils.getIf(addon.getMenus(), m -> m.getID().equalsIgnoreCase(s));
+        CustomMenu menu = CommonUtils.getIf(addon.getMenus(), m -> m.getID().equalsIgnoreCase(id));
+        if (menu == null) {
+            ExceptionHandler.handleWarning("未找到菜单 " + id + " 使用默认菜单");
+        }
 
         List<Integer> input = section.getIntegerList("input");
         List<Integer> output = section.getIntegerList("output");

@@ -114,13 +114,16 @@ public class CommonUtils {
 
                 itemStack = new RSCItemStack(head, name, lore);
             }
-            case "skull_base64", "skull" -> {
+            case "skull_base64" -> {
                 PlayerSkin playerSkin = PlayerSkin.fromBase64(material);
                 ItemStack head = PlayerHead.getItemStack(playerSkin);
 
                 itemStack = new RSCItemStack(head, name, lore);
             }
-            case "skull_url" -> {
+            case "skull_url", "skull" -> {
+                if (material.startsWith("SKULL")) {
+                    material = material.replaceFirst("SKULL", "");
+                }
                 PlayerSkin playerSkin = PlayerSkin.fromURL(material);
                 ItemStack head = PlayerHead.getItemStack(playerSkin);
 
@@ -211,12 +214,15 @@ public class CommonUtils {
                         break;
                     }
 
+                    ExceptionHandler.handleWarning("无法加载材料: " + material + ", 正在尝试自动修复...");
+
                     if ("GRASS".equals(material)) {
                         materialo = Optional.ofNullable(Material.matchMaterial("SHORT_GRASS"));
                     }
 
                     if (materialo.isPresent()) {
                         mat = materialo.get();
+                        ExceptionHandler.handleWarning("材料" + material + "已自动修复为" + mat.toString());
                         break;
                     }
 
@@ -226,6 +232,7 @@ public class CommonUtils {
 
                     if (materialo.isPresent()) {
                         mat = materialo.get();
+                        ExceptionHandler.handleWarning("材料" + material + "已自动修复为" + mat.toString());
                         break;
                     }
 
@@ -235,6 +242,7 @@ public class CommonUtils {
 
                     if (materialo.isPresent()) {
                         mat = materialo.get();
+                        ExceptionHandler.handleWarning("材料" + material + "已自动修复为" + mat.toString());
                         break;
                     }
 
@@ -244,6 +252,7 @@ public class CommonUtils {
 
                     if (materialo.isPresent()) {
                         mat = materialo.get();
+                        ExceptionHandler.handleWarning("材料" + material + "已自动修复为" + mat.toString());
                         break;
                     }
 

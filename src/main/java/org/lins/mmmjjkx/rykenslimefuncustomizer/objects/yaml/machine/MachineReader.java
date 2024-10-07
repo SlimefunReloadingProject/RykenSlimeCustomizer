@@ -69,7 +69,7 @@ public class MachineReader extends YamlReader<AbstractEmptyMachine<?>> {
 
         List<Integer> input = section.getIntegerList("input");
         List<Integer> output = section.getIntegerList("output");
-        CustomMenu menu = CommonUtils.getIf(addon.getMenus(), m -> m.getID().equalsIgnoreCase(s));
+        CustomMenu menu = CommonUtils.getIf(addon.getMenus(), m -> m.getID().equalsIgnoreCase(id));
 
         AbstractEmptyMachine<?> machine;
         CustomNoEnergyMachine defaultNoEnergyMachine = new CustomNoEnergyMachine(

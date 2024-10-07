@@ -58,7 +58,7 @@ public class TemplateMachineReader extends YamlReader<CustomTemplateMachine> {
             return null;
         }
 
-        CustomMenu menu = CommonUtils.getIf(addon.getMenus(), m -> m.getID().equalsIgnoreCase(s));
+        CustomMenu menu = CommonUtils.getIf(addon.getMenus(), m -> m.getID().equalsIgnoreCase(id));
 
         if (menu == null) {
             ExceptionHandler.handleError("在附属" + addon.getAddonId() + "中加载模板机器" + s + "时遇到了问题: " + "未找到菜单");
