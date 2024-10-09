@@ -28,7 +28,7 @@ public class MaterialGeneratorReader extends YamlReader<CustomMaterialGenerator>
     public CustomMaterialGenerator readEach(String s) {
         ConfigurationSection section = configuration.getConfigurationSection(s);
         if (section == null) return null;
-        String id = section.getString("id_alias", s);
+        String id = section.getString("id_alias", s).toUpperCase();
 
         ExceptionHandler.HandleResult result = ExceptionHandler.handleIdConflict(id);
 
@@ -49,7 +49,7 @@ public class MaterialGeneratorReader extends YamlReader<CustomMaterialGenerator>
 
         if (rt.getFirstValue() == ExceptionHandler.HandleResult.FAILED) return null;
 
-        CustomMenu menu = CommonUtils.getIf(addon.getMenus(), m -> m.getID().equalsIgnoreCase(s));
+        CustomMenu menu = CommonUtils.getIf(addon.getMenus(), m -> m.getID().equalsIgnoreCase(id));
         if (menu == null) {
             ExceptionHandler.handleError("在附属" + addon.getAddonId() + "中加载材料生成器" + s + "时遇到了问题: " + "对应菜单不存在");
             return null;
@@ -139,6 +139,6 @@ public class MaterialGeneratorReader extends YamlReader<CustomMaterialGenerator>
             return null;
         }
 
-        return List.of(new SlimefunItemStack(s, stack));
+        return List.of(new SlimefunItemStack(section.getString("id_alias", s).toUpperCase(), stack));
     }
 }

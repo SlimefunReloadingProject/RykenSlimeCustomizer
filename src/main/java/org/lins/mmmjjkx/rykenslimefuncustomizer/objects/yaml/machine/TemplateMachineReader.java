@@ -28,7 +28,7 @@ public class TemplateMachineReader extends YamlReader<CustomTemplateMachine> {
         ConfigurationSection section = configuration.getConfigurationSection(s);
         if (section == null) return null;
 
-        String id = section.getString("id_alias", s);
+        String id = section.getString("id_alias", s).toUpperCase();
         ExceptionHandler.HandleResult result = ExceptionHandler.handleIdConflict(id);
 
         if (result == ExceptionHandler.HandleResult.FAILED) return null;
@@ -58,7 +58,7 @@ public class TemplateMachineReader extends YamlReader<CustomTemplateMachine> {
             return null;
         }
 
-        CustomMenu menu = CommonUtils.getIf(addon.getMenus(), m -> m.getID().equalsIgnoreCase(s));
+        CustomMenu menu = CommonUtils.getIf(addon.getMenus(), m -> m.getID().equalsIgnoreCase(id));
 
         if (menu == null) {
             ExceptionHandler.handleError("在附属" + addon.getAddonId() + "中加载模板机器" + s + "时遇到了问题: " + "未找到菜单");
@@ -205,6 +205,6 @@ public class TemplateMachineReader extends YamlReader<CustomTemplateMachine> {
             return null;
         }
 
-        return List.of(new SlimefunItemStack(s, stack));
+        return List.of(new SlimefunItemStack(section.getString("id_alias", s).toUpperCase(), stack));
     }
 }

@@ -26,7 +26,7 @@ public class SimpleMachineReader extends YamlReader<SlimefunItem> {
     public SlimefunItem readEach(String s) {
         ConfigurationSection section = configuration.getConfigurationSection(s);
         if (section == null) return null;
-        String id = section.getString("id_alias", s);
+        String id = section.getString("id_alias", s).toUpperCase();
 
         ExceptionHandler.HandleResult result = ExceptionHandler.handleIdConflict(id);
 
@@ -147,7 +147,7 @@ public class SimpleMachineReader extends YamlReader<SlimefunItem> {
             return null;
         }
 
-        return List.of(new SlimefunItemStack(s, stack));
+        return List.of(new SlimefunItemStack(section.getString("id_alias", s).toUpperCase(), stack));
     }
 
     private boolean isAccelerator(SimpleMachineType type) {

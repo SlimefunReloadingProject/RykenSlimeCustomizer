@@ -32,7 +32,7 @@ public class GeoResourceReader extends YamlReader<GEOResource> {
     public GEOResource readEach(String s) {
         ConfigurationSection section = configuration.getConfigurationSection(s);
         if (section != null) {
-            String id = section.getString("id_alias", s);
+            String id = section.getString("id_alias", s).toUpperCase();
 
             ExceptionHandler.HandleResult result = ExceptionHandler.handleIdConflict(id);
             if (result == ExceptionHandler.HandleResult.FAILED) return null;
@@ -148,7 +148,7 @@ public class GeoResourceReader extends YamlReader<GEOResource> {
             return null;
         }
 
-        return List.of(new SlimefunItemStack(id, stack));
+        return List.of(new SlimefunItemStack(section.getString("id_alias", id).toUpperCase(), stack));
     }
 
     private GEOResource createGEO(

@@ -32,6 +32,7 @@ import org.lins.mmmjjkx.rykenslimefuncustomizer.objects.customs.CustomMenu;
 import org.lins.mmmjjkx.rykenslimefuncustomizer.objects.machine.CustomCraftingOperation;
 import org.lins.mmmjjkx.rykenslimefuncustomizer.objects.machine.CustomMachineRecipe;
 import org.lins.mmmjjkx.rykenslimefuncustomizer.utils.CommonUtils;
+import org.lins.mmmjjkx.rykenslimefuncustomizer.utils.ExceptionHandler;
 
 public class CustomRecipeMachine extends AContainer implements RecipeDisplayItem {
     private final MachineProcessor<CraftingOperation> processor;
@@ -78,6 +79,7 @@ public class CustomRecipeMachine extends AContainer implements RecipeDisplayItem
         this.hideAllRecipes = hideAllRecipes;
 
         if (menu == null) {
+            ExceptionHandler.handleWarning("未找到菜单 " + item.getItemId() + " 使用默认菜单");
             this.createPreset(this, this.getInventoryTitle(), super::constructMenu);
         }
 
