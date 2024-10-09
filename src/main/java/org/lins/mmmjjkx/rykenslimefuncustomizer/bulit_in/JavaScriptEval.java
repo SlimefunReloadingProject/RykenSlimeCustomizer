@@ -124,7 +124,6 @@ public class JavaScriptEval extends ScriptEval {
                         .allowExperimentalOptions(true)
                         .allowPolyglotAccess(PolyglotAccess.ALL)
                         .allowCreateProcess(true)
-                        .allowCreateThread(true)
                         .allowValueSharing(true)
                         .allowHostClassLoading(true)
                         .allowIO(IOAccess.ALL)
