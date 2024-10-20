@@ -153,7 +153,7 @@ public abstract class YamlReader<T> {
 
                 String[] versionSplit = splits[2].split("\\.");
                 if (versionSplit.length != 3) {
-                    ExceptionHandler.handleError("读取" + key + "的注册条件时发现问题: 版本号" + condition + "不是正常的版本号！");
+                    ExceptionHandler.handleError("读取" + key + "的注册条件时发现问题: 版本号" + splits[2] + "不是正常的版本号！");
                 }
 
                 int targetMajor = 0;
@@ -162,12 +162,51 @@ public abstract class YamlReader<T> {
                     targetMajor = Integer.parseInt(versionSplit[1]);
                     targetMinor = Integer.parseInt(versionSplit[2]);
                 } catch (NumberFormatException e) {
-                    ExceptionHandler.handleError("读取" + key + "的注册条件时发现问题: 版本号" + condition + "不是正常的版本号！");
+                    ExceptionHandler.handleError("读取" + key + "的注册条件时发现问题: 版本号" + splits[2] + "不是正常的版本号！");
                     continue;
                 }
 
-                if (warn && !(MAJOR_VERSION > targetMajor || (MAJOR_VERSION == targetMajor && MINOR_VERSION >= targetMinor))) {
-                    ExceptionHandler.handleError(key + "需要服务端版本大于等于" + "1." + targetMajor + "." + targetMinor + "才能被注册");
+                boolean pass = false;
+                switch (splits[1]) {
+                    case ">" -> {
+                        if (MAJOR_VERSION > targetMajor || (MAJOR_VERSION == targetMajor && MINOR_VERSION > targetMinor)) {
+                            pass = true;
+                        }
+                    }
+                    case "<" -> {
+                        if (MAJOR_VERSION < targetMajor || (MAJOR_VERSION == targetMajor && MINOR_VERSION < targetMinor)) {
+                            pass = true;
+                        }
+                    }
+                    case ">=" -> {
+                        if (MAJOR_VERSION > targetMajor || (MAJOR_VERSION == targetMajor && MINOR_VERSION >= targetMinor)) {
+                            pass = true;
+                        }
+                    }
+                    case "<=" -> {
+                        if (MAJOR_VERSION < targetMajor || (MAJOR_VERSION == targetMajor && MINOR_VERSION <= targetMinor)) {
+                            pass = true;
+                        }
+                    }
+                    case "==" -> {
+                        if (MAJOR_VERSION == targetMajor && MINOR_VERSION == targetMinor) {
+                            pass = true;
+                        }
+                    }
+                    case "!=" -> {
+                        if (MAJOR_VERSION != targetMajor || MINOR_VERSION != targetMinor) {
+                            pass = true;
+                        }
+                    }
+                    default -> {
+                        ExceptionHandler.handleError("读取" + key + "的注册条件时发现问题: version需要合法的比较符！");
+                        pass = true;
+                    }
+                }
+                if (!pass) {
+                    if (warn) {
+                        ExceptionHandler.handleError(key + "需要服务端版本" + splits[1] + " " + splits[2] + "才能被注册");
+                    }
                 }
             } else if (head.contains("config")) {
                 CustomAddonConfig config = addon.getConfig();
