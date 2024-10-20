@@ -6,6 +6,7 @@ import java.util.List;
 import java.util.Objects;
 import java.util.function.Function;
 
+import io.github.thebusybiscuit.slimefun4.libraries.paperlib.PaperLib;
 import org.bukkit.Bukkit;
 import org.bukkit.configuration.ConfigurationSection;
 import org.bukkit.configuration.file.YamlConfiguration;
@@ -16,6 +17,8 @@ import org.lins.mmmjjkx.rykenslimefuncustomizer.utils.CommonUtils;
 import org.lins.mmmjjkx.rykenslimefuncustomizer.utils.ExceptionHandler;
 
 public abstract class YamlReader<T> {
+    public static final int MAJOR_VERSION = PaperLib.getMinecraftVersion();
+    public static final int MINOR_VERSION = PaperLib.getMinecraftPatchVersion();
     private final List<String> lateInits;
     protected final ProjectAddon addon;
     protected final YamlConfiguration configuration;
@@ -148,11 +151,23 @@ public abstract class YamlReader<T> {
                     continue;
                 }
 
-                int current = CommonUtils.versionToCode(Bukkit.getMinecraftVersion());
-                int destination = CommonUtils.versionToCode(splits[2]);
+                String[] versionSplit = splits[2].split("\\.");
+                if (versionSplit.length != 3) {
+                    ExceptionHandler.handleError("读取" + key + "的注册条件时发现问题: 版本号" + condition + "不是正常的版本号！");
+                }
 
-                if (!intCheck(splits[1], key, "version", current, destination, (op) -> "需要版本" + op + splits[2] + "才能被注册", warn)) {
-                    return false;
+                int targetMajor = 0;
+                int targetMinor = 0;
+                try {
+                    targetMajor = Integer.parseInt(versionSplit[1]);
+                    targetMinor = Integer.parseInt(versionSplit[2]);
+                } catch (NumberFormatException e) {
+                    ExceptionHandler.handleError("读取" + key + "的注册条件时发现问题: 版本号" + condition + "不是正常的版本号！");
+                    continue;
+                }
+
+                if (warn && !(MAJOR_VERSION > targetMajor || (MAJOR_VERSION == targetMajor && MINOR_VERSION >= targetMinor))) {
+                    ExceptionHandler.handleError(key + "需要服务端版本大于等于" + "1." + targetMajor + "." + targetMinor + "才能被注册");
                 }
             } else if (head.contains("config")) {
                 CustomAddonConfig config = addon.getConfig();
