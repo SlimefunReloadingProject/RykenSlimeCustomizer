@@ -104,7 +104,7 @@ public class MachineReader extends YamlReader<AbstractEmptyMachine<?>> {
                 return defaultNoEnergyMachine;
             }
             
-            if (section.contains("energyOutput")) {
+            if (energySettings.contains("energyOutput")) {
                 int energyOutput = section.getInt("energyOutput");
                 if (energyOutput < 0) {
                     ExceptionHandler.handleError("无法读取在附属" + addon.getAddonId() + "中的自定义发电机" + s + "的能源设置，已转为普通有电机器，原因: 能量输出不能小于0");
