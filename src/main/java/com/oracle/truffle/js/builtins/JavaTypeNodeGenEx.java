@@ -1,8 +1,8 @@
 package com.oracle.truffle.js.builtins;
 
 import com.oracle.truffle.api.CompilerDirectives;
+import com.oracle.truffle.api.LanguageEditor;
 import com.oracle.truffle.api.TruffleLanguage;
-import com.oracle.truffle.api.dsl.Introspection;
 import com.oracle.truffle.api.dsl.NeverDefault;
 import com.oracle.truffle.api.dsl.Specialization;
 import com.oracle.truffle.api.dsl.UnsupportedSpecializationException;
@@ -10,14 +10,13 @@ import com.oracle.truffle.api.frame.VirtualFrame;
 import com.oracle.truffle.api.nodes.Node;
 import com.oracle.truffle.api.nodes.NodeCost;
 import com.oracle.truffle.api.strings.TruffleString;
-import com.oracle.truffle.host.HostObjectCreator;
 import com.oracle.truffle.js.nodes.JSGuards;
 import com.oracle.truffle.js.nodes.JavaScriptNode;
 import com.oracle.truffle.js.nodes.function.JSBuiltin;
 import com.oracle.truffle.js.runtime.Errors;
 import com.oracle.truffle.js.runtime.JSContext;
-import com.oracle.truffle.js.runtime.JSRealm;
 import com.oracle.truffle.js.runtime.Strings;
+import org.graalvm.polyglot.Value;
 
 class JavaTypeNodeGenEx extends JavaBuiltins.JavaTypeNode {
     @Child
@@ -79,32 +78,6 @@ class JavaTypeNodeGenEx extends JavaBuiltins.JavaTypeNode {
         }
     }
 
-    public Introspection getIntrospectionData() {
-        Object[] data = new Object[]{0, null, null};
-        int state_0 = this.state_0_;
-        Object[] s = new Object[]{"type", null, null};
-        if ((state_0 & 1) != 0) {
-            s[1] = 1;
-        }
-
-        if (s[1] == null) {
-            s[1] = 0;
-        }
-
-        data[1] = s;
-        s = new Object[]{"typeNoString", null, null};
-        if ((state_0 & 2) != 0) {
-            s[1] = 1;
-        }
-
-        if (s[1] == null) {
-            s[1] = 0;
-        }
-
-        data[2] = s;
-        return Introspection.Provider.create(data);
-    }
-
     @Specialization
     @CompilerDirectives.TruffleBoundary
     protected Object type(TruffleString name) {
@@ -120,8 +93,11 @@ class JavaTypeNodeGenEx extends JavaBuiltins.JavaTypeNode {
     private Object lookup(TruffleString name, TruffleLanguage.Env env) {
         if (env != null && env.isHostLookupAllowed()) {
             try {
-                Class<?> clazz = Class.forName(Strings.toJavaString(name));
-                return HostObjectCreator.create(clazz, env, JSRealm.get(null).getCallNode());
+                String className = Strings.toJavaString(name);
+                Class<?> clazz = Class.forName(className);
+                Value value = Value.asValue(clazz);
+                LanguageEditor.edit(env, className, value);
+                return env.lookupHostSymbol(className);
             } catch (Exception ignored) {
             }
 

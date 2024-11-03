@@ -113,6 +113,12 @@ public class JavaScriptEval extends ScriptEval {
 
         try {
             return jsEngine.invokeFunction(funName, args);
+        } catch (IllegalStateException e) {
+            String message = e.getMessage();
+            if (!message.contains("Multi threaded access")) {
+                ExceptionHandler.handleError("在运行" + getFile().getName() + "时发生错误");
+                e.printStackTrace();
+            }
         } catch (ScriptException e) {
             ExceptionHandler.handleError("在运行" + getFile().getName() + "时发生错误");
             e.printStackTrace();
