@@ -31,8 +31,10 @@ import org.bukkit.persistence.PersistentDataType;
 import org.lins.mmmjjkx.rykenslimefuncustomizer.RykenSlimefunCustomizer;
 import org.lins.mmmjjkx.rykenslimefuncustomizer.libraries.colors.CMIChatColor;
 import org.lins.mmmjjkx.rykenslimefuncustomizer.objects.customs.CustomMenu;
+import org.lins.mmmjjkx.rykenslimefuncustomizer.objects.customs.machine.CustomLinkedRecipeMachine;
 import org.lins.mmmjjkx.rykenslimefuncustomizer.objects.customs.machine.CustomRecipeMachine;
 import org.lins.mmmjjkx.rykenslimefuncustomizer.objects.customs.machine.CustomTemplateMachine;
+import org.lins.mmmjjkx.rykenslimefuncustomizer.objects.machine.CustomLinkedMachineRecipe;
 import org.lins.mmmjjkx.rykenslimefuncustomizer.objects.machine.CustomMachineRecipe;
 import org.lins.mmmjjkx.rykenslimefuncustomizer.objects.machine.MachineTemplate;
 import org.lins.mmmjjkx.rykenslimefuncustomizer.objects.slimefun.AsyncChanceRecipeTask;
@@ -384,6 +386,169 @@ public class SingleItemRecipeGuideListener implements Listener {
 
                 addItem(progressSlot, progressBar, (pl, s, is, action) -> false);
             }
+        }
+
+        @Override
+        public void open(Player... players) {
+            super.open(players);
+
+            if (!recipeTask.isEmpty()) {
+                recipeTask.start(toInventory());
+            }
+        }
+
+        private ItemStack tagOutputChance(ItemStack item, int chance) {
+            item = item.clone();
+            CommonUtils.addLore(item, true, CMIChatColor.translate("&a有&b " + chance + "% &a的概率产出"));
+            return item;
+        }
+    }
+
+    private static class LinkedRecipeMenu extends ChestMenu {
+        private final AsyncChanceRecipeTask recipeTask = new AsyncChanceRecipeTask();
+
+        public LinkedRecipeMenu(AContainer item, Player p, int index) {
+            super(Slimefun.getLocalization().getMessage(p, "guide.title.main"));
+
+            Optional<PlayerProfile> profile = PlayerProfile.find(p);
+
+            setEmptySlotsClickable(false);
+            setPlayerInventoryClickable(false);
+
+            boolean defaultRecipeGUI = true;
+
+            int progressSlot = 31;
+            ItemStack progressBar = item.getProgressBar();
+
+            int[] inputSlots = item.getInputSlots();
+            int[] outputSlots = item.getOutputSlots();
+
+            if (item instanceof CustomLinkedRecipeMachine clrm) {
+                CustomMenu menu = clrm.getMenu();
+                if (menu != null) {
+                    defaultRecipeGUI = false;
+                    progressSlot = menu.getProgressSlot();
+                    if (menu.getProgressBarItem() != null) {
+                        progressBar = menu.getProgressBarItem();
+                    }
+                }
+            } else {
+                inputSlots = new int[] {28, 29};
+                outputSlots = new int[] {33, 34};
+            }
+
+            BlockMenuPreset preset = Slimefun.getRegistry().getMenuPresets().get(item.getId());
+
+            if (preset == null) {
+                return;
+            }
+
+            if (!defaultRecipeGUI) {
+                for (int slot : preset.getPresetSlots()) {
+                    ItemStack itemStack = preset.getItemInSlot(slot);
+                    if (itemStack != null) {
+                        addItem(slot, itemStack, (pl, s, is, action) -> false);
+                    }
+                }
+            }
+
+            if (defaultRecipeGUI) {
+                int[] backgroundSlots = {
+                        1, 2, 3, 5, 6, 7, 8, 9, 10, 11, 12, 13, 14, 15, 16, 17, 22, 31, 40, 45, 46, 47, 48, 49, 50, 51, 52,
+                        53
+                };
+                for (int background : backgroundSlots) {
+                    addItem(background, ChestMenuUtils.getBackground(), (pl, s, is, action) -> false);
+                }
+
+                int[] inputBorderSlots = {18, 19, 20, 21, 27, 30, 36, 37, 38, 39};
+                for (int inputBackground : inputBorderSlots) {
+                    addItem(inputBackground, ChestMenuUtils.getInputSlotTexture(), (pl, s, is, action) -> false);
+                }
+
+                int[] outputBorderSlots = {23, 24, 25, 26, 32, 35, 41, 42, 43, 44};
+                for (int outputBackground : outputBorderSlots) {
+                    addItem(outputBackground, ChestMenuUtils.getOutputSlotTexture(), (pl, s, is, action) -> false);
+                }
+
+                profile.ifPresent(prof -> addItem(
+                        0,
+                        ChestMenuUtils.getBackButton(p, "", "&f左键: &7返回上一页", "&fShift + 左键: &7返回主菜单"),
+                        (pl, s, is, action) -> {
+                            SurvivalSlimefunGuide guide = new SurvivalSlimefunGuide(false, false);
+                            GuideHistory history = prof.getGuideHistory();
+                            if (action.isShiftClicked()) {
+                                guide.openMainMenu(prof, history.getMainMenuPage());
+                            } else {
+                                history.goBack(guide);
+                            }
+                            return false;
+                        }));
+            }
+
+            List<MachineRecipe> recipes = item.getMachineRecipes();
+            MachineRecipe recipe = recipes.get(index);
+            ItemStack[] input = recipe.getInput();
+            for (int i = 0; i < input.length; i++) {
+                ItemStack inputItem = input[i];
+                if (inputItem != null) {
+                    addItem(inputSlots[i], inputItem, (pl, s, is, action) -> false);
+                }
+            }
+
+            if (recipe instanceof CustomLinkedMachineRecipe lmr) {
+                int outputSlot = outputSlots[0];
+                ItemStack[] outputs = recipe.getOutput();
+                if (lmr.isChooseOneIfHas()) {
+                    List<ItemStack> taggedChanceOutputs = new ArrayList<>();
+                    for (int i = 0; i < outputs.length; i++) {
+                        Integer chance = lmr.getChances().get(i);
+                        ItemStack output = outputs[i];
+                        if (chance != null && chance > 0 && output != null) {
+                            taggedChanceOutputs.add(tagOutputChance(output, chance));
+                        }
+                    }
+
+                    recipeTask.add(outputSlot, taggedChanceOutputs);
+                    addMenuClickHandler(outputSlot, (pl, s, is, action) -> false);
+                } else {
+                    List<Integer> chances = lmr.getChances();
+
+                    for (int i = 0; i < outputs.length; i++) {
+                        int chance = chances.get(i);
+                        ItemStack originalOutput = outputs[i];
+                        if (originalOutput != null) {
+                            ItemStack chanceOutput = originalOutput.clone();
+                            if (chance < 100) {
+                                CommonUtils.addLore(
+                                        chanceOutput, true, CMIChatColor.translate("&a有&b " + chance + "% &a的概率产出"));
+                            }
+
+                            if (chance > 0) {
+                                addItem(outputSlots[i], chanceOutput, (pl, s, is, action) -> false);
+                            }
+                        }
+                    }
+                }
+            } else {
+                for (int i = 0; i < outputSlots.length; i++) {
+                    ItemStack output = recipe.getOutput()[i];
+                    if (output != null) {
+                        addItem(outputSlots[i], output, (pl, s, is, action) -> false);
+                    }
+                }
+            }
+
+            int seconds = recipe.getTicks() / 2;
+            String rawName = "&e制作时间: &b" + seconds + "&es";
+
+            if (seconds > 60) {
+                rawName = rawName.concat("(" + CommonUtils.formatSeconds(seconds) + "&e)");
+            }
+
+            progressBar = new CustomItemStack(progressBar, rawName);
+
+            addItem(progressSlot, progressBar, (pl, s, is, action) -> false);
         }
 
         @Override

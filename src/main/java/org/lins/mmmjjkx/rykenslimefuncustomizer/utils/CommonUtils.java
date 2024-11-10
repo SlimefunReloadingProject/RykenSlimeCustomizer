@@ -71,6 +71,19 @@ public class CommonUtils {
         return itemStacks;
     }
 
+    @Contract("null,_,_ -> new")
+    public static int @NotNull [] readSlot(ConfigurationSection section, @NotNull ProjectAddon addon, int size) {
+        if (section == null) return new int[] {};
+        int[] slots = new int[size];
+        for (int i = 0; i < size; i++) {
+            ConfigurationSection section1 = section.getConfigurationSection(String.valueOf(i + 1));
+            if (section1 != null) {
+                slots[i] = section1.getInt("slot", -1);
+            }
+        }
+        return slots;
+    }
+
     @SneakyThrows
     @Nullable @SuppressWarnings("deprecation")
     public static ItemStack readItem(ConfigurationSection section, boolean countable, ProjectAddon addon) {

@@ -44,7 +44,7 @@ public abstract class YamlReader<T> {
 
             for (SlimefunItemStack item : items) {
                 addon.getPreloadItems().put(item.getItemId(), item);
-                ExceptionHandler.debugLog("已预加载物品: " + item.getItemId());
+                ExceptionHandler.debugLog("&a已预加载物品: " + item.getItemId());
             }
         }
     }
@@ -77,9 +77,9 @@ public abstract class YamlReader<T> {
             var object = readEach(key);
             if (object != null) {
                 objects.add(object);
-                ExceptionHandler.debugLog("SUCCESS | 读取项" + key + "成功！");
+                ExceptionHandler.debugLog("&aSUCCESS | 读取项" + key + "成功！");
             } else {
-                ExceptionHandler.debugLog("FAILURE | 读取项" + key + "失败！");
+                ExceptionHandler.debugLog("&cFAILURE | 读取项" + key + "失败！");
             }
         }
         return objects;
@@ -96,9 +96,9 @@ public abstract class YamlReader<T> {
             var object = readEach(key);
             if (object != null) {
                 objects.add(object);
-                ExceptionHandler.debugLog("SUCCESS | 读取项" + key + "成功！");
+                ExceptionHandler.debugLog("&aSUCCESS | 读取项" + key + "成功！");
             } else {
-                ExceptionHandler.debugLog("FAILURE | 读取项" + key + "失败！");
+                ExceptionHandler.debugLog("&cFAILURE | 读取项" + key + "失败！");
             }
         });
 

@@ -95,6 +95,8 @@ public final class ProjectAddon {
     private List<SlimefunItem> supers = new ArrayList<>();
     // template_machines.yml
     private List<CustomTemplateMachine> templateMachines = new ArrayList<>();
+    // linked_recipe_machines.yml
+    private List<CustomLinkedRecipeMachine> linkedRecipeMachines = new ArrayList<>();
 
     public File getScriptsFolder() {
         File scripts = new File(folder, "scripts");
