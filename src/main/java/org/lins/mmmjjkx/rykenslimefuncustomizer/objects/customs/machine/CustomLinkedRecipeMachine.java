@@ -152,7 +152,7 @@ public class CustomLinkedRecipeMachine extends AContainer implements RecipeDispl
                 continue;
             }
 
-            ItemStack[] input = recipe.getLinkedInput().values().toArray(new ItemStack[0]);
+            ItemStack[] input = recipe.getInput();
             ItemStack[] output = recipe.getOutput();
 
             if (input.length == 1) {

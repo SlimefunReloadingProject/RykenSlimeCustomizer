@@ -11,7 +11,7 @@ public class CustomLinkedMachineOperation extends CraftingOperation {
     private final CustomLinkedMachineRecipe recipe;
 
     public CustomLinkedMachineOperation(@Nonnull CustomLinkedMachineRecipe recipe) {
-        super(recipe.getInput().values().toArray(new ItemStack[0]), recipe.getOutput(), recipe.getTicks());
+        super(recipe.getInput(), recipe.getOutput(), recipe.getTicks());
         Validate.isTrue(
                 recipe.getTicks() >= 0,
                 "The amount of total ticks must be a positive integer or zero, received: " + recipe.getTicks());
