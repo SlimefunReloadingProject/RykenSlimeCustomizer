@@ -4,10 +4,12 @@ import com.google.errorprone.annotations.CanIgnoreReturnValue;
 import com.oracle.truffle.api.TruffleFile;
 import com.oracle.truffle.api.TruffleLanguage;
 import com.oracle.truffle.api.strings.TruffleString;
+import com.oracle.truffle.js.builtins.JavaBuiltinsOverride;
 import com.oracle.truffle.js.lang.JavaScriptLanguage;
 import com.oracle.truffle.js.runtime.JSRealm;
 import com.oracle.truffle.js.runtime.java.JavaPackage;
 import com.oracle.truffle.js.runtime.objects.JSAttributes;
+import com.oracle.truffle.js.runtime.objects.JSObject;
 import com.oracle.truffle.js.runtime.objects.JSObjectUtil;
 import com.oracle.truffle.js.scriptengine.GraalJSScriptEngine;
 import com.xzavier0722.mc.plugin.slimefun4.storage.util.StorageCacheUtils;
@@ -65,6 +67,12 @@ public class JavaScriptEval extends ScriptEval {
             TruffleString str = TruffleString.fromConstant(packageName, TruffleString.Encoding.UTF_8);
             JSObjectUtil.putDataProperty(realm.getGlobalObject(), str, JavaPackage.createInit(realm, str), JSAttributes.getDefaultNotEnumerable());
         }
+
+        JSObject java = JSObjectUtil.createOrdinaryPrototypeObject(realm);
+        JSObjectUtil.putToStringTag(java, JSRealm.JAVA_CLASS_NAME);
+        JSObjectUtil.putFunctionsFromContainer(realm, java, new JavaBuiltinsOverride());
+
+        JSObjectUtil.putDataProperty(realm.getGlobalObject(), "Java", java, JSAttributes.getDefaultNotEnumerable());
     }
 
     @Override
@@ -105,6 +113,12 @@ public class JavaScriptEval extends ScriptEval {
 
         try {
             return jsEngine.invokeFunction(funName, args);
+        } catch (IllegalStateException e) {
+            String message = e.getMessage();
+            if (!message.contains("Multi threaded access")) {
+                ExceptionHandler.handleError("在运行" + getFile().getName() + "时发生错误");
+                e.printStackTrace();
+            }
         } catch (ScriptException e) {
             ExceptionHandler.handleError("在运行" + getFile().getName() + "时发生错误");
             e.printStackTrace();

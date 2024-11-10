@@ -735,10 +735,6 @@ public class ScriptableEventListener implements Listener {
         ScriptableListeners.getScriptableListeners().forEach(o -> o.doEventEval(e));
     }
     @EventHandler
-    public void onEvent(EntityCreatePortalEvent e) {
-        ScriptableListeners.getScriptableListeners().forEach(o -> o.doEventEval(e));
-    }
-    @EventHandler
     public void onEvent(EntityDamageByBlockEvent e) {
         ScriptableListeners.getScriptableListeners().forEach(o -> o.doEventEval(e));
     }
