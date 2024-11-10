@@ -10,6 +10,7 @@ import io.github.thebusybiscuit.slimefun4.libraries.dough.items.CustomItemStack;
 import io.github.thebusybiscuit.slimefun4.utils.ChestMenuUtils;
 import java.util.ArrayList;
 import java.util.List;
+import java.util.Map;
 import java.util.Optional;
 import me.mrCookieSlime.CSCoreLibPlugin.general.Inventory.ChestMenu;
 import me.mrCookieSlime.Slimefun.Objects.SlimefunItem.abstractItems.AContainer;
@@ -105,6 +106,16 @@ public class SingleItemRecipeGuideListener implements Listener {
         return item;
     }
 
+    public static ItemStack tagItemLinkedRecipe(ItemStack item, int recipeIndex) {
+        item = item.clone();
+        ItemMeta meta = item.getItemMeta();
+        PersistentDataContainer pdc = meta.getPersistentDataContainer();
+        pdc.set(RECIPE_KEY, PersistentDataType.INTEGER, 3);
+        pdc.set(RECIPE_INDEX_KEY, PersistentDataType.INTEGER, recipeIndex);
+        item.setItemMeta(meta);
+        return item;
+    }
+
     private ChestMenu createGUI(Player p, SlimefunItem machine, PersistentDataHolder holder) {
         int type = PersistentDataAPI.getInt(holder, RECIPE_KEY, 1);
         if (machine instanceof AContainer ac && type == 1) {
@@ -114,6 +125,9 @@ public class SingleItemRecipeGuideListener implements Listener {
             int templateIndex = PersistentDataAPI.getInt(holder, RECIPE_TEMPLATE_INDEX_KEY, 0);
             int recipeIndex = PersistentDataAPI.getInt(holder, RECIPE_INDEX_KEY, 0);
             return new TemplateRecipeMenu(ctm, p, templateIndex, recipeIndex);
+        } else if (machine instanceof CustomLinkedRecipeMachine clrm && type == 3) {
+            int recipeIndex = PersistentDataAPI.getInt(holder, RECIPE_INDEX_KEY, 0);
+            return new LinkedRecipeMenu(clrm, p, recipeIndex);
         }
         return null;
     }
@@ -488,15 +502,15 @@ public class SingleItemRecipeGuideListener implements Listener {
 
             List<MachineRecipe> recipes = item.getMachineRecipes();
             MachineRecipe recipe = recipes.get(index);
-            ItemStack[] input = recipe.getInput();
-            for (int i = 0; i < input.length; i++) {
-                ItemStack inputItem = input[i];
-                if (inputItem != null) {
-                    addItem(inputSlots[i], inputItem, (pl, s, is, action) -> false);
-                }
-            }
 
             if (recipe instanceof CustomLinkedMachineRecipe lmr) {
+                Map<Integer, ItemStack> linkedInput = lmr.getLinkedInput();
+                for (int slot : linkedInput.keySet()) {
+                    ItemStack inputItem = linkedInput.get(slot);
+                    if (inputItem != null) {
+                        addItem(slot, inputItem.clone(), (pl, s, is, action) -> false);
+                    }
+                }
                 int outputSlot = outputSlots[0];
                 ItemStack[] outputs = recipe.getOutput();
                 if (lmr.isChooseOneIfHas()) {
@@ -531,6 +545,13 @@ public class SingleItemRecipeGuideListener implements Listener {
                     }
                 }
             } else {
+                ItemStack[] input = recipe.getInput();
+                for (int i = 0; i < input.length; i++) {
+                    ItemStack inputItem = input[i];
+                    if (inputItem != null) {
+                        addItem(inputSlots[i], inputItem, (pl, s, is, action) -> false);
+                    }
+                }
                 for (int i = 0; i < outputSlots.length; i++) {
                     ItemStack output = recipe.getOutput()[i];
                     if (output != null) {

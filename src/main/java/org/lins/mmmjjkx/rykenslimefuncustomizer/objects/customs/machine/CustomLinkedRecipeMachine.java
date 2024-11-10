@@ -152,13 +152,13 @@ public class CustomLinkedRecipeMachine extends AContainer implements RecipeDispl
                 continue;
             }
 
-            ItemStack[] input = recipe.getInput().values().toArray(new ItemStack[0]);
+            ItemStack[] input = recipe.getLinkedInput().values().toArray(new ItemStack[0]);
             ItemStack[] output = recipe.getOutput();
 
             if (input.length == 1) {
                 displayRecipes.add(input[0]);
             } else {
-                ItemStack in = SingleItemRecipeGuideListener.tagItemRecipe(RECIPE_INPUT, i);
+                ItemStack in = SingleItemRecipeGuideListener.tagItemLinkedRecipe(RECIPE_INPUT, i);
                 displayRecipes.add(in);
             }
 
@@ -172,7 +172,7 @@ public class CustomLinkedRecipeMachine extends AContainer implements RecipeDispl
                 CommonUtils.addLore(out, true, rawLore);
                 displayRecipes.add(out);
             } else {
-                ItemStack out = SingleItemRecipeGuideListener.tagItemRecipe(RECIPE_OUTPUT, i);
+                ItemStack out = SingleItemRecipeGuideListener.tagItemLinkedRecipe(RECIPE_OUTPUT, i);
                 displayRecipes.add(out);
             }
 
@@ -269,7 +269,7 @@ public class CustomLinkedRecipeMachine extends AContainer implements RecipeDispl
     @Nullable
     public CustomLinkedMachineRecipe findNextLinkedRecipe(BlockMenu blockMenu) {
         for (CustomLinkedMachineRecipe recipe : this.recipes) {
-            Map<Integer, ItemStack> inputMap = recipe.getInput();
+            Map<Integer, ItemStack> inputMap = recipe.getLinkedInput();
             boolean matched = true;
             for (int slot : inputMap.keySet()) {
                 ItemStack item = blockMenu.getItemInSlot(slot);
