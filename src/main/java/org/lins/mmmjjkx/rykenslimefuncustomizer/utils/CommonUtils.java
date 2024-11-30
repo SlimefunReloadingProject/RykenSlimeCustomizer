@@ -13,7 +13,9 @@ import java.nio.charset.StandardCharsets;
 import java.nio.file.Files;
 import java.nio.file.StandardOpenOption;
 import java.util.Arrays;
+import java.util.HashMap;
 import java.util.List;
+import java.util.Map;
 import java.util.Optional;
 import java.util.function.Predicate;
 import java.util.regex.Matcher;
@@ -69,19 +71,6 @@ public class CommonUtils {
             itemStacks[i] = readItem(section1, true, addon);
         }
         return itemStacks;
-    }
-
-    @Contract("null,_,_ -> new")
-    public static int @NotNull [] readSlot(ConfigurationSection section, @NotNull ProjectAddon addon, int size) {
-        if (section == null) return new int[] {};
-        int[] slots = new int[size];
-        for (int i = 0; i < size; i++) {
-            ConfigurationSection section1 = section.getConfigurationSection(String.valueOf(i + 1));
-            if (section1 != null) {
-                slots[i] = section1.getInt("slot", -1);
-            }
-        }
-        return slots;
     }
 
     @SneakyThrows

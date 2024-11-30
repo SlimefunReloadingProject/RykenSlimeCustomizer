@@ -174,31 +174,7 @@ public class LinkedRecipeMachineReader extends YamlReader<CustomLinkedRecipeMach
                         "在附属" + addon.getAddonId() + "中加载强配方机器" + s + "的工作配方" + key + "时遇到了问题: " + "没有输入物品");
                 continue;
             }
-            ItemStack[] input = CommonUtils.readRecipe(inputs, addon, inputSize);
-            if (input == null) {
-                ExceptionHandler.handleError(
-                        "在附属" + addon.getAddonId() + "中加载强配方机器" + s + "的工作配方" + key + "时遇到了问题: " + "输入物品为空或格式错误");
-                continue;
-            }
-            int[] slots = CommonUtils.readSlot(inputs, addon, inputSize);
-            if (slots == null) {
-                ExceptionHandler.handleError(
-                        "在附属" + addon.getAddonId() + "中加载强配方机器" + s + "的工作配方" + key + "时遇到了问题: " + "输入槽位为空或格式错误");
-                continue;
-            }
-            for (int sss : slots) {
-                if (sss == -1) {
-                    ExceptionHandler.handleError(
-                            "在附属" + addon.getAddonId() + "中加载强配方机器" + s + "的工作配方" + key + "时遇到了问题: " + "输入槽位不能为空");
-                    continue;
-                }
 
-                if (sss < 0 || sss > 53) {
-                    ExceptionHandler.handleError(
-                            "在附属" + addon.getAddonId() + "中加载强配方机器" + s + "的工作配方" + key + "时遇到了问题: " + "输入槽位超出范围");
-                    continue;
-                }
-            }
             ConfigurationSection outputs = recipes.getConfigurationSection("output");
             if (outputs == null) {
                 ExceptionHandler.handleError(
@@ -230,22 +206,34 @@ public class LinkedRecipeMachineReader extends YamlReader<CustomLinkedRecipeMach
             boolean forDisplay = recipes.getBoolean("forDisplay", false);
             boolean hide = recipes.getBoolean("hide", false);
 
-            ItemStack[] input1 = new ItemStack[input.length];
-            int[] slots1 = new int[slots.length];
-            int index = 0;
-            for (int i = 0; i < input.length; i++) {
-                if (input[i] == null) {
-                    continue;
-                }
-                input1[index] = input[i];
-                slots1[index] = slots[i];
-                index++;
-            }
             output = CommonUtils.removeNulls(output);
 
             Map<Integer, ItemStack> finalInput = new HashMap<>();
-            for (int i = 0; i < input1.length; i++) {
-                finalInput.put(slots1[i], input1[i]);
+            for (int i = 0; i < inputSize; i++) {
+                ConfigurationSection section1 = inputs.getConfigurationSection(String.valueOf(i + 1));
+                if (section1 == null) {
+                    continue;
+                }
+
+                ItemStack itemStack = CommonUtils.readItem(section1, true, addon);
+                if (itemStack == null) {
+                    continue;
+                }
+
+                int slot = section1.getInt("slot", -1);
+                if (slot == -1) {
+                    ExceptionHandler.handleError(
+                            "在附属" + addon.getAddonId() + "中加载强配方机器" + s + "的工作配方" + key + "时遇到了问题: " + "输入槽位不能为空");
+                    continue;
+                }
+
+                if (slot < 0 || slot > 53) {
+                    ExceptionHandler.handleError(
+                            "在附属" + addon.getAddonId() + "中加载强配方机器" + s + "的工作配方" + key + "时遇到了问题: " + "输入槽位超出范围");
+                    continue;
+                }
+
+                finalInput.put(slot, itemStack);
             }
 
             list.add(new CustomLinkedMachineRecipe(seconds, finalInput, output, chances, chooseOne, forDisplay, hide));

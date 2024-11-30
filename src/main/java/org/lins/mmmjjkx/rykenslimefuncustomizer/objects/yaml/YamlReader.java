@@ -151,19 +151,26 @@ public abstract class YamlReader<T> {
                     continue;
                 }
 
-                String[] versionSplit = splits[2].split("\\.");
-                if (versionSplit.length != 3) {
-                    ExceptionHandler.handleError("读取" + key + "的注册条件时发现问题: 版本号" + splits[2] + "不是正常的版本号！");
-                }
-
                 int targetMajor = 0;
                 int targetMinor = 0;
-                try {
-                    targetMajor = Integer.parseInt(versionSplit[1]);
-                    targetMinor = Integer.parseInt(versionSplit[2]);
-                } catch (NumberFormatException e) {
+                String[] versionSplit = splits[2].split("\\.");
+                if (versionSplit.length == 2) {
+                    try {
+                        targetMajor = Integer.parseInt(versionSplit[1]);
+                    } catch (NumberFormatException e) {
+                        ExceptionHandler.handleError("读取" + key + "的注册条件时发现问题: 版本号" + splits[2] + "不是正常的版本号！");
+                        continue;
+                    }
+                } else if (versionSplit.length == 3) {
+                    try {
+                        targetMajor = Integer.parseInt(versionSplit[1]);
+                        targetMinor = Integer.parseInt(versionSplit[2]);
+                    } catch (NumberFormatException e) {
+                        ExceptionHandler.handleError("读取" + key + "的注册条件时发现问题: 版本号" + splits[2] + "不是正常的版本号！");
+                        continue;
+                    }
+                } else {
                     ExceptionHandler.handleError("读取" + key + "的注册条件时发现问题: 版本号" + splits[2] + "不是正常的版本号！");
-                    continue;
                 }
 
                 boolean pass = false;
