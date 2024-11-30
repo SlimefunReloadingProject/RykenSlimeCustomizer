@@ -1,42 +1,58 @@
 package org.lins.mmmjjkx.rykenslimefuncustomizer.objects.customs.machine;
 
+import com.xzavier0722.mc.plugin.slimefun4.storage.controller.SlimefunBlockData;
 import com.xzavier0722.mc.plugin.slimefun4.storage.util.StorageCacheUtils;
 import io.github.thebusybiscuit.slimefun4.api.items.ItemGroup;
+import io.github.thebusybiscuit.slimefun4.api.items.SlimefunItem;
 import io.github.thebusybiscuit.slimefun4.api.items.SlimefunItemStack;
 import io.github.thebusybiscuit.slimefun4.api.recipes.RecipeType;
+import io.github.thebusybiscuit.slimefun4.core.attributes.EnergyNetComponent;
 import io.github.thebusybiscuit.slimefun4.core.attributes.RecipeDisplayItem;
 import io.github.thebusybiscuit.slimefun4.core.handlers.BlockBreakHandler;
 import io.github.thebusybiscuit.slimefun4.core.machines.MachineProcessor;
+import io.github.thebusybiscuit.slimefun4.core.networks.energy.EnergyNetComponentType;
+import io.github.thebusybiscuit.slimefun4.implementation.Slimefun;
 import io.github.thebusybiscuit.slimefun4.implementation.handlers.SimpleBlockBreakHandler;
 import io.github.thebusybiscuit.slimefun4.implementation.operations.CraftingOperation;
 import io.github.thebusybiscuit.slimefun4.libraries.dough.items.CustomItemStack;
-import io.github.thebusybiscuit.slimefun4.utils.ChestMenuUtils;
-
-import java.security.SecureRandom;
-import java.util.ArrayList;
-import java.util.List;
-import java.util.Map;
-
+import io.github.thebusybiscuit.slimefun4.libraries.dough.protection.Interaction;
 import io.github.thebusybiscuit.slimefun4.utils.SlimefunUtils;
 import lombok.Getter;
 import me.mrCookieSlime.Slimefun.Objects.SlimefunItem.abstractItems.AContainer;
+import me.mrCookieSlime.Slimefun.Objects.SlimefunItem.interfaces.InventoryBlock;
+import me.mrCookieSlime.Slimefun.Objects.handlers.BlockTicker;
 import me.mrCookieSlime.Slimefun.api.inventory.BlockMenu;
 import me.mrCookieSlime.Slimefun.api.inventory.BlockMenuPreset;
+import me.mrCookieSlime.Slimefun.api.item_transport.ItemTransportFlow;
 import org.bukkit.Material;
 import org.bukkit.block.Block;
+import org.bukkit.entity.Player;
 import org.bukkit.inventory.ItemStack;
 import org.jetbrains.annotations.NotNull;
 import org.jetbrains.annotations.Nullable;
 import org.lins.mmmjjkx.rykenslimefuncustomizer.RykenSlimefunCustomizer;
 import org.lins.mmmjjkx.rykenslimefuncustomizer.listeners.SingleItemRecipeGuideListener;
 import org.lins.mmmjjkx.rykenslimefuncustomizer.objects.customs.CustomMenu;
-import org.lins.mmmjjkx.rykenslimefuncustomizer.objects.machine.CustomLinkedMachineOperation;
 import org.lins.mmmjjkx.rykenslimefuncustomizer.objects.machine.CustomLinkedMachineRecipe;
+import org.lins.mmmjjkx.rykenslimefuncustomizer.objects.script.ScriptEval;
 import org.lins.mmmjjkx.rykenslimefuncustomizer.utils.BlockMenuUtil;
 import org.lins.mmmjjkx.rykenslimefuncustomizer.utils.CommonUtils;
 import org.lins.mmmjjkx.rykenslimefuncustomizer.utils.ExceptionHandler;
 
-public class CustomLinkedRecipeMachine extends AContainer implements RecipeDisplayItem {
+import java.util.ArrayList;
+import java.util.List;
+import java.util.Map;
+
+public class CustomWorkbench extends AContainer implements EnergyNetComponent, RecipeDisplayItem {
+    private final BlockTicker blockTicker = new BlockTicker() {
+        @Override
+        public boolean isSynchronized() {
+            return false;
+        }
+
+        @Override
+        public void tick(Block b, SlimefunItem slimefunItem, SlimefunBlockData data) {}
+    };
     private final MachineProcessor<CraftingOperation> processor;
     private final int[] input;
     private final int[] output;
@@ -45,7 +61,8 @@ public class CustomLinkedRecipeMachine extends AContainer implements RecipeDispl
     private final int energyPerCraft;
     private final int capacity;
     private final boolean hideAllRecipes;
-    private final int saveAmount;
+    private final int click;
+    private final ScriptEval eval;
 
     public static final ItemStack RECIPE_INPUT =
             new CustomItemStack(Material.GREEN_STAINED_GLASS_PANE, "&a多物品输入", "", "&2> &a点击查看");
@@ -55,7 +72,7 @@ public class CustomLinkedRecipeMachine extends AContainer implements RecipeDispl
     @Getter
     @Nullable private final CustomMenu menu;
 
-    public CustomLinkedRecipeMachine(
+    public CustomWorkbench(
             ItemGroup itemGroup,
             SlimefunItemStack item,
             RecipeType recipeType,
@@ -66,35 +83,74 @@ public class CustomLinkedRecipeMachine extends AContainer implements RecipeDispl
             int energyPerCraft,
             int capacity,
             @Nullable CustomMenu menu,
-            int speed,
             boolean hideAllRecipes,
-            int saveAmount) {
+            int click,
+            @Nullable ScriptEval eval) {
         super(itemGroup, item, recipeType, recipe);
 
         this.processor = new MachineProcessor<>(this);
         this.input = input;
         this.output = output;
         this.raw_recipes = recipes;
-        this.recipes = new ArrayList<>(
-                raw_recipes.stream().filter(r -> !r.isForDisplay()).toList());
+        this.recipes = new ArrayList<>(raw_recipes.stream().filter(r -> !r.isForDisplay()).toList());
         this.energyPerCraft = energyPerCraft;
         this.capacity = capacity;
         this.menu = menu;
         this.hideAllRecipes = hideAllRecipes;
-        this.saveAmount = saveAmount;
+        this.click = click;
+        this.eval = eval;
 
         if (menu == null) {
-            ExceptionHandler.handleWarning("未找到菜单 " + item.getItemId() + " 使用默认菜单");
-            this.createPreset(this, this.getInventoryTitle(), super::constructMenu);
+            ExceptionHandler.handleError("未找到菜单 " + item.getItemId());
+            return;
         }
 
-        if (menu != null) {
-            this.processor.setProgressBar(menu.getProgressBarItem());
+        this.processor.setProgressBar(menu.getProgressBarItem());
 
-            createPreset(this, menu::apply);
+        if (eval != null) {
+            eval.doInit();
         }
 
-        setProcessingSpeed(speed);
+        new BlockMenuPreset(this.getId(), this.getItemName()) {
+            public void init() {
+                menu.apply(this);
+            }
+
+            public void newInstance(@NotNull BlockMenu menu, @NotNull Block b) {
+                menu.addMenuClickHandler(CustomWorkbench.this.click, (player, clickedSlot, clickedItem, clickAction) -> {
+                    if (CustomWorkbench.this.eval != null) {
+                        Object result = CustomWorkbench.this.eval.evalFunction("onClick", this, player, clickedSlot, clickedItem, clickAction);
+                        if (result instanceof Boolean booleanResult) {
+                            return booleanResult;
+                        }
+
+                        return false;
+                    } else {
+                        if (!takeCharge(menu.getLocation())) {
+                            return false;
+                        }
+
+                        CustomLinkedMachineRecipe nextRecipe = CustomWorkbench.this.findNextLinkedRecipe(menu);
+                        if (nextRecipe != null) {
+                            BlockMenuUtil.pushItem(menu, nextRecipe.getLinkedOutput(), nextRecipe.isChooseOneIfHas());
+                        }
+
+                        return false;
+                    }
+                });
+            }
+            public int[] getSlotsAccessedByItemTransport(ItemTransportFlow flow) {
+                return flow == ItemTransportFlow.INSERT ? input : output;
+            }
+
+            public boolean canOpen(Block b, Player p) {
+                if (p.hasPermission("slimefun.inventory.bypass")) {
+                    return true;
+                } else {
+                    return CustomWorkbench.this.canUse(p, false) && Slimefun.getProtectionManager().hasPermission(p, b.getLocation(), Interaction.INTERACT_BLOCK);
+                }
+            }
+        };
 
         setCapacity(capacity);
         setEnergyConsumption(energyPerCraft);
@@ -108,11 +164,11 @@ public class CustomLinkedRecipeMachine extends AContainer implements RecipeDispl
             public void onBlockBreak(@NotNull Block b) {
                 BlockMenu inv = StorageCacheUtils.getMenu(b.getLocation());
                 if (inv != null) {
-                    inv.dropItems(b.getLocation(), CustomLinkedRecipeMachine.this.getInputSlots());
-                    inv.dropItems(b.getLocation(), CustomLinkedRecipeMachine.this.getOutputSlots());
+                    inv.dropItems(b.getLocation(), CustomWorkbench.this.getInputSlots());
+                    inv.dropItems(b.getLocation(), CustomWorkbench.this.getOutputSlots());
                 }
 
-                CustomLinkedRecipeMachine.this.processor.endOperation(b);
+                CustomWorkbench.this.processor.endOperation(b);
             }
         };
     }
@@ -196,6 +252,12 @@ public class CustomLinkedRecipeMachine extends AContainer implements RecipeDispl
         return output;
     }
 
+    @NotNull
+    @Override
+    public EnergyNetComponentType getEnergyComponentType() {
+        return EnergyNetComponentType.CONSUMER;
+    }
+
     @Override
     public int getCapacity() {
         return capacity;
@@ -211,46 +273,7 @@ public class CustomLinkedRecipeMachine extends AContainer implements RecipeDispl
 
     @Override
     protected void tick(Block b) {
-        BlockMenu inv = StorageCacheUtils.getMenu(b.getLocation());
-        CustomLinkedMachineOperation currentOperation = (CustomLinkedMachineOperation) this.processor.getOperation(b);
-        int progressSlot = this.menu == null || this.menu.getProgressSlot() == -1 ? 22 : this.menu.getProgressSlot();
-        if (inv != null) {
-            if (currentOperation != null) {
-                if (takeCharge(b.getLocation())) {
-                    if (!currentOperation.isFinished()) {
-                        if (inv.hasViewer()) {
-                            this.processor.updateProgressBar(inv, progressSlot, currentOperation);
-                        }
-                        currentOperation.addProgress(1);
-                    } else {
-                        CustomLinkedMachineRecipe currentRecipe = currentOperation.getRecipe();
-                        if (currentRecipe != null) {
-                            BlockMenuUtil.pushItem(inv, currentRecipe.getLinkedOutput(), currentRecipe.isChooseOneIfHas());
-                        }
 
-                        ItemStack progress;
-                        if (this.menu == null) {
-                            progress = ChestMenuUtils.getBackground();
-                        } else {
-                            progress = this.menu.getItems().getOrDefault(progressSlot, ChestMenuUtils.getBackground());
-                        }
-                        inv.replaceExistingItem(progressSlot, progress);
-
-                        this.processor.endOperation(b);
-                    }
-                }
-            } else {
-                CustomLinkedMachineRecipe next = this.findNextLinkedRecipe(inv);
-                if (next == null) {
-                    return;
-                }
-                currentOperation = new CustomLinkedMachineOperation(next);
-                this.processor.startOperation(b, currentOperation);
-                if (inv.hasViewer()) {
-                    this.processor.updateProgressBar(inv, progressSlot, currentOperation);
-                }
-            }
-        }
     }
 
     @Nullable
@@ -261,27 +284,19 @@ public class CustomLinkedRecipeMachine extends AContainer implements RecipeDispl
             for (int slot : inputMap.keySet()) {
                 ItemStack item = blockMenu.getItemInSlot(slot);
 
-                if (saveAmount > 0) {
-                    if (item.getAmount() <= saveAmount) {
-                        matched = false;
-                        break;
-                    }
-                    ItemStack clone = item.clone();
-                    clone.setAmount(clone.getAmount() - saveAmount);
-                    if (!SlimefunUtils.isItemSimilar(clone, inputMap.get(slot), false, true)) {
-                        matched = false;
-                        break;
-                    }
-                } else {
-                    if (!SlimefunUtils.isItemSimilar(item, inputMap.get(slot), false, true)) {
-                        matched = false;
-                        break;
-                    }
+                if (!SlimefunUtils.isItemSimilar(item, inputMap.get(slot), false, true)) {
+                    matched = false;
+                    break;
                 }
             }
             if (!matched) {
                 continue;
             }
+
+            if (!BlockMenuUtil.fits(blockMenu, recipe.getLinkedOutput())) {
+                continue;
+            }
+
 
             for (int slot : inputMap.keySet()) {
                 blockMenu.consumeItem(slot, inputMap.get(slot).getAmount());
@@ -289,5 +304,10 @@ public class CustomLinkedRecipeMachine extends AContainer implements RecipeDispl
             return recipe;
         }
         return null;
+    }
+
+    @Override
+    public BlockTicker getBlockTicker() {
+        return blockTicker;
     }
 }
