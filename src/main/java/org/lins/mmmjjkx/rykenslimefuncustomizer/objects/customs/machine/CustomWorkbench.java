@@ -38,6 +38,7 @@ import org.lins.mmmjjkx.rykenslimefuncustomizer.objects.script.ScriptEval;
 import org.lins.mmmjjkx.rykenslimefuncustomizer.utils.BlockMenuUtil;
 import org.lins.mmmjjkx.rykenslimefuncustomizer.utils.CommonUtils;
 import org.lins.mmmjjkx.rykenslimefuncustomizer.utils.ExceptionHandler;
+import org.lins.mmmjjkx.rykenslimefuncustomizer.utils.StackUtils;
 
 import java.util.ArrayList;
 import java.util.List;
@@ -278,7 +279,7 @@ public class CustomWorkbench extends AContainer implements EnergyNetComponent, R
             for (int slot : inputMap.keySet()) {
                 ItemStack item = blockMenu.getItemInSlot(slot);
 
-                if (!SlimefunUtils.isItemSimilar(item, inputMap.get(slot), false, true)) {
+                if (!StackUtils.itemsMatch(item, inputMap.get(slot), false, true)) {
                     matched = false;
                     break;
                 }

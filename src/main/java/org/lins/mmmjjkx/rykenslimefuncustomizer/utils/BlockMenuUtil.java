@@ -46,7 +46,7 @@ public class BlockMenuUtil {
                     continue;
                 }
 
-                if (!SlimefunUtils.isItemSimilar(item, existing, true, false)) {
+                if (!StackUtils.itemsMatch(item, existing, true, false)) {
                     continue;
                 }
 
@@ -110,7 +110,7 @@ public class BlockMenuUtil {
 
             if (stack == null || stack.getType() == Material.AIR) {
                 incoming -= item.getMaxStackSize();
-            } else if (stack.getMaxStackSize() > stack.getAmount() && SlimefunUtils.isItemSimilar(item, stack, true, false)) {
+            } else if (stack.getMaxStackSize() > stack.getAmount() && StackUtils.itemsMatch(item, stack, true, false)) {
                 incoming -= stack.getMaxStackSize() - stack.getAmount();
             }
 
@@ -179,7 +179,7 @@ public class BlockMenuUtil {
                         continue;
                     }
 
-                    if (!SlimefunUtils.isItemSimilar(item, existing, true, false)) {
+                    if (!StackUtils.itemsMatch(item, existing, true, false)) {
                         continue;
                     }
 
@@ -241,7 +241,7 @@ public class BlockMenuUtil {
                 clone.setAmount(received);
                 cloneMenu.set(pushToSlot, clone);
                 itemToPush.setAmount(itemToPush.getAmount() - received);
-            } else if (SlimefunUtils.isItemSimilar(itemToPush, existing, true, false)) {
+            } else if (StackUtils.itemsMatch(itemToPush, existing, true, false)) {
                 int existingAmount = existing.getAmount();
                 int received = Math.min(itemToPush.getMaxStackSize() - existingAmount, itemToPush.getAmount());
                 if (received <= 0) {
@@ -274,7 +274,7 @@ public class BlockMenuUtil {
                     clone.setAmount(received);
                     cloneMenu.set(slot, clone);
                     itemToPush.setAmount(itemToPush.getAmount() - received);
-                } else if (SlimefunUtils.isItemSimilar(itemToPush, existing, true, false)) {
+                } else if (StackUtils.itemsMatch(itemToPush, existing, true, false)) {
                     int existingAmount = existing.getAmount();
                     int received = Math.min(itemToPush.getMaxStackSize() - existingAmount, itemToPush.getAmount());
                     existing.setAmount(existingAmount + received);

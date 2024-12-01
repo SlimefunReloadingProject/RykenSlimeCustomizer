@@ -35,6 +35,7 @@ import org.lins.mmmjjkx.rykenslimefuncustomizer.objects.machine.CustomLinkedMach
 import org.lins.mmmjjkx.rykenslimefuncustomizer.utils.BlockMenuUtil;
 import org.lins.mmmjjkx.rykenslimefuncustomizer.utils.CommonUtils;
 import org.lins.mmmjjkx.rykenslimefuncustomizer.utils.ExceptionHandler;
+import org.lins.mmmjjkx.rykenslimefuncustomizer.utils.StackUtils;
 
 public class CustomLinkedRecipeMachine extends AContainer implements RecipeDisplayItem {
     private final MachineProcessor<CraftingOperation> processor;
@@ -264,7 +265,7 @@ public class CustomLinkedRecipeMachine extends AContainer implements RecipeDispl
                 if (saveAmount > 0) {
                     if (item != null) {
                         ItemStack clone;
-                        if (item.getMaxStackSize() == 0 || item.getMaxStackSize() == 1) {
+                        if (item.getMaxStackSize() == 1) {
                             clone = item.clone();
                         } else {
                             if (item.getAmount() <= saveAmount) {
@@ -274,7 +275,7 @@ public class CustomLinkedRecipeMachine extends AContainer implements RecipeDispl
                             clone = item.clone();
                             clone.setAmount(clone.getAmount() - saveAmount);
                         }
-                        if (!SlimefunUtils.isItemSimilar(clone, inputMap.get(slot), false, true)) {
+                        if (!StackUtils.itemsMatch(clone, inputMap.get(slot), false, true)) {
                             matched = false;
                             break;
                         }
@@ -285,7 +286,7 @@ public class CustomLinkedRecipeMachine extends AContainer implements RecipeDispl
                         }
                     }
                 } else {
-                    if (!SlimefunUtils.isItemSimilar(item, inputMap.get(slot), false, true)) {
+                    if (!StackUtils.itemsMatch(item, inputMap.get(slot), false, true)) {
                         matched = false;
                         break;
                     }
