@@ -12,16 +12,16 @@ import io.github.thebusybiscuit.slimefun4.implementation.operations.CraftingOper
 import io.github.thebusybiscuit.slimefun4.libraries.dough.items.CustomItemStack;
 import io.github.thebusybiscuit.slimefun4.utils.ChestMenuUtils;
 
-import java.security.SecureRandom;
 import java.util.ArrayList;
+import java.util.HashMap;
 import java.util.List;
 import java.util.Map;
 
-import io.github.thebusybiscuit.slimefun4.utils.SlimefunUtils;
 import lombok.Getter;
 import me.mrCookieSlime.Slimefun.Objects.SlimefunItem.abstractItems.AContainer;
 import me.mrCookieSlime.Slimefun.api.inventory.BlockMenu;
 import me.mrCookieSlime.Slimefun.api.inventory.BlockMenuPreset;
+import org.bukkit.Location;
 import org.bukkit.Material;
 import org.bukkit.block.Block;
 import org.bukkit.inventory.ItemStack;
@@ -38,6 +38,7 @@ import org.lins.mmmjjkx.rykenslimefuncustomizer.utils.ExceptionHandler;
 import org.lins.mmmjjkx.rykenslimefuncustomizer.utils.StackUtils;
 
 public class CustomLinkedRecipeMachine extends AContainer implements RecipeDisplayItem {
+    private static final Map<Location, Integer> lastMatch = new HashMap<>();
     private final MachineProcessor<CraftingOperation> processor;
     private final int[] input;
     private final int[] output;
@@ -256,55 +257,78 @@ public class CustomLinkedRecipeMachine extends AContainer implements RecipeDispl
 
     @Nullable
     public CustomLinkedMachineRecipe findNextLinkedRecipe(BlockMenu blockMenu) {
-        for (CustomLinkedMachineRecipe recipe : this.recipes) {
-            Map<Integer, ItemStack> inputMap = recipe.getLinkedInput();
-            boolean matched = true;
-            for (int slot : inputMap.keySet()) {
-                ItemStack item = blockMenu.getItemInSlot(slot);
+        Location location = blockMenu.getLocation();
+        Integer lastMatchIndex = lastMatch.get(blockMenu.getLocation());
+        if (lastMatchIndex != null) {
+            CustomLinkedMachineRecipe recipe = recipes.get(lastMatchIndex);
+            if (matchRecipe(blockMenu, recipe)) {
+                return recipe;
+            } else {
+                lastMatch.remove(location);
+            }
+        }
 
-                if (saveAmount > 0) {
-                    if (item != null) {
-                        ItemStack clone;
-                        if (item.getMaxStackSize() == 1) {
-                            clone = item.clone();
-                        } else {
-                            if (item.getAmount() <= saveAmount) {
-                                matched = false;
-                                break;
-                            }
-                            clone = item.clone();
-                            clone.setAmount(clone.getAmount() - saveAmount);
-                        }
-                        if (!StackUtils.itemsMatch(clone, inputMap.get(slot), false, true)) {
-                            matched = false;
-                            break;
-                        }
+        for (int i = 0; i < recipes.size(); i++) {
+            if (lastMatchIndex != null && i == lastMatchIndex) {
+                continue;
+            }
+
+            CustomLinkedMachineRecipe recipe = recipes.get(i);
+            if (matchRecipe(blockMenu, recipe)) {
+                lastMatch.put(location, i);
+                return recipe;
+            }
+        }
+        return null;
+    }
+
+    private boolean matchRecipe(BlockMenu blockMenu, CustomLinkedMachineRecipe recipe) {
+        Map<Integer, ItemStack> inputMap = recipe.getLinkedInput();
+        boolean matched = true;
+        if (!BlockMenuUtil.fits(blockMenu, recipe.getLinkedOutput())) {
+            return false;
+        }
+        for (int slot : inputMap.keySet()) {
+            ItemStack item = blockMenu.getItemInSlot(slot);
+
+            if (saveAmount > 0) {
+                if (item != null) {
+                    ItemStack clone;
+                    if (item.getMaxStackSize() == 1) {
+                        clone = item.clone();
                     } else {
-                        if (inputMap.get(slot) != null) {
+                        if (item.getAmount() <= saveAmount) {
                             matched = false;
                             break;
                         }
+                        clone = item.clone();
+                        clone.setAmount(clone.getAmount() - saveAmount);
+                    }
+                    if (!StackUtils.itemsMatch(clone, inputMap.get(slot), false, true)) {
+                        matched = false;
+                        break;
                     }
                 } else {
-                    if (!StackUtils.itemsMatch(item, inputMap.get(slot), false, true)) {
+                    if (inputMap.get(slot) != null) {
                         matched = false;
                         break;
                     }
                 }
+            } else {
+                if (!StackUtils.itemsMatch(item, inputMap.get(slot), false, true)) {
+                    matched = false;
+                    break;
+                }
             }
-            if (!matched) {
-                continue;
-            }
-
-            if (!BlockMenuUtil.fits(blockMenu, recipe.getLinkedOutput())) {
-                continue;
-            }
-
-            for (int slot : inputMap.keySet()) {
-                blockMenu.consumeItem(slot, inputMap.get(slot).getAmount());
-            }
-            return recipe;
         }
-        return null;
+        if (!matched) {
+            return false;
+        }
+
+        for (int slot : inputMap.keySet()) {
+            blockMenu.consumeItem(slot, inputMap.get(slot).getAmount());
+        }
+
+        return true;
     }
 }
