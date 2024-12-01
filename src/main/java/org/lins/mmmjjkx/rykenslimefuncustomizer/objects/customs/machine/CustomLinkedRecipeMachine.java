@@ -262,15 +262,27 @@ public class CustomLinkedRecipeMachine extends AContainer implements RecipeDispl
                 ItemStack item = blockMenu.getItemInSlot(slot);
 
                 if (saveAmount > 0) {
-                    if (item.getAmount() <= saveAmount) {
-                        matched = false;
-                        break;
-                    }
-                    ItemStack clone = item.clone();
-                    clone.setAmount(clone.getAmount() - saveAmount);
-                    if (!SlimefunUtils.isItemSimilar(clone, inputMap.get(slot), false, true)) {
-                        matched = false;
-                        break;
+                    if (item != null) {
+                        ItemStack clone;
+                        if (item.getMaxStackSize() == 0 || item.getMaxStackSize() == 1) {
+                            clone = item.clone();
+                        } else {
+                            if (item.getAmount() <= saveAmount) {
+                                matched = false;
+                                break;
+                            }
+                            clone = item.clone();
+                            clone.setAmount(clone.getAmount() - saveAmount);
+                        }
+                        if (!SlimefunUtils.isItemSimilar(clone, inputMap.get(slot), false, true)) {
+                            matched = false;
+                            break;
+                        }
+                    } else {
+                        if (inputMap.get(slot) != null) {
+                            matched = false;
+                            break;
+                        }
                     }
                 } else {
                     if (!SlimefunUtils.isItemSimilar(item, inputMap.get(slot), false, true)) {
@@ -280,6 +292,10 @@ public class CustomLinkedRecipeMachine extends AContainer implements RecipeDispl
                 }
             }
             if (!matched) {
+                continue;
+            }
+
+            if (!BlockMenuUtil.fits(blockMenu, recipe.getLinkedOutput())) {
                 continue;
             }
 

@@ -32,9 +32,11 @@ import org.bukkit.persistence.PersistentDataType;
 import org.lins.mmmjjkx.rykenslimefuncustomizer.RykenSlimefunCustomizer;
 import org.lins.mmmjjkx.rykenslimefuncustomizer.libraries.colors.CMIChatColor;
 import org.lins.mmmjjkx.rykenslimefuncustomizer.objects.customs.CustomMenu;
+import org.lins.mmmjjkx.rykenslimefuncustomizer.objects.customs.LinkedOutput;
 import org.lins.mmmjjkx.rykenslimefuncustomizer.objects.customs.machine.CustomLinkedRecipeMachine;
 import org.lins.mmmjjkx.rykenslimefuncustomizer.objects.customs.machine.CustomRecipeMachine;
 import org.lins.mmmjjkx.rykenslimefuncustomizer.objects.customs.machine.CustomTemplateMachine;
+import org.lins.mmmjjkx.rykenslimefuncustomizer.objects.customs.machine.CustomWorkbench;
 import org.lins.mmmjjkx.rykenslimefuncustomizer.objects.machine.CustomLinkedMachineRecipe;
 import org.lins.mmmjjkx.rykenslimefuncustomizer.objects.machine.CustomMachineRecipe;
 import org.lins.mmmjjkx.rykenslimefuncustomizer.objects.machine.MachineTemplate;
@@ -116,6 +118,16 @@ public class SingleItemRecipeGuideListener implements Listener {
         return item;
     }
 
+    public static ItemStack tagItemWorkbenchRecipe(ItemStack item, int index) {
+        item = item.clone();
+        ItemMeta meta = item.getItemMeta();
+        PersistentDataContainer pdc = meta.getPersistentDataContainer();
+        pdc.set(RECIPE_KEY, PersistentDataType.INTEGER, 4);
+        pdc.set(RECIPE_INDEX_KEY, PersistentDataType.INTEGER, index);
+        item.setItemMeta(meta);
+        return item;
+    }
+
     private ChestMenu createGUI(Player p, SlimefunItem machine, PersistentDataHolder holder) {
         int type = PersistentDataAPI.getInt(holder, RECIPE_KEY, 1);
         if (machine instanceof AContainer ac && type == 1) {
@@ -128,6 +140,9 @@ public class SingleItemRecipeGuideListener implements Listener {
         } else if (machine instanceof CustomLinkedRecipeMachine clrm && type == 3) {
             int recipeIndex = PersistentDataAPI.getInt(holder, RECIPE_INDEX_KEY, 0);
             return new LinkedRecipeMenu(clrm, p, recipeIndex);
+        } else if (machine instanceof CustomWorkbench cw && type == 4) {
+            int index = PersistentDataAPI.getInt(holder, RECIPE_INDEX_KEY, 0);
+            return new WorkbenchRecipeMenu(cw, p, index);
         }
         return null;
     }
@@ -570,6 +585,87 @@ public class SingleItemRecipeGuideListener implements Listener {
             progressBar = new CustomItemStack(progressBar, rawName);
 
             addItem(progressSlot, progressBar, (pl, s, is, action) -> false);
+        }
+
+        @Override
+        public void open(Player... players) {
+            super.open(players);
+
+            if (!recipeTask.isEmpty()) {
+                recipeTask.start(toInventory());
+            }
+        }
+
+        private ItemStack tagOutputChance(ItemStack item, int chance) {
+            item = item.clone();
+            CommonUtils.addLore(item, true, CMIChatColor.translate("&a有&b " + chance + "% &a的概率产出"));
+            return item;
+        }
+    }
+
+    private static class WorkbenchRecipeMenu extends ChestMenu {
+        private final AsyncChanceRecipeTask recipeTask = new AsyncChanceRecipeTask();
+
+        public WorkbenchRecipeMenu(AContainer item, Player p, int index) {
+            super(Slimefun.getLocalization().getMessage(p, "guide.title.main"));
+
+            setEmptySlotsClickable(false);
+            setPlayerInventoryClickable(false);
+
+            int[] outputSlots = item.getOutputSlots();
+
+            if (item instanceof CustomWorkbench cw) {
+                CustomMenu menu = cw.getMenu();
+                if (menu != null) {
+                    BlockMenuPreset preset = Slimefun.getRegistry().getMenuPresets().get(item.getId());
+                    for (int slot : preset.getPresetSlots()) {
+                        ItemStack itemStack = preset.getItemInSlot(slot);
+                        if (itemStack != null && itemStack.getType() != Material.AIR) {
+                            addItem(slot, itemStack, (pl, s, is, action) -> false);
+                        }
+                    }
+                    CustomLinkedMachineRecipe recipe = (CustomLinkedMachineRecipe) cw.getMachineRecipes().get(index);
+                    Map<Integer, ItemStack> linkedInput = recipe.getLinkedInput();
+                    for (int slot : linkedInput.keySet()) {
+                        addItem(slot, linkedInput.get(slot).clone(), (pl, s, is, action) -> false);
+                    }
+
+                    LinkedOutput linkedOutput = recipe.getLinkedOutput();
+                    Map<Integer, Integer> chanceMap = linkedOutput.getLinkedChances();
+                    Map<Integer, ItemStack> outputMap = linkedOutput.getLinkedOutput();
+                    for (int slot : outputMap.keySet()) {
+                        if (chanceMap.containsKey(slot)) {
+                            int chance = chanceMap.get(slot);
+                            ItemStack output = outputMap.get(slot);
+                            if (output != null && output.getType() != Material.AIR) {
+                                ItemStack chanceOutput = output.clone();
+                                if (chance < 100) {
+                                    CommonUtils.addLore(
+                                            chanceOutput, true, CMIChatColor.translate("&a有&b " + chance + "% &a的概率产出"));
+                                }
+
+                                if (chance > 0) {
+                                    addItem(slot, chanceOutput, (pl, s, is, action) -> false);
+                                }
+                            }
+                        } else {
+                            addItem(slot, outputMap.get(slot).clone(), (pl, s, is, action) -> false);
+                        }
+                    }
+
+                    for (ItemStack itemStack : linkedOutput.getFreeOutput()) {
+                        for (int slot : outputSlots) {
+                            ItemStack existing = getItemInSlot(slot);
+                            if (existing == null || existing.getType() == Material.AIR) {
+                                addItem(slot, itemStack.clone(), (pl, s, is, action) -> false);
+                                break;
+                            }
+                        }
+                    }
+                }
+            }
+
+
         }
 
         @Override

@@ -152,6 +152,7 @@ public class CustomWorkbench extends AContainer implements EnergyNetComponent, R
             }
         };
 
+        setProcessingSpeed(1);
         setCapacity(capacity);
         setEnergyConsumption(energyPerCraft);
 
@@ -218,21 +219,14 @@ public class CustomWorkbench extends AContainer implements EnergyNetComponent, R
             if (input.length == 1) {
                 displayRecipes.add(input[0]);
             } else {
-                ItemStack in = SingleItemRecipeGuideListener.tagItemLinkedRecipe(RECIPE_INPUT, i);
+                ItemStack in = SingleItemRecipeGuideListener.tagItemWorkbenchRecipe(RECIPE_INPUT, i);
                 displayRecipes.add(in);
             }
 
             if (output.length == 1) {
-                int seconds = recipe.getTicks() / 2;
-                ItemStack out = output[0].clone();
-                String rawLore = "&e制作时间: &b" + seconds + "&es";
-                if (seconds > 60) {
-                    rawLore = rawLore.concat("(" + CommonUtils.formatSeconds(seconds) + "&e)");
-                }
-                CommonUtils.addLore(out, true, rawLore);
-                displayRecipes.add(out);
+                displayRecipes.add(output[0]);
             } else {
-                ItemStack out = SingleItemRecipeGuideListener.tagItemLinkedRecipe(RECIPE_OUTPUT, i);
+                ItemStack out = SingleItemRecipeGuideListener.tagItemWorkbenchRecipe(RECIPE_OUTPUT, i);
                 displayRecipes.add(out);
             }
 

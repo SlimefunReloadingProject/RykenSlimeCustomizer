@@ -23,6 +23,7 @@ public class BlockMenuUtil {
             throw new IllegalArgumentException("Cannot push null or AIR");
         }
 
+
         int leftAmount = item.getAmount();
 
         for (int slot : slots) {
@@ -45,7 +46,7 @@ public class BlockMenuUtil {
                     continue;
                 }
 
-                if (!SlimefunUtils.isItemSimilar(item, existing, true)) {
+                if (!SlimefunUtils.isItemSimilar(item, existing, true, false)) {
                     continue;
                 }
 
@@ -109,7 +110,7 @@ public class BlockMenuUtil {
 
             if (stack == null || stack.getType() == Material.AIR) {
                 incoming -= item.getMaxStackSize();
-            } else if (stack.getMaxStackSize() > stack.getAmount() && SlimefunUtils.isItemSimilar(item, stack, true)) {
+            } else if (stack.getMaxStackSize() > stack.getAmount() && SlimefunUtils.isItemSimilar(item, stack, true, false)) {
                 incoming -= stack.getMaxStackSize() - stack.getAmount();
             }
 
@@ -178,7 +179,7 @@ public class BlockMenuUtil {
                         continue;
                     }
 
-                    if (!SlimefunUtils.isItemSimilar(item, existing, true)) {
+                    if (!SlimefunUtils.isItemSimilar(item, existing, true, false)) {
                         continue;
                     }
 
@@ -205,8 +206,16 @@ public class BlockMenuUtil {
         // clone the menu
         List<ItemStack> cloneMenu = new ArrayList<>();
         for (int i = 0; i < 54; i++) {
+            cloneMenu.add(null);
+        }
+
+        for (int i = 0; i < 54; i++) {
             ItemStack stack = blockMenu.getItemInSlot(i);
-            cloneMenu.add(stack);
+            if (stack != null && stack.getType() != Material.AIR) {
+                cloneMenu.set(i, stack.clone());
+            } else {
+                cloneMenu.set(i, null);
+            }
         }
 
         // try push linked output
@@ -215,21 +224,29 @@ public class BlockMenuUtil {
                 continue;
             }
 
-            ItemStack itemToPush = output.getLinkedOutput().get(pushToSlot);
-            if (itemToPush == null || itemToPush.getType() == Material.AIR) {
+            ItemStack PitemToPush = output.getLinkedOutput().get(pushToSlot);
+            if (PitemToPush == null || PitemToPush.getType() == Material.AIR) {
                 continue;
             }
+
+            ItemStack itemToPush = PitemToPush.clone();
 
             ItemStack existing = cloneMenu.get(pushToSlot);
             if (existing == null || existing.getType() == Material.AIR) {
                 int received = Math.min(itemToPush.getAmount(), itemToPush.getMaxStackSize());
+                if (received <= 0) {
+                    return false;
+                }
                 ItemStack clone = itemToPush.clone();
                 clone.setAmount(received);
                 cloneMenu.set(pushToSlot, clone);
                 itemToPush.setAmount(itemToPush.getAmount() - received);
-            } else if (SlimefunUtils.isItemSimilar(itemToPush, existing, true)) {
+            } else if (SlimefunUtils.isItemSimilar(itemToPush, existing, true, false)) {
                 int existingAmount = existing.getAmount();
                 int received = Math.min(itemToPush.getMaxStackSize() - existingAmount, itemToPush.getAmount());
+                if (received <= 0) {
+                    return false;
+                }
                 existing.setAmount(existingAmount + received);
                 itemToPush.setAmount(itemToPush.getAmount() - received);
             } else {
@@ -238,10 +255,12 @@ public class BlockMenuUtil {
         }
 
         // try push free output
-        for (ItemStack itemToPush : output.getFreeOutput()) {
-            if (itemToPush == null || itemToPush.getType() == Material.AIR) {
+        for (ItemStack PitemToPush : output.getFreeOutput()) {
+            if (PitemToPush == null || PitemToPush.getType() == Material.AIR) {
                 continue;
             }
+
+            ItemStack itemToPush = PitemToPush.clone();
 
             for (int slot : slots) {
                 if (itemToPush.getAmount() <= 0) {
@@ -255,7 +274,7 @@ public class BlockMenuUtil {
                     clone.setAmount(received);
                     cloneMenu.set(slot, clone);
                     itemToPush.setAmount(itemToPush.getAmount() - received);
-                } else if (SlimefunUtils.isItemSimilar(itemToPush, existing, true)) {
+                } else if (SlimefunUtils.isItemSimilar(itemToPush, existing, true, false)) {
                     int existingAmount = existing.getAmount();
                     int received = Math.min(itemToPush.getMaxStackSize() - existingAmount, itemToPush.getAmount());
                     existing.setAmount(existingAmount + received);
@@ -279,10 +298,12 @@ public class BlockMenuUtil {
                 continue;
             }
 
-            ItemStack itemToPush = output.getLinkedOutput().get(pushToSlot);
-            if (itemToPush == null || itemToPush.getType() == Material.AIR) {
+            ItemStack PitemToPush = output.getLinkedOutput().get(pushToSlot);
+            if (PitemToPush == null || PitemToPush.getType() == Material.AIR) {
                 continue;
             }
+
+            ItemStack itemToPush = PitemToPush.clone();
 
             int chance = output.getLinkedChances().get(pushToSlot);
             if (chance > 0 && chance < 100 && Math.random() * 100 > chance) {
@@ -300,10 +321,12 @@ public class BlockMenuUtil {
         // push free output
         ItemStack[] freeOutput = output.getFreeOutput();
         for (int i = 0; i < freeOutput.length; i++) {
-            ItemStack itemToPush = freeOutput[i];
-            if (itemToPush == null || itemToPush.getType() == Material.AIR) {
+            ItemStack PitemToPush = freeOutput[i];
+            if (PitemToPush == null || PitemToPush.getType() == Material.AIR) {
                 continue;
             }
+
+            ItemStack itemToPush = PitemToPush.clone();
 
             int chance = output.getFreeChances()[i];
             if (chance > 0 && chance < 100 && Math.random() * 100 > chance) {

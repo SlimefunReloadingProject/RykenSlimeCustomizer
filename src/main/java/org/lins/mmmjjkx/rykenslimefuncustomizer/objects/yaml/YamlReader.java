@@ -173,6 +173,7 @@ public abstract class YamlReader<T> {
                     ExceptionHandler.handleError("读取" + key + "的注册条件时发现问题: 版本号" + splits[2] + "不是正常的版本号！");
                 }
 
+                ExceptionHandler.info("key: " + key + " condition: " + condition + " major: " + targetMajor + " minor: " + targetMinor);
                 boolean pass = false;
                 switch (splits[1]) {
                     case ">" -> {

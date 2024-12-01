@@ -4,6 +4,7 @@ import io.github.thebusybiscuit.slimefun4.utils.SlimefunUtils;
 import lombok.Getter;
 import me.mrCookieSlime.Slimefun.api.inventory.BlockMenu;
 import org.bukkit.inventory.ItemStack;
+import org.lins.mmmjjkx.rykenslimefuncustomizer.utils.ExceptionHandler;
 
 import java.util.ArrayList;
 import java.util.Arrays;
@@ -31,6 +32,7 @@ public class LinkedOutput {
             result[i] = item;
             i++;
         }
+
         return result;
     }
 
@@ -41,5 +43,18 @@ public class LinkedOutput {
          }
          result.addAll(linkedChances.values());
          return result;
+    }
+
+    public void log() {
+        // log free output & linked output
+        for (int i = 0; i < freeOutput.length; i++) {
+            ItemStack item = freeOutput[i];
+            ExceptionHandler.info("FreeOutput: " + i + " 物品: " + item);
+        }
+
+        for (int slot : linkedOutput.keySet()) {
+            ItemStack item = linkedOutput.get(slot);
+            ExceptionHandler.info("LinkedOutput: " + slot + " 物品: " + item + " 位置: " + slot);
+        }
     }
 }

@@ -4,6 +4,7 @@ import io.github.thebusybiscuit.slimefun4.api.items.ItemGroup;
 import io.github.thebusybiscuit.slimefun4.api.items.SlimefunItemStack;
 import io.github.thebusybiscuit.slimefun4.api.recipes.RecipeType;
 import io.github.thebusybiscuit.slimefun4.libraries.dough.collections.Pair;
+import org.bukkit.Material;
 import org.bukkit.configuration.ConfigurationSection;
 import org.bukkit.configuration.file.YamlConfiguration;
 import org.bukkit.inventory.ItemStack;
@@ -28,8 +29,8 @@ import java.util.Map;
  *   item_group: RSC_EXAMPLE_NORMAL_GROUP
  *   item:
  *     material: GOLD_BLOCK
- *   inputs: [19, 20]
- *   outputs: [24, 25]
+ *   input: [19, 20]
+ *   output: [24, 25]
  *   click: 42
  *   capacity: 1000
  *   energyPerCraft: 1000
@@ -225,7 +226,7 @@ public class WorkbenchReader extends YamlReader<CustomWorkbench> {
             for (int i = 0; i < outputSize; i++) {
                 ConfigurationSection section1 = outputs.getConfigurationSection(String.valueOf(i + 1));
                 var item = CommonUtils.readItem(section1, true, addon);
-                if (item != null) {
+                if (item != null && item.getType() != Material.AIR) {
                     int chance = section1.getInt("chance", 100);
 
                     if (chance < 1) {
@@ -281,6 +282,9 @@ public class WorkbenchReader extends YamlReader<CustomWorkbench> {
             for (int i = 0; i < array.length; i++) {
                 array[i] = i;
             }
+
+
+
             list.add(new CustomLinkedMachineRecipe(0, finalInput, new LinkedOutput(freeOutput.toArray(new ItemStack[0]), linkedOutput, array, linkedChances), chooseOne, forDisplay, hide));
         }
         return list;

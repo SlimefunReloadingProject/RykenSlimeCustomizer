@@ -27,8 +27,8 @@ import java.util.Map;
  *   item_group: RSC_EXAMPLE_NORMAL_GROUP
  *   item:
  *     material: EMERALD_BLOCK
- *   inputs: [19, 20]
- *   outputs: [24, 25]
+ *   input: [19, 20]
+ *   output: [24, 25]
  *   saveAmount: 1
  *   recipes:
  *     your_recipe_name:
