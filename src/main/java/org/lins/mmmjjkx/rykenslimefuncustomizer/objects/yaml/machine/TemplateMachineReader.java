@@ -1,6 +1,7 @@
 package org.lins.mmmjjkx.rykenslimefuncustomizer.objects.yaml.machine;
 
 import io.github.thebusybiscuit.slimefun4.api.items.ItemGroup;
+import io.github.thebusybiscuit.slimefun4.api.items.SlimefunItem;
 import io.github.thebusybiscuit.slimefun4.api.items.SlimefunItemStack;
 import io.github.thebusybiscuit.slimefun4.api.recipes.RecipeType;
 import io.github.thebusybiscuit.slimefun4.libraries.dough.collections.Pair;
@@ -121,11 +122,13 @@ public class TemplateMachineReader extends YamlReader<CustomTemplateMachine> {
         }
 
         for (String key : section.getKeys(false)) {
-            SlimefunItemStack item = getPreloadItem(key);
+            SlimefunItemStack item = getPreloadItem(key) == null ? SlimefunItem.getById(key) == null ? null : ((SlimefunItemStack) SlimefunItem.getById(key).getItem().clone()) : getPreloadItem(key);
+
             if (item == null) {
                 ExceptionHandler.handleError("在附属" + addon.getAddonId() + "中加载模板机器" + s + "时遇到了问题: 无法找到作为模板的物品" + key);
                 continue;
             }
+
             List<CustomMachineRecipe> recipes =
                     readRecipes(s, inputSize, outputSize, section.getConfigurationSection(key), addon);
             list.add(new MachineTemplate(item, recipes));
