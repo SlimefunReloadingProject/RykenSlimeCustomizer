@@ -59,6 +59,10 @@ public class GithubUpdater {
                     return false;
                 }
 
+                if (!downloadFolder.exists()) {
+                    downloadFolder.mkdirs();
+                }
+
                 File zip = new File(downloadFolder, prjId + "-" + releaseName + ".zip");
 
                 String zipUrl;
@@ -84,11 +88,11 @@ public class GithubUpdater {
 
                 URL urlObj = new URL(zipUrl);
 
-                if (!zip.createNewFile()) {
-                    throw new IOException("创建下载文件失败");
+                if (!zip.exists()) {
+                    if (!zip.createNewFile()) {
+                        throw new IOException("创建下载文件失败");
+                    }
                 }
-
-                zip.createNewFile();
 
                 long result = Files.copy(urlObj.openStream(), zip.toPath(), StandardCopyOption.REPLACE_EXISTING);
 

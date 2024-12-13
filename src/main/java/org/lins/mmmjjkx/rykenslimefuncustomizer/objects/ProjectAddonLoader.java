@@ -192,6 +192,8 @@ public class ProjectAddonLoader {
         YamlConfiguration multiBlockMachines = doFileLoad(file, Constants.MULTI_BLOCK_MACHINES_FILE);
         YamlConfiguration supers = doFileLoad(file, Constants.SUPERS_FILE);
         YamlConfiguration templateMachines = doFileLoad(file, Constants.TEMPLATE_MACHINES_FILE);
+        YamlConfiguration linkedRecipeMachines = doFileLoad(file, Constants.LINKED_RECIPE_MACHINES_FILE);
+        YamlConfiguration workbenches = doFileLoad(file, Constants.WORKBENCHES_FILE);
 
         MobDropsReader mobDropsReader = new MobDropsReader(mob_drops, addon);
         GeoResourceReader resourceReader = new GeoResourceReader(geo_resources, addon);
@@ -209,6 +211,8 @@ public class ProjectAddonLoader {
         MultiBlockMachineReader multiBlockMachineReader = new MultiBlockMachineReader(multiBlockMachines, addon);
         SuperReader superReader = new SuperReader(supers, addon);
         TemplateMachineReader templateMachineReader = new TemplateMachineReader(templateMachines, addon);
+        LinkedRecipeMachineReader linkedRecipeMachineReader = new LinkedRecipeMachineReader(linkedRecipeMachines, addon);
+        WorkbenchReader workbenchReader = new WorkbenchReader(workbenches, addon);
 
         ExceptionHandler.debugLog("开始加载 " + file.getName() + " 中的物品内容...");
 
@@ -227,6 +231,8 @@ public class ProjectAddonLoader {
         multiBlockMachineReader.preload();
         superReader.preload();
         templateMachineReader.preload();
+        linkedRecipeMachineReader.preload();
+        workbenchReader.preload();
 
         ExceptionHandler.debugLog("开始注册 " + file.getName() + " 存放的内容...");
 
@@ -246,6 +252,8 @@ public class ProjectAddonLoader {
         addon.setMultiBlockMachines(multiBlockMachineReader.readAll());
         addon.setSupers(superReader.readAll());
         addon.setTemplateMachines(templateMachineReader.readAll());
+        addon.setLinkedRecipeMachines(linkedRecipeMachineReader.readAll());
+        addon.setWorkbenches(workbenchReader.readAll());
 
         ExceptionHandler.debugLog("开始加载要求延迟加载的内容...");
 
@@ -266,6 +274,8 @@ public class ProjectAddonLoader {
         addon.getMultiBlockMachines().addAll(multiBlockMachineReader.loadLateInits());
         addon.getSupers().addAll(superReader.loadLateInits());
         addon.getTemplateMachines().addAll(templateMachineReader.loadLateInits());
+        addon.getLinkedRecipeMachines().addAll(linkedRecipeMachineReader.loadLateInits());
+        addon.getWorkbenches().addAll(workbenchReader.loadLateInits());
 
         YamlConfiguration researches = doFileLoad(file, Constants.RESEARCHES_FILE);
         ResearchReader researchReader = new ResearchReader(researches, addon);
