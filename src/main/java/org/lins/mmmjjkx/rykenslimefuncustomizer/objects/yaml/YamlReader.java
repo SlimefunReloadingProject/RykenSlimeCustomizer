@@ -6,6 +6,7 @@ import java.util.List;
 import java.util.Objects;
 import java.util.function.Function;
 
+import io.github.thebusybiscuit.slimefun4.libraries.paperlib.PaperLib;
 import org.bukkit.Bukkit;
 import org.bukkit.configuration.ConfigurationSection;
 import org.bukkit.configuration.file.YamlConfiguration;
@@ -16,6 +17,8 @@ import org.lins.mmmjjkx.rykenslimefuncustomizer.utils.CommonUtils;
 import org.lins.mmmjjkx.rykenslimefuncustomizer.utils.ExceptionHandler;
 
 public abstract class YamlReader<T> {
+    public static final int MAJOR_VERSION = PaperLib.getMinecraftVersion();
+    public static final int MINOR_VERSION = PaperLib.getMinecraftPatchVersion();
     private final List<String> lateInits;
     protected final ProjectAddon addon;
     protected final YamlConfiguration configuration;
@@ -41,7 +44,7 @@ public abstract class YamlReader<T> {
 
             for (SlimefunItemStack item : items) {
                 addon.getPreloadItems().put(item.getItemId(), item);
-                ExceptionHandler.debugLog("已预加载物品: " + item.getItemId());
+                ExceptionHandler.debugLog("&a已预加载物品: " + item.getItemId());
             }
         }
     }
@@ -74,9 +77,9 @@ public abstract class YamlReader<T> {
             var object = readEach(key);
             if (object != null) {
                 objects.add(object);
-                ExceptionHandler.debugLog("SUCCESS | 读取项" + key + "成功！");
+                ExceptionHandler.debugLog("&aSUCCESS | 读取项" + key + "成功！");
             } else {
-                ExceptionHandler.debugLog("FAILURE | 读取项" + key + "失败！");
+                ExceptionHandler.debugLog("&cFAILURE | 读取项" + key + "失败！");
             }
         }
         return objects;
@@ -93,9 +96,9 @@ public abstract class YamlReader<T> {
             var object = readEach(key);
             if (object != null) {
                 objects.add(object);
-                ExceptionHandler.debugLog("SUCCESS | 读取项" + key + "成功！");
+                ExceptionHandler.debugLog("&aSUCCESS | 读取项" + key + "成功！");
             } else {
-                ExceptionHandler.debugLog("FAILURE | 读取项" + key + "失败！");
+                ExceptionHandler.debugLog("&cFAILURE | 读取项" + key + "失败！");
             }
         });
 
@@ -148,10 +151,70 @@ public abstract class YamlReader<T> {
                     continue;
                 }
 
-                int current = CommonUtils.versionToCode(Bukkit.getMinecraftVersion());
-                int destination = CommonUtils.versionToCode(splits[2]);
+                int targetMajor = 0;
+                int targetMinor = 0;
+                String[] versionSplit = splits[2].split("\\.");
+                if (versionSplit.length == 2) {
+                    try {
+                        targetMajor = Integer.parseInt(versionSplit[1]);
+                    } catch (NumberFormatException e) {
+                        ExceptionHandler.handleError("读取" + key + "的注册条件时发现问题: 版本号" + splits[2] + "不是正常的版本号！");
+                        continue;
+                    }
+                } else if (versionSplit.length == 3) {
+                    try {
+                        targetMajor = Integer.parseInt(versionSplit[1]);
+                        targetMinor = Integer.parseInt(versionSplit[2]);
+                    } catch (NumberFormatException e) {
+                        ExceptionHandler.handleError("读取" + key + "的注册条件时发现问题: 版本号" + splits[2] + "不是正常的版本号！");
+                        continue;
+                    }
+                } else {
+                    ExceptionHandler.handleError("读取" + key + "的注册条件时发现问题: 版本号" + splits[2] + "不是正常的版本号！");
+                }
 
-                if (!intCheck(splits[1], key, "version", current, destination, (op) -> "需要版本" + op + splits[2] + "才能被注册", warn)) {
+                // ExceptionHandler.info("key: " + key + " condition: " + condition + " major: " + targetMajor + " minor: " + targetMinor);
+                boolean pass = false;
+                switch (splits[1]) {
+                    case ">" -> {
+                        if (MAJOR_VERSION > targetMajor || (MAJOR_VERSION == targetMajor && MINOR_VERSION > targetMinor)) {
+                            pass = true;
+                        }
+                    }
+                    case "<" -> {
+                        if (MAJOR_VERSION < targetMajor || (MAJOR_VERSION == targetMajor && MINOR_VERSION < targetMinor)) {
+                            pass = true;
+                        }
+                    }
+                    case ">=" -> {
+                        if (MAJOR_VERSION > targetMajor || (MAJOR_VERSION == targetMajor && MINOR_VERSION >= targetMinor)) {
+                            pass = true;
+                        }
+                    }
+                    case "<=" -> {
+                        if (MAJOR_VERSION < targetMajor || (MAJOR_VERSION == targetMajor && MINOR_VERSION <= targetMinor)) {
+                            pass = true;
+                        }
+                    }
+                    case "==" -> {
+                        if (MAJOR_VERSION == targetMajor && MINOR_VERSION == targetMinor) {
+                            pass = true;
+                        }
+                    }
+                    case "!=" -> {
+                        if (MAJOR_VERSION != targetMajor || MINOR_VERSION != targetMinor) {
+                            pass = true;
+                        }
+                    }
+                    default -> {
+                        ExceptionHandler.handleError("读取" + key + "的注册条件时发现问题: version需要合法的比较符！");
+                        pass = true;
+                    }
+                }
+                if (!pass) {
+                    if (warn) {
+                        ExceptionHandler.handleError(key + "需要服务端版本" + splits[1] + " " + splits[2] + "才能被注册");
+                    }
                     return false;
                 }
             } else if (head.contains("config")) {

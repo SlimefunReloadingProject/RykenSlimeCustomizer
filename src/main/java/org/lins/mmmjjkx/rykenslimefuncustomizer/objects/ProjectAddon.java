@@ -95,6 +95,10 @@ public final class ProjectAddon {
     private List<SlimefunItem> supers = new ArrayList<>();
     // template_machines.yml
     private List<CustomTemplateMachine> templateMachines = new ArrayList<>();
+    // linked_recipe_machines.yml
+    private List<CustomLinkedRecipeMachine> linkedRecipeMachines = new ArrayList<>();
+    // workbenches.yml
+    private List<CustomWorkbench> workbenches = new ArrayList<>();
 
     public File getScriptsFolder() {
         File scripts = new File(folder, "scripts");
@@ -139,6 +143,8 @@ public final class ProjectAddon {
         armors.forEach(l -> l.forEach(this::unregisterItem));
         supers.forEach(this::unregisterItem);
         templateMachines.forEach(this::unregisterItem);
+        linkedRecipeMachines.forEach(this::unregisterItem);
+        workbenches.forEach(this::unregisterItem);
 
         recipeTypes.forEach(r -> RecipeTypeMap.removeRecipeTypes(r.getKey().getKey()));
 
@@ -162,6 +168,8 @@ public final class ProjectAddon {
         armors.clear();
         supers.clear();
         templateMachines.clear();
+        linkedRecipeMachines.clear();
+        workbenches.clear();
         preloadItems.clear();
 
         DropFromBlock.unregisterAddonDrops(this);

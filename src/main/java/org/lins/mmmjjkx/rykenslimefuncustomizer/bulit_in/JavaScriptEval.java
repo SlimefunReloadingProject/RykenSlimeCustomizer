@@ -28,6 +28,7 @@ import org.jetbrains.annotations.Nullable;
 import org.lins.mmmjjkx.rykenslimefuncustomizer.RykenSlimefunCustomizer;
 import org.lins.mmmjjkx.rykenslimefuncustomizer.objects.ProjectAddon;
 import org.lins.mmmjjkx.rykenslimefuncustomizer.objects.script.ScriptEval;
+import org.lins.mmmjjkx.rykenslimefuncustomizer.utils.BlockMenuUtil;
 import org.lins.mmmjjkx.rykenslimefuncustomizer.utils.ExceptionHandler;
 
 public class JavaScriptEval extends ScriptEval {
@@ -55,6 +56,7 @@ public class JavaScriptEval extends ScriptEval {
         addThing("StorageCacheUtils", env.asHostSymbol(StorageCacheUtils.class));
         addThing("SlimefunUtils", env.asHostSymbol(SlimefunUtils.class));
         addThing("BlockMenu", env.asHostSymbol(BlockMenu.class));
+        addThing("BlockMenuUtil", env.asHostSymbol(BlockMenuUtil.class));
 
         for (File file : Objects.requireNonNull(PLUGINS_FOLDER.listFiles())) {
             TruffleFile truffleFile = env.getPublicTruffleFile(file.toURI());
