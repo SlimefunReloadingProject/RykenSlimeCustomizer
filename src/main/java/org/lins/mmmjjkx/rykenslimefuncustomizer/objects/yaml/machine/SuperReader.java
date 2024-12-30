@@ -155,7 +155,10 @@ public class SuperReader extends YamlReader<SlimefunItem> {
                 try {
                     Field field = getField(clazz, fieldName);
 
-                    if (field == null) throw new NoSuchFieldException(fieldName);
+                    if (field == null) {
+                        ExceptionHandler.handleError("在附属" + addon.getAddonId() + "中加载继承物品" + s + "时遇到了问题: " + "没有找到字段" + fieldName);
+                        continue;
+                    }
                     if (Modifier.isStatic(field.getModifiers())) {
                         ExceptionHandler.handleError(
                                 "在附属" + addon.getAddonId() + "中加载继承物品" + s + "时遇到了问题: " + "字段" + fieldName + "为static");
@@ -173,12 +176,16 @@ public class SuperReader extends YamlReader<SlimefunItem> {
                     }
                     Object object = fieldArray.getObject(fieldName, field.getType());
                     field.set(instance, object);
-                } catch (Exception e) {
+                } catch (Throwable e) {
                     ExceptionHandler.handleError("在附属" + addon.getAddonId() + "中加载继承物品" + s + "时遇到了问题: " + "字段修改异常", e);
                 }
             }
         }
-        instance.register(RykenSlimefunCustomizer.INSTANCE);
+        try {
+            instance.register(RykenSlimefunCustomizer.INSTANCE);
+        } catch (Throwable e) {
+            ExceptionHandler.handleError("在附属" + addon.getAddonId() + "中加载继承物品" + s + "时遇到了问题: " + "注册失败", e);
+        }
 
         return instance;
     }
