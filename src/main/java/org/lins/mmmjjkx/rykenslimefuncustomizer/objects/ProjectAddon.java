@@ -215,13 +215,16 @@ public final class ProjectAddon {
                 }
             }
 
-            return id;
+            return id.toUpperCase();
         } else {
             ExceptionHandler.handleError("无法获取id");
             ExceptionHandler.handleError("configuredId: " + configuredId == null ? "null" : configuredId);
             ExceptionHandler.handleError("id_alias: " + id_alias == null ? "null" : id_alias);
             ExceptionHandler.handleError("idPattern: " + idPattern == null ? "null" : idPattern);
-            return "unknown";
+            String randomId = "RSC_UNKNOWN_ID_"+((int) (Math.random()*1_000_000));
+            ExceptionHandler.handleError("分配随机id");
+            ExceptionHandler.handleError("randomId: " + randomId);
+            return randomId;
         }
     }
 }
