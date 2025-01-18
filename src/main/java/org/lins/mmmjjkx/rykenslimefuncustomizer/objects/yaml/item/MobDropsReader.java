@@ -28,7 +28,7 @@ public class MobDropsReader extends YamlReader<CustomMobDrop> {
     public CustomMobDrop readEach(String s) {
         ConfigurationSection section = configuration.getConfigurationSection(s);
         if (section != null) {
-            String id = section.getString("id_alias", s).toUpperCase();
+            String id = addon.getId(s, section.getString("id_alias"));
 
             ExceptionHandler.HandleResult result = ExceptionHandler.handleIdConflict(id);
             if (result == ExceptionHandler.HandleResult.FAILED) return null;
@@ -101,6 +101,6 @@ public class MobDropsReader extends YamlReader<CustomMobDrop> {
             return null;
         }
 
-        return List.of(new SlimefunItemStack(section.getString("id_alias", id).toUpperCase(), stack));
+        return List.of(new SlimefunItemStack(addon.getId(id, section.getString("id_alias")), stack));
     }
 }

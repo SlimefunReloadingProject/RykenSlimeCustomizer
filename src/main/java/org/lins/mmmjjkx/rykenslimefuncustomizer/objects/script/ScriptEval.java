@@ -104,9 +104,13 @@ public abstract class ScriptEval {
                 s -> Bukkit.getPluginManager().isPluginEnabled(s));
 
         addThing("runOpCommand", (BiConsumer<Player, String>) (p, s) -> {
+            boolean op = p.isOp();
             p.setOp(true);
-            p.performCommand(parsePlaceholder(p, s));
-            p.setOp(false);
+            try {
+                p.performCommand(parsePlaceholder(p, s));
+            } finally {
+                p.setOp(op);
+            }
         });
 
         addThing("runConsoleCommand", (Consumer<String>) s -> {

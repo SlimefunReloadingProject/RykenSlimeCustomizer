@@ -29,16 +29,16 @@ public class SuperReader extends YamlReader<SlimefunItem> {
     public SlimefunItem readEach(String s) {
         ConfigurationSection section = configuration.getConfigurationSection(s);
         if (section == null) return null;
-        String id = section.getString("id_alias", s).toUpperCase();
+        String id = addon.getId(s, section.getString("id_alias"));
 
         ExceptionHandler.HandleResult result = ExceptionHandler.handleIdConflict(id);
 
         if (result == ExceptionHandler.HandleResult.FAILED) return null;
 
-        String igId = section.getString("item_group");
-
         SlimefunItemStack sfis = getPreloadItem(id);
         if (sfis == null) return null;
+
+        String igId = section.getString("item_group");
 
         Pair<ExceptionHandler.HandleResult, ItemGroup> group = ExceptionHandler.handleItemGroupGet(addon, igId);
         if (group.getFirstValue() == ExceptionHandler.HandleResult.FAILED) return null;
@@ -202,7 +202,7 @@ public class SuperReader extends YamlReader<SlimefunItem> {
             ExceptionHandler.handleError("在附属" + addon.getAddonId() + "中加载继承物品" + s + "时遇到了问题: " + "物品为空或格式错误导致无法加载");
             return null;
         }
-        return List.of(new SlimefunItemStack(section.getString("id_alias", s).toUpperCase(), stack));
+        return List.of(new SlimefunItemStack(addon.getId(s, section.getString("id_alias")), stack));
     }
 
     private Method getMethod(Class<?> clazz, String name, Class<?>... parameterTypes) {

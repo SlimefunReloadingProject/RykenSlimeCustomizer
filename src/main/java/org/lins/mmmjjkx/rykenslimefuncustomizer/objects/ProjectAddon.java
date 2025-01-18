@@ -32,6 +32,7 @@ import org.lins.mmmjjkx.rykenslimefuncustomizer.objects.customs.parent.AbstractE
 import org.lins.mmmjjkx.rykenslimefuncustomizer.objects.global.DropFromBlock;
 import org.lins.mmmjjkx.rykenslimefuncustomizer.objects.global.RecipeTypeMap;
 import org.lins.mmmjjkx.rykenslimefuncustomizer.objects.global.ScriptableListeners;
+import org.lins.mmmjjkx.rykenslimefuncustomizer.utils.ExceptionHandler;
 
 @RequiredArgsConstructor(access = AccessLevel.PACKAGE)
 @Getter
@@ -53,6 +54,7 @@ public final class ProjectAddon {
     //
     private @Nullable String githubRepo;
     private @Nullable String downloadZipName;
+    private @Nullable String idPattern;
     //
     private @Nullable CustomAddonConfig config;
     //
@@ -196,5 +198,30 @@ public final class ProjectAddon {
 
     private void unregisterGeo(GEOResource resource) {
         Slimefun.getRegistry().getGEOResources().remove(resource.getKey());
+    }
+
+    public String getId(@NotNull String configuredId, @Nullable String id_alias) {
+        String id = configuredId;
+        if (id_alias != null) {
+            id = id_alias;
+        }
+        if (id != null) {
+            if (idPattern != null) {
+                // 当前使用的 id 可能是正常引用的 id，也可能是 idPattern 格式化后的 id
+                // 如果找不到已初始化的 item，则尝试用 idPattern 格式化 id
+                SlimefunItem item = SlimefunItem.getById(id);
+                if (item == null) {
+                    id = idPattern.replaceAll("%0", id);
+                }
+            }
+
+            return id;
+        } else {
+            ExceptionHandler.handleError("无法获取id");
+            ExceptionHandler.handleError("configuredId: " + configuredId == null ? "null" : configuredId);
+            ExceptionHandler.handleError("id_alias: " + id_alias == null ? "null" : id_alias);
+            ExceptionHandler.handleError("idPattern: " + idPattern == null ? "null" : idPattern);
+            return "unknown";
+        }
     }
 }
