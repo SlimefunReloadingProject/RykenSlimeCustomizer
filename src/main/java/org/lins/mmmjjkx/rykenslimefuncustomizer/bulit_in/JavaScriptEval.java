@@ -14,6 +14,8 @@ import com.oracle.truffle.js.runtime.objects.JSObjectUtil;
 import com.oracle.truffle.js.scriptengine.GraalJSScriptEngine;
 import com.xzavier0722.mc.plugin.slimefun4.storage.util.StorageCacheUtils;
 import io.github.thebusybiscuit.slimefun4.api.items.SlimefunItem;
+import io.github.thebusybiscuit.slimefun4.api.player.PlayerProfile;
+import io.github.thebusybiscuit.slimefun4.implementation.Slimefun;
 import io.github.thebusybiscuit.slimefun4.implementation.SlimefunItems;
 import io.github.thebusybiscuit.slimefun4.utils.SlimefunUtils;
 import java.io.File;
@@ -57,6 +59,8 @@ public class JavaScriptEval extends ScriptEval {
         addThing("SlimefunUtils", env.asHostSymbol(SlimefunUtils.class));
         addThing("BlockMenu", env.asHostSymbol(BlockMenu.class));
         addThing("BlockMenuUtil", env.asHostSymbol(BlockMenuUtil.class));
+        addThing("PlayerProfile", env.asHostSymbol(PlayerProfile.class));
+        addThing("Slimefun", env.asHostSymbol(Slimefun.class));
 
         for (File file : Objects.requireNonNull(PLUGINS_FOLDER.listFiles())) {
             TruffleFile truffleFile = env.getPublicTruffleFile(file.toURI());
