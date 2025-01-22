@@ -29,16 +29,16 @@ public class SuperReader extends YamlReader<SlimefunItem> {
     public SlimefunItem readEach(String s) {
         ConfigurationSection section = configuration.getConfigurationSection(s);
         if (section == null) return null;
-        String id = section.getString("id_alias", s).toUpperCase();
+        String id = addon.getId(s, section.getString("id_alias"));
 
         ExceptionHandler.HandleResult result = ExceptionHandler.handleIdConflict(id);
 
         if (result == ExceptionHandler.HandleResult.FAILED) return null;
 
-        String igId = section.getString("item_group");
-
         SlimefunItemStack sfis = getPreloadItem(id);
         if (sfis == null) return null;
+
+        String igId = section.getString("item_group");
 
         Pair<ExceptionHandler.HandleResult, ItemGroup> group = ExceptionHandler.handleItemGroupGet(addon, igId);
         if (group.getFirstValue() == ExceptionHandler.HandleResult.FAILED) return null;
@@ -62,14 +62,38 @@ public class SuperReader extends YamlReader<SlimefunItem> {
             ExceptionHandler.handleError("在附属" + addon.getAddonId() + "中加载继承物品" + s + "时遇到了问题: " + "基类不是粘液物品");
             return null;
         }
-        // a zero-based number
-        int ctorIndex = section.getInt("ctor", 0);
-        if (clazz.getConstructors().length < ctorIndex + 1) {
-            ExceptionHandler.handleError("在附属" + addon.getAddonId() + "中加载继承物品" + s + "时遇到了问题: " + "无效的构造函数");
-            return null;
+
+        // a dangerous option to ignore accessibility
+        // Author: balugaq
+        boolean ignoreAccessible = section.getBoolean("ignore_accessible", false);
+
+        if (ignoreAccessible) {
+            ExceptionHandler.handleWarning(
+                    "在附属" + addon.getAddonId() + "中加载继承物品" + s + "发现了 ignore_accessible 选项被启用，这可能会导致潜在的安全漏洞!");
         }
-        Constructor<? extends SlimefunItem> ctor =
-                (Constructor<? extends SlimefunItem>) clazz.getConstructors()[ctorIndex];
+        // a zero-based number
+        int constructorIndex = section.getInt("ctor", 0);
+        if (clazz.getConstructors().length < constructorIndex + 1) {
+            if (ignoreAccessible) {
+                // try to find a private constructor
+                if (clazz.getDeclaredConstructors().length < constructorIndex + 1) {
+                    ExceptionHandler.handleError("在附属" + addon.getAddonId() + "中加载继承物品" + s + "时遇到了问题: " + "无法找到第 "
+                            + constructorIndex + " 个构造函数");
+                    return null;
+                }
+            } else {
+                ExceptionHandler.handleError("在附属" + addon.getAddonId() + "中加载继承物品" + s + "时遇到了问题: " + "无法找到第 "
+                        + constructorIndex + " 个构造函数");
+                return null;
+            }
+        }
+        Constructor<? extends SlimefunItem> constructor;
+        if (!ignoreAccessible) {
+            constructor = (Constructor<? extends SlimefunItem>) clazz.getConstructors()[constructorIndex];
+        } else {
+            constructor = (Constructor<? extends SlimefunItem>) clazz.getDeclaredConstructors()[constructorIndex];
+        }
+
         Object[] args = section.getList("args", new ArrayList<>()).toArray();
         List<Object> argTemplate =
                 (List<Object>) section.getList("arg_template", List.of("group", "item", "recipe_type", "recipe"));
@@ -87,7 +111,7 @@ public class SuperReader extends YamlReader<SlimefunItem> {
         try {
             List<Object> newArgs = new ArrayList<>(List.of(originArgs));
             newArgs.addAll(List.of(args));
-            instance = ctor.newInstance(newArgs.toArray());
+            instance = constructor.newInstance(newArgs.toArray());
         } catch (InstantiationException | InvocationTargetException | IllegalAccessException e) {
             ExceptionHandler.handleError("在附属" + addon.getAddonId() + "中加载继承物品" + s + "时遇到了问题: " + "无法创建类", e);
             return null;
@@ -115,9 +139,11 @@ public class SuperReader extends YamlReader<SlimefunItem> {
                 }
 
                 try {
-                    method.setAccessible(true);
+                    if (ignoreAccessible) {
+                        method.setAccessible(true);
+                    }
                     method.invoke(instance, args1);
-                } catch (IllegalAccessException | InvocationTargetException e) {
+                } catch (InvocationTargetException | IllegalAccessException e) {
                     ExceptionHandler.handleError("在附属" + addon.getAddonId() + "中加载继承物品" + s + "时遇到了问题: " + "方法调用异常", e);
                 }
             }
@@ -129,23 +155,37 @@ public class SuperReader extends YamlReader<SlimefunItem> {
                 try {
                     Field field = getField(clazz, fieldName);
 
-                    if (field == null) throw new NoSuchFieldException(fieldName);
-                    if (Modifier.isStatic(field.getModifiers()))
-                        throw new IllegalAccessException(
+                    if (field == null) {
+                        ExceptionHandler.handleError("在附属" + addon.getAddonId() + "中加载继承物品" + s + "时遇到了问题: " + "没有找到字段" + fieldName);
+                        continue;
+                    }
+                    if (Modifier.isStatic(field.getModifiers())) {
+                        ExceptionHandler.handleError(
                                 "在附属" + addon.getAddonId() + "中加载继承物品" + s + "时遇到了问题: " + "字段" + fieldName + "为static");
-                    if (Modifier.isFinal(field.getModifiers()))
-                        throw new IllegalAccessException(
-                                "在附属" + addon.getAddonId() + "中加载继承物品" + s + "时遇到了问题: " + "字段" + fieldName + "为final");
+                        return null;
+                    }
 
-                    field.setAccessible(true);
+                    if (Modifier.isFinal(field.getModifiers())) {
+                        ExceptionHandler.handleError(
+                                "在附属" + addon.getAddonId() + "中加载继承物品" + s + "时遇到了问题: " + "字段" + fieldName + "为final");
+                        return null;
+                    }
+
+                    if (ignoreAccessible) {
+                        field.setAccessible(true);
+                    }
                     Object object = fieldArray.getObject(fieldName, field.getType());
                     field.set(instance, object);
-                } catch (Exception e) {
+                } catch (Throwable e) {
                     ExceptionHandler.handleError("在附属" + addon.getAddonId() + "中加载继承物品" + s + "时遇到了问题: " + "字段修改异常", e);
                 }
             }
         }
-        instance.register(RykenSlimefunCustomizer.INSTANCE);
+        try {
+            instance.register(RykenSlimefunCustomizer.INSTANCE);
+        } catch (Throwable e) {
+            ExceptionHandler.handleError("在附属" + addon.getAddonId() + "中加载继承物品" + s + "时遇到了问题: " + "注册失败", e);
+        }
 
         return instance;
     }
@@ -162,7 +202,7 @@ public class SuperReader extends YamlReader<SlimefunItem> {
             ExceptionHandler.handleError("在附属" + addon.getAddonId() + "中加载继承物品" + s + "时遇到了问题: " + "物品为空或格式错误导致无法加载");
             return null;
         }
-        return List.of(new SlimefunItemStack(section.getString("id_alias", s).toUpperCase(), stack));
+        return List.of(new SlimefunItemStack(addon.getId(s, section.getString("id_alias")), stack));
     }
 
     private Method getMethod(Class<?> clazz, String name, Class<?>... parameterTypes) {

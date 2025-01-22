@@ -107,7 +107,7 @@ public class ItemGroupReader extends YamlReader<ItemGroup> {
 
                         List<String> actions = section.getStringList("actions");
 
-                        yield new ItemGroupButton(key, nig, stack, tier, actions);
+                        yield new ItemGroupButton(addon, key, nig, stack, tier, actions);
                     }
                 };
 

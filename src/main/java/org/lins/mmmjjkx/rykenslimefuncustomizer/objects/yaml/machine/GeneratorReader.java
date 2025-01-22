@@ -28,7 +28,7 @@ public class GeneratorReader extends YamlReader<CustomGenerator> {
     public CustomGenerator readEach(String s) {
         ConfigurationSection section = configuration.getConfigurationSection(s);
         if (section == null) return null;
-        String id = section.getString("id_alias", s).toUpperCase();
+        String id = addon.getId(s, section.getString("id_alias"));
 
         ExceptionHandler.HandleResult result = ExceptionHandler.handleIdConflict(id);
 
@@ -89,7 +89,7 @@ public class GeneratorReader extends YamlReader<CustomGenerator> {
             ExceptionHandler.handleError("在附属" + addon.getAddonId() + "中加载发电机" + id + "时遇到了问题: " + "物品为空或格式错误导致无法加载");
             return null;
         }
-        return List.of(new SlimefunItemStack(section.getString("id_alias", id).toUpperCase(), stack));
+        return List.of(new SlimefunItemStack(addon.getId(id, section.getString("id_alias")), stack));
     }
 
     private List<MachineFuel> readFuels(String s, ConfigurationSection section, ProjectAddon addon) {

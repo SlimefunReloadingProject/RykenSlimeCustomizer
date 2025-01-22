@@ -160,6 +160,15 @@ public class ProjectAddonLoader {
                 addon.setConfig(customConfigObj);
                 customConfigObj.tryReload();
             }
+
+            String idPattern = info.getString("idPattern");
+            if (idPattern != null && !idPattern.isBlank()) {
+                if (idPattern.contains("%0")) {
+                    addon.setIdPattern(idPattern);
+                } else {
+                    ExceptionHandler.handleError("在名称为 " + file.getName() + "的文件夹中有无效的配置: idPattern，idPattern 必须包含 %0（原id）");
+                }
+            }
         } else {
             ExceptionHandler.handleError("在名称为 " + file.getName() + "的文件夹中有无效的项目信息，导致此附属无法加载！");
             return null;

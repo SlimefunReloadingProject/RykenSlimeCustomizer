@@ -28,7 +28,7 @@ public class MaterialGeneratorReader extends YamlReader<CustomMaterialGenerator>
     public CustomMaterialGenerator readEach(String s) {
         ConfigurationSection section = configuration.getConfigurationSection(s);
         if (section == null) return null;
-        String id = section.getString("id_alias", s).toUpperCase();
+        String id = addon.getId(s, section.getString("id_alias"));
 
         ExceptionHandler.HandleResult result = ExceptionHandler.handleIdConflict(id);
 
@@ -139,6 +139,6 @@ public class MaterialGeneratorReader extends YamlReader<CustomMaterialGenerator>
             return null;
         }
 
-        return List.of(new SlimefunItemStack(section.getString("id_alias", s).toUpperCase(), stack));
+        return List.of(new SlimefunItemStack(addon.getId(s, section.getString("id_alias")), stack));
     }
 }
