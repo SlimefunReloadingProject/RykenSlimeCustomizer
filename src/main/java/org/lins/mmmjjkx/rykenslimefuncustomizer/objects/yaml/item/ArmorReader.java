@@ -53,9 +53,9 @@ public class ArmorReader extends YamlReader<List<CustomArmorPiece>> {
             ConfigurationSection pieceSection = section.getConfigurationSection(check);
             if (pieceSection == null) continue;
 
-            String pieceId = addon.getId(s, pieceSection.getString("id_alias"));
+            String pieceId = addon.getId(s + "_" + check.toUpperCase(), section.getString("id_alias", pieceSection.getString("id", "")));
 
-            ExceptionHandler.HandleResult result = ExceptionHandler.handleIdConflict(s);
+            ExceptionHandler.HandleResult result = ExceptionHandler.handleIdConflict(pieceId);
             if (result == ExceptionHandler.HandleResult.FAILED) return null;
 
             String recipeType = pieceSection.getString("recipe_type", "NULL");
@@ -131,8 +131,6 @@ public class ArmorReader extends YamlReader<List<CustomArmorPiece>> {
             ConfigurationSection pieceSection = section.getConfigurationSection(check);
             if (pieceSection == null) continue;
 
-            String id = pieceSection.getString("id_alias", pieceSection.getString("id", ""));
-
             ItemStack stack = CommonUtils.readItem(pieceSection, false, addon);
             if (stack == null) {
                 ExceptionHandler.handleError(
@@ -140,7 +138,7 @@ public class ArmorReader extends YamlReader<List<CustomArmorPiece>> {
                 continue;
             }
 
-            SlimefunItemStack sfis = new SlimefunItemStack(addon.getId(s, section.getString("id_alias")), stack);
+            SlimefunItemStack sfis = new SlimefunItemStack(addon.getId(s + "_" + check.toUpperCase(), section.getString("id_alias", pieceSection.getString("id", ""))), stack);
             items.add(sfis);
         }
 
