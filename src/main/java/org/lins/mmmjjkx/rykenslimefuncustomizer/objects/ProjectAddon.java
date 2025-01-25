@@ -21,6 +21,7 @@ import lombok.Setter;
 import org.jetbrains.annotations.NotNull;
 import org.jetbrains.annotations.Nullable;
 import org.lins.mmmjjkx.rykenslimefuncustomizer.bulit_in.JavaScriptEval;
+import org.lins.mmmjjkx.rykenslimefuncustomizer.listeners.ScriptableEventListener;
 import org.lins.mmmjjkx.rykenslimefuncustomizer.objects.customs.CustomAddonConfig;
 import org.lins.mmmjjkx.rykenslimefuncustomizer.objects.customs.CustomMenu;
 import org.lins.mmmjjkx.rykenslimefuncustomizer.objects.customs.item.CustomArmorPiece;
@@ -31,6 +32,7 @@ import org.lins.mmmjjkx.rykenslimefuncustomizer.objects.customs.machine.*;
 import org.lins.mmmjjkx.rykenslimefuncustomizer.objects.customs.parent.AbstractEmptyMachine;
 import org.lins.mmmjjkx.rykenslimefuncustomizer.objects.global.DropFromBlock;
 import org.lins.mmmjjkx.rykenslimefuncustomizer.objects.global.RecipeTypeMap;
+import org.lins.mmmjjkx.rykenslimefuncustomizer.utils.ExceptionHandler;
 
 @RequiredArgsConstructor(access = AccessLevel.PACKAGE)
 @Getter
@@ -200,7 +202,7 @@ public final class ProjectAddon {
         Slimefun.getRegistry().getGEOResources().remove(resource.getKey());
     }
 
-    public String getId(@NotNull String configuredId, @Nullable String id_alias) {
+    public String getId(@Nullable String configuredId, @Nullable String id_alias) {
         String id = configuredId;
         if (id_alias != null) {
             id = id_alias;
