@@ -28,6 +28,7 @@ import io.github.thebusybiscuit.slimefun4.api.events.SlimefunItemSpawnEvent;
 import io.github.thebusybiscuit.slimefun4.api.events.TalismanActivateEvent;
 import io.github.thebusybiscuit.slimefun4.api.events.WaypointCreateEvent;
 import org.bukkit.Bukkit;
+import org.bukkit.event.Event;
 import org.bukkit.event.EventHandler;
 import org.bukkit.event.Listener;
 import org.bukkit.event.block.BlockBreakEvent;
@@ -79,7 +80,6 @@ import org.bukkit.event.entity.EntityChangeBlockEvent;
 import org.bukkit.event.entity.EntityCombustByBlockEvent;
 import org.bukkit.event.entity.EntityCombustByEntityEvent;
 import org.bukkit.event.entity.EntityCombustEvent;
-import org.bukkit.event.entity.EntityCreatePortalEvent;
 import org.bukkit.event.entity.EntityDamageByBlockEvent;
 import org.bukkit.event.entity.EntityDamageByEntityEvent;
 import org.bukkit.event.entity.EntityDamageEvent;
@@ -168,8 +168,6 @@ import org.bukkit.event.player.PlayerBucketEntityEvent;
 import org.bukkit.event.player.PlayerBucketFillEvent;
 import org.bukkit.event.player.PlayerChangedMainHandEvent;
 import org.bukkit.event.player.PlayerChangedWorldEvent;
-import org.bukkit.event.player.PlayerChatEvent;
-import org.bukkit.event.player.PlayerChatTabCompleteEvent;
 import org.bukkit.event.player.PlayerCommandPreprocessEvent;
 import org.bukkit.event.player.PlayerCommandSendEvent;
 import org.bukkit.event.player.PlayerDropItemEvent;
@@ -197,7 +195,6 @@ import org.bukkit.event.player.PlayerMoveEvent;
 import org.bukkit.event.player.PlayerPickupArrowEvent;
 import org.bukkit.event.player.PlayerPickupItemEvent;
 import org.bukkit.event.player.PlayerPortalEvent;
-import org.bukkit.event.player.PlayerPreLoginEvent;
 import org.bukkit.event.player.PlayerQuitEvent;
 import org.bukkit.event.player.PlayerRecipeDiscoverEvent;
 import org.bukkit.event.player.PlayerRegisterChannelEvent;
@@ -258,10 +255,8 @@ import org.bukkit.event.world.WorldInitEvent;
 import org.bukkit.event.world.WorldLoadEvent;
 import org.bukkit.event.world.WorldSaveEvent;
 import org.bukkit.event.world.WorldUnloadEvent;
-import org.lins.mmmjjkx.rykenslimefuncustomizer.RykenSlimefunCustomizer;
-import org.lins.mmmjjkx.rykenslimefuncustomizer.objects.global.ScriptableListeners;
+import org.lins.mmmjjkx.rykenslimefuncustomizer.bulit_in.JavaScriptEval;
 
-@SuppressWarnings("deprecation")
 public class ScriptableEventListener implements Listener {
     /**
      * Events:
@@ -318,7 +313,7 @@ public class ScriptableEventListener implements Listener {
      * {@link EntityCombustByBlockEvent}
      * {@link EntityCombustByEntityEvent}
      * {@link EntityCombustEvent}
-     * {@link EntityCreatePortalEvent}
+     * {@link PortalCreateEvent}
      * {@link EntityDamageByBlockEvent}
      * {@link EntityDamageByEntityEvent}
      * {@link EntityDamageEvent}
@@ -410,8 +405,6 @@ public class ScriptableEventListener implements Listener {
      * {@link PlayerBucketFillEvent}
      * {@link PlayerChangedMainHandEvent}
      * {@link PlayerChangedWorldEvent}
-     * {@link PlayerChatEvent}
-     * {@link PlayerChatTabCompleteEvent}
      * {@link PlayerCommandPreprocessEvent}
      * {@link PlayerCommandSendEvent}
      * {@link PlayerDropItemEvent}
@@ -439,7 +432,6 @@ public class ScriptableEventListener implements Listener {
      * {@link PlayerPickupArrowEvent}
      * {@link PlayerPickupItemEvent}
      * {@link PlayerPortalEvent}
-     * {@link PlayerPreLoginEvent}
      * {@link PlayerQuitEvent}
      * {@link PlayerRecipeDiscoverEvent}
      * {@link PlayerRegisterChannelEvent}
@@ -505,7 +497,7 @@ public class ScriptableEventListener implements Listener {
      * {@link WorldLoadEvent}
      * {@link WorldSaveEvent}
      * {@link WorldUnloadEvent}
-     * slimefun events:
+     * Slimefun events:
      * {@link AncientAltarCraftEvent}
      * {@link AndroidFarmEvent}
      * {@link AndroidMineEvent}
@@ -534,1051 +526,1055 @@ public class ScriptableEventListener implements Listener {
      * {@link TalismanActivateEvent}
      * {@link WaypointCreateEvent}
      */
-    public ScriptableEventListener() {
-        Bukkit.getPluginManager().registerEvents(this, RykenSlimefunCustomizer.INSTANCE);
+    public ScriptableEventListener(JavaScriptEval e) {
+        ctx = new ListenerContext(e);
     }
+
+    private final ListenerContext ctx;
 
     @EventHandler
     public void onEvent(BlockBreakEvent e) {
-        ScriptableListeners.getScriptableListeners().forEach(o -> o.doEventEval(e));
+        ctx.invoke(e);
     }
     @EventHandler
     public void onEvent(BlockBurnEvent e) {
-        ScriptableListeners.getScriptableListeners().forEach(o -> o.doEventEval(e));
+        ctx.invoke(e);
     }
     @EventHandler
     public void onEvent(BlockCanBuildEvent e) {
-        ScriptableListeners.getScriptableListeners().forEach(o -> o.doEventEval(e));
+        ctx.invoke(e);
     }
     @EventHandler
     public void onEvent(BlockCookEvent e) {
-        ScriptableListeners.getScriptableListeners().forEach(o -> o.doEventEval(e));
+        ctx.invoke(e);
     }
     @EventHandler
     public void onEvent(BlockDamageEvent e) {
-        ScriptableListeners.getScriptableListeners().forEach(o -> o.doEventEval(e));
+        ctx.invoke(e);
     }
     @EventHandler
     public void onEvent(BlockDispenseArmorEvent e) {
-        ScriptableListeners.getScriptableListeners().forEach(o -> o.doEventEval(e));
+        ctx.invoke(e);
     }
     @EventHandler
     public void onEvent(BlockDispenseEvent e) {
-        ScriptableListeners.getScriptableListeners().forEach(o -> o.doEventEval(e));
+        ctx.invoke(e);
     }
     @EventHandler
     public void onEvent(BlockDropItemEvent e) {
-        ScriptableListeners.getScriptableListeners().forEach(o -> o.doEventEval(e));
+        ctx.invoke(e);
     }
     @EventHandler
     public void onEvent(BlockExpEvent e) {
-        ScriptableListeners.getScriptableListeners().forEach(o -> o.doEventEval(e));
+        ctx.invoke(e);
     }
     @EventHandler
     public void onEvent(BlockExplodeEvent e) {
-        ScriptableListeners.getScriptableListeners().forEach(o -> o.doEventEval(e));
+        ctx.invoke(e);
     }
     @EventHandler
     public void onEvent(BlockFadeEvent e) {
-        ScriptableListeners.getScriptableListeners().forEach(o -> o.doEventEval(e));
+        ctx.invoke(e);
     }
     @EventHandler
     public void onEvent(BlockFertilizeEvent e) {
-        ScriptableListeners.getScriptableListeners().forEach(o -> o.doEventEval(e));
+        ctx.invoke(e);
     }
     @EventHandler
     public void onEvent(BlockFormEvent e) {
-        ScriptableListeners.getScriptableListeners().forEach(o -> o.doEventEval(e));
+        ctx.invoke(e);
     }
     @EventHandler
     public void onEvent(BlockFromToEvent e) {
-        ScriptableListeners.getScriptableListeners().forEach(o -> o.doEventEval(e));
+        ctx.invoke(e);
     }
     @EventHandler
     public void onEvent(BlockGrowEvent e) {
-        ScriptableListeners.getScriptableListeners().forEach(o -> o.doEventEval(e));
+        ctx.invoke(e);
     }
     @EventHandler
     public void onEvent(BlockIgniteEvent e) {
-        ScriptableListeners.getScriptableListeners().forEach(o -> o.doEventEval(e));
+        ctx.invoke(e);
     }
     @EventHandler
     public void onEvent(BlockMultiPlaceEvent e) {
-        ScriptableListeners.getScriptableListeners().forEach(o -> o.doEventEval(e));
+        ctx.invoke(e);
     }
     @EventHandler
     public void onEvent(BlockPhysicsEvent e) {
-        ScriptableListeners.getScriptableListeners().forEach(o -> o.doEventEval(e));
+        ctx.invoke(e);
     }
     @EventHandler
     public void onEvent(BlockPistonExtendEvent e) {
-        ScriptableListeners.getScriptableListeners().forEach(o -> o.doEventEval(e));
+        ctx.invoke(e);
     }
     @EventHandler
     public void onEvent(BlockPistonRetractEvent e) {
-        ScriptableListeners.getScriptableListeners().forEach(o -> o.doEventEval(e));
+        ctx.invoke(e);
     }
     @EventHandler
     public void onEvent(BlockPlaceEvent e) {
-        ScriptableListeners.getScriptableListeners().forEach(o -> o.doEventEval(e));
+        ctx.invoke(e);
     }
     @EventHandler
     public void onEvent(BlockReceiveGameEvent e) {
-        ScriptableListeners.getScriptableListeners().forEach(o -> o.doEventEval(e));
+        ctx.invoke(e);
     }
     @EventHandler
     public void onEvent(BlockRedstoneEvent e) {
-        ScriptableListeners.getScriptableListeners().forEach(o -> o.doEventEval(e));
+        ctx.invoke(e);
     }
     @EventHandler
     public void onEvent(BlockShearEntityEvent e) {
-        ScriptableListeners.getScriptableListeners().forEach(o -> o.doEventEval(e));
+        ctx.invoke(e);
     }
     @EventHandler
     public void onEvent(BlockSpreadEvent e) {
-        ScriptableListeners.getScriptableListeners().forEach(o -> o.doEventEval(e));
+        ctx.invoke(e);
     }
     @EventHandler
     public void onEvent(CauldronLevelChangeEvent e) {
-        ScriptableListeners.getScriptableListeners().forEach(o -> o.doEventEval(e));
+        ctx.invoke(e);
     }
     @EventHandler
     public void onEvent(EntityBlockFormEvent e) {
-        ScriptableListeners.getScriptableListeners().forEach(o -> o.doEventEval(e));
+        ctx.invoke(e);
     }
     @EventHandler
     public void onEvent(FluidLevelChangeEvent e) {
-        ScriptableListeners.getScriptableListeners().forEach(o -> o.doEventEval(e));
+        ctx.invoke(e);
     }
     @EventHandler
     public void onEvent(LeavesDecayEvent e) {
-        ScriptableListeners.getScriptableListeners().forEach(o -> o.doEventEval(e));
+        ctx.invoke(e);
     }
     @EventHandler
     public void onEvent(MoistureChangeEvent e) {
-        ScriptableListeners.getScriptableListeners().forEach(o -> o.doEventEval(e));
+        ctx.invoke(e);
     }
     @EventHandler
     public void onEvent(NotePlayEvent e) {
-        ScriptableListeners.getScriptableListeners().forEach(o -> o.doEventEval(e));
+        ctx.invoke(e);
     }
     @EventHandler
     public void onEvent(SignChangeEvent e) {
-        ScriptableListeners.getScriptableListeners().forEach(o -> o.doEventEval(e));
+        ctx.invoke(e);
     }
     @EventHandler
     public void onEvent(SpongeAbsorbEvent e) {
-        ScriptableListeners.getScriptableListeners().forEach(o -> o.doEventEval(e));
+        ctx.invoke(e);
     }
     @EventHandler
     public void onEvent(UnknownCommandEvent e) {
-        ScriptableListeners.getScriptableListeners().forEach(o -> o.doEventEval(e));
+        ctx.invoke(e);
     }
     @EventHandler
     public void onEvent(EnchantItemEvent e) {
-        ScriptableListeners.getScriptableListeners().forEach(o -> o.doEventEval(e));
+        ctx.invoke(e);
     }
     @EventHandler
     public void onEvent(PrepareItemEnchantEvent e) {
-        ScriptableListeners.getScriptableListeners().forEach(o -> o.doEventEval(e));
+        ctx.invoke(e);
     }
     @EventHandler
     public void onEvent(AreaEffectCloudApplyEvent e) {
-        ScriptableListeners.getScriptableListeners().forEach(o -> o.doEventEval(e));
+        ctx.invoke(e);
     }
     @EventHandler
     public void onEvent(ArrowBodyCountChangeEvent e) {
-        ScriptableListeners.getScriptableListeners().forEach(o -> o.doEventEval(e));
+        ctx.invoke(e);
     }
     @EventHandler
     public void onEvent(BatToggleSleepEvent e) {
-        ScriptableListeners.getScriptableListeners().forEach(o -> o.doEventEval(e));
+        ctx.invoke(e);
     }
     @EventHandler
     public void onEvent(CreatureSpawnEvent e) {
-        ScriptableListeners.getScriptableListeners().forEach(o -> o.doEventEval(e));
+        ctx.invoke(e);
     }
     @EventHandler
     public void onEvent(CreeperPowerEvent e) {
-        ScriptableListeners.getScriptableListeners().forEach(o -> o.doEventEval(e));
+        ctx.invoke(e);
     }
     @EventHandler
     public void onEvent(EnderDragonChangePhaseEvent e) {
-        ScriptableListeners.getScriptableListeners().forEach(o -> o.doEventEval(e));
+        ctx.invoke(e);
     }
     @EventHandler
     public void onEvent(EntityAirChangeEvent e) {
-        ScriptableListeners.getScriptableListeners().forEach(o -> o.doEventEval(e));
+        ctx.invoke(e);
     }
     @EventHandler
     public void onEvent(EntityBreakDoorEvent e) {
-        ScriptableListeners.getScriptableListeners().forEach(o -> o.doEventEval(e));
+        ctx.invoke(e);
     }
     @EventHandler
     public void onEvent(EntityBreedEvent e) {
-        ScriptableListeners.getScriptableListeners().forEach(o -> o.doEventEval(e));
+        ctx.invoke(e);
     }
     @EventHandler
     public void onEvent(EntityChangeBlockEvent e) {
-        ScriptableListeners.getScriptableListeners().forEach(o -> o.doEventEval(e));
+        ctx.invoke(e);
     }
     @EventHandler
     public void onEvent(EntityCombustByBlockEvent e) {
-        ScriptableListeners.getScriptableListeners().forEach(o -> o.doEventEval(e));
+        ctx.invoke(e);
     }
     @EventHandler
     public void onEvent(EntityCombustByEntityEvent e) {
-        ScriptableListeners.getScriptableListeners().forEach(o -> o.doEventEval(e));
+        ctx.invoke(e);
     }
     @EventHandler
     public void onEvent(EntityCombustEvent e) {
-        ScriptableListeners.getScriptableListeners().forEach(o -> o.doEventEval(e));
+        ctx.invoke(e);
     }
     @EventHandler
     public void onEvent(EntityDamageByBlockEvent e) {
-        ScriptableListeners.getScriptableListeners().forEach(o -> o.doEventEval(e));
+        ctx.invoke(e);
     }
     @EventHandler
     public void onEvent(EntityDamageByEntityEvent e) {
-        ScriptableListeners.getScriptableListeners().forEach(o -> o.doEventEval(e));
+        ctx.invoke(e);
     }
     @EventHandler
     public void onEvent(EntityDamageEvent e) {
-        ScriptableListeners.getScriptableListeners().forEach(o -> o.doEventEval(e));
+        ctx.invoke(e);
     }
     @EventHandler
     public void onEvent(EntityDeathEvent e) {
-        ScriptableListeners.getScriptableListeners().forEach(o -> o.doEventEval(e));
+        ctx.invoke(e);
     }
     @EventHandler
     public void onEvent(EntityDropItemEvent e) {
-        ScriptableListeners.getScriptableListeners().forEach(o -> o.doEventEval(e));
+        ctx.invoke(e);
     }
     @EventHandler
     public void onEvent(EntityEnterBlockEvent e) {
-        ScriptableListeners.getScriptableListeners().forEach(o -> o.doEventEval(e));
+        ctx.invoke(e);
     }
     @EventHandler
     public void onEvent(EntityEnterLoveModeEvent e) {
-        ScriptableListeners.getScriptableListeners().forEach(o -> o.doEventEval(e));
+        ctx.invoke(e);
     }
     @EventHandler
     public void onEvent(EntityExhaustionEvent e) {
-        ScriptableListeners.getScriptableListeners().forEach(o -> o.doEventEval(e));
+        ctx.invoke(e);
     }
     @EventHandler
     public void onEvent(EntityExplodeEvent e) {
-        ScriptableListeners.getScriptableListeners().forEach(o -> o.doEventEval(e));
+        ctx.invoke(e);
     }
     @EventHandler
     public void onEvent(EntityInteractEvent e) {
-        ScriptableListeners.getScriptableListeners().forEach(o -> o.doEventEval(e));
+        ctx.invoke(e);
     }
     @EventHandler
     public void onEvent(EntityPickupItemEvent e) {
-        ScriptableListeners.getScriptableListeners().forEach(o -> o.doEventEval(e));
+        ctx.invoke(e);
     }
     @EventHandler
     public void onEvent(EntityPlaceEvent e) {
-        ScriptableListeners.getScriptableListeners().forEach(o -> o.doEventEval(e));
+        ctx.invoke(e);
     }
     @EventHandler
     public void onEvent(EntityPortalEnterEvent e) {
-        ScriptableListeners.getScriptableListeners().forEach(o -> o.doEventEval(e));
+        ctx.invoke(e);
     }
     @EventHandler
     public void onEvent(EntityPortalExitEvent e) {
-        ScriptableListeners.getScriptableListeners().forEach(o -> o.doEventEval(e));
+        ctx.invoke(e);
     }
     @EventHandler
     public void onEvent(EntityPoseChangeEvent e) {
-        ScriptableListeners.getScriptableListeners().forEach(o -> o.doEventEval(e));
+        ctx.invoke(e);
     }
     @EventHandler
     public void onEvent(EntityPotionEffectEvent e) {
-        ScriptableListeners.getScriptableListeners().forEach(o -> o.doEventEval(e));
+        ctx.invoke(e);
     }
     @EventHandler
     public void onEvent(EntityRegainHealthEvent e) {
-        ScriptableListeners.getScriptableListeners().forEach(o -> o.doEventEval(e));
+        ctx.invoke(e);
     }
     @EventHandler
     public void onEvent(EntityResurrectEvent e) {
-        ScriptableListeners.getScriptableListeners().forEach(o -> o.doEventEval(e));
+        ctx.invoke(e);
     }
     @EventHandler
     public void onEvent(EntityShootBowEvent e) {
-        ScriptableListeners.getScriptableListeners().forEach(o -> o.doEventEval(e));
+        ctx.invoke(e);
     }
     @EventHandler
     public void onEvent(EntitySpawnEvent e) {
-        ScriptableListeners.getScriptableListeners().forEach(o -> o.doEventEval(e));
+        ctx.invoke(e);
     }
     @EventHandler
     public void onEvent(EntitySpellCastEvent e) {
-        ScriptableListeners.getScriptableListeners().forEach(o -> o.doEventEval(e));
+        ctx.invoke(e);
     }
     @EventHandler
     public void onEvent(EntityTameEvent e) {
-        ScriptableListeners.getScriptableListeners().forEach(o -> o.doEventEval(e));
+        ctx.invoke(e);
     }
     @EventHandler
     public void onEvent(EntityTargetEvent e) {
-        ScriptableListeners.getScriptableListeners().forEach(o -> o.doEventEval(e));
+        ctx.invoke(e);
     }
     @EventHandler
     public void onEvent(EntityTargetLivingEntityEvent e) {
-        ScriptableListeners.getScriptableListeners().forEach(o -> o.doEventEval(e));
+        ctx.invoke(e);
     }
     @EventHandler
     public void onEvent(EntityTeleportEvent e) {
-        ScriptableListeners.getScriptableListeners().forEach(o -> o.doEventEval(e));
+        ctx.invoke(e);
     }
     @EventHandler
     public void onEvent(EntityToggleGlideEvent e) {
-        ScriptableListeners.getScriptableListeners().forEach(o -> o.doEventEval(e));
+        ctx.invoke(e);
     }
     @EventHandler
     public void onEvent(EntityToggleSwimEvent e) {
-        ScriptableListeners.getScriptableListeners().forEach(o -> o.doEventEval(e));
+        ctx.invoke(e);
     }
     @EventHandler
     public void onEvent(EntityTransformEvent e) {
-        ScriptableListeners.getScriptableListeners().forEach(o -> o.doEventEval(e));
+        ctx.invoke(e);
     }
     @EventHandler
     public void onEvent(EntityUnleashEvent e) {
-        ScriptableListeners.getScriptableListeners().forEach(o -> o.doEventEval(e));
+        ctx.invoke(e);
     }
     @EventHandler
     public void onEvent(ExpBottleEvent e) {
-        ScriptableListeners.getScriptableListeners().forEach(o -> o.doEventEval(e));
+        ctx.invoke(e);
     }
     @EventHandler
     public void onEvent(ExplosionPrimeEvent e) {
-        ScriptableListeners.getScriptableListeners().forEach(o -> o.doEventEval(e));
+        ctx.invoke(e);
     }
     @EventHandler
     public void onEvent(FireworkExplodeEvent e) {
-        ScriptableListeners.getScriptableListeners().forEach(o -> o.doEventEval(e));
+        ctx.invoke(e);
     }
     @EventHandler
     public void onEvent(FoodLevelChangeEvent e) {
-        ScriptableListeners.getScriptableListeners().forEach(o -> o.doEventEval(e));
+        ctx.invoke(e);
     }
     @EventHandler
     public void onEvent(HorseJumpEvent e) {
-        ScriptableListeners.getScriptableListeners().forEach(o -> o.doEventEval(e));
+        ctx.invoke(e);
     }
     @EventHandler
     public void onEvent(ItemDespawnEvent e) {
-        ScriptableListeners.getScriptableListeners().forEach(o -> o.doEventEval(e));
+        ctx.invoke(e);
     }
     @EventHandler
     public void onEvent(ItemMergeEvent e) {
-        ScriptableListeners.getScriptableListeners().forEach(o -> o.doEventEval(e));
+        ctx.invoke(e);
     }
     @EventHandler
     public void onEvent(ItemSpawnEvent e) {
-        ScriptableListeners.getScriptableListeners().forEach(o -> o.doEventEval(e));
+        ctx.invoke(e);
     }
     @EventHandler
     public void onEvent(LingeringPotionSplashEvent e) {
-        ScriptableListeners.getScriptableListeners().forEach(o -> o.doEventEval(e));
+        ctx.invoke(e);
     }
     @EventHandler
     public void onEvent(PigZapEvent e) {
-        ScriptableListeners.getScriptableListeners().forEach(o -> o.doEventEval(e));
+        ctx.invoke(e);
     }
     @EventHandler
     public void onEvent(PigZombieAngerEvent e) {
-        ScriptableListeners.getScriptableListeners().forEach(o -> o.doEventEval(e));
+        ctx.invoke(e);
     }
     @EventHandler
     public void onEvent(PiglinBarterEvent e) {
-        ScriptableListeners.getScriptableListeners().forEach(o -> o.doEventEval(e));
+        ctx.invoke(e);
     }
     @EventHandler
     public void onEvent(PlayerDeathEvent e) {
-        ScriptableListeners.getScriptableListeners().forEach(o -> o.doEventEval(e));
+        ctx.invoke(e);
     }
     @EventHandler
     public void onEvent(PlayerLeashEntityEvent e) {
-        ScriptableListeners.getScriptableListeners().forEach(o -> o.doEventEval(e));
+        ctx.invoke(e);
     }
     @EventHandler
     public void onEvent(PotionSplashEvent e) {
-        ScriptableListeners.getScriptableListeners().forEach(o -> o.doEventEval(e));
+        ctx.invoke(e);
     }
     @EventHandler
     public void onEvent(ProjectileHitEvent e) {
-        ScriptableListeners.getScriptableListeners().forEach(o -> o.doEventEval(e));
+        ctx.invoke(e);
     }
     @EventHandler
     public void onEvent(ProjectileLaunchEvent e) {
-        ScriptableListeners.getScriptableListeners().forEach(o -> o.doEventEval(e));
+        ctx.invoke(e);
     }
     @EventHandler
     public void onEvent(SheepDyeWoolEvent e) {
-        ScriptableListeners.getScriptableListeners().forEach(o -> o.doEventEval(e));
+        ctx.invoke(e);
     }
     @EventHandler
     public void onEvent(SheepRegrowWoolEvent e) {
-        ScriptableListeners.getScriptableListeners().forEach(o -> o.doEventEval(e));
+        ctx.invoke(e);
     }
     @EventHandler
     public void onEvent(SlimeSplitEvent e) {
-        ScriptableListeners.getScriptableListeners().forEach(o -> o.doEventEval(e));
+        ctx.invoke(e);
     }
     @EventHandler
     public void onEvent(SpawnerSpawnEvent e) {
-        ScriptableListeners.getScriptableListeners().forEach(o -> o.doEventEval(e));
+        ctx.invoke(e);
     }
     @EventHandler
     public void onEvent(StriderTemperatureChangeEvent e) {
-        ScriptableListeners.getScriptableListeners().forEach(o -> o.doEventEval(e));
+        ctx.invoke(e);
     }
     @EventHandler
     public void onEvent(VillagerAcquireTradeEvent e) {
-        ScriptableListeners.getScriptableListeners().forEach(o -> o.doEventEval(e));
+        ctx.invoke(e);
     }
     @EventHandler
     public void onEvent(VillagerCareerChangeEvent e) {
-        ScriptableListeners.getScriptableListeners().forEach(o -> o.doEventEval(e));
+        ctx.invoke(e);
     }
     @EventHandler
     public void onEvent(VillagerReplenishTradeEvent e) {
-        ScriptableListeners.getScriptableListeners().forEach(o -> o.doEventEval(e));
+        ctx.invoke(e);
     }
     @EventHandler
     public void onEvent(HangingBreakByEntityEvent e) {
-        ScriptableListeners.getScriptableListeners().forEach(o -> o.doEventEval(e));
+        ctx.invoke(e);
     }
     @EventHandler
     public void onEvent(HangingBreakEvent e) {
-        ScriptableListeners.getScriptableListeners().forEach(o -> o.doEventEval(e));
+        ctx.invoke(e);
     }
     @EventHandler
     public void onEvent(HangingPlaceEvent e) {
-        ScriptableListeners.getScriptableListeners().forEach(o -> o.doEventEval(e));
+        ctx.invoke(e);
     }
     @EventHandler
     public void onEvent(BrewEvent e) {
-        ScriptableListeners.getScriptableListeners().forEach(o -> o.doEventEval(e));
+        ctx.invoke(e);
     }
     @EventHandler
     public void onEvent(BrewingStandFuelEvent e) {
-        ScriptableListeners.getScriptableListeners().forEach(o -> o.doEventEval(e));
+        ctx.invoke(e);
     }
     @EventHandler
     public void onEvent(CraftItemEvent e) {
-        ScriptableListeners.getScriptableListeners().forEach(o -> o.doEventEval(e));
+        ctx.invoke(e);
     }
     @EventHandler
     public void onEvent(FurnaceBurnEvent e) {
-        ScriptableListeners.getScriptableListeners().forEach(o -> o.doEventEval(e));
+        ctx.invoke(e);
     }
     @EventHandler
     public void onEvent(FurnaceExtractEvent e) {
-        ScriptableListeners.getScriptableListeners().forEach(o -> o.doEventEval(e));
+        ctx.invoke(e);
     }
     @EventHandler
     public void onEvent(FurnaceSmeltEvent e) {
-        ScriptableListeners.getScriptableListeners().forEach(o -> o.doEventEval(e));
+        ctx.invoke(e);
     }
     @EventHandler
     public void onEvent(InventoryClickEvent e) {
-        ScriptableListeners.getScriptableListeners().forEach(o -> o.doEventEval(e));
+        ctx.invoke(e);
     }
     @EventHandler
     public void onEvent(InventoryCloseEvent e) {
-        ScriptableListeners.getScriptableListeners().forEach(o -> o.doEventEval(e));
+        ctx.invoke(e);
     }
     @EventHandler
     public void onEvent(InventoryCreativeEvent e) {
-        ScriptableListeners.getScriptableListeners().forEach(o -> o.doEventEval(e));
+        ctx.invoke(e);
     }
     @EventHandler
     public void onEvent(InventoryDragEvent e) {
-        ScriptableListeners.getScriptableListeners().forEach(o -> o.doEventEval(e));
+        ctx.invoke(e);
     }
     @EventHandler
     public void onEvent(InventoryMoveItemEvent e) {
-        ScriptableListeners.getScriptableListeners().forEach(o -> o.doEventEval(e));
+        ctx.invoke(e);
     }
     @EventHandler
     public void onEvent(InventoryOpenEvent e) {
-        ScriptableListeners.getScriptableListeners().forEach(o -> o.doEventEval(e));
+        ctx.invoke(e);
     }
     @EventHandler
     public void onEvent(InventoryPickupItemEvent e) {
-        ScriptableListeners.getScriptableListeners().forEach(o -> o.doEventEval(e));
+        ctx.invoke(e);
     }
     @EventHandler
     public void onEvent(PrepareAnvilEvent e) {
-        ScriptableListeners.getScriptableListeners().forEach(o -> o.doEventEval(e));
+        ctx.invoke(e);
     }
     @EventHandler
     public void onEvent(PrepareItemCraftEvent e) {
-        ScriptableListeners.getScriptableListeners().forEach(o -> o.doEventEval(e));
+        ctx.invoke(e);
     }
     @EventHandler
     public void onEvent(PrepareSmithingEvent e) {
-        ScriptableListeners.getScriptableListeners().forEach(o -> o.doEventEval(e));
+        ctx.invoke(e);
     }
     @EventHandler
     public void onEvent(SmithItemEvent e) {
-        ScriptableListeners.getScriptableListeners().forEach(o -> o.doEventEval(e));
+        ctx.invoke(e);
     }
     @EventHandler
     public void onEvent(TradeSelectEvent e) {
-        ScriptableListeners.getScriptableListeners().forEach(o -> o.doEventEval(e));
+        ctx.invoke(e);
     }
     @EventHandler
     public void onEvent(AsyncPlayerChatEvent e) {
-        ScriptableListeners.getScriptableListeners().forEach(o -> o.doEventEval(e));
+        ctx.invoke(e);
     }
     @EventHandler
     public void onEvent(AsyncPlayerPreLoginEvent e) {
-        ScriptableListeners.getScriptableListeners().forEach(o -> o.doEventEval(e));
+        ctx.invoke(e);
     }
     @EventHandler
     public void onEvent(PlayerAdvancementDoneEvent e) {
-        ScriptableListeners.getScriptableListeners().forEach(o -> o.doEventEval(e));
+        ctx.invoke(e);
     }
     @EventHandler
     public void onEvent(PlayerAnimationEvent e) {
-        ScriptableListeners.getScriptableListeners().forEach(o -> o.doEventEval(e));
+        ctx.invoke(e);
     }
     @EventHandler
     public void onEvent(PlayerArmorStandManipulateEvent e) {
-        ScriptableListeners.getScriptableListeners().forEach(o -> o.doEventEval(e));
+        ctx.invoke(e);
     }
     @EventHandler
     public void onEvent(PlayerAttemptPickupItemEvent e) {
-        ScriptableListeners.getScriptableListeners().forEach(o -> o.doEventEval(e));
+        ctx.invoke(e);
     }
     @EventHandler
     public void onEvent(PlayerBedEnterEvent e) {
-        ScriptableListeners.getScriptableListeners().forEach(o -> o.doEventEval(e));
+        ctx.invoke(e);
     }
     @EventHandler
     public void onEvent(PlayerBedLeaveEvent e) {
-        ScriptableListeners.getScriptableListeners().forEach(o -> o.doEventEval(e));
+        ctx.invoke(e);
     }
     @EventHandler
     public void onEvent(PlayerBucketEmptyEvent e) {
-        ScriptableListeners.getScriptableListeners().forEach(o -> o.doEventEval(e));
+        ctx.invoke(e);
     }
     @EventHandler
     public void onEvent(PlayerBucketEntityEvent e) {
-        ScriptableListeners.getScriptableListeners().forEach(o -> o.doEventEval(e));
+        ctx.invoke(e);
     }
     @EventHandler
     public void onEvent(PlayerBucketFillEvent e) {
-        ScriptableListeners.getScriptableListeners().forEach(o -> o.doEventEval(e));
+        ctx.invoke(e);
     }
     @EventHandler
     public void onEvent(PlayerChangedMainHandEvent e) {
-        ScriptableListeners.getScriptableListeners().forEach(o -> o.doEventEval(e));
+        ctx.invoke(e);
     }
     @EventHandler
     public void onEvent(PlayerChangedWorldEvent e) {
-        ScriptableListeners.getScriptableListeners().forEach(o -> o.doEventEval(e));
-    }
-    @EventHandler
-    public void onEvent(PlayerChatEvent e) {
-        ScriptableListeners.getScriptableListeners().forEach(o -> o.doEventEval(e));
-    }
-    @EventHandler
-    public void onEvent(PlayerChatTabCompleteEvent e) {
-        ScriptableListeners.getScriptableListeners().forEach(o -> o.doEventEval(e));
+        ctx.invoke(e);
     }
     @EventHandler
     public void onEvent(PlayerCommandPreprocessEvent e) {
-        ScriptableListeners.getScriptableListeners().forEach(o -> o.doEventEval(e));
+        ctx.invoke(e);
     }
     @EventHandler
     public void onEvent(PlayerCommandSendEvent e) {
-        ScriptableListeners.getScriptableListeners().forEach(o -> o.doEventEval(e));
+        ctx.invoke(e);
     }
     @EventHandler
     public void onEvent(PlayerDropItemEvent e) {
-        ScriptableListeners.getScriptableListeners().forEach(o -> o.doEventEval(e));
+        ctx.invoke(e);
     }
     @EventHandler
     public void onEvent(PlayerEditBookEvent e) {
-        ScriptableListeners.getScriptableListeners().forEach(o -> o.doEventEval(e));
+        ctx.invoke(e);
     }
     @EventHandler
     public void onEvent(PlayerEggThrowEvent e) {
-        ScriptableListeners.getScriptableListeners().forEach(o -> o.doEventEval(e));
+        ctx.invoke(e);
     }
     @EventHandler
     public void onEvent(PlayerExpChangeEvent e) {
-        ScriptableListeners.getScriptableListeners().forEach(o -> o.doEventEval(e));
+        ctx.invoke(e);
     }
     @EventHandler
     public void onEvent(PlayerFishEvent e) {
-        ScriptableListeners.getScriptableListeners().forEach(o -> o.doEventEval(e));
+        ctx.invoke(e);
     }
     @EventHandler
     public void onEvent(PlayerGameModeChangeEvent e) {
-        ScriptableListeners.getScriptableListeners().forEach(o -> o.doEventEval(e));
+        ctx.invoke(e);
     }
     @EventHandler
     public void onEvent(PlayerHarvestBlockEvent e) {
-        ScriptableListeners.getScriptableListeners().forEach(o -> o.doEventEval(e));
+        ctx.invoke(e);
     }
     @EventHandler
     public void onEvent(PlayerHideEntityEvent e) {
-        ScriptableListeners.getScriptableListeners().forEach(o -> o.doEventEval(e));
+        ctx.invoke(e);
     }
     @EventHandler
     public void onEvent(PlayerInteractAtEntityEvent e) {
-        ScriptableListeners.getScriptableListeners().forEach(o -> o.doEventEval(e));
+        ctx.invoke(e);
     }
     @EventHandler
     public void onEvent(PlayerInteractEntityEvent e) {
-        ScriptableListeners.getScriptableListeners().forEach(o -> o.doEventEval(e));
+        ctx.invoke(e);
     }
     @EventHandler
     public void onEvent(PlayerInteractEvent e) {
-        ScriptableListeners.getScriptableListeners().forEach(o -> o.doEventEval(e));
+        ctx.invoke(e);
     }
     @EventHandler
     public void onEvent(PlayerItemBreakEvent e) {
-        ScriptableListeners.getScriptableListeners().forEach(o -> o.doEventEval(e));
+        ctx.invoke(e);
     }
     @EventHandler
     public void onEvent(PlayerItemConsumeEvent e) {
-        ScriptableListeners.getScriptableListeners().forEach(o -> o.doEventEval(e));
+        ctx.invoke(e);
     }
     @EventHandler
     public void onEvent(PlayerItemDamageEvent e) {
-        ScriptableListeners.getScriptableListeners().forEach(o -> o.doEventEval(e));
+        ctx.invoke(e);
     }
     @EventHandler
     public void onEvent(PlayerItemHeldEvent e) {
-        ScriptableListeners.getScriptableListeners().forEach(o -> o.doEventEval(e));
+        ctx.invoke(e);
     }
     @EventHandler
     public void onEvent(PlayerItemMendEvent e) {
-        ScriptableListeners.getScriptableListeners().forEach(o -> o.doEventEval(e));
+        ctx.invoke(e);
     }
     @EventHandler
     public void onEvent(PlayerJoinEvent e) {
-        ScriptableListeners.getScriptableListeners().forEach(o -> o.doEventEval(e));
+        ctx.invoke(e);
     }
     @EventHandler
     public void onEvent(PlayerKickEvent e) {
-        ScriptableListeners.getScriptableListeners().forEach(o -> o.doEventEval(e));
+        ctx.invoke(e);
     }
     @EventHandler
     public void onEvent(PlayerLevelChangeEvent e) {
-        ScriptableListeners.getScriptableListeners().forEach(o -> o.doEventEval(e));
+        ctx.invoke(e);
     }
     @EventHandler
     public void onEvent(PlayerLocaleChangeEvent e) {
-        ScriptableListeners.getScriptableListeners().forEach(o -> o.doEventEval(e));
+        ctx.invoke(e);
     }
     @EventHandler
     public void onEvent(PlayerLoginEvent e) {
-        ScriptableListeners.getScriptableListeners().forEach(o -> o.doEventEval(e));
+        ctx.invoke(e);
     }
     @EventHandler
     public void onEvent(PlayerMoveEvent e) {
-        ScriptableListeners.getScriptableListeners().forEach(o -> o.doEventEval(e));
+        ctx.invoke(e);
     }
     @EventHandler
     public void onEvent(PlayerPickupArrowEvent e) {
-        ScriptableListeners.getScriptableListeners().forEach(o -> o.doEventEval(e));
+        ctx.invoke(e);
     }
     @EventHandler
     public void onEvent(PlayerPickupItemEvent e) {
-        ScriptableListeners.getScriptableListeners().forEach(o -> o.doEventEval(e));
+        ctx.invoke(e);
     }
     @EventHandler
     public void onEvent(PlayerPortalEvent e) {
-        ScriptableListeners.getScriptableListeners().forEach(o -> o.doEventEval(e));
-    }
-    @EventHandler
-    public void onEvent(PlayerPreLoginEvent e) {
-        ScriptableListeners.getScriptableListeners().forEach(o -> o.doEventEval(e));
+        ctx.invoke(e);
     }
     @EventHandler
     public void onEvent(PlayerQuitEvent e) {
-        ScriptableListeners.getScriptableListeners().forEach(o -> o.doEventEval(e));
+        ctx.invoke(e);
     }
     @EventHandler
     public void onEvent(PlayerRecipeDiscoverEvent e) {
-        ScriptableListeners.getScriptableListeners().forEach(o -> o.doEventEval(e));
+        ctx.invoke(e);
     }
     @EventHandler
     public void onEvent(PlayerRegisterChannelEvent e) {
-        ScriptableListeners.getScriptableListeners().forEach(o -> o.doEventEval(e));
+        ctx.invoke(e);
     }
     @EventHandler
     public void onEvent(PlayerResourcePackStatusEvent e) {
-        ScriptableListeners.getScriptableListeners().forEach(o -> o.doEventEval(e));
+        ctx.invoke(e);
     }
     @EventHandler
     public void onEvent(PlayerRespawnEvent e) {
-        ScriptableListeners.getScriptableListeners().forEach(o -> o.doEventEval(e));
+        ctx.invoke(e);
     }
     @EventHandler
     public void onEvent(PlayerRiptideEvent e) {
-        ScriptableListeners.getScriptableListeners().forEach(o -> o.doEventEval(e));
+        ctx.invoke(e);
     }
     @EventHandler
     public void onEvent(PlayerShearEntityEvent e) {
-        ScriptableListeners.getScriptableListeners().forEach(o -> o.doEventEval(e));
+        ctx.invoke(e);
     }
     @EventHandler
     public void onEvent(PlayerShowEntityEvent e) {
-        ScriptableListeners.getScriptableListeners().forEach(o -> o.doEventEval(e));
+        ctx.invoke(e);
     }
     @EventHandler
     public void onEvent(PlayerStatisticIncrementEvent e) {
-        ScriptableListeners.getScriptableListeners().forEach(o -> o.doEventEval(e));
+        ctx.invoke(e);
     }
     @EventHandler
     public void onEvent(PlayerSwapHandItemsEvent e) {
-        ScriptableListeners.getScriptableListeners().forEach(o -> o.doEventEval(e));
+        ctx.invoke(e);
     }
     @EventHandler
     public void onEvent(PlayerTakeLecternBookEvent e) {
-        ScriptableListeners.getScriptableListeners().forEach(o -> o.doEventEval(e));
+        ctx.invoke(e);
     }
     @EventHandler
     public void onEvent(PlayerTeleportEvent e) {
-        ScriptableListeners.getScriptableListeners().forEach(o -> o.doEventEval(e));
+        ctx.invoke(e);
     }
     @EventHandler
     public void onEvent(PlayerToggleFlightEvent e) {
-        ScriptableListeners.getScriptableListeners().forEach(o -> o.doEventEval(e));
+        ctx.invoke(e);
     }
     @EventHandler
     public void onEvent(PlayerToggleSneakEvent e) {
-        ScriptableListeners.getScriptableListeners().forEach(o -> o.doEventEval(e));
+        ctx.invoke(e);
     }
     @EventHandler
     public void onEvent(PlayerToggleSprintEvent e) {
-        ScriptableListeners.getScriptableListeners().forEach(o -> o.doEventEval(e));
+        ctx.invoke(e);
     }
     @EventHandler
     public void onEvent(PlayerUnleashEntityEvent e) {
-        ScriptableListeners.getScriptableListeners().forEach(o -> o.doEventEval(e));
+        ctx.invoke(e);
     }
     @EventHandler
     public void onEvent(PlayerUnregisterChannelEvent e) {
-        ScriptableListeners.getScriptableListeners().forEach(o -> o.doEventEval(e));
+        ctx.invoke(e);
     }
     @EventHandler
     public void onEvent(PlayerVelocityEvent e) {
-        ScriptableListeners.getScriptableListeners().forEach(o -> o.doEventEval(e));
+        ctx.invoke(e);
     }
     @EventHandler
     public void onEvent(RaidFinishEvent e) {
-        ScriptableListeners.getScriptableListeners().forEach(o -> o.doEventEval(e));
+        ctx.invoke(e);
     }
     @EventHandler
     public void onEvent(RaidSpawnWaveEvent e) {
-        ScriptableListeners.getScriptableListeners().forEach(o -> o.doEventEval(e));
+        ctx.invoke(e);
     }
     @EventHandler
     public void onEvent(RaidStopEvent e) {
-        ScriptableListeners.getScriptableListeners().forEach(o -> o.doEventEval(e));
+        ctx.invoke(e);
     }
     @EventHandler
     public void onEvent(RaidTriggerEvent e) {
-        ScriptableListeners.getScriptableListeners().forEach(o -> o.doEventEval(e));
+        ctx.invoke(e);
     }
     @EventHandler
     public void onEvent(BroadcastMessageEvent e) {
-        ScriptableListeners.getScriptableListeners().forEach(o -> o.doEventEval(e));
+        ctx.invoke(e);
     }
     @EventHandler
     public void onEvent(MapInitializeEvent e) {
-        ScriptableListeners.getScriptableListeners().forEach(o -> o.doEventEval(e));
+        ctx.invoke(e);
     }
     @EventHandler
     public void onEvent(PluginDisableEvent e) {
-        ScriptableListeners.getScriptableListeners().forEach(o -> o.doEventEval(e));
+        ctx.invoke(e);
     }
     @EventHandler
     public void onEvent(PluginEnableEvent e) {
-        ScriptableListeners.getScriptableListeners().forEach(o -> o.doEventEval(e));
+        ctx.invoke(e);
     }
     @EventHandler
     public void onEvent(RemoteServerCommandEvent e) {
-        ScriptableListeners.getScriptableListeners().forEach(o -> o.doEventEval(e));
+        ctx.invoke(e);
     }
     @EventHandler
     public void onEvent(ServerCommandEvent e) {
-        ScriptableListeners.getScriptableListeners().forEach(o -> o.doEventEval(e));
+        ctx.invoke(e);
     }
     @EventHandler
     public void onEvent(ServerListPingEvent e) {
-        ScriptableListeners.getScriptableListeners().forEach(o -> o.doEventEval(e));
+        ctx.invoke(e);
     }
     @EventHandler
     public void onEvent(ServerLoadEvent e) {
-        ScriptableListeners.getScriptableListeners().forEach(o -> o.doEventEval(e));
+        ctx.invoke(e);
     }
     @EventHandler
     public void onEvent(ServiceRegisterEvent e) {
-        ScriptableListeners.getScriptableListeners().forEach(o -> o.doEventEval(e));
+        ctx.invoke(e);
     }
     @EventHandler
     public void onEvent(ServiceUnregisterEvent e) {
-        ScriptableListeners.getScriptableListeners().forEach(o -> o.doEventEval(e));
+        ctx.invoke(e);
     }
     @EventHandler
     public void onEvent(TabCompleteEvent e) {
-        ScriptableListeners.getScriptableListeners().forEach(o -> o.doEventEval(e));
+        ctx.invoke(e);
     }
     @EventHandler
     public void onEvent(VehicleBlockCollisionEvent e) {
-        ScriptableListeners.getScriptableListeners().forEach(o -> o.doEventEval(e));
+        ctx.invoke(e);
     }
     @EventHandler
     public void onEvent(VehicleCreateEvent e) {
-        ScriptableListeners.getScriptableListeners().forEach(o -> o.doEventEval(e));
+        ctx.invoke(e);
     }
     @EventHandler
     public void onEvent(VehicleDamageEvent e) {
-        ScriptableListeners.getScriptableListeners().forEach(o -> o.doEventEval(e));
+        ctx.invoke(e);
     }
     @EventHandler
     public void onEvent(VehicleDestroyEvent e) {
-        ScriptableListeners.getScriptableListeners().forEach(o -> o.doEventEval(e));
+        ctx.invoke(e);
     }
     @EventHandler
     public void onEvent(VehicleEnterEvent e) {
-        ScriptableListeners.getScriptableListeners().forEach(o -> o.doEventEval(e));
+        ctx.invoke(e);
     }
     @EventHandler
     public void onEvent(VehicleEntityCollisionEvent e) {
-        ScriptableListeners.getScriptableListeners().forEach(o -> o.doEventEval(e));
+        ctx.invoke(e);
     }
     @EventHandler
     public void onEvent(VehicleExitEvent e) {
-        ScriptableListeners.getScriptableListeners().forEach(o -> o.doEventEval(e));
+        ctx.invoke(e);
     }
     @EventHandler
     public void onEvent(VehicleMoveEvent e) {
-        ScriptableListeners.getScriptableListeners().forEach(o -> o.doEventEval(e));
+        ctx.invoke(e);
     }
     @EventHandler
     public void onEvent(VehicleUpdateEvent e) {
-        ScriptableListeners.getScriptableListeners().forEach(o -> o.doEventEval(e));
+        ctx.invoke(e);
     }
     @EventHandler
     public void onEvent(LightningStrikeEvent e) {
-        ScriptableListeners.getScriptableListeners().forEach(o -> o.doEventEval(e));
+        ctx.invoke(e);
     }
     @EventHandler
     public void onEvent(ThunderChangeEvent e) {
-        ScriptableListeners.getScriptableListeners().forEach(o -> o.doEventEval(e));
+        ctx.invoke(e);
     }
     @EventHandler
     public void onEvent(WeatherChangeEvent e) {
-        ScriptableListeners.getScriptableListeners().forEach(o -> o.doEventEval(e));
+        ctx.invoke(e);
     }
     @EventHandler
     public void onEvent(ChunkLoadEvent e) {
-        ScriptableListeners.getScriptableListeners().forEach(o -> o.doEventEval(e));
+        ctx.invoke(e);
     }
     @EventHandler
     public void onEvent(ChunkPopulateEvent e) {
-        ScriptableListeners.getScriptableListeners().forEach(o -> o.doEventEval(e));
+        ctx.invoke(e);
     }
     @EventHandler
     public void onEvent(ChunkUnloadEvent e) {
-        ScriptableListeners.getScriptableListeners().forEach(o -> o.doEventEval(e));
+        ctx.invoke(e);
     }
     @EventHandler
     public void onEvent(EntitiesLoadEvent e) {
-        ScriptableListeners.getScriptableListeners().forEach(o -> o.doEventEval(e));
+        ctx.invoke(e);
     }
     @EventHandler
     public void onEvent(EntitiesUnloadEvent e) {
-        ScriptableListeners.getScriptableListeners().forEach(o -> o.doEventEval(e));
+        ctx.invoke(e);
     }
     @EventHandler
     public void onEvent(GenericGameEvent e) {
-        ScriptableListeners.getScriptableListeners().forEach(o -> o.doEventEval(e));
+        ctx.invoke(e);
     }
     @EventHandler
     public void onEvent(LootGenerateEvent e) {
-        ScriptableListeners.getScriptableListeners().forEach(o -> o.doEventEval(e));
+        ctx.invoke(e);
     }
     @EventHandler
     public void onEvent(PortalCreateEvent e) {
-        ScriptableListeners.getScriptableListeners().forEach(o -> o.doEventEval(e));
+        ctx.invoke(e);
     }
     @EventHandler
     public void onEvent(SpawnChangeEvent e) {
-        ScriptableListeners.getScriptableListeners().forEach(o -> o.doEventEval(e));
+        ctx.invoke(e);
     }
     @EventHandler
     public void onEvent(StructureGrowEvent e) {
-        ScriptableListeners.getScriptableListeners().forEach(o -> o.doEventEval(e));
+        ctx.invoke(e);
     }
     @EventHandler
     public void onEvent(TimeSkipEvent e) {
-        ScriptableListeners.getScriptableListeners().forEach(o -> o.doEventEval(e));
+        ctx.invoke(e);
     }
     @EventHandler
     public void onEvent(WorldInitEvent e) {
-        ScriptableListeners.getScriptableListeners().forEach(o -> o.doEventEval(e));
+        ctx.invoke(e);
     }
     @EventHandler
     public void onEvent(WorldLoadEvent e) {
-        ScriptableListeners.getScriptableListeners().forEach(o -> o.doEventEval(e));
+        ctx.invoke(e);
     }
     @EventHandler
     public void onEvent(WorldSaveEvent e) {
-        ScriptableListeners.getScriptableListeners().forEach(o -> o.doEventEval(e));
+        ctx.invoke(e);
     }
     @EventHandler
     public void onEvent(WorldUnloadEvent e) {
-        ScriptableListeners.getScriptableListeners().forEach(o -> o.doEventEval(e));
+        ctx.invoke(e);
     }
 
     @EventHandler
     public void onAncientAltarCraft(AncientAltarCraftEvent e) {
-        ScriptableListeners.getScriptableListeners().forEach(o -> o.doEventEval(e));
+        ctx.invoke(e);
     }
 
     @EventHandler
     public void onAndroidFarm(AndroidFarmEvent e) {
-        ScriptableListeners.getScriptableListeners().forEach(o -> o.doEventEval(e));
+        ctx.invoke(e);
     }
 
     @EventHandler
     public void onAndroidMine(AndroidMineEvent e) {
-        ScriptableListeners.getScriptableListeners().forEach(o -> o.doEventEval(e));
+        ctx.invoke(e);
     }
 
     @EventHandler
     public void onAsyncAutoEnchanterProcess(AsyncAutoEnchanterProcessEvent e) {
-        ScriptableListeners.getScriptableListeners().forEach(o -> o.doEventEval(e));
+        ctx.invoke(e);
     }
 
     @EventHandler
     public void onAsyncMachineOperationFinish(AsyncMachineOperationFinishEvent e) {
-        ScriptableListeners.getScriptableListeners().forEach(o -> o.doEventEval(e));
+        ctx.invoke(e);
     }
 
     @EventHandler
     public void onAsyncProfileLoad(AsyncProfileLoadEvent e) {
-        ScriptableListeners.getScriptableListeners().forEach(o -> o.doEventEval(e));
+        ctx.invoke(e);
     }
 
     @EventHandler
     public void onAutoDisenchant(AutoDisenchantEvent e) {
-        ScriptableListeners.getScriptableListeners().forEach(o -> o.doEventEval(e));
+        ctx.invoke(e);
     }
 
     @EventHandler
     public void onAutoEnchant(AutoEnchantEvent e) {
-        ScriptableListeners.getScriptableListeners().forEach(o -> o.doEventEval(e));
+        ctx.invoke(e);
     }
 
     @EventHandler
     public void onBlockPlacerPlace(BlockPlacerPlaceEvent e) {
-        ScriptableListeners.getScriptableListeners().forEach(o -> o.doEventEval(e));
+        ctx.invoke(e);
     }
 
     @EventHandler
     public void onClimbingPickLaunch(ClimbingPickLaunchEvent e) {
-        ScriptableListeners.getScriptableListeners().forEach(o -> o.doEventEval(e));
+        ctx.invoke(e);
     }
 
     @EventHandler
     public void onCoolerFeedPlayer(CoolerFeedPlayerEvent e) {
-        ScriptableListeners.getScriptableListeners().forEach(o -> o.doEventEval(e));
+        ctx.invoke(e);
     }
 
     @EventHandler
     public void onExplosiveToolBreakBlocks(ExplosiveToolBreakBlocksEvent e) {
-        ScriptableListeners.getScriptableListeners().forEach(o -> o.doEventEval(e));
+        ctx.invoke(e);
     }
 
     @EventHandler
     public void onGEOResourceGeneration(GEOResourceGenerationEvent e) {
-        ScriptableListeners.getScriptableListeners().forEach(o -> o.doEventEval(e));
+        ctx.invoke(e);
     }
 
     @EventHandler
     public void onMultiBlockCraft(MultiBlockCraftEvent e) {
-        ScriptableListeners.getScriptableListeners().forEach(o -> o.doEventEval(e));
+        ctx.invoke(e);
     }
 
     @EventHandler
     public void onMultiBlockInteract(MultiBlockInteractEvent e) {
-        ScriptableListeners.getScriptableListeners().forEach(o -> o.doEventEval(e));
+        ctx.invoke(e);
     }
 
     @EventHandler
     public void onPlayerLanguageChange(PlayerLanguageChangeEvent e) {
-        ScriptableListeners.getScriptableListeners().forEach(o -> o.doEventEval(e));
+        ctx.invoke(e);
     }
 
     @EventHandler
     public void onPlayerPreResearch(PlayerPreResearchEvent e) {
-        ScriptableListeners.getScriptableListeners().forEach(o -> o.doEventEval(e));
+        ctx.invoke(e);
     }
 
     @EventHandler
     public void onPlayerRightClick(PlayerRightClickEvent e) {
-        ScriptableListeners.getScriptableListeners().forEach(o -> o.doEventEval(e));
+        ctx.invoke(e);
     }
 
     @EventHandler
     public void onReactorExplode(ReactorExplodeEvent e) {
-        ScriptableListeners.getScriptableListeners().forEach(o -> o.doEventEval(e));
+        ctx.invoke(e);
     }
 
     @EventHandler
     public void onResearchUnlock(ResearchUnlockEvent e) {
-        ScriptableListeners.getScriptableListeners().forEach(o -> o.doEventEval(e));
+        ctx.invoke(e);
     }
 
     @EventHandler
     public void onSlimefunBlockBreak(SlimefunBlockBreakEvent e) {
-        ScriptableListeners.getScriptableListeners().forEach(o -> o.doEventEval(e));
+        ctx.invoke(e);
     }
 
     @EventHandler
     public void onSlimefunBlockPlace(SlimefunBlockPlaceEvent e) {
-        ScriptableListeners.getScriptableListeners().forEach(o -> o.doEventEval(e));
+        ctx.invoke(e);
     }
 
     @EventHandler
     public void onSlimefunGuideOpen(SlimefunGuideOpenEvent e) {
-        ScriptableListeners.getScriptableListeners().forEach(o -> o.doEventEval(e));
+        ctx.invoke(e);
     }
 
     @EventHandler
     public void onSlimefunItemRegistryFinalized(SlimefunItemRegistryFinalizedEvent e) {
-        ScriptableListeners.getScriptableListeners().forEach(o -> o.doEventEval(e));
+        ctx.invoke(e);
     }
 
     @EventHandler
     public void onSlimefunItemSpawn(SlimefunItemSpawnEvent e) {
-        ScriptableListeners.getScriptableListeners().forEach(o -> o.doEventEval(e));
+        ctx.invoke(e);
     }
 
     @EventHandler
     public void onTalismanActivate(TalismanActivateEvent e) {
-        ScriptableListeners.getScriptableListeners().forEach(o -> o.doEventEval(e));
+        ctx.invoke(e);
     }
 
     @EventHandler
     public void onWaypointCreate(WaypointCreateEvent e) {
-        ScriptableListeners.getScriptableListeners().forEach(o -> o.doEventEval(e));
+        ctx.invoke(e);
+    }
+
+    class ListenerContext {
+        private final JavaScriptEval eval;
+
+        ListenerContext(JavaScriptEval eval) {
+            this.eval = eval;
+        }
+
+        public <T extends Event> void invoke(T event) {
+            String className = event.getClass().getSimpleName();
+            String methodName = "on" + className.replace("Event", "");
+            eval.evalFunction(methodName, event);
+        }
     }
 }

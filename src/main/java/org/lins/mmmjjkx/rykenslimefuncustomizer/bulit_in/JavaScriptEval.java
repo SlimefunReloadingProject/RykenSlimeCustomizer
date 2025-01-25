@@ -117,6 +117,10 @@ public class JavaScriptEval extends ScriptEval {
             contextInit();
         }
 
+        if (!jsEngine.getPolyglotContext().getPolyglotBindings().hasMember(funName)) {
+            return null;
+        }
+
         try {
             return jsEngine.invokeFunction(funName, args);
         } catch (IllegalStateException e) {

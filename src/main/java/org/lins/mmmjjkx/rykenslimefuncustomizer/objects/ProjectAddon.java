@@ -31,8 +31,6 @@ import org.lins.mmmjjkx.rykenslimefuncustomizer.objects.customs.machine.*;
 import org.lins.mmmjjkx.rykenslimefuncustomizer.objects.customs.parent.AbstractEmptyMachine;
 import org.lins.mmmjjkx.rykenslimefuncustomizer.objects.global.DropFromBlock;
 import org.lins.mmmjjkx.rykenslimefuncustomizer.objects.global.RecipeTypeMap;
-import org.lins.mmmjjkx.rykenslimefuncustomizer.objects.global.ScriptableListeners;
-import org.lins.mmmjjkx.rykenslimefuncustomizer.utils.ExceptionHandler;
 
 @RequiredArgsConstructor(access = AccessLevel.PACKAGE)
 @Getter
@@ -57,6 +55,8 @@ public final class ProjectAddon {
     private @Nullable String idPattern;
     //
     private @Nullable CustomAddonConfig config;
+    //
+    private @Nullable ScriptableEventListener eventListener;
     //
     private List<JavaScriptEval> scriptEvals = new ArrayList<>();
     // groups.yml
@@ -175,7 +175,7 @@ public final class ProjectAddon {
         preloadItems.clear();
 
         DropFromBlock.unregisterAddonDrops(this);
-        ScriptableListeners.removeScriptableListener(addonId);
+
 
         if (config != null) {
             if (config.onReloadHandler() != null) {
