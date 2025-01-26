@@ -117,22 +117,23 @@ public class JavaScriptEval extends ScriptEval {
             contextInit();
         }
 
-        if (!jsEngine.getPolyglotContext().getPolyglotBindings().hasMember(funName)) {
-            return null;
-        }
-
         try {
-            return jsEngine.invokeFunction(funName, args);
+            Object result = jsEngine.invokeFunction(funName, args);
+            ExceptionHandler.debugLog("运行了 " + getAddon().getAddonName() + "的脚本" + getFile().getName() + "中的函数 " + funName);
+            return result;
         } catch (IllegalStateException e) {
             String message = e.getMessage();
             if (!message.contains("Multi threaded access")) {
-                ExceptionHandler.handleError("在运行" + getFile().getName() + "时发生错误");
+                ExceptionHandler.handleError("在运行附属" + getAddon().getAddonName() + "的脚本" + getFile().getName() + "时发生错误");
                 e.printStackTrace();
             }
         } catch (ScriptException e) {
-            ExceptionHandler.handleError("在运行" + getFile().getName() + "时发生错误");
+            ExceptionHandler.handleError("在运行" + getAddon().getAddonName() + "的脚本" + getFile().getName() + "时发生错误");
             e.printStackTrace();
         } catch (NoSuchMethodException ignored) {
+        } catch (Throwable e) {
+            ExceptionHandler.handleError("在运行" + getAddon().getAddonName() + "的脚本" + getFile().getName() + "时发生意外错误");
+            e.printStackTrace();
         }
 
         return null;

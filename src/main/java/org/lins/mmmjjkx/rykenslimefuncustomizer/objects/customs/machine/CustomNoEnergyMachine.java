@@ -84,7 +84,7 @@ public class CustomNoEnergyMachine extends AbstractEmptyMachine<MachineOperation
                 public void onPlayerPlace(@NotNull BlockPlaceEvent e) {
                     CustomNoEnergyMachine.this.eval.evalFunction("onPlace", e);
                 }
-            }, (BlockUseHandler) e -> CustomNoEnergyMachine.this.eval.evalFunction("onUse", e),
+            }, 
             new BlockBreakHandler(false, false) {
                 @Override
                 public void onPlayerBreak(@NotNull BlockBreakEvent e, @NotNull ItemStack item, @NotNull List<ItemStack> drops) {
@@ -103,8 +103,8 @@ public class CustomNoEnergyMachine extends AbstractEmptyMachine<MachineOperation
                     this.menu.addMenuClickHandler(workSlot, new RSCClickHandler() {
                         @Override
                         public void mainFunction(Player player, int slot, ItemStack itemStack, ClickAction action) {
-                            if (eval != null) {
-                                eval.addThing("working", true);
+                            if (CustomNoEnergyMachine.this.eval != null) {
+                                CustomNoEnergyMachine.this.eval.addThing("working", true);
                             }
                         }
 
