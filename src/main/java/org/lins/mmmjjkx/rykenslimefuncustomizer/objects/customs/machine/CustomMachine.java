@@ -71,7 +71,7 @@ public class CustomMachine extends AbstractEmptyMachine<MachineOperation> implem
                 public void onPlayerPlace(@NotNull BlockPlaceEvent e) {
                     CustomMachine.this.eval.evalFunction("onPlace", e);
                 }
-            }, (BlockUseHandler) e -> CustomMachine.this.eval.evalFunction("onUse", e),
+            },
             new BlockBreakHandler(false, false) {
                 @Override
                 public void onPlayerBreak(@NotNull BlockBreakEvent e, @NotNull ItemStack item, @NotNull List<ItemStack> drops) {

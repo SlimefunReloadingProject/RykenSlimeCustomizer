@@ -103,8 +103,8 @@ public class CustomNoEnergyMachine extends AbstractEmptyMachine<MachineOperation
                     this.menu.addMenuClickHandler(workSlot, new RSCClickHandler() {
                         @Override
                         public void mainFunction(Player player, int slot, ItemStack itemStack, ClickAction action) {
-                            if (eval != null) {
-                                eval.addThing("working", true);
+                            if (CustomNoEnergyMachine.this.eval != null) {
+                                CustomNoEnergyMachine.this.eval.addThing("working", true);
                             }
                         }
 
