@@ -6,7 +6,7 @@
 
 	<groupId>org.lins.mmmjjkx</groupId>
 	<artifactId>RykenSlimefunCustomizer</artifactId>
-	<version>19</version>
+	<version>20</version>
 	<packaging>jar</packaging>
 
 	<name>RykenSlimefunCustomizer</name>
