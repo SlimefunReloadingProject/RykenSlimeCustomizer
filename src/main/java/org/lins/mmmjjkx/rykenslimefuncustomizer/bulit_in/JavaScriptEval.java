@@ -19,7 +19,9 @@ import io.github.thebusybiscuit.slimefun4.implementation.Slimefun;
 import io.github.thebusybiscuit.slimefun4.implementation.SlimefunItems;
 import io.github.thebusybiscuit.slimefun4.utils.SlimefunUtils;
 import java.io.File;
+import java.util.HashSet;
 import java.util.Objects;
+import java.util.Set;
 import javax.script.ScriptException;
 import me.mrCookieSlime.Slimefun.api.inventory.BlockMenu;
 import org.graalvm.polyglot.Context;
@@ -36,6 +38,7 @@ import org.lins.mmmjjkx.rykenslimefuncustomizer.utils.ExceptionHandler;
 public class JavaScriptEval extends ScriptEval {
     private static final File PLUGINS_FOLDER = RykenSlimefunCustomizer.INSTANCE.getDataFolder().getParentFile();
     private static final String[] packages = {"io", "net"};
+    private final Set<String> failed_functions = new HashSet<>();
 
     private GraalJSScriptEngine jsEngine;
 
@@ -117,6 +120,11 @@ public class JavaScriptEval extends ScriptEval {
             contextInit();
         }
 
+        // a simple fix for the optimization
+        if (failed_functions.contains(funName)) {
+            return null;
+        }
+
         try {
             Object result = jsEngine.invokeFunction(funName, args);
             ExceptionHandler.debugLog("运行了 " + getAddon().getAddonName() + "的脚本" + getFile().getName() + "中的函数 " + funName);
@@ -131,6 +139,8 @@ public class JavaScriptEval extends ScriptEval {
             ExceptionHandler.handleError("在运行" + getAddon().getAddonName() + "的脚本" + getFile().getName() + "时发生错误");
             e.printStackTrace();
         } catch (NoSuchMethodException ignored) {
+            // won't log it, because listeners always send a lot of functions
+            failed_functions.add(funName);
         } catch (Throwable e) {
             ExceptionHandler.handleError("在运行" + getAddon().getAddonName() + "的脚本" + getFile().getName() + "时发生意外错误");
             e.printStackTrace();
