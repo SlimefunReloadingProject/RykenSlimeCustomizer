@@ -1,15 +1,11 @@
 package org.lins.mmmjjkx.rykenslimefuncustomizer.objects.customs;
 
-import io.github.thebusybiscuit.slimefun4.utils.SlimefunUtils;
-import lombok.Getter;
-import me.mrCookieSlime.Slimefun.api.inventory.BlockMenu;
-import org.bukkit.inventory.ItemStack;
-import org.lins.mmmjjkx.rykenslimefuncustomizer.utils.ExceptionHandler;
-
 import java.util.ArrayList;
-import java.util.Arrays;
 import java.util.List;
 import java.util.Map;
+import lombok.Getter;
+import org.bukkit.inventory.ItemStack;
+import org.lins.mmmjjkx.rykenslimefuncustomizer.utils.ExceptionHandler;
 
 @Getter
 public class LinkedOutput {
@@ -17,7 +13,12 @@ public class LinkedOutput {
     private final Map<Integer, ItemStack> linkedOutput;
     private final int[] freeChances;
     private final Map<Integer, Integer> linkedChances;
-    public LinkedOutput(ItemStack[] freeOutput, Map<Integer, ItemStack> linkedOutput, int[] freeChances, Map<Integer, Integer> linkedChances) {
+
+    public LinkedOutput(
+            ItemStack[] freeOutput,
+            Map<Integer, ItemStack> linkedOutput,
+            int[] freeChances,
+            Map<Integer, Integer> linkedChances) {
         this.freeOutput = freeOutput;
         this.linkedOutput = linkedOutput;
         this.freeChances = freeChances;
@@ -37,12 +38,12 @@ public class LinkedOutput {
     }
 
     public List<Integer> chancesToArray() {
-         List<Integer> result = new ArrayList<>(freeChances.length + linkedChances.size());
-         for (int chance : freeChances) {
-             result.add(chance);
-         }
-         result.addAll(linkedChances.values());
-         return result;
+        List<Integer> result = new ArrayList<>(freeChances.length + linkedChances.size());
+        for (int chance : freeChances) {
+            result.add(chance);
+        }
+        result.addAll(linkedChances.values());
+        return result;
     }
 
     public void log() {

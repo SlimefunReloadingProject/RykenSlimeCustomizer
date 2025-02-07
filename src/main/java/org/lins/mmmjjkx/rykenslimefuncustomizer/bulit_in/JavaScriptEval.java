@@ -3,11 +3,8 @@ package org.lins.mmmjjkx.rykenslimefuncustomizer.bulit_in;
 import com.google.errorprone.annotations.CanIgnoreReturnValue;
 import com.oracle.truffle.api.TruffleFile;
 import com.oracle.truffle.api.TruffleLanguage;
-import com.oracle.truffle.api.strings.TruffleString;
-import com.oracle.truffle.js.builtins.JavaBuiltinsOverride;
 import com.oracle.truffle.js.lang.JavaScriptLanguage;
 import com.oracle.truffle.js.runtime.JSRealm;
-import com.oracle.truffle.js.runtime.java.JavaPackage;
 import com.oracle.truffle.js.runtime.objects.JSAttributes;
 import com.oracle.truffle.js.runtime.objects.JSObject;
 import com.oracle.truffle.js.runtime.objects.JSObjectUtil;
@@ -34,8 +31,8 @@ import org.lins.mmmjjkx.rykenslimefuncustomizer.utils.BlockMenuUtil;
 import org.lins.mmmjjkx.rykenslimefuncustomizer.utils.ExceptionHandler;
 
 public class JavaScriptEval extends ScriptEval {
-    private static final File PLUGINS_FOLDER = RykenSlimefunCustomizer.INSTANCE.getDataFolder().getParentFile();
-    private static final String[] packages = {"io", "net"};
+    private static final File PLUGINS_FOLDER =
+            RykenSlimefunCustomizer.INSTANCE.getDataFolder().getParentFile();
 
     private GraalJSScriptEngine jsEngine;
 
@@ -69,14 +66,8 @@ public class JavaScriptEval extends ScriptEval {
             }
         }
 
-        for (String packageName : packages) {
-            TruffleString str = TruffleString.fromConstant(packageName, TruffleString.Encoding.UTF_8);
-            JSObjectUtil.putDataProperty(realm.getGlobalObject(), str, JavaPackage.createInit(realm, str), JSAttributes.getDefaultNotEnumerable());
-        }
-
         JSObject java = JSObjectUtil.createOrdinaryPrototypeObject(realm);
         JSObjectUtil.putToStringTag(java, JSRealm.JAVA_CLASS_NAME);
-        JSObjectUtil.putFunctionsFromContainer(realm, java, new JavaBuiltinsOverride());
 
         JSObjectUtil.putDataProperty(realm.getGlobalObject(), "Java", java, JSAttributes.getDefaultNotEnumerable());
     }
@@ -151,7 +142,8 @@ public class JavaScriptEval extends ScriptEval {
                         .allowValueSharing(true)
                         .allowHostClassLoading(true)
                         .allowIO(IOAccess.ALL)
-                        .allowHostClassLookup(s -> true));
+                        .allowHostClassLookup(s -> true)
+                        .hostClassLoader(ClassLoader.getSystemClassLoader()));
 
         advancedSetup();
     }

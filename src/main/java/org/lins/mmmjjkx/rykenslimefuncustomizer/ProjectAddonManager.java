@@ -61,6 +61,11 @@ public final class ProjectAddonManager {
         List<String> skip = new ArrayList<>();
 
         for (File folder : folders) {
+            if (folder.isFile()) {
+                ExceptionHandler.handleError(folder.getName() + " 不是文件夹！无法加载此附属！");
+                continue;
+            }
+
             File info = new File(folder, Constants.INFO_FILE);
             if (!info.exists()) {
                 ExceptionHandler.handleError("在名称为 " + folder.getName() + "的文件夹中有无效的附属信息，导致此附属无法加载！");

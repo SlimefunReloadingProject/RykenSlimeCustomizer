@@ -4,15 +4,13 @@ import io.github.thebusybiscuit.slimefun4.api.items.ItemGroup;
 import io.github.thebusybiscuit.slimefun4.api.items.SlimefunItem;
 import io.github.thebusybiscuit.slimefun4.api.items.groups.NestedItemGroup;
 import io.github.thebusybiscuit.slimefun4.api.items.groups.SubItemGroup;
-
-import java.io.File;
-import java.util.List;
-import java.util.Optional;
-
 import io.github.thebusybiscuit.slimefun4.api.player.PlayerProfile;
 import io.github.thebusybiscuit.slimefun4.core.guide.SlimefunGuideImplementation;
 import io.github.thebusybiscuit.slimefun4.core.guide.SlimefunGuideMode;
 import io.github.thebusybiscuit.slimefun4.implementation.Slimefun;
+import java.io.File;
+import java.util.List;
+import java.util.Optional;
 import me.mrCookieSlime.CSCoreLibPlugin.general.Inventory.ClickAction;
 import net.md_5.bungee.api.ChatColor;
 import net.md_5.bungee.api.chat.ClickEvent;
@@ -34,7 +32,12 @@ public class ItemGroupButton extends SubItemGroup {
     private final ProjectAddon addon;
 
     public ItemGroupButton(
-            ProjectAddon addon, NamespacedKey key, NestedItemGroup parent, ItemStack item, int tier, @Nullable List<String> actions) {
+            ProjectAddon addon,
+            NamespacedKey key,
+            NestedItemGroup parent,
+            ItemStack item,
+            int tier,
+            @Nullable List<String> actions) {
         super(key, parent, item, tier);
 
         this.addon = addon;
@@ -73,7 +76,8 @@ public class ItemGroupButton extends SubItemGroup {
                     }
                     case "open_itemgroup" -> {
                         if (content.split(":").length < 2) {
-                            ExceptionHandler.handleWarning("在" + getKey().getKey() + "物品组按钮中发现未知的物品组 NamespacedKey: " + content);
+                            ExceptionHandler.handleWarning(
+                                    "在" + getKey().getKey() + "物品组按钮中发现未知的物品组 NamespacedKey: " + content);
                             continue;
                         }
                         String namespace = content.split(":")[0];
@@ -87,13 +91,16 @@ public class ItemGroupButton extends SubItemGroup {
                         }
                         Optional<PlayerProfile> Oprofile = PlayerProfile.find(p);
                         if (Oprofile.isEmpty()) {
-                            ExceptionHandler.handleWarning("在" + getKey().getKey() + "物品组按钮中发现无法获取 PlayerProfile: " + p.getName());
+                            ExceptionHandler.handleWarning(
+                                    "在" + getKey().getKey() + "物品组按钮中发现无法获取 PlayerProfile: " + p.getName());
                             continue;
                         }
                         PlayerProfile profile = Oprofile.get();
                         for (ItemGroup group : Slimefun.getRegistry().getAllItemGroups()) {
-                            if (group.getKey().getNamespace().equals(namespace) && group.getKey().getKey().equals(key)) {
-                                SlimefunGuideImplementation implementation = Slimefun.getRegistry().getSlimefunGuide(mode);
+                            if (group.getKey().getNamespace().equals(namespace)
+                                    && group.getKey().getKey().equals(key)) {
+                                SlimefunGuideImplementation implementation =
+                                        Slimefun.getRegistry().getSlimefunGuide(mode);
                                 implementation.openItemGroup(profile, group, page);
                             }
                         }
@@ -101,16 +108,19 @@ public class ItemGroupButton extends SubItemGroup {
                     case "display_slimefunitem" -> {
                         Optional<PlayerProfile> Oprofile = PlayerProfile.find(p);
                         if (Oprofile.isEmpty()) {
-                            ExceptionHandler.handleWarning("在" + getKey().getKey() + "物品组按钮中发现无法获取 PlayerProfile: " + p.getName());
+                            ExceptionHandler.handleWarning(
+                                    "在" + getKey().getKey() + "物品组按钮中发现无法获取 PlayerProfile: " + p.getName());
                             continue;
                         }
                         SlimefunItem item = SlimefunItem.getById(content);
                         if (item == null) {
-                            ExceptionHandler.handleWarning("在" + getKey().getKey() + "物品组按钮中发现未知的 SlimefunItem ID: " + content);
+                            ExceptionHandler.handleWarning(
+                                    "在" + getKey().getKey() + "物品组按钮中发现未知的 SlimefunItem ID: " + content);
                             continue;
                         }
                         PlayerProfile profile = Oprofile.get();
-                        SlimefunGuideImplementation implementation = Slimefun.getRegistry().getSlimefunGuide(mode);
+                        SlimefunGuideImplementation implementation =
+                                Slimefun.getRegistry().getSlimefunGuide(mode);
                         implementation.displayItem(profile, item, true);
                     }
                     case "script" -> {

@@ -11,12 +11,10 @@ import io.github.thebusybiscuit.slimefun4.implementation.handlers.SimpleBlockBre
 import io.github.thebusybiscuit.slimefun4.implementation.operations.CraftingOperation;
 import io.github.thebusybiscuit.slimefun4.libraries.dough.items.CustomItemStack;
 import io.github.thebusybiscuit.slimefun4.utils.ChestMenuUtils;
-
 import java.util.ArrayList;
 import java.util.HashMap;
 import java.util.List;
 import java.util.Map;
-
 import lombok.Getter;
 import me.mrCookieSlime.Slimefun.Objects.SlimefunItem.abstractItems.AContainer;
 import me.mrCookieSlime.Slimefun.api.inventory.BlockMenu;
@@ -227,7 +225,8 @@ public class CustomLinkedRecipeMachine extends AContainer implements RecipeDispl
                     } else {
                         CustomLinkedMachineRecipe currentRecipe = currentOperation.getRecipe();
                         if (currentRecipe != null) {
-                            BlockMenuUtil.pushItem(inv, currentRecipe.getLinkedOutput(), currentRecipe.isChooseOneIfHas());
+                            BlockMenuUtil.pushItem(
+                                    inv, currentRecipe.getLinkedOutput(), currentRecipe.isChooseOneIfHas());
                         }
 
                         ItemStack progress;
@@ -255,8 +254,7 @@ public class CustomLinkedRecipeMachine extends AContainer implements RecipeDispl
         }
     }
 
-    @Nullable
-    public CustomLinkedMachineRecipe findNextLinkedRecipe(BlockMenu blockMenu) {
+    @Nullable public CustomLinkedMachineRecipe findNextLinkedRecipe(BlockMenu blockMenu) {
         Location location = blockMenu.getLocation();
         Integer lastMatchIndex = lastMatch.get(blockMenu.getLocation());
         if (lastMatchIndex != null) {

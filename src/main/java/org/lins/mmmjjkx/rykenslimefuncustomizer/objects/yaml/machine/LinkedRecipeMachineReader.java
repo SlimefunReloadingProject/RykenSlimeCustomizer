@@ -4,6 +4,10 @@ import io.github.thebusybiscuit.slimefun4.api.items.ItemGroup;
 import io.github.thebusybiscuit.slimefun4.api.items.SlimefunItemStack;
 import io.github.thebusybiscuit.slimefun4.api.recipes.RecipeType;
 import io.github.thebusybiscuit.slimefun4.libraries.dough.collections.Pair;
+import java.util.ArrayList;
+import java.util.HashMap;
+import java.util.List;
+import java.util.Map;
 import org.bukkit.configuration.ConfigurationSection;
 import org.bukkit.configuration.file.YamlConfiguration;
 import org.bukkit.inventory.ItemStack;
@@ -12,15 +16,9 @@ import org.lins.mmmjjkx.rykenslimefuncustomizer.objects.customs.CustomMenu;
 import org.lins.mmmjjkx.rykenslimefuncustomizer.objects.customs.LinkedOutput;
 import org.lins.mmmjjkx.rykenslimefuncustomizer.objects.customs.machine.CustomLinkedRecipeMachine;
 import org.lins.mmmjjkx.rykenslimefuncustomizer.objects.machine.CustomLinkedMachineRecipe;
-import org.lins.mmmjjkx.rykenslimefuncustomizer.objects.machine.CustomMachineRecipe;
 import org.lins.mmmjjkx.rykenslimefuncustomizer.objects.yaml.YamlReader;
 import org.lins.mmmjjkx.rykenslimefuncustomizer.utils.CommonUtils;
 import org.lins.mmmjjkx.rykenslimefuncustomizer.utils.ExceptionHandler;
-
-import java.util.ArrayList;
-import java.util.HashMap;
-import java.util.List;
-import java.util.Map;
 
 /*
  * RSC_EXAMPLE_LINKED_RECIPE_MACHINE:
@@ -251,7 +249,13 @@ public class LinkedRecipeMachineReader extends YamlReader<CustomLinkedRecipeMach
             for (int i = 0; i < array.length; i++) {
                 array[i] = i;
             }
-            list.add(new CustomLinkedMachineRecipe(seconds, finalInput, new LinkedOutput(freeOutput.toArray(new ItemStack[0]), linkedOutput, array, linkedChances), chooseOne, forDisplay, hide));
+            list.add(new CustomLinkedMachineRecipe(
+                    seconds,
+                    finalInput,
+                    new LinkedOutput(freeOutput.toArray(new ItemStack[0]), linkedOutput, array, linkedChances),
+                    chooseOne,
+                    forDisplay,
+                    hide));
         }
         return list;
     }

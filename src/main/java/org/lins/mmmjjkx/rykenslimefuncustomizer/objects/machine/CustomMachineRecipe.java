@@ -3,7 +3,6 @@ package org.lins.mmmjjkx.rykenslimefuncustomizer.objects.machine;
 import java.security.SecureRandom;
 import java.util.ArrayList;
 import java.util.List;
-
 import lombok.Getter;
 import me.mrCookieSlime.Slimefun.Objects.SlimefunItem.abstractItems.MachineRecipe;
 import org.bukkit.inventory.ItemStack;

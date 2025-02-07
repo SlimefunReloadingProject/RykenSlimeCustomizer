@@ -13,7 +13,6 @@ import org.bukkit.plugin.java.JavaPlugin;
 import org.jetbrains.annotations.NotNull;
 import org.lins.mmmjjkx.rykenslimefuncustomizer.commands.MainCommand;
 import org.lins.mmmjjkx.rykenslimefuncustomizer.listeners.BlockListener;
-import org.lins.mmmjjkx.rykenslimefuncustomizer.listeners.ScriptableEventListener;
 import org.lins.mmmjjkx.rykenslimefuncustomizer.listeners.SingleItemRecipeGuideListener;
 import org.lins.mmmjjkx.rykenslimefuncustomizer.utils.CommonUtils;
 import org.lins.mmmjjkx.rykenslimefuncustomizer.utils.ExceptionHandler;

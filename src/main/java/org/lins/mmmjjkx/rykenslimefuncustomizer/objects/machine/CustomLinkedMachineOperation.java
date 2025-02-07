@@ -4,7 +4,6 @@ import io.github.thebusybiscuit.slimefun4.implementation.operations.CraftingOper
 import io.github.thebusybiscuit.slimefun4.libraries.commons.lang.Validate;
 import javax.annotation.Nonnull;
 import lombok.Getter;
-import org.bukkit.inventory.ItemStack;
 
 @Getter
 public class CustomLinkedMachineOperation extends CraftingOperation {
