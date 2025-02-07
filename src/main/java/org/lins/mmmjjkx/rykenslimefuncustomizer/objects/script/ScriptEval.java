@@ -181,6 +181,7 @@ public abstract class ScriptEval {
                             t);
             return task.get();
         });
+        /*
         addThing("runAsync", (Function<Function<Object[], ?>, BukkitTask>) r -> {
             AtomicReference<BukkitTask> task = new AtomicReference<>();
             Bukkit.getScheduler().runTaskAsynchronously(RykenSlimefunCustomizer.INSTANCE, t -> {
@@ -214,6 +215,8 @@ public abstract class ScriptEval {
                             t);
             return task.get();
         });
+
+         */
 
         addThing("getAddonConfig", (Supplier<YamlConfiguration>) () -> {
             if (addon.getConfig() == null) {

@@ -108,10 +108,18 @@ public final class ProjectAddonManager {
                 continue;
             }
 
-            ProjectAddonLoader loader = new ProjectAddonLoader(folder, projectIds);
-            ProjectAddon addon = loader.load();
-            if (addon != null) {
-                projectAddons.put(addon.getAddonId(), addon);
+            try {
+                ProjectAddonLoader loader = new ProjectAddonLoader(folder, projectIds);
+                ProjectAddon addon = loader.load();
+                if (addon != null) {
+                    projectAddons.put(addon.getAddonId(), addon);
+                }
+            } catch (Exception e) {
+                if (folder.isFile()) {
+                    ExceptionHandler.handleError(folder.getName() + " 不是文件夹！无法加载此附属！");
+                    continue;
+                }
+                e.printStackTrace();
             }
         }
     }

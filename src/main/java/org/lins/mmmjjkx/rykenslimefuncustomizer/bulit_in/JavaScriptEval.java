@@ -22,6 +22,7 @@ import java.util.Set;
 import javax.script.ScriptException;
 import me.mrCookieSlime.Slimefun.api.inventory.BlockMenu;
 import org.graalvm.polyglot.Context;
+import org.graalvm.polyglot.Engine;
 import org.graalvm.polyglot.PolyglotAccess;
 import org.graalvm.polyglot.io.IOAccess;
 import org.jetbrains.annotations.NotNull;
@@ -142,8 +143,11 @@ public class JavaScriptEval extends ScriptEval {
 
     private void reSetup() {
         jsEngine = GraalJSScriptEngine.create(
-                null,
+                Engine.newBuilder("js")
+                        .allowExperimentalOptions(true)
+                        .build(),
                 Context.newBuilder("js")
+                        .hostClassLoader(RykenSlimefunCustomizer.class.getClassLoader())
                         .allowAllAccess(true)
                         .allowHostAccess(UNIVERSAL_HOST_ACCESS)
                         .allowNativeAccess(false)
@@ -151,10 +155,9 @@ public class JavaScriptEval extends ScriptEval {
                         .allowPolyglotAccess(PolyglotAccess.ALL)
                         .allowCreateProcess(true)
                         .allowValueSharing(true)
-                        .allowHostClassLoading(true)
                         .allowIO(IOAccess.ALL)
                         .allowHostClassLookup(s -> true)
-                        .hostClassLoader(ClassLoader.getSystemClassLoader()));
+                        .allowHostClassLoading(true));
 
         advancedSetup();
     }

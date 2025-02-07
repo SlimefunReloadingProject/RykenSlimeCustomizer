@@ -85,12 +85,14 @@ public final class RykenSlimefunCustomizer extends JavaPlugin implements Slimefu
     }
 
     private void setupLibraries() {
-        String graalVersion = "24.0.2";
+        String graalVersion = "24.1.2";
         BukkitLibraryManager libraryManager = new BukkitLibraryManager(this);
 
         for (String repo : getConfig().getStringList("repositories")) {
             libraryManager.addRepository(repo);
         }
+
+        libraryManager.addMavenCentral();
 
         Library byteBuddy = Library.builder()
                 .groupId("net{}bytebuddy")
@@ -99,8 +101,13 @@ public final class RykenSlimefunCustomizer extends JavaPlugin implements Slimefu
                 .build();
         Library graalJS = Library.builder()
                 .groupId("org{}graalvm{}js")
-                .artifactId("js")
-                .version("23.0.5")
+                .artifactId("js-language")
+                .version(graalVersion)
+                .build();
+        Library shadowedIcu4j = Library.builder()
+                .groupId("org{}graalvm{}shadowed")
+                .artifactId("icu4j")
+                .version(graalVersion)
                 .build();
         Library graalJSEngine = Library.builder()
                 .groupId("org{}graalvm{}js")
@@ -110,6 +117,21 @@ public final class RykenSlimefunCustomizer extends JavaPlugin implements Slimefu
         Library truffleAPI = Library.builder()
                 .groupId("org{}graalvm{}truffle")
                 .artifactId("truffle-api")
+                .version(graalVersion)
+                .build();
+        Library truffleCompiler = Library.builder()
+                .groupId("org{}graalvm{}truffle")
+                .artifactId("truffle-compiler")
+                .version(graalVersion)
+                .build();
+        Library truffleEnterprise = Library.builder()
+                .groupId("org{}graalvm{}truffle")
+                .artifactId("truffle-enterprise")
+                .version(graalVersion)
+                .build();
+        Library truffleRuntime = Library.builder()
+                .groupId("org{}graalvm{}truffle")
+                .artifactId("truffle-runtime")
                 .version(graalVersion)
                 .build();
         Library polyglot = Library.builder()
@@ -132,10 +154,20 @@ public final class RykenSlimefunCustomizer extends JavaPlugin implements Slimefu
                 .artifactId("word")
                 .version(graalVersion)
                 .build();
-        Library icu4j = Library.builder()
-                .groupId("com{}ibm{}icu")
-                .artifactId("icu4j")
-                .version("75.1")
+        Library graalSdkNativeBridge = Library.builder()
+                .groupId("org{}graalvm{}sdk")
+                .artifactId("nativebridge")
+                .version(graalVersion)
+                .build();
+        Library graalJniUtils = Library.builder()
+                .groupId("org{}graalvm{}sdk")
+                .artifactId("jniutils")
+                .version(graalVersion)
+                .build();
+        Library graalRegex = Library.builder()
+                .groupId("org{}graalvm{}regex")
+                .artifactId("regex")
+                .version(graalVersion)
                 .build();
 
         libraryManager.loadLibrary(byteBuddy);
@@ -146,7 +178,13 @@ public final class RykenSlimefunCustomizer extends JavaPlugin implements Slimefu
         libraryManager.loadLibrary(graalSdkCollections);
         libraryManager.loadLibrary(graalSdkNativeImage);
         libraryManager.loadLibrary(graalSdkWord);
-        libraryManager.loadLibrary(icu4j);
+        libraryManager.loadLibrary(shadowedIcu4j);
+        libraryManager.loadLibrary(graalSdkNativeBridge);
+        libraryManager.loadLibrary(graalJniUtils);
+        libraryManager.loadLibrary(graalRegex);
+        libraryManager.loadLibrary(truffleCompiler);
+        libraryManager.loadLibrary(truffleEnterprise);
+        libraryManager.loadLibrary(truffleRuntime);
     }
 
     public static boolean allowUpdate(String prjId) {
