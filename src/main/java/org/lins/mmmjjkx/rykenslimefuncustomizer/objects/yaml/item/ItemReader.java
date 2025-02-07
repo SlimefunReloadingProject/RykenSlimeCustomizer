@@ -84,6 +84,7 @@ public class ItemReader extends YamlReader<SlimefunItem> {
                 ExceptionHandler.handleWarning(
                         "在附属" + addon.getAddonId() + "中加载物品" + s + "时遇到了问题: " + "找不到脚本文件" + file.getName());
             } else {
+                ExceptionHandler.debugLog("加载了附属" + addon.getAddonId() + "中物品" + s + "的脚本文件" + file.getName());
                 eval = new JavaScriptEval(file, addon);
             }
         }

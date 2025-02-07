@@ -7,9 +7,12 @@ import java.io.IOException;
 import java.lang.reflect.InvocationTargetException;
 import java.nio.file.Files;
 import java.util.ArrayList;
+import java.util.HashSet;
 import java.util.List;
 import java.util.Map;
 import java.util.Objects;
+import java.util.Set;
+
 import net.bytebuddy.ByteBuddy;
 import org.bukkit.Bukkit;
 import org.bukkit.configuration.file.YamlConfiguration;
@@ -94,13 +97,26 @@ public class ProjectAddonLoader {
             }
 
             if (info.contains("pluginDepends")) {
+                Set<String> unloadedPlugins = new HashSet<>();
                 pluginDepends = info.getStringList("pluginDepends");
                 for (String pluginDepend : pluginDepends) {
                     if (!Bukkit.getPluginManager().isPluginEnabled(pluginDepend)) {
-                        ExceptionHandler.handleError("在名称为 " + name + " 的附属(附属id：" + id + ")中需要插件依赖项 " + pluginDepends
-                                + "，由于部分依赖项在加载时出错或未安装，导致此附属无法加载！");
-                        return null;
+                        unloadedPlugins.add(pluginDepend);
                     }
+                }
+
+                if (!unloadedPlugins.isEmpty()) {
+                    StringBuilder message = new StringBuilder("在名称为 " + name + " 的附属(附属id：" + id + ")中需要插件依赖项 ");
+                    for (String pluginDepend : pluginDepends) {
+                        if (unloadedPlugins.contains(pluginDepend)) {
+                            message.append("&c").append(pluginDepend).append("&r ");
+                        } else {
+                            message.append("&a").append(pluginDepend).append("&r ");
+                        }
+                    }
+                    message.append("，由于部分依赖项在加载时出错或未安装，导致此附属无法加载！");
+                    ExceptionHandler.handleError(message.toString());
+                    return null;
                 }
             }
 
@@ -120,6 +136,7 @@ public class ProjectAddonLoader {
                 if (file.exists()) {
                     JavaScriptEval eval = new JavaScriptEval(file, addon);
 
+                    // First letter to uppercase
                     String listenerName = scriptListener.replaceFirst(
                             String.valueOf(scriptListener.charAt(0)),
                             String.valueOf(Character.toUpperCase(scriptListener.charAt(0))));
@@ -136,6 +153,7 @@ public class ProjectAddonLoader {
                         Bukkit.getPluginManager().registerEvents(listenerObj, RykenSlimefunCustomizer.INSTANCE);
 
                         addon.setEventListener(listenerObj);
+                        ExceptionHandler.info("成功注册附属 " + addon.getAddonId() + " 的监听脚本 " + file.getName() + "!");
                     } catch (InstantiationException | IllegalAccessException | InvocationTargetException e) {
                         throw new RuntimeException(e);
                     }
