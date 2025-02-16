@@ -13,9 +13,7 @@ import java.nio.charset.StandardCharsets;
 import java.nio.file.Files;
 import java.nio.file.StandardOpenOption;
 import java.util.Arrays;
-import java.util.HashMap;
 import java.util.List;
-import java.util.Map;
 import java.util.Optional;
 import java.util.function.Predicate;
 import java.util.regex.Matcher;
@@ -342,17 +340,6 @@ public class CommonUtils {
         } catch (IOException e) {
             throw new RuntimeException(e);
         }
-    }
-
-    public static boolean isArmor(Material material) {
-        if (material == null) return false;
-
-        final String typeNameString = material.toString();
-
-        return typeNameString.endsWith("_HELMET")
-                || typeNameString.endsWith("_CHESTPLATE")
-                || typeNameString.endsWith("_LEGGINGS")
-                || typeNameString.endsWith("_BOOTS");
     }
 
     public static void completeFile(String resourceFile) {

@@ -141,7 +141,8 @@ public class ProjectAddonLoader {
                             String.valueOf(scriptListener.charAt(0)),
                             String.valueOf(Character.toUpperCase(scriptListener.charAt(0))));
 
-                    Class<? extends ScriptableEventListener> sel = new ByteBuddy().subclass(ScriptableEventListener.class)
+                    Class<? extends ScriptableEventListener> sel = new ByteBuddy()
+                            .subclass(ScriptableEventListener.class)
                             .name("org.rykenslimefuncustomizer.addoncontents.listeners." + listenerName)
                             .make()
                             .load(getClass().getClassLoader())
@@ -177,7 +178,10 @@ public class ProjectAddonLoader {
                         Files.copy(configFile.toPath(), customConfig.toPath());
                         customConfigYaml = doFileLoad(customConfigFolder, "config.yml");
                     } catch (IOException e) {
-                        ExceptionHandler.handleError("无法复制配置文件 " + configFile.getName() + " 到 " + customConfigFolder.getName() + "，附属可能不按预期工作！", e);
+                        ExceptionHandler.handleError(
+                                "无法复制配置文件 " + configFile.getName() + " 到 " + customConfigFolder.getName()
+                                        + "，附属可能不按预期工作！",
+                                e);
                     }
                 }
 
@@ -201,7 +205,8 @@ public class ProjectAddonLoader {
                 if (idPattern.contains("%0")) {
                     addon.setIdPattern(idPattern);
                 } else {
-                    ExceptionHandler.handleError("在名称为 " + file.getName() + "的文件夹中有无效的配置: idPattern，idPattern 必须包含 %0（原id）");
+                    ExceptionHandler.handleError(
+                            "在名称为 " + file.getName() + "的文件夹中有无效的配置: idPattern，idPattern 必须包含 %0（原id）");
                 }
             }
         } else {
@@ -255,7 +260,8 @@ public class ProjectAddonLoader {
         MultiBlockMachineReader multiBlockMachineReader = new MultiBlockMachineReader(multiBlockMachines, addon);
         SuperReader superReader = new SuperReader(supers, addon);
         TemplateMachineReader templateMachineReader = new TemplateMachineReader(templateMachines, addon);
-        LinkedRecipeMachineReader linkedRecipeMachineReader = new LinkedRecipeMachineReader(linkedRecipeMachines, addon);
+        LinkedRecipeMachineReader linkedRecipeMachineReader =
+                new LinkedRecipeMachineReader(linkedRecipeMachines, addon);
         WorkbenchReader workbenchReader = new WorkbenchReader(workbenches, addon);
 
         ExceptionHandler.debugLog("开始加载 " + file.getName() + " 中的物品内容...");

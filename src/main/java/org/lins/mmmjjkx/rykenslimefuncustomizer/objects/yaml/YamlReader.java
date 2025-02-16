@@ -1,19 +1,17 @@
 package org.lins.mmmjjkx.rykenslimefuncustomizer.objects.yaml;
 
 import io.github.thebusybiscuit.slimefun4.api.items.SlimefunItemStack;
+import io.github.thebusybiscuit.slimefun4.libraries.paperlib.PaperLib;
 import java.util.ArrayList;
 import java.util.List;
 import java.util.Objects;
 import java.util.function.Function;
-
-import io.github.thebusybiscuit.slimefun4.libraries.paperlib.PaperLib;
 import org.bukkit.Bukkit;
 import org.bukkit.configuration.ConfigurationSection;
 import org.bukkit.configuration.file.YamlConfiguration;
 import org.jetbrains.annotations.Nullable;
 import org.lins.mmmjjkx.rykenslimefuncustomizer.objects.ProjectAddon;
 import org.lins.mmmjjkx.rykenslimefuncustomizer.objects.customs.CustomAddonConfig;
-import org.lins.mmmjjkx.rykenslimefuncustomizer.utils.CommonUtils;
 import org.lins.mmmjjkx.rykenslimefuncustomizer.utils.ExceptionHandler;
 
 public abstract class YamlReader<T> {
@@ -173,26 +171,31 @@ public abstract class YamlReader<T> {
                     ExceptionHandler.handleError("读取" + key + "的注册条件时发现问题: 版本号" + splits[2] + "不是正常的版本号！");
                 }
 
-                // ExceptionHandler.info("key: " + key + " condition: " + condition + " major: " + targetMajor + " minor: " + targetMinor);
+                // ExceptionHandler.info("key: " + key + " condition: " + condition + " major: " + targetMajor + "
+                // minor: " + targetMinor);
                 boolean pass = false;
                 switch (splits[1]) {
                     case ">" -> {
-                        if (MAJOR_VERSION > targetMajor || (MAJOR_VERSION == targetMajor && MINOR_VERSION > targetMinor)) {
+                        if (MAJOR_VERSION > targetMajor
+                                || (MAJOR_VERSION == targetMajor && MINOR_VERSION > targetMinor)) {
                             pass = true;
                         }
                     }
                     case "<" -> {
-                        if (MAJOR_VERSION < targetMajor || (MAJOR_VERSION == targetMajor && MINOR_VERSION < targetMinor)) {
+                        if (MAJOR_VERSION < targetMajor
+                                || (MAJOR_VERSION == targetMajor && MINOR_VERSION < targetMinor)) {
                             pass = true;
                         }
                     }
                     case ">=" -> {
-                        if (MAJOR_VERSION > targetMajor || (MAJOR_VERSION == targetMajor && MINOR_VERSION >= targetMinor)) {
+                        if (MAJOR_VERSION > targetMajor
+                                || (MAJOR_VERSION == targetMajor && MINOR_VERSION >= targetMinor)) {
                             pass = true;
                         }
                     }
                     case "<=" -> {
-                        if (MAJOR_VERSION < targetMajor || (MAJOR_VERSION == targetMajor && MINOR_VERSION <= targetMinor)) {
+                        if (MAJOR_VERSION < targetMajor
+                                || (MAJOR_VERSION == targetMajor && MINOR_VERSION <= targetMinor)) {
                             pass = true;
                         }
                     }
@@ -261,7 +264,14 @@ public abstract class YamlReader<T> {
                         int current = config.config().getInt(splits[2]);
                         int destination = Integer.parseInt(splits[3]);
 
-                        if (!intCheck(splits[1], key, "config.int", current, destination, (op) -> "需要配置选项" + configKey + op + splits[3] + "才能被注册", warn)) {
+                        if (!intCheck(
+                                splits[1],
+                                key,
+                                "config.int",
+                                current,
+                                destination,
+                                (op) -> "需要配置选项" + configKey + op + splits[3] + "才能被注册",
+                                warn)) {
                             return false;
                         }
                     }
@@ -271,38 +281,46 @@ public abstract class YamlReader<T> {
         return true;
     }
 
-    private boolean intCheck(String operator, String key, String regParam, int current, int destination, Function<String, String> msg, boolean warn) {
+    private boolean intCheck(
+            String operator,
+            String key,
+            String regParam,
+            int current,
+            int destination,
+            Function<String, String> msg,
+            boolean warn) {
         String operation = "";
-        boolean b = switch (operator) {
-            case ">" -> {
-                operation = "大于";
-                yield current > destination;
-            }
-            case "<" -> {
-                operation = "小于";
-                yield current < destination;
-            }
-            case ">=" -> {
-                operation = "大于或等于";
-                yield current >= destination;
-            }
-            case "<=" -> {
-                operation = "小于或等于";
-                yield current <= destination;
-            }
-            case "==" -> {
-                operation = "等于";
-                yield current == destination;
-            }
-            case "!=" -> {
-                operation = "不等于";
-                yield current != destination;
-            }
-            default -> {
-                ExceptionHandler.handleError("读取" + key + "的注册条件时发现问题: " + regParam + "需要合法的比较符！");
-                yield true;
-            }
-        };
+        boolean b =
+                switch (operator) {
+                    case ">" -> {
+                        operation = "大于";
+                        yield current > destination;
+                    }
+                    case "<" -> {
+                        operation = "小于";
+                        yield current < destination;
+                    }
+                    case ">=" -> {
+                        operation = "大于或等于";
+                        yield current >= destination;
+                    }
+                    case "<=" -> {
+                        operation = "小于或等于";
+                        yield current <= destination;
+                    }
+                    case "==" -> {
+                        operation = "等于";
+                        yield current == destination;
+                    }
+                    case "!=" -> {
+                        operation = "不等于";
+                        yield current != destination;
+                    }
+                    default -> {
+                        ExceptionHandler.handleError("读取" + key + "的注册条件时发现问题: " + regParam + "需要合法的比较符！");
+                        yield true;
+                    }
+                };
 
         if (!b) {
             if (warn) {

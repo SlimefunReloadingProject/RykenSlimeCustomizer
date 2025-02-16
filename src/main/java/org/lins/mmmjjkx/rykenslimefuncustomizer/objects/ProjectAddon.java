@@ -178,7 +178,6 @@ public final class ProjectAddon {
 
         DropFromBlock.unregisterAddonDrops(this);
 
-
         if (config != null) {
             if (config.onReloadHandler() != null) {
                 config.onReloadHandler().close();
@@ -223,7 +222,7 @@ public final class ProjectAddon {
             ExceptionHandler.handleError("configuredId: " + configuredId == null ? "null" : configuredId);
             ExceptionHandler.handleError("id_alias: " + id_alias == null ? "null" : id_alias);
             ExceptionHandler.handleError("idPattern: " + idPattern == null ? "null" : idPattern);
-            String randomId = "RSC_UNKNOWN_ID_"+((int) (Math.random()*1_000_000));
+            String randomId = "RSC_UNKNOWN_ID_" + ((int) (Math.random() * 1_000_000));
             ExceptionHandler.handleError("分配随机id");
             ExceptionHandler.handleError("randomId: " + randomId);
             return randomId;

@@ -73,15 +73,7 @@ public class MachineReader extends YamlReader<AbstractEmptyMachine<?>> {
 
         AbstractEmptyMachine<?> machine;
         CustomNoEnergyMachine defaultNoEnergyMachine = new CustomNoEnergyMachine(
-                group.getSecondValue(),
-                slimefunItemStack,
-                rt.getSecondValue(),
-                recipe,
-                menu,
-                input,
-                output,
-                eval,
-                -1);
+                group.getSecondValue(), slimefunItemStack, rt.getSecondValue(), recipe, menu, input, output, eval, -1);
 
         if (section.contains("energy")) {
             ConfigurationSection energySettings = section.getConfigurationSection("energy");
@@ -103,11 +95,12 @@ public class MachineReader extends YamlReader<AbstractEmptyMachine<?>> {
             if (enc.getFirstValue() == ExceptionHandler.HandleResult.FAILED) {
                 return defaultNoEnergyMachine;
             }
-            
+
             if (energySettings.contains("energyOutput")) {
                 int energyOutput = section.getInt("energyOutput");
                 if (energyOutput < 0) {
-                    ExceptionHandler.handleError("无法读取在附属" + addon.getAddonId() + "中的自定义发电机" + s + "的能源设置，已转为普通有电机器，原因: 能量输出不能小于0");
+                    ExceptionHandler.handleError(
+                            "无法读取在附属" + addon.getAddonId() + "中的自定义发电机" + s + "的能源设置，已转为普通有电机器，原因: 能量输出不能小于0");
                     machine = new CustomMachine(
                             group.getSecondValue(),
                             slimefunItemStack,

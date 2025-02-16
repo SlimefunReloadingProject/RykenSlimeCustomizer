@@ -27,7 +27,6 @@ import io.github.thebusybiscuit.slimefun4.api.events.SlimefunItemRegistryFinaliz
 import io.github.thebusybiscuit.slimefun4.api.events.SlimefunItemSpawnEvent;
 import io.github.thebusybiscuit.slimefun4.api.events.TalismanActivateEvent;
 import io.github.thebusybiscuit.slimefun4.api.events.WaypointCreateEvent;
-import org.bukkit.Bukkit;
 import org.bukkit.event.Event;
 import org.bukkit.event.EventHandler;
 import org.bukkit.event.Listener;
@@ -536,894 +535,1117 @@ public class ScriptableEventListener implements Listener {
     public void onEvent(BlockBreakEvent e) {
         ctx.invoke(e);
     }
+
     @EventHandler
     public void onEvent(BlockBurnEvent e) {
         ctx.invoke(e);
     }
+
     @EventHandler
     public void onEvent(BlockCanBuildEvent e) {
         ctx.invoke(e);
     }
+
     @EventHandler
     public void onEvent(BlockCookEvent e) {
         ctx.invoke(e);
     }
+
     @EventHandler
     public void onEvent(BlockDamageEvent e) {
         ctx.invoke(e);
     }
+
     @EventHandler
     public void onEvent(BlockDispenseArmorEvent e) {
         ctx.invoke(e);
     }
+
     @EventHandler
     public void onEvent(BlockDispenseEvent e) {
         ctx.invoke(e);
     }
+
     @EventHandler
     public void onEvent(BlockDropItemEvent e) {
         ctx.invoke(e);
     }
+
     @EventHandler
     public void onEvent(BlockExpEvent e) {
         ctx.invoke(e);
     }
+
     @EventHandler
     public void onEvent(BlockExplodeEvent e) {
         ctx.invoke(e);
     }
+
     @EventHandler
     public void onEvent(BlockFadeEvent e) {
         ctx.invoke(e);
     }
+
     @EventHandler
     public void onEvent(BlockFertilizeEvent e) {
         ctx.invoke(e);
     }
+
     @EventHandler
     public void onEvent(BlockFormEvent e) {
         ctx.invoke(e);
     }
+
     @EventHandler
     public void onEvent(BlockFromToEvent e) {
         ctx.invoke(e);
     }
+
     @EventHandler
     public void onEvent(BlockGrowEvent e) {
         ctx.invoke(e);
     }
+
     @EventHandler
     public void onEvent(BlockIgniteEvent e) {
         ctx.invoke(e);
     }
+
     @EventHandler
     public void onEvent(BlockMultiPlaceEvent e) {
         ctx.invoke(e);
     }
+
     @EventHandler
     public void onEvent(BlockPhysicsEvent e) {
         ctx.invoke(e);
     }
+
     @EventHandler
     public void onEvent(BlockPistonExtendEvent e) {
         ctx.invoke(e);
     }
+
     @EventHandler
     public void onEvent(BlockPistonRetractEvent e) {
         ctx.invoke(e);
     }
+
     @EventHandler
     public void onEvent(BlockPlaceEvent e) {
         ctx.invoke(e);
     }
+
     @EventHandler
     public void onEvent(BlockReceiveGameEvent e) {
         ctx.invoke(e);
     }
+
     @EventHandler
     public void onEvent(BlockRedstoneEvent e) {
         ctx.invoke(e);
     }
+
     @EventHandler
     public void onEvent(BlockShearEntityEvent e) {
         ctx.invoke(e);
     }
+
     @EventHandler
     public void onEvent(BlockSpreadEvent e) {
         ctx.invoke(e);
     }
+
     @EventHandler
     public void onEvent(CauldronLevelChangeEvent e) {
         ctx.invoke(e);
     }
+
     @EventHandler
     public void onEvent(EntityBlockFormEvent e) {
         ctx.invoke(e);
     }
+
     @EventHandler
     public void onEvent(FluidLevelChangeEvent e) {
         ctx.invoke(e);
     }
+
     @EventHandler
     public void onEvent(LeavesDecayEvent e) {
         ctx.invoke(e);
     }
+
     @EventHandler
     public void onEvent(MoistureChangeEvent e) {
         ctx.invoke(e);
     }
+
     @EventHandler
     public void onEvent(NotePlayEvent e) {
         ctx.invoke(e);
     }
+
     @EventHandler
     public void onEvent(SignChangeEvent e) {
         ctx.invoke(e);
     }
+
     @EventHandler
     public void onEvent(SpongeAbsorbEvent e) {
         ctx.invoke(e);
     }
+
     @EventHandler
     public void onEvent(UnknownCommandEvent e) {
         ctx.invoke(e);
     }
+
     @EventHandler
     public void onEvent(EnchantItemEvent e) {
         ctx.invoke(e);
     }
+
     @EventHandler
     public void onEvent(PrepareItemEnchantEvent e) {
         ctx.invoke(e);
     }
+
     @EventHandler
     public void onEvent(AreaEffectCloudApplyEvent e) {
         ctx.invoke(e);
     }
+
     @EventHandler
     public void onEvent(ArrowBodyCountChangeEvent e) {
         ctx.invoke(e);
     }
+
     @EventHandler
     public void onEvent(BatToggleSleepEvent e) {
         ctx.invoke(e);
     }
+
     @EventHandler
     public void onEvent(CreatureSpawnEvent e) {
         ctx.invoke(e);
     }
+
     @EventHandler
     public void onEvent(CreeperPowerEvent e) {
         ctx.invoke(e);
     }
+
     @EventHandler
     public void onEvent(EnderDragonChangePhaseEvent e) {
         ctx.invoke(e);
     }
+
     @EventHandler
     public void onEvent(EntityAirChangeEvent e) {
         ctx.invoke(e);
     }
+
     @EventHandler
     public void onEvent(EntityBreakDoorEvent e) {
         ctx.invoke(e);
     }
+
     @EventHandler
     public void onEvent(EntityBreedEvent e) {
         ctx.invoke(e);
     }
+
     @EventHandler
     public void onEvent(EntityChangeBlockEvent e) {
         ctx.invoke(e);
     }
+
     @EventHandler
     public void onEvent(EntityCombustByBlockEvent e) {
         ctx.invoke(e);
     }
+
     @EventHandler
     public void onEvent(EntityCombustByEntityEvent e) {
         ctx.invoke(e);
     }
+
     @EventHandler
     public void onEvent(EntityCombustEvent e) {
         ctx.invoke(e);
     }
+
     @EventHandler
     public void onEvent(EntityDamageByBlockEvent e) {
         ctx.invoke(e);
     }
+
     @EventHandler
     public void onEvent(EntityDamageByEntityEvent e) {
         ctx.invoke(e);
     }
+
     @EventHandler
     public void onEvent(EntityDamageEvent e) {
         ctx.invoke(e);
     }
+
     @EventHandler
     public void onEvent(EntityDeathEvent e) {
         ctx.invoke(e);
     }
+
     @EventHandler
     public void onEvent(EntityDropItemEvent e) {
         ctx.invoke(e);
     }
+
     @EventHandler
     public void onEvent(EntityEnterBlockEvent e) {
         ctx.invoke(e);
     }
+
     @EventHandler
     public void onEvent(EntityEnterLoveModeEvent e) {
         ctx.invoke(e);
     }
+
     @EventHandler
     public void onEvent(EntityExhaustionEvent e) {
         ctx.invoke(e);
     }
+
     @EventHandler
     public void onEvent(EntityExplodeEvent e) {
         ctx.invoke(e);
     }
+
     @EventHandler
     public void onEvent(EntityInteractEvent e) {
         ctx.invoke(e);
     }
+
     @EventHandler
     public void onEvent(EntityPickupItemEvent e) {
         ctx.invoke(e);
     }
+
     @EventHandler
     public void onEvent(EntityPlaceEvent e) {
         ctx.invoke(e);
     }
+
     @EventHandler
     public void onEvent(EntityPortalEnterEvent e) {
         ctx.invoke(e);
     }
+
     @EventHandler
     public void onEvent(EntityPortalExitEvent e) {
         ctx.invoke(e);
     }
+
     @EventHandler
     public void onEvent(EntityPoseChangeEvent e) {
         ctx.invoke(e);
     }
+
     @EventHandler
     public void onEvent(EntityPotionEffectEvent e) {
         ctx.invoke(e);
     }
+
     @EventHandler
     public void onEvent(EntityRegainHealthEvent e) {
         ctx.invoke(e);
     }
+
     @EventHandler
     public void onEvent(EntityResurrectEvent e) {
         ctx.invoke(e);
     }
+
     @EventHandler
     public void onEvent(EntityShootBowEvent e) {
         ctx.invoke(e);
     }
+
     @EventHandler
     public void onEvent(EntitySpawnEvent e) {
         ctx.invoke(e);
     }
+
     @EventHandler
     public void onEvent(EntitySpellCastEvent e) {
         ctx.invoke(e);
     }
+
     @EventHandler
     public void onEvent(EntityTameEvent e) {
         ctx.invoke(e);
     }
+
     @EventHandler
     public void onEvent(EntityTargetEvent e) {
         ctx.invoke(e);
     }
+
     @EventHandler
     public void onEvent(EntityTargetLivingEntityEvent e) {
         ctx.invoke(e);
     }
+
     @EventHandler
     public void onEvent(EntityTeleportEvent e) {
         ctx.invoke(e);
     }
+
     @EventHandler
     public void onEvent(EntityToggleGlideEvent e) {
         ctx.invoke(e);
     }
+
     @EventHandler
     public void onEvent(EntityToggleSwimEvent e) {
         ctx.invoke(e);
     }
+
     @EventHandler
     public void onEvent(EntityTransformEvent e) {
         ctx.invoke(e);
     }
+
     @EventHandler
     public void onEvent(EntityUnleashEvent e) {
         ctx.invoke(e);
     }
+
     @EventHandler
     public void onEvent(ExpBottleEvent e) {
         ctx.invoke(e);
     }
+
     @EventHandler
     public void onEvent(ExplosionPrimeEvent e) {
         ctx.invoke(e);
     }
+
     @EventHandler
     public void onEvent(FireworkExplodeEvent e) {
         ctx.invoke(e);
     }
+
     @EventHandler
     public void onEvent(FoodLevelChangeEvent e) {
         ctx.invoke(e);
     }
+
     @EventHandler
     public void onEvent(HorseJumpEvent e) {
         ctx.invoke(e);
     }
+
     @EventHandler
     public void onEvent(ItemDespawnEvent e) {
         ctx.invoke(e);
     }
+
     @EventHandler
     public void onEvent(ItemMergeEvent e) {
         ctx.invoke(e);
     }
+
     @EventHandler
     public void onEvent(ItemSpawnEvent e) {
         ctx.invoke(e);
     }
+
     @EventHandler
     public void onEvent(LingeringPotionSplashEvent e) {
         ctx.invoke(e);
     }
+
     @EventHandler
     public void onEvent(PigZapEvent e) {
         ctx.invoke(e);
     }
+
     @EventHandler
     public void onEvent(PigZombieAngerEvent e) {
         ctx.invoke(e);
     }
+
     @EventHandler
     public void onEvent(PiglinBarterEvent e) {
         ctx.invoke(e);
     }
+
     @EventHandler
     public void onEvent(PlayerDeathEvent e) {
         ctx.invoke(e);
     }
+
     @EventHandler
     public void onEvent(PlayerLeashEntityEvent e) {
         ctx.invoke(e);
     }
+
     @EventHandler
     public void onEvent(PotionSplashEvent e) {
         ctx.invoke(e);
     }
+
     @EventHandler
     public void onEvent(ProjectileHitEvent e) {
         ctx.invoke(e);
     }
+
     @EventHandler
     public void onEvent(ProjectileLaunchEvent e) {
         ctx.invoke(e);
     }
+
     @EventHandler
     public void onEvent(SheepDyeWoolEvent e) {
         ctx.invoke(e);
     }
+
     @EventHandler
     public void onEvent(SheepRegrowWoolEvent e) {
         ctx.invoke(e);
     }
+
     @EventHandler
     public void onEvent(SlimeSplitEvent e) {
         ctx.invoke(e);
     }
+
     @EventHandler
     public void onEvent(SpawnerSpawnEvent e) {
         ctx.invoke(e);
     }
+
     @EventHandler
     public void onEvent(StriderTemperatureChangeEvent e) {
         ctx.invoke(e);
     }
+
     @EventHandler
     public void onEvent(VillagerAcquireTradeEvent e) {
         ctx.invoke(e);
     }
+
     @EventHandler
     public void onEvent(VillagerCareerChangeEvent e) {
         ctx.invoke(e);
     }
+
     @EventHandler
     public void onEvent(VillagerReplenishTradeEvent e) {
         ctx.invoke(e);
     }
+
     @EventHandler
     public void onEvent(HangingBreakByEntityEvent e) {
         ctx.invoke(e);
     }
+
     @EventHandler
     public void onEvent(HangingBreakEvent e) {
         ctx.invoke(e);
     }
+
     @EventHandler
     public void onEvent(HangingPlaceEvent e) {
         ctx.invoke(e);
     }
+
     @EventHandler
     public void onEvent(BrewEvent e) {
         ctx.invoke(e);
     }
+
     @EventHandler
     public void onEvent(BrewingStandFuelEvent e) {
         ctx.invoke(e);
     }
+
     @EventHandler
     public void onEvent(CraftItemEvent e) {
         ctx.invoke(e);
     }
+
     @EventHandler
     public void onEvent(FurnaceBurnEvent e) {
         ctx.invoke(e);
     }
+
     @EventHandler
     public void onEvent(FurnaceExtractEvent e) {
         ctx.invoke(e);
     }
+
     @EventHandler
     public void onEvent(FurnaceSmeltEvent e) {
         ctx.invoke(e);
     }
+
     @EventHandler
     public void onEvent(InventoryClickEvent e) {
         ctx.invoke(e);
     }
+
     @EventHandler
     public void onEvent(InventoryCloseEvent e) {
         ctx.invoke(e);
     }
+
     @EventHandler
     public void onEvent(InventoryCreativeEvent e) {
         ctx.invoke(e);
     }
+
     @EventHandler
     public void onEvent(InventoryDragEvent e) {
         ctx.invoke(e);
     }
+
     @EventHandler
     public void onEvent(InventoryMoveItemEvent e) {
         ctx.invoke(e);
     }
+
     @EventHandler
     public void onEvent(InventoryOpenEvent e) {
         ctx.invoke(e);
     }
+
     @EventHandler
     public void onEvent(InventoryPickupItemEvent e) {
         ctx.invoke(e);
     }
+
     @EventHandler
     public void onEvent(PrepareAnvilEvent e) {
         ctx.invoke(e);
     }
+
     @EventHandler
     public void onEvent(PrepareItemCraftEvent e) {
         ctx.invoke(e);
     }
+
     @EventHandler
     public void onEvent(PrepareSmithingEvent e) {
         ctx.invoke(e);
     }
+
     @EventHandler
     public void onEvent(SmithItemEvent e) {
         ctx.invoke(e);
     }
+
     @EventHandler
     public void onEvent(TradeSelectEvent e) {
         ctx.invoke(e);
     }
+
     @EventHandler
     public void onEvent(AsyncPlayerChatEvent e) {
         ctx.invoke(e);
     }
+
     @EventHandler
     public void onEvent(AsyncPlayerPreLoginEvent e) {
         ctx.invoke(e);
     }
+
     @EventHandler
     public void onEvent(PlayerAdvancementDoneEvent e) {
         ctx.invoke(e);
     }
+
     @EventHandler
     public void onEvent(PlayerAnimationEvent e) {
         ctx.invoke(e);
     }
+
     @EventHandler
     public void onEvent(PlayerArmorStandManipulateEvent e) {
         ctx.invoke(e);
     }
+
     @EventHandler
     public void onEvent(PlayerAttemptPickupItemEvent e) {
         ctx.invoke(e);
     }
+
     @EventHandler
     public void onEvent(PlayerBedEnterEvent e) {
         ctx.invoke(e);
     }
+
     @EventHandler
     public void onEvent(PlayerBedLeaveEvent e) {
         ctx.invoke(e);
     }
+
     @EventHandler
     public void onEvent(PlayerBucketEmptyEvent e) {
         ctx.invoke(e);
     }
+
     @EventHandler
     public void onEvent(PlayerBucketEntityEvent e) {
         ctx.invoke(e);
     }
+
     @EventHandler
     public void onEvent(PlayerBucketFillEvent e) {
         ctx.invoke(e);
     }
+
     @EventHandler
     public void onEvent(PlayerChangedMainHandEvent e) {
         ctx.invoke(e);
     }
+
     @EventHandler
     public void onEvent(PlayerChangedWorldEvent e) {
         ctx.invoke(e);
     }
+
     @EventHandler
     public void onEvent(PlayerCommandPreprocessEvent e) {
         ctx.invoke(e);
     }
+
     @EventHandler
     public void onEvent(PlayerCommandSendEvent e) {
         ctx.invoke(e);
     }
+
     @EventHandler
     public void onEvent(PlayerDropItemEvent e) {
         ctx.invoke(e);
     }
+
     @EventHandler
     public void onEvent(PlayerEditBookEvent e) {
         ctx.invoke(e);
     }
+
     @EventHandler
     public void onEvent(PlayerEggThrowEvent e) {
         ctx.invoke(e);
     }
+
     @EventHandler
     public void onEvent(PlayerExpChangeEvent e) {
         ctx.invoke(e);
     }
+
     @EventHandler
     public void onEvent(PlayerFishEvent e) {
         ctx.invoke(e);
     }
+
     @EventHandler
     public void onEvent(PlayerGameModeChangeEvent e) {
         ctx.invoke(e);
     }
+
     @EventHandler
     public void onEvent(PlayerHarvestBlockEvent e) {
         ctx.invoke(e);
     }
+
     @EventHandler
     public void onEvent(PlayerHideEntityEvent e) {
         ctx.invoke(e);
     }
+
     @EventHandler
     public void onEvent(PlayerInteractAtEntityEvent e) {
         ctx.invoke(e);
     }
+
     @EventHandler
     public void onEvent(PlayerInteractEntityEvent e) {
         ctx.invoke(e);
     }
+
     @EventHandler
     public void onEvent(PlayerInteractEvent e) {
         ctx.invoke(e);
     }
+
     @EventHandler
     public void onEvent(PlayerItemBreakEvent e) {
         ctx.invoke(e);
     }
+
     @EventHandler
     public void onEvent(PlayerItemConsumeEvent e) {
         ctx.invoke(e);
     }
+
     @EventHandler
     public void onEvent(PlayerItemDamageEvent e) {
         ctx.invoke(e);
     }
+
     @EventHandler
     public void onEvent(PlayerItemHeldEvent e) {
         ctx.invoke(e);
     }
+
     @EventHandler
     public void onEvent(PlayerItemMendEvent e) {
         ctx.invoke(e);
     }
+
     @EventHandler
     public void onEvent(PlayerJoinEvent e) {
         ctx.invoke(e);
     }
+
     @EventHandler
     public void onEvent(PlayerKickEvent e) {
         ctx.invoke(e);
     }
+
     @EventHandler
     public void onEvent(PlayerLevelChangeEvent e) {
         ctx.invoke(e);
     }
+
     @EventHandler
     public void onEvent(PlayerLocaleChangeEvent e) {
         ctx.invoke(e);
     }
+
     @EventHandler
     public void onEvent(PlayerLoginEvent e) {
         ctx.invoke(e);
     }
+
     @EventHandler
     public void onEvent(PlayerMoveEvent e) {
         ctx.invoke(e);
     }
+
     @EventHandler
     public void onEvent(PlayerPickupArrowEvent e) {
         ctx.invoke(e);
     }
+
     @EventHandler
     public void onEvent(PlayerPickupItemEvent e) {
         ctx.invoke(e);
     }
+
     @EventHandler
     public void onEvent(PlayerPortalEvent e) {
         ctx.invoke(e);
     }
+
     @EventHandler
     public void onEvent(PlayerQuitEvent e) {
         ctx.invoke(e);
     }
+
     @EventHandler
     public void onEvent(PlayerRecipeDiscoverEvent e) {
         ctx.invoke(e);
     }
+
     @EventHandler
     public void onEvent(PlayerRegisterChannelEvent e) {
         ctx.invoke(e);
     }
+
     @EventHandler
     public void onEvent(PlayerResourcePackStatusEvent e) {
         ctx.invoke(e);
     }
+
     @EventHandler
     public void onEvent(PlayerRespawnEvent e) {
         ctx.invoke(e);
     }
+
     @EventHandler
     public void onEvent(PlayerRiptideEvent e) {
         ctx.invoke(e);
     }
+
     @EventHandler
     public void onEvent(PlayerShearEntityEvent e) {
         ctx.invoke(e);
     }
+
     @EventHandler
     public void onEvent(PlayerShowEntityEvent e) {
         ctx.invoke(e);
     }
+
     @EventHandler
     public void onEvent(PlayerStatisticIncrementEvent e) {
         ctx.invoke(e);
     }
+
     @EventHandler
     public void onEvent(PlayerSwapHandItemsEvent e) {
         ctx.invoke(e);
     }
+
     @EventHandler
     public void onEvent(PlayerTakeLecternBookEvent e) {
         ctx.invoke(e);
     }
+
     @EventHandler
     public void onEvent(PlayerTeleportEvent e) {
         ctx.invoke(e);
     }
+
     @EventHandler
     public void onEvent(PlayerToggleFlightEvent e) {
         ctx.invoke(e);
     }
+
     @EventHandler
     public void onEvent(PlayerToggleSneakEvent e) {
         ctx.invoke(e);
     }
+
     @EventHandler
     public void onEvent(PlayerToggleSprintEvent e) {
         ctx.invoke(e);
     }
+
     @EventHandler
     public void onEvent(PlayerUnleashEntityEvent e) {
         ctx.invoke(e);
     }
+
     @EventHandler
     public void onEvent(PlayerUnregisterChannelEvent e) {
         ctx.invoke(e);
     }
+
     @EventHandler
     public void onEvent(PlayerVelocityEvent e) {
         ctx.invoke(e);
     }
+
     @EventHandler
     public void onEvent(RaidFinishEvent e) {
         ctx.invoke(e);
     }
+
     @EventHandler
     public void onEvent(RaidSpawnWaveEvent e) {
         ctx.invoke(e);
     }
+
     @EventHandler
     public void onEvent(RaidStopEvent e) {
         ctx.invoke(e);
     }
+
     @EventHandler
     public void onEvent(RaidTriggerEvent e) {
         ctx.invoke(e);
     }
+
     @EventHandler
     public void onEvent(BroadcastMessageEvent e) {
         ctx.invoke(e);
     }
+
     @EventHandler
     public void onEvent(MapInitializeEvent e) {
         ctx.invoke(e);
     }
+
     @EventHandler
     public void onEvent(PluginDisableEvent e) {
         ctx.invoke(e);
     }
+
     @EventHandler
     public void onEvent(PluginEnableEvent e) {
         ctx.invoke(e);
     }
+
     @EventHandler
     public void onEvent(RemoteServerCommandEvent e) {
         ctx.invoke(e);
     }
+
     @EventHandler
     public void onEvent(ServerCommandEvent e) {
         ctx.invoke(e);
     }
+
     @EventHandler
     public void onEvent(ServerListPingEvent e) {
         ctx.invoke(e);
     }
+
     @EventHandler
     public void onEvent(ServerLoadEvent e) {
         ctx.invoke(e);
     }
+
     @EventHandler
     public void onEvent(ServiceRegisterEvent e) {
         ctx.invoke(e);
     }
+
     @EventHandler
     public void onEvent(ServiceUnregisterEvent e) {
         ctx.invoke(e);
     }
+
     @EventHandler
     public void onEvent(TabCompleteEvent e) {
         ctx.invoke(e);
     }
+
     @EventHandler
     public void onEvent(VehicleBlockCollisionEvent e) {
         ctx.invoke(e);
     }
+
     @EventHandler
     public void onEvent(VehicleCreateEvent e) {
         ctx.invoke(e);
     }
+
     @EventHandler
     public void onEvent(VehicleDamageEvent e) {
         ctx.invoke(e);
     }
+
     @EventHandler
     public void onEvent(VehicleDestroyEvent e) {
         ctx.invoke(e);
     }
+
     @EventHandler
     public void onEvent(VehicleEnterEvent e) {
         ctx.invoke(e);
     }
+
     @EventHandler
     public void onEvent(VehicleEntityCollisionEvent e) {
         ctx.invoke(e);
     }
+
     @EventHandler
     public void onEvent(VehicleExitEvent e) {
         ctx.invoke(e);
     }
+
     @EventHandler
     public void onEvent(VehicleMoveEvent e) {
         ctx.invoke(e);
     }
+
     @EventHandler
     public void onEvent(VehicleUpdateEvent e) {
         ctx.invoke(e);
     }
+
     @EventHandler
     public void onEvent(LightningStrikeEvent e) {
         ctx.invoke(e);
     }
+
     @EventHandler
     public void onEvent(ThunderChangeEvent e) {
         ctx.invoke(e);
     }
+
     @EventHandler
     public void onEvent(WeatherChangeEvent e) {
         ctx.invoke(e);
     }
+
     @EventHandler
     public void onEvent(ChunkLoadEvent e) {
         ctx.invoke(e);
     }
+
     @EventHandler
     public void onEvent(ChunkPopulateEvent e) {
         ctx.invoke(e);
     }
+
     @EventHandler
     public void onEvent(ChunkUnloadEvent e) {
         ctx.invoke(e);
     }
+
     @EventHandler
     public void onEvent(EntitiesLoadEvent e) {
         ctx.invoke(e);
     }
+
     @EventHandler
     public void onEvent(EntitiesUnloadEvent e) {
         ctx.invoke(e);
     }
+
     @EventHandler
     public void onEvent(GenericGameEvent e) {
         ctx.invoke(e);
     }
+
     @EventHandler
     public void onEvent(LootGenerateEvent e) {
         ctx.invoke(e);
     }
+
     @EventHandler
     public void onEvent(PortalCreateEvent e) {
         ctx.invoke(e);
     }
+
     @EventHandler
     public void onEvent(SpawnChangeEvent e) {
         ctx.invoke(e);
     }
+
     @EventHandler
     public void onEvent(StructureGrowEvent e) {
         ctx.invoke(e);
     }
+
     @EventHandler
     public void onEvent(TimeSkipEvent e) {
         ctx.invoke(e);
     }
+
     @EventHandler
     public void onEvent(WorldInitEvent e) {
         ctx.invoke(e);
     }
+
     @EventHandler
     public void onEvent(WorldLoadEvent e) {
         ctx.invoke(e);
     }
+
     @EventHandler
     public void onEvent(WorldSaveEvent e) {
         ctx.invoke(e);
     }
+
     @EventHandler
     public void onEvent(WorldUnloadEvent e) {
         ctx.invoke(e);

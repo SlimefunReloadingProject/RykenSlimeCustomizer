@@ -122,7 +122,12 @@ public class TemplateMachineReader extends YamlReader<CustomTemplateMachine> {
         }
 
         for (String key : section.getKeys(false)) {
-            SlimefunItemStack item = getPreloadItem(key) == null ? SlimefunItem.getById(key) == null ? null : ((SlimefunItemStack) SlimefunItem.getById(key).getItem().clone()) : getPreloadItem(key);
+            SlimefunItemStack item = getPreloadItem(key) == null
+                    ? SlimefunItem.getById(key) == null
+                            ? null
+                            : ((SlimefunItemStack)
+                                    SlimefunItem.getById(key).getItem().clone())
+                    : getPreloadItem(key);
 
             if (item == null) {
                 ExceptionHandler.handleError("在附属" + addon.getAddonId() + "中加载模板机器" + s + "时遇到了问题: 无法找到作为模板的物品" + key);

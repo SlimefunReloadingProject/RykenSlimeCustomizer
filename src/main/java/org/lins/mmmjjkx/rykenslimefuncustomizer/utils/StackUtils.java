@@ -1,11 +1,13 @@
 package org.lins.mmmjjkx.rykenslimefuncustomizer.utils;
 
 import io.github.thebusybiscuit.slimefun4.implementation.Slimefun;
-import io.github.thebusybiscuit.slimefun4.libraries.dough.data.persistent.PersistentDataAPI;
+import java.util.Objects;
+import java.util.Optional;
+import javax.annotation.Nonnull;
+import javax.annotation.Nullable;
 import lombok.experimental.UtilityClass;
 import org.bukkit.Material;
 import org.bukkit.Tag;
-import org.bukkit.entity.LivingEntity;
 import org.bukkit.inventory.ItemStack;
 import org.bukkit.inventory.meta.AxolotlBucketMeta;
 import org.bukkit.inventory.meta.BannerMeta;
@@ -29,11 +31,6 @@ import org.bukkit.inventory.meta.SkullMeta;
 import org.bukkit.inventory.meta.SuspiciousStewMeta;
 import org.bukkit.inventory.meta.TropicalFishBucketMeta;
 
-import javax.annotation.Nonnull;
-import javax.annotation.Nullable;
-import java.util.Objects;
-import java.util.Optional;
-
 @UtilityClass
 @SuppressWarnings("deprecation")
 public class StackUtils {
@@ -50,11 +47,13 @@ public class StackUtils {
     public static boolean itemsMatch(@Nonnull ItemStack cache, @Nullable ItemStack itemStack) {
         return itemsMatch(cache, itemStack, false, false, false);
     }
+
     public static boolean itemsMatch(@Nonnull ItemStack cache, @Nullable ItemStack itemStack, boolean checkLore) {
         return itemsMatch(cache, itemStack, checkLore, false, false);
     }
 
-    public static boolean itemsMatch(@Nonnull ItemStack cache, @Nullable ItemStack itemStack, boolean checkLore, boolean checkAmount) {
+    public static boolean itemsMatch(
+            @Nonnull ItemStack cache, @Nullable ItemStack itemStack, boolean checkLore, boolean checkAmount) {
         return itemsMatch(cache, itemStack, checkLore, checkAmount, false);
     }
     /**
@@ -64,10 +63,15 @@ public class StackUtils {
      * @param itemStack The {@link ItemStack} being evaluated
      * @return True if items match
      */
-    public static boolean itemsMatch(@Nonnull ItemStack cache, @Nullable ItemStack itemStack, boolean checkLore, boolean checkAmount, boolean checkCustomModelId) {
+    public static boolean itemsMatch(
+            @Nullable ItemStack cache,
+            @Nullable ItemStack itemStack,
+            boolean checkLore,
+            boolean checkAmount,
+            boolean checkCustomModelId) {
         // Null check
         if (cache == null || itemStack == null) {
-            return itemStack == null && itemStack == null;
+            return itemStack == null;
         }
 
         // If types do not match, then the items cannot possibly match
@@ -148,7 +152,8 @@ public class StackUtils {
         final boolean hasAttributeOne = itemMeta.hasAttributeModifiers();
         final boolean hasAttributeTwo = cachedMeta.hasAttributeModifiers();
         if (hasAttributeOne) {
-            if (!hasAttributeTwo || !Objects.equals(itemMeta.getAttributeModifiers(), cachedMeta.getAttributeModifiers())) {
+            if (!hasAttributeTwo
+                    || !Objects.equals(itemMeta.getAttributeModifiers(), cachedMeta.getAttributeModifiers())) {
                 return false;
             }
         } else if (hasAttributeTwo) {
@@ -157,7 +162,8 @@ public class StackUtils {
 
         // Check the lore
         if (checkLore
-                || itemStack.getType() == Material.PLAYER_HEAD // Fix Soul jars in SoulJars & Number Components in MomoTech
+                || itemStack.getType()
+                        == Material.PLAYER_HEAD // Fix Soul jars in SoulJars & Number Components in MomoTech
                 || itemStack.getType() == Material.SPAWNER // Fix Reinforced Spawner in Slimefun4
                 || itemStack.getType() == Material.SUGAR // Fix Symbols in MomoTech
         ) {
@@ -181,12 +187,7 @@ public class StackUtils {
         }
 
         // Check the display name
-        if (itemMeta.hasDisplayName() && !Objects.equals(itemMeta.getDisplayName(), cachedMeta.getDisplayName())) {
-            return false;
-        }
-
-        // Everything should match if we've managed to get here
-        return true;
+        return !itemMeta.hasDisplayName() || Objects.equals(itemMeta.getDisplayName(), cachedMeta.getDisplayName());
     }
 
     public static boolean canQuickEscapeMetaVariant(@Nonnull ItemMeta metaOne, @Nonnull ItemMeta metaTwo) {
@@ -303,7 +304,8 @@ public class StackUtils {
         }
 
         // Enchantment Storage
-        if (metaOne instanceof EnchantmentStorageMeta instanceOne && metaTwo instanceof EnchantmentStorageMeta instanceTwo) {
+        if (metaOne instanceof EnchantmentStorageMeta instanceOne
+                && metaTwo instanceof EnchantmentStorageMeta instanceTwo) {
             if (instanceOne.hasStoredEnchants() != instanceTwo.hasStoredEnchants()) {
                 return true;
             }
@@ -399,7 +401,8 @@ public class StackUtils {
         }
 
         // Fish Bucket
-        if (metaOne instanceof TropicalFishBucketMeta instanceOne && metaTwo instanceof TropicalFishBucketMeta instanceTwo) {
+        if (metaOne instanceof TropicalFishBucketMeta instanceOne
+                && metaTwo instanceof TropicalFishBucketMeta instanceTwo) {
             if (instanceOne.hasVariant() != instanceTwo.hasVariant()) {
                 return true;
             }
@@ -420,12 +423,10 @@ public class StackUtils {
                 return true;
             }
 
-            if (!Objects.equals(instanceOne.getRecipes(), instanceTwo.getRecipes())) {
-                return true;
-            }
+            return !Objects.equals(instanceOne.getRecipes(), instanceTwo.getRecipes());
         }
 
-        // Cannot escape via any meta extension check
+        // Cannot escape via any meta's extension check
         return false;
     }
 }

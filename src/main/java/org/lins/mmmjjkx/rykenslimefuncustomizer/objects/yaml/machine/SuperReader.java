@@ -156,7 +156,8 @@ public class SuperReader extends YamlReader<SlimefunItem> {
                     Field field = getField(clazz, fieldName);
 
                     if (field == null) {
-                        ExceptionHandler.handleError("在附属" + addon.getAddonId() + "中加载继承物品" + s + "时遇到了问题: " + "没有找到字段" + fieldName);
+                        ExceptionHandler.handleError(
+                                "在附属" + addon.getAddonId() + "中加载继承物品" + s + "时遇到了问题: " + "没有找到字段" + fieldName);
                         continue;
                     }
                     if (Modifier.isStatic(field.getModifiers())) {

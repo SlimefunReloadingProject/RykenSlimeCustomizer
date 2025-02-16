@@ -158,44 +158,65 @@ public abstract class ScriptEval {
 
         addThing("runLater", (BiFunction<Function<Object[], ?>, Integer, BukkitTask>) (r, l) -> {
             AtomicReference<BukkitTask> task = new AtomicReference<>();
-            Bukkit.getScheduler().runTaskLater(RykenSlimefunCustomizer.INSTANCE, t -> {
-                r.apply(new Object[]{t});
-                task.set(t);
-            }, l);
+            Bukkit.getScheduler()
+                    .runTaskLater(
+                            RykenSlimefunCustomizer.INSTANCE,
+                            t -> {
+                                r.apply(new Object[] {t});
+                                task.set(t);
+                            },
+                            l);
             return task.get();
         });
         addThing("runRepeating", (CiFunction<Function<Object[], ?>, Integer, Integer, BukkitTask>) (r, l, t) -> {
             AtomicReference<BukkitTask> task = new AtomicReference<>();
-            Bukkit.getScheduler().runTaskTimer(RykenSlimefunCustomizer.INSTANCE, ta -> {
-                r.apply(new Object[]{ta});
-                task.set(ta);
-            }, l, t);
+            Bukkit.getScheduler()
+                    .runTaskTimer(
+                            RykenSlimefunCustomizer.INSTANCE,
+                            ta -> {
+                                r.apply(new Object[] {ta});
+                                task.set(ta);
+                            },
+                            l,
+                            t);
             return task.get();
         });
+        /*
         addThing("runAsync", (Function<Function<Object[], ?>, BukkitTask>) r -> {
             AtomicReference<BukkitTask> task = new AtomicReference<>();
             Bukkit.getScheduler().runTaskAsynchronously(RykenSlimefunCustomizer.INSTANCE, t -> {
-                r.apply(new Object[]{t});
+                r.apply(new Object[] {t});
                 task.set(t);
             });
             return task.get();
         });
         addThing("runLaterAsync", (BiFunction<Function<Object[], ?>, Integer, BukkitTask>) (r, l) -> {
             AtomicReference<BukkitTask> task = new AtomicReference<>();
-            Bukkit.getScheduler().runTaskLaterAsynchronously(RykenSlimefunCustomizer.INSTANCE, t -> {
-                r.apply(null);
-                task.set(t);
-            }, l);
+            Bukkit.getScheduler()
+                    .runTaskLaterAsynchronously(
+                            RykenSlimefunCustomizer.INSTANCE,
+                            t -> {
+                                r.apply(null);
+                                task.set(t);
+                            },
+                            l);
             return task.get();
         });
         addThing("runRepeatingAsync", (CiFunction<Function<Object[], ?>, Integer, Integer, BukkitTask>) (r, l, t) -> {
             AtomicReference<BukkitTask> task = new AtomicReference<>();
-            Bukkit.getScheduler().runTaskTimerAsynchronously(RykenSlimefunCustomizer.INSTANCE, ta -> {
-                r.apply(null);
-                task.set(ta);
-            }, l, t);
+            Bukkit.getScheduler()
+                    .runTaskTimerAsynchronously(
+                            RykenSlimefunCustomizer.INSTANCE,
+                            ta -> {
+                                r.apply(null);
+                                task.set(ta);
+                            },
+                            l,
+                            t);
             return task.get();
         });
+
+         */
 
         addThing("getAddonConfig", (Supplier<YamlConfiguration>) () -> {
             if (addon.getConfig() == null) {

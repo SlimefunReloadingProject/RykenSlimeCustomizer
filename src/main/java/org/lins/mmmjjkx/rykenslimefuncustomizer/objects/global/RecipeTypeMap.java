@@ -4,7 +4,6 @@ import io.github.thebusybiscuit.slimefun4.api.recipes.RecipeType;
 import java.util.HashMap;
 import java.util.List;
 import java.util.Map;
-
 import org.bukkit.Bukkit;
 import org.jetbrains.annotations.Nullable;
 
@@ -63,13 +62,15 @@ public class RecipeTypeMap {
                     if (integration.isStatic) {
                         instance = clazz.getField(fieldName).get(null);
                     } else {
-                        instance = clazz.newInstance(); //or something sus
+                        instance = clazz.newInstance(); // or something sus
                     }
                     if (instance instanceof RecipeType) {
                         RecipeTypeMap.pushRecipeType((RecipeType) instance);
                     }
                 } catch (Exception e) {
-                    Bukkit.getLogger().warning("Failed to get external recipe type from " + className + "#" + fieldName + ": " + e.getMessage());
+                    Bukkit.getLogger()
+                            .warning("Failed to get external recipe type from " + className + "#" + fieldName + ": "
+                                    + e.getMessage());
                 }
             }
         }

@@ -483,8 +483,8 @@ public class SingleItemRecipeGuideListener implements Listener {
 
             if (defaultRecipeGUI) {
                 int[] backgroundSlots = {
-                        1, 2, 3, 5, 6, 7, 8, 9, 10, 11, 12, 13, 14, 15, 16, 17, 22, 31, 40, 45, 46, 47, 48, 49, 50, 51, 52,
-                        53
+                    1, 2, 3, 5, 6, 7, 8, 9, 10, 11, 12, 13, 14, 15, 16, 17, 22, 31, 40, 45, 46, 47, 48, 49, 50, 51, 52,
+                    53
                 };
                 for (int background : backgroundSlots) {
                     addItem(background, ChestMenuUtils.getBackground(), (pl, s, is, action) -> false);
@@ -617,14 +617,16 @@ public class SingleItemRecipeGuideListener implements Listener {
             if (item instanceof CustomWorkbench cw) {
                 CustomMenu menu = cw.getMenu();
                 if (menu != null) {
-                    BlockMenuPreset preset = Slimefun.getRegistry().getMenuPresets().get(item.getId());
+                    BlockMenuPreset preset =
+                            Slimefun.getRegistry().getMenuPresets().get(item.getId());
                     for (int slot : preset.getPresetSlots()) {
                         ItemStack itemStack = preset.getItemInSlot(slot);
                         if (itemStack != null && itemStack.getType() != Material.AIR) {
                             addItem(slot, itemStack, (pl, s, is, action) -> false);
                         }
                     }
-                    CustomLinkedMachineRecipe recipe = (CustomLinkedMachineRecipe) cw.getMachineRecipes().get(index);
+                    CustomLinkedMachineRecipe recipe =
+                            (CustomLinkedMachineRecipe) cw.getMachineRecipes().get(index);
                     Map<Integer, ItemStack> linkedInput = recipe.getLinkedInput();
                     for (int slot : linkedInput.keySet()) {
                         addItem(slot, linkedInput.get(slot).clone(), (pl, s, is, action) -> false);
@@ -641,7 +643,9 @@ public class SingleItemRecipeGuideListener implements Listener {
                                 ItemStack chanceOutput = output.clone();
                                 if (chance < 100) {
                                     CommonUtils.addLore(
-                                            chanceOutput, true, CMIChatColor.translate("&a有&b " + chance + "% &a的概率产出"));
+                                            chanceOutput,
+                                            true,
+                                            CMIChatColor.translate("&a有&b " + chance + "% &a的概率产出"));
                                 }
 
                                 if (chance > 0) {
@@ -664,8 +668,6 @@ public class SingleItemRecipeGuideListener implements Listener {
                     }
                 }
             }
-
-
         }
 
         @Override

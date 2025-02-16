@@ -4,6 +4,11 @@ import io.github.thebusybiscuit.slimefun4.api.items.ItemGroup;
 import io.github.thebusybiscuit.slimefun4.api.items.SlimefunItemStack;
 import io.github.thebusybiscuit.slimefun4.api.recipes.RecipeType;
 import io.github.thebusybiscuit.slimefun4.libraries.dough.collections.Pair;
+import java.io.File;
+import java.util.ArrayList;
+import java.util.HashMap;
+import java.util.List;
+import java.util.Map;
 import org.bukkit.Material;
 import org.bukkit.configuration.ConfigurationSection;
 import org.bukkit.configuration.file.YamlConfiguration;
@@ -17,12 +22,6 @@ import org.lins.mmmjjkx.rykenslimefuncustomizer.objects.machine.CustomLinkedMach
 import org.lins.mmmjjkx.rykenslimefuncustomizer.objects.yaml.YamlReader;
 import org.lins.mmmjjkx.rykenslimefuncustomizer.utils.CommonUtils;
 import org.lins.mmmjjkx.rykenslimefuncustomizer.utils.ExceptionHandler;
-
-import java.io.File;
-import java.util.ArrayList;
-import java.util.HashMap;
-import java.util.List;
-import java.util.Map;
 
 /*
  * RSC_EXAMPLE_WORKBENCH:
@@ -126,8 +125,7 @@ public class WorkbenchReader extends YamlReader<CustomWorkbench> {
         int energy = section.getInt("energyPerCraft");
 
         if (energy <= 0) {
-            ExceptionHandler.handleError(
-                    "在附属" + addon.getAddonId() + "中加载工作台" + s + "时遇到了问题: " + "合成一次的消耗能量未设置或小于等于0");
+            ExceptionHandler.handleError("在附属" + addon.getAddonId() + "中加载工作台" + s + "时遇到了问题: " + "合成一次的消耗能量未设置或小于等于0");
             return null;
         }
 
@@ -145,14 +143,12 @@ public class WorkbenchReader extends YamlReader<CustomWorkbench> {
 
         int click = section.getInt("click", -1);
         if (click == -1) {
-            ExceptionHandler.handleError(
-                    "在附属" + addon.getAddonId() + "中加载工作台" + s + "时遇到了问题: " + "点击槽位未设置");
+            ExceptionHandler.handleError("在附属" + addon.getAddonId() + "中加载工作台" + s + "时遇到了问题: " + "点击槽位未设置");
             return null;
         }
 
         if (click < 0 || click > 53) {
-            ExceptionHandler.handleError(
-                    "在附属" + addon.getAddonId() + "中加载工作台" + s + "时遇到了问题: " + "点击槽位超出范围");
+            ExceptionHandler.handleError("在附属" + addon.getAddonId() + "中加载工作台" + s + "时遇到了问题: " + "点击槽位超出范围");
             return null;
         }
 
@@ -173,8 +169,7 @@ public class WorkbenchReader extends YamlReader<CustomWorkbench> {
                 menu,
                 hideAllRecipes,
                 click,
-                eval
-        );
+                eval);
     }
 
     @Override
@@ -283,9 +278,13 @@ public class WorkbenchReader extends YamlReader<CustomWorkbench> {
                 array[i] = i;
             }
 
-
-
-            list.add(new CustomLinkedMachineRecipe(0, finalInput, new LinkedOutput(freeOutput.toArray(new ItemStack[0]), linkedOutput, array, linkedChances), chooseOne, forDisplay, hide));
+            list.add(new CustomLinkedMachineRecipe(
+                    0,
+                    finalInput,
+                    new LinkedOutput(freeOutput.toArray(new ItemStack[0]), linkedOutput, array, linkedChances),
+                    chooseOne,
+                    forDisplay,
+                    hide));
         }
         return list;
     }
