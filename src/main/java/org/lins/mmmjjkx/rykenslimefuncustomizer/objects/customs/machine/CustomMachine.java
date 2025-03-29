@@ -78,6 +78,11 @@ public class CustomMachine extends AbstractEmptyMachine<MachineOperation> implem
                         @Override
                         public void onPlayerBreak(
                                 @NotNull BlockBreakEvent e, @NotNull ItemStack item, @NotNull List<ItemStack> drops) {
+                            MachineOperation operation = getMachineProcessor().getOperation(e.getBlock());
+                            if (operation != null) {
+                                getMachineProcessor().endOperation(e.getBlock());
+                            }
+
                             CustomMachine.this.eval.evalFunction("onBreak", e, item, drops);
                         }
                     });

@@ -90,6 +90,11 @@ public class CustomNoEnergyMachine extends AbstractEmptyMachine<MachineOperation
                         @Override
                         public void onPlayerBreak(
                                 @NotNull BlockBreakEvent e, @NotNull ItemStack item, @NotNull List<ItemStack> drops) {
+                            MachineOperation operation = getMachineProcessor().getOperation(e.getBlock());
+                            if (operation != null) {
+                                getMachineProcessor().endOperation(e.getBlock());
+                            }
+
                             CustomNoEnergyMachine.this.eval.evalFunction("onBreak", e, item, drops);
                         }
                     });
