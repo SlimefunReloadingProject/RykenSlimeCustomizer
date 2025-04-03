@@ -14,6 +14,7 @@ import java.nio.file.Files;
 import java.nio.file.StandardOpenOption;
 import java.util.Arrays;
 import java.util.List;
+import java.util.Map;
 import java.util.Optional;
 import java.util.function.Predicate;
 import java.util.regex.Matcher;
@@ -38,6 +39,13 @@ import org.lins.mmmjjkx.rykenslimefuncustomizer.objects.ProjectAddon;
 import org.lins.mmmjjkx.rykenslimefuncustomizer.objects.customs.item.RSCItemStack;
 
 public class CommonUtils {
+    private static final Map<String, String> materialMappings = Map.of(
+            "GRASS", "SHORT_GRASS",
+            "SHORT_GRASS", "GRASS",
+            "SCUTE", "TURTLE_SCUTE",
+            "TURTLE_SCUTE", "SCUTE"
+    );
+
     public static ItemStack doGlow(ItemStack item) {
         item.addUnsafeEnchantment(Enchantment.LUCK, 1);
         item.addItemFlags(ItemFlag.HIDE_ENCHANTS);
@@ -202,58 +210,25 @@ public class CommonUtils {
                     itemStack.setAmount(1);
                 }
             }
+            //mc
             default -> {
-                Optional<Material> materialo = Optional.ofNullable(Material.matchMaterial(material));
+                Optional<Material> materialOptional = Optional.ofNullable(Material.matchMaterial(material));
                 Material mat = Material.STONE;
-                for (int i = 0; i < 1; i++) {
-                    if (materialo.isPresent()) {
-                        mat = materialo.get();
-                        break;
+
+                if (materialOptional.isPresent()) {
+                    mat = materialOptional.get();
+                } else if (SlimefunItem.getById(material) == null && addon.getPreloadItems().get(material) == null) {
+                    if (materialMappings.containsKey(material)) {
+                        materialOptional = Optional.ofNullable(Material.matchMaterial(materialMappings.get(material)));
+                        if (materialOptional.isPresent()) {
+                            mat = materialOptional.get();
+                            ExceptionHandler.handleWarning("材料" + material + "已自动修复为" + mat);
+                        } else {
+                            ExceptionHandler.handleError("无法在附属" + addon.getAddonId() + "中读取材料" + material + "，已转为石头");
+                        }
+                    } else {
+                        ExceptionHandler.handleError("无法在附属" + addon.getAddonId() + "中读取材料" + material + "，已转为石头");
                     }
-
-                    ExceptionHandler.handleWarning("无法加载材料: " + material + ", 正在尝试自动修复...");
-
-                    if ("GRASS".equals(material)) {
-                        materialo = Optional.ofNullable(Material.matchMaterial("SHORT_GRASS"));
-                    }
-
-                    if (materialo.isPresent()) {
-                        mat = materialo.get();
-                        ExceptionHandler.handleWarning("材料" + material + "已自动修复为" + mat.toString());
-                        break;
-                    }
-
-                    if ("SHORT_GRASS".equals(material)) {
-                        materialo = Optional.ofNullable(Material.matchMaterial("GRASS"));
-                    }
-
-                    if (materialo.isPresent()) {
-                        mat = materialo.get();
-                        ExceptionHandler.handleWarning("材料" + material + "已自动修复为" + mat.toString());
-                        break;
-                    }
-
-                    if ("SCUTE".equals(material)) {
-                        materialo = Optional.ofNullable(Material.matchMaterial("TURTLE_SCUTE"));
-                    }
-
-                    if (materialo.isPresent()) {
-                        mat = materialo.get();
-                        ExceptionHandler.handleWarning("材料" + material + "已自动修复为" + mat.toString());
-                        break;
-                    }
-
-                    if ("TURTLE_SCUTE".equals(material)) {
-                        materialo = Optional.ofNullable(Material.matchMaterial("SCUTE"));
-                    }
-
-                    if (materialo.isPresent()) {
-                        mat = materialo.get();
-                        ExceptionHandler.handleWarning("材料" + material + "已自动修复为" + mat.toString());
-                        break;
-                    }
-
-                    ExceptionHandler.handleError("无法在附属" + addon.getAddonId() + "中读取材料" + material + "，已转为石头");
                 }
 
                 itemStack = new CustomItemStack(mat, name, lore);
