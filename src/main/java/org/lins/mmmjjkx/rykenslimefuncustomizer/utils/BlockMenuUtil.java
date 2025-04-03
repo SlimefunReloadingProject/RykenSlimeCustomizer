@@ -252,7 +252,7 @@ public class BlockMenuUtil {
             }
         }
 
-        // try push free output
+        // try to push free output
         for (ItemStack PitemToPush : output.getFreeOutput()) {
             if (PitemToPush == null || PitemToPush.getType() == Material.AIR) {
                 continue;

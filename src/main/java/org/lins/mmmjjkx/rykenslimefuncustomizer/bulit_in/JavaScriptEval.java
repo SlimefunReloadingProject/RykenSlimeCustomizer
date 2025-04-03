@@ -157,7 +157,7 @@ public class JavaScriptEval extends ScriptEval {
                 .engine(Engine.newBuilder("js")
                         .allowExperimentalOptions(true)
                         .build())
-                .currentWorkingDirectory(getAddon().getScriptsFolder().toPath())
+                .currentWorkingDirectory(getAddon().getScriptsFolder().toPath().toAbsolutePath())
                 .build();
 
         advancedSetup();
