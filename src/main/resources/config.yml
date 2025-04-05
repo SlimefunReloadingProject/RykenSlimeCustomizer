@@ -1,5 +1,5 @@
 # 是否自动获取示例
-saveExample: true
+saveExample: false
 # 是否获取调试日志，如果插件没有意外错误时，可以关闭该选项
 debug: false
 # 是否是否启用插件更新(需要GuizhanLibPlugin)
