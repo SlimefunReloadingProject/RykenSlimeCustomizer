@@ -8,7 +8,6 @@ import com.oracle.truffle.js.runtime.JSRealm;
 import com.oracle.truffle.js.runtime.objects.JSAttributes;
 import com.oracle.truffle.js.runtime.objects.JSObject;
 import com.oracle.truffle.js.runtime.objects.JSObjectUtil;
-import com.oracle.truffle.js.scriptengine.GraalJSScriptEngine;
 import com.xzavier0722.mc.plugin.slimefun4.storage.util.StorageCacheUtils;
 import io.github.thebusybiscuit.slimefun4.api.items.SlimefunItem;
 import io.github.thebusybiscuit.slimefun4.api.player.PlayerProfile;
@@ -16,14 +15,12 @@ import io.github.thebusybiscuit.slimefun4.implementation.Slimefun;
 import io.github.thebusybiscuit.slimefun4.implementation.SlimefunItems;
 import io.github.thebusybiscuit.slimefun4.utils.SlimefunUtils;
 import java.io.File;
+import java.io.IOException;
 import java.util.HashSet;
 import java.util.Objects;
 import java.util.Set;
-import javax.script.ScriptException;
 import me.mrCookieSlime.Slimefun.api.inventory.BlockMenu;
-import org.graalvm.polyglot.Context;
-import org.graalvm.polyglot.Engine;
-import org.graalvm.polyglot.PolyglotAccess;
+import org.graalvm.polyglot.*;
 import org.graalvm.polyglot.io.IOAccess;
 import org.jetbrains.annotations.NotNull;
 import org.jetbrains.annotations.Nullable;
@@ -38,7 +35,7 @@ public class JavaScriptEval extends ScriptEval {
             RykenSlimefunCustomizer.INSTANCE.getDataFolder().getParentFile();
     private final Set<String> failed_functions = new HashSet<>();
 
-    private GraalJSScriptEngine jsEngine;
+    private Context jsEngine;
 
     public JavaScriptEval(@NotNull File js, ProjectAddon addon) {
         super(js, addon);
@@ -52,7 +49,7 @@ public class JavaScriptEval extends ScriptEval {
     }
 
     private void advancedSetup() {
-        JSRealm realm = JavaScriptLanguage.getJSRealm(jsEngine.getPolyglotContext());
+        JSRealm realm = JavaScriptLanguage.getJSRealm(jsEngine);
         TruffleLanguage.Env env = realm.getEnv();
         addThing("SlimefunItems", env.asHostSymbol(SlimefunItems.class));
         addThing("SlimefunItem", env.asHostSymbol(SlimefunItem.class));
@@ -74,11 +71,14 @@ public class JavaScriptEval extends ScriptEval {
         JSObjectUtil.putToStringTag(java, JSRealm.JAVA_CLASS_NAME);
 
         JSObjectUtil.putDataProperty(realm.getGlobalObject(), "Java", java, JSAttributes.getDefaultNotEnumerable());
+
+        jsEngine.enter();
     }
 
     @Override
     public void close() {
         try {
+            jsEngine.leave();
             jsEngine.close();
         } catch (IllegalStateException ignored) {
         }
@@ -86,7 +86,7 @@ public class JavaScriptEval extends ScriptEval {
 
     @Override
     public void addThing(String name, Object value) {
-        jsEngine.put(name, value);
+        jsEngine.getBindings("js").putMember(name, value);
     }
 
     @Override
@@ -98,8 +98,8 @@ public class JavaScriptEval extends ScriptEval {
         super.contextInit();
         if (jsEngine != null) {
             try {
-                jsEngine.eval(getFileContext());
-            } catch (ScriptException e) {
+                jsEngine.eval(Source.newBuilder("js", getFileContext(), "JavaScript").build());
+            } catch (IOException e) {
                 e.printStackTrace();
             }
         }
@@ -117,8 +117,14 @@ public class JavaScriptEval extends ScriptEval {
             return null;
         }
 
+        Value member = jsEngine.getBindings("js").getMember(funName);
+        if (member == null) {
+            failed_functions.add(funName);
+            return null;
+        }
+
         try {
-            Object result = jsEngine.invokeFunction(funName, args);
+            Object result = member.execute(args);
             ExceptionHandler.debugLog("运行了 " + getAddon().getAddonName() + "的脚本" + getFile().getName() + "中的函数 " + funName);
             return result;
         } catch (IllegalStateException e) {
@@ -127,12 +133,6 @@ public class JavaScriptEval extends ScriptEval {
                 ExceptionHandler.handleError("在运行附属" + getAddon().getAddonName() + "的脚本" + getFile().getName() + "时发生错误");
                 e.printStackTrace();
             }
-        } catch (ScriptException e) {
-            ExceptionHandler.handleError("在运行" + getAddon().getAddonName() + "的脚本" + getFile().getName() + "时发生错误");
-            e.printStackTrace();
-        } catch (NoSuchMethodException ignored) {
-            // won't log it, because listeners always send a lot of functions
-            failed_functions.add(funName);
         } catch (Throwable e) {
             ExceptionHandler.handleError("在运行" + getAddon().getAddonName() + "的脚本" + getFile().getName() + "时发生意外错误");
             e.printStackTrace();
@@ -142,11 +142,7 @@ public class JavaScriptEval extends ScriptEval {
     }
 
     private void reSetup() {
-        jsEngine = GraalJSScriptEngine.create(
-                Engine.newBuilder("js")
-                        .allowExperimentalOptions(true)
-                        .build(),
-                Context.newBuilder("js")
+        jsEngine = Context.newBuilder("js")
                         .hostClassLoader(RykenSlimefunCustomizer.class.getClassLoader())
                         .allowAllAccess(true)
                         .allowHostAccess(UNIVERSAL_HOST_ACCESS)
@@ -157,7 +153,12 @@ public class JavaScriptEval extends ScriptEval {
                         .allowValueSharing(true)
                         .allowIO(IOAccess.ALL)
                         .allowHostClassLookup(s -> true)
-                        .allowHostClassLoading(true));
+                        .allowHostClassLoading(true)
+                .engine(Engine.newBuilder("js")
+                        .allowExperimentalOptions(true)
+                        .build())
+                .currentWorkingDirectory(getAddon().getScriptsFolder().toPath().toAbsolutePath())
+                .build();
 
         advancedSetup();
     }

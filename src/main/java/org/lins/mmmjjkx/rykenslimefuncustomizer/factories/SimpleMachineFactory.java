@@ -11,9 +11,7 @@ import io.github.thebusybiscuit.slimefun4.implementation.items.electric.machines
 import io.github.thebusybiscuit.slimefun4.implementation.items.electric.machines.entities.ProduceCollector;
 import me.mrCookieSlime.Slimefun.Objects.SlimefunItem.abstractItems.AContainer;
 import org.bukkit.inventory.ItemStack;
-import org.lins.mmmjjkx.rykenslimefuncustomizer.objects.customs.machine.sf.AdvancedAnimalGrowthAccelerator;
-import org.lins.mmmjjkx.rykenslimefuncustomizer.objects.customs.machine.sf.AdvancedCropGrowthAccelerator;
-import org.lins.mmmjjkx.rykenslimefuncustomizer.objects.customs.machine.sf.AdvancedTreeGrowthAccelerator;
+import org.lins.mmmjjkx.rykenslimefuncustomizer.objects.customs.machine.sf.*;
 import org.lins.mmmjjkx.rykenslimefuncustomizer.objects.machine.SimpleMachineType;
 
 public class SimpleMachineFactory {
@@ -51,17 +49,18 @@ public class SimpleMachineFactory {
                     case AUTO_ENCHANTER -> new AutoEnchanter(group, slimefunItemStack, recipeType, recipe);
                     case AUTO_DISENCHANTER -> new AutoDisenchanter(group, slimefunItemStack, recipeType, recipe);
                     case AUTO_DRIER -> new AutoDrier(group, slimefunItemStack, recipeType, recipe);
-                    case AUTO_BREWER -> new AutoBrewer(group, slimefunItemStack, recipeType, recipe);
+                    case AUTO_BREWER -> new AdvancedAutoBrewer(group, slimefunItemStack, recipeType, recipe, speed);
                     case REFINERY -> new Refinery(group, slimefunItemStack, recipeType, recipe);
-                    case PRODUCE_COLLECTOR -> new ProduceCollector(group, slimefunItemStack, recipeType, recipe);
+                    case PRODUCE_COLLECTOR -> new AdvancedProduceCollector(group, slimefunItemStack, recipeType, recipe, speed);
                     case TREE_GROWTH_ACCELERATOR -> new AdvancedTreeGrowthAccelerator(
                             group, slimefunItemStack, recipeType, recipe, capacity, radius, consumption);
                     case ANIMAL_GROWTH_ACCELERATOR -> new AdvancedAnimalGrowthAccelerator(
                             group, slimefunItemStack, recipeType, recipe, capacity, radius, consumption);
                     case CROP_GROWTH_ACCELERATOR -> new AdvancedCropGrowthAccelerator(
                             group, slimefunItemStack, recipeType, recipe, capacity, radius, consumption, speed);
-                    case AUTO_ANVIL -> new AutoAnvil(group, repairFactor, slimefunItemStack, recipeType, recipe);
+                    case AUTO_ANVIL -> new AdvancedAutoAnvil(group, repairFactor, slimefunItemStack, recipeType, recipe, speed);
                 };
+
         if (instance instanceof AContainer aContainer) {
             aContainer.setCapacity(capacity);
             aContainer.setEnergyConsumption(consumption);

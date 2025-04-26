@@ -27,6 +27,7 @@ import io.github.thebusybiscuit.slimefun4.api.events.SlimefunItemRegistryFinaliz
 import io.github.thebusybiscuit.slimefun4.api.events.SlimefunItemSpawnEvent;
 import io.github.thebusybiscuit.slimefun4.api.events.TalismanActivateEvent;
 import io.github.thebusybiscuit.slimefun4.api.events.WaypointCreateEvent;
+import org.bukkit.Bukkit;
 import org.bukkit.event.Event;
 import org.bukkit.event.EventHandler;
 import org.bukkit.event.Listener;
@@ -254,6 +255,7 @@ import org.bukkit.event.world.WorldInitEvent;
 import org.bukkit.event.world.WorldLoadEvent;
 import org.bukkit.event.world.WorldSaveEvent;
 import org.bukkit.event.world.WorldUnloadEvent;
+import org.lins.mmmjjkx.rykenslimefuncustomizer.RykenSlimefunCustomizer;
 import org.lins.mmmjjkx.rykenslimefuncustomizer.bulit_in.JavaScriptEval;
 
 public class ScriptableEventListener implements Listener {
@@ -1786,7 +1788,7 @@ public class ScriptableEventListener implements Listener {
         ctx.invoke(e);
     }
 
-    class ListenerContext {
+    static class ListenerContext {
         private final JavaScriptEval eval;
 
         ListenerContext(JavaScriptEval eval) {
@@ -1796,7 +1798,8 @@ public class ScriptableEventListener implements Listener {
         public <T extends Event> void invoke(T event) {
             String className = event.getClass().getSimpleName();
             String methodName = "on" + className.replace("Event", "");
-            eval.evalFunction(methodName, event);
+
+            Bukkit.getScheduler().runTask(RykenSlimefunCustomizer.INSTANCE, () -> eval.evalFunction(methodName, event));
         }
     }
 }

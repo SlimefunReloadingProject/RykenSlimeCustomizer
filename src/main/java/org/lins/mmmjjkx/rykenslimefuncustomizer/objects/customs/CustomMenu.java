@@ -10,6 +10,7 @@ import me.mrCookieSlime.CSCoreLibPlugin.general.Inventory.ChestMenu;
 import me.mrCookieSlime.CSCoreLibPlugin.general.Inventory.ClickAction;
 import me.mrCookieSlime.Slimefun.Objects.SlimefunItem.abstractItems.AContainer;
 import me.mrCookieSlime.Slimefun.api.inventory.BlockMenuPreset;
+import net.kyori.adventure.text.Component;
 import org.bukkit.Bukkit;
 import org.bukkit.entity.Player;
 import org.bukkit.inventory.Inventory;
@@ -164,6 +165,10 @@ public class CustomMenu {
     }
 
     public void addItem(int i, ItemStack item, ChestMenu.MenuClickHandler onClick) {
+        if (!item.getItemMeta().hasDisplayName()) {
+            item.editMeta(m -> m.displayName(Component.text(" ")));
+        }
+
         items.put(i, item);
         clickHandlers.put(i, onClick);
     }
