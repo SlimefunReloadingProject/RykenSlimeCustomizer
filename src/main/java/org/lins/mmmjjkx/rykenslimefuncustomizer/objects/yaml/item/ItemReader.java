@@ -108,7 +108,7 @@ public class ItemReader extends YamlReader<SlimefunItem> {
 
             CommonUtils.addLore(sfis, true, CMIChatColor.translate("&8⇨ &e⚡ &70 / " + energyCapacity + " J"));
 
-            instance = new CustomEnergyItem(group.getSecondValue(), sfis, rt, itemStacks, (float) energyCapacity, eval);
+            instance = new CustomEnergyItem(group.getSecondValue(), sfis, rt, itemStacks, (float) energyCapacity, eval, sfis);
         } else if (section.getBoolean("placeable", false)) {
             instance = new CustomDefaultItem(group.getSecondValue(), sfis, rt, itemStacks);
         } else if (section.contains("rainbow")) {

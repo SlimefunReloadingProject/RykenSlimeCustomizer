@@ -43,8 +43,7 @@ public class CommonUtils {
             "GRASS", "SHORT_GRASS",
             "SHORT_GRASS", "GRASS",
             "SCUTE", "TURTLE_SCUTE",
-            "TURTLE_SCUTE", "SCUTE"
-    );
+            "TURTLE_SCUTE", "SCUTE");
 
     public static ItemStack doGlow(ItemStack item) {
         item.addUnsafeEnchantment(Enchantment.LUCK, 1);
@@ -206,18 +205,17 @@ public class CommonUtils {
                         name,
                         lore);
 
-                if (itemStack.getAmount() > 1 && !countable) {
-                    itemStack.setAmount(1);
-                }
+                itemStack.setAmount(1);
             }
-            //mc
+                // mc
             default -> {
                 Optional<Material> materialOptional = Optional.ofNullable(Material.matchMaterial(material));
                 Material mat = Material.STONE;
 
                 if (materialOptional.isPresent()) {
                     mat = materialOptional.get();
-                } else if (SlimefunItem.getById(material) == null && addon.getPreloadItems().get(material) == null) {
+                } else if (SlimefunItem.getById(material) == null
+                        && addon.getPreloadItems().get(material) == null) {
                     if (materialMappings.containsKey(material)) {
                         materialOptional = Optional.ofNullable(Material.matchMaterial(materialMappings.get(material)));
                         if (materialOptional.isPresent()) {
@@ -241,15 +239,6 @@ public class CommonUtils {
         }
 
         itemStack.setItemMeta(meta);
-
-        if (countable) {
-            if (amount > 64 || amount < -1) {
-                ExceptionHandler.handleError(
-                        "无法在附属" + addon.getAddonId() + "中读取" + section.getCurrentPath() + "的物品: 物品数量不能大于64或小于-1");
-                return null;
-            }
-            itemStack.setAmount(amount);
-        }
 
         if (hasEnchantment) {
             List<String> enchants = section.getStringList("enchantments");

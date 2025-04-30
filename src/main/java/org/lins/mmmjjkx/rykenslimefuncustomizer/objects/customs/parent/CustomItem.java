@@ -11,5 +11,9 @@ public abstract class CustomItem extends SlimefunItem {
         super(itemGroup, item, recipeType, recipe);
     }
 
+    public CustomItem(ItemGroup itemGroup, SlimefunItemStack item, RecipeType recipeType, ItemStack[] recipe, ItemStack recipeOutput) {
+        super(itemGroup, item, recipeType, recipe, recipeOutput);
+    }
+
     public abstract Object[] constructorArgs();
 }

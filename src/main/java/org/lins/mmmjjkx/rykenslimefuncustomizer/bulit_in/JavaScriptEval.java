@@ -98,7 +98,8 @@ public class JavaScriptEval extends ScriptEval {
         super.contextInit();
         if (jsEngine != null) {
             try {
-                jsEngine.eval(Source.newBuilder("js", getFileContext(), "JavaScript").build());
+                jsEngine.eval(
+                        Source.newBuilder("js", getFileContext(), "JavaScript").build());
             } catch (IOException e) {
                 e.printStackTrace();
             }
@@ -125,16 +126,19 @@ public class JavaScriptEval extends ScriptEval {
 
         try {
             Object result = member.execute(args);
-            ExceptionHandler.debugLog("运行了 " + getAddon().getAddonName() + "的脚本" + getFile().getName() + "中的函数 " + funName);
+            ExceptionHandler.debugLog(
+                    "运行了 " + getAddon().getAddonName() + "的脚本" + getFile().getName() + "中的函数 " + funName);
             return result;
         } catch (IllegalStateException e) {
             String message = e.getMessage();
             if (!message.contains("Multi threaded access")) {
-                ExceptionHandler.handleError("在运行附属" + getAddon().getAddonName() + "的脚本" + getFile().getName() + "时发生错误");
+                ExceptionHandler.handleError(
+                        "在运行附属" + getAddon().getAddonName() + "的脚本" + getFile().getName() + "时发生错误");
                 e.printStackTrace();
             }
         } catch (Throwable e) {
-            ExceptionHandler.handleError("在运行" + getAddon().getAddonName() + "的脚本" + getFile().getName() + "时发生意外错误");
+            ExceptionHandler.handleError(
+                    "在运行" + getAddon().getAddonName() + "的脚本" + getFile().getName() + "时发生意外错误");
             e.printStackTrace();
         }
 
@@ -143,20 +147,18 @@ public class JavaScriptEval extends ScriptEval {
 
     private void reSetup() {
         jsEngine = Context.newBuilder("js")
-                        .hostClassLoader(RykenSlimefunCustomizer.class.getClassLoader())
-                        .allowAllAccess(true)
-                        .allowHostAccess(UNIVERSAL_HOST_ACCESS)
-                        .allowNativeAccess(false)
-                        .allowExperimentalOptions(true)
-                        .allowPolyglotAccess(PolyglotAccess.ALL)
-                        .allowCreateProcess(true)
-                        .allowValueSharing(true)
-                        .allowIO(IOAccess.ALL)
-                        .allowHostClassLookup(s -> true)
-                        .allowHostClassLoading(true)
-                .engine(Engine.newBuilder("js")
-                        .allowExperimentalOptions(true)
-                        .build())
+                .hostClassLoader(RykenSlimefunCustomizer.class.getClassLoader())
+                .allowAllAccess(true)
+                .allowHostAccess(UNIVERSAL_HOST_ACCESS)
+                .allowNativeAccess(false)
+                .allowExperimentalOptions(true)
+                .allowPolyglotAccess(PolyglotAccess.ALL)
+                .allowCreateProcess(true)
+                .allowValueSharing(true)
+                .allowIO(IOAccess.ALL)
+                .allowHostClassLookup(s -> true)
+                .allowHostClassLoading(true)
+                .engine(Engine.newBuilder("js").allowExperimentalOptions(true).build())
                 .currentWorkingDirectory(getAddon().getScriptsFolder().toPath().toAbsolutePath())
                 .build();
 

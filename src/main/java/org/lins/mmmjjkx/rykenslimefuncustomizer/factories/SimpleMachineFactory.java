@@ -8,7 +8,6 @@ import io.github.thebusybiscuit.slimefun4.implementation.items.electric.machines
 import io.github.thebusybiscuit.slimefun4.implementation.items.electric.machines.enchanting.AutoDisenchanter;
 import io.github.thebusybiscuit.slimefun4.implementation.items.electric.machines.enchanting.AutoEnchanter;
 import io.github.thebusybiscuit.slimefun4.implementation.items.electric.machines.enchanting.BookBinder;
-import io.github.thebusybiscuit.slimefun4.implementation.items.electric.machines.entities.ProduceCollector;
 import me.mrCookieSlime.Slimefun.Objects.SlimefunItem.abstractItems.AContainer;
 import org.bukkit.inventory.ItemStack;
 import org.lins.mmmjjkx.rykenslimefuncustomizer.objects.customs.machine.sf.*;
@@ -51,14 +50,16 @@ public class SimpleMachineFactory {
                     case AUTO_DRIER -> new AutoDrier(group, slimefunItemStack, recipeType, recipe);
                     case AUTO_BREWER -> new AdvancedAutoBrewer(group, slimefunItemStack, recipeType, recipe, speed);
                     case REFINERY -> new Refinery(group, slimefunItemStack, recipeType, recipe);
-                    case PRODUCE_COLLECTOR -> new AdvancedProduceCollector(group, slimefunItemStack, recipeType, recipe, speed);
+                    case PRODUCE_COLLECTOR -> new AdvancedProduceCollector(
+                            group, slimefunItemStack, recipeType, recipe, speed);
                     case TREE_GROWTH_ACCELERATOR -> new AdvancedTreeGrowthAccelerator(
                             group, slimefunItemStack, recipeType, recipe, capacity, radius, consumption);
                     case ANIMAL_GROWTH_ACCELERATOR -> new AdvancedAnimalGrowthAccelerator(
                             group, slimefunItemStack, recipeType, recipe, capacity, radius, consumption);
                     case CROP_GROWTH_ACCELERATOR -> new AdvancedCropGrowthAccelerator(
                             group, slimefunItemStack, recipeType, recipe, capacity, radius, consumption, speed);
-                    case AUTO_ANVIL -> new AdvancedAutoAnvil(group, repairFactor, slimefunItemStack, recipeType, recipe, speed);
+                    case AUTO_ANVIL -> new AdvancedAutoAnvil(
+                            group, repairFactor, slimefunItemStack, recipeType, recipe, speed);
                 };
 
         if (instance instanceof AContainer aContainer) {

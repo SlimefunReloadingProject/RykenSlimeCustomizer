@@ -11,7 +11,8 @@ import org.jetbrains.annotations.NotNull;
 public class AdvancedProduceCollector extends ProduceCollector {
     private final int speed;
 
-    public AdvancedProduceCollector(ItemGroup itemGroup, SlimefunItemStack item, RecipeType recipeType, ItemStack[] recipe, int speed) {
+    public AdvancedProduceCollector(
+            ItemGroup itemGroup, SlimefunItemStack item, RecipeType recipeType, ItemStack[] recipe, int speed) {
         super(itemGroup, item, recipeType, recipe);
 
         this.speed = speed;

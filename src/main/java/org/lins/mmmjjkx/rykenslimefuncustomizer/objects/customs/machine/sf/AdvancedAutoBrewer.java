@@ -5,6 +5,11 @@ import io.github.thebusybiscuit.slimefun4.api.items.SlimefunItemStack;
 import io.github.thebusybiscuit.slimefun4.api.recipes.RecipeType;
 import io.github.thebusybiscuit.slimefun4.implementation.items.electric.machines.AutoBrewer;
 import io.github.thebusybiscuit.slimefun4.libraries.dough.inventory.InvUtils;
+import java.util.EnumMap;
+import java.util.Map;
+import javax.annotation.Nonnull;
+import javax.annotation.Nullable;
+import javax.annotation.ParametersAreNonnullByDefault;
 import me.mrCookieSlime.Slimefun.Objects.SlimefunItem.abstractItems.MachineRecipe;
 import me.mrCookieSlime.Slimefun.api.inventory.BlockMenu;
 import org.bukkit.Material;
@@ -13,26 +18,20 @@ import org.bukkit.inventory.meta.PotionMeta;
 import org.bukkit.potion.PotionData;
 import org.bukkit.potion.PotionType;
 
-import javax.annotation.Nonnull;
-import javax.annotation.Nullable;
-import javax.annotation.ParametersAreNonnullByDefault;
-import java.util.EnumMap;
-import java.util.Map;
-
 public class AdvancedAutoBrewer extends AutoBrewer {
     private static final Map<Material, PotionType> potionRecipes = new EnumMap<>(Material.class);
     private static final Map<PotionType, PotionType> fermentations = new EnumMap<>(PotionType.class);
 
     private final int speed;
 
-    public AdvancedAutoBrewer(ItemGroup itemGroup, SlimefunItemStack item, RecipeType recipeType, ItemStack[] recipe, int speed) {
+    public AdvancedAutoBrewer(
+            ItemGroup itemGroup, SlimefunItemStack item, RecipeType recipeType, ItemStack[] recipe, int speed) {
         super(itemGroup, item, recipeType, recipe);
 
         this.speed = speed;
     }
 
-    @Nullable
-    protected MachineRecipe findNextRecipe(BlockMenu menu) {
+    @Nullable protected MachineRecipe findNextRecipe(BlockMenu menu) {
         ItemStack input1 = menu.getItemInSlot(this.getInputSlots()[0]);
         ItemStack input2 = menu.getItemInSlot(this.getInputSlots()[1]);
         if (input1 != null && input2 != null) {
@@ -45,7 +44,7 @@ public class AdvancedAutoBrewer extends AutoBrewer {
                     return null;
                 } else {
                     ItemStack potionItem = isPotionInFirstSlot ? input1 : input2;
-                    PotionMeta potion = (PotionMeta)potionItem.getItemMeta();
+                    PotionMeta potion = (PotionMeta) potionItem.getItemMeta();
                     ItemStack output = this.brew(ingredient.getType(), potionItem.getType(), potion);
                     if (output == null) {
                         return null;
@@ -54,11 +53,12 @@ public class AdvancedAutoBrewer extends AutoBrewer {
                         if (!InvUtils.fits(menu.toInventory(), output, this.getOutputSlots())) {
                             return null;
                         } else {
-                            for(int slot : this.getInputSlots()) {
+                            for (int slot : this.getInputSlots()) {
                                 menu.consumeItem(slot);
                             }
 
-                            return new MachineRecipe(30 / speed, new ItemStack[]{input1, input2}, new ItemStack[]{output});
+                            return new MachineRecipe(
+                                    30 / speed, new ItemStack[] {input1, input2}, new ItemStack[] {output});
                         }
                     }
                 }
@@ -69,8 +69,7 @@ public class AdvancedAutoBrewer extends AutoBrewer {
     }
 
     @ParametersAreNonnullByDefault
-    @Nullable
-    private ItemStack brew(Material input, Material potionType, PotionMeta potion) {
+    @Nullable private ItemStack brew(Material input, Material potionType, PotionMeta potion) {
         PotionData data = potion.getBasePotionData();
         PotionType type = data.getType();
         if (type == PotionType.WATER) {

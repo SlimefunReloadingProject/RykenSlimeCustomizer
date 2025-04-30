@@ -26,6 +26,17 @@ public class CustomEnergyItem extends CustomItem implements Rechargeable, NotPla
             ItemStack[] recipe,
             float capacity,
             @Nullable ScriptEval eval) {
+        this(itemGroup, item, recipeType, recipe, capacity, eval, null);
+    }
+
+    public CustomEnergyItem(
+            ItemGroup itemGroup,
+            SlimefunItemStack item,
+            RecipeType recipeType,
+            ItemStack[] recipe,
+            float capacity,
+            @Nullable ScriptEval eval,
+            ItemStack recipeOutput) {
         super(itemGroup, item, recipeType, recipe);
 
         this.capacity = capacity;
