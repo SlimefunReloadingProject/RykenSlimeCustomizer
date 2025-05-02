@@ -207,7 +207,7 @@ public class CommonUtils {
 
                 itemStack.setAmount(1);
             }
-                // mc
+            // mc
             default -> {
                 Optional<Material> materialOptional = Optional.ofNullable(Material.matchMaterial(material));
                 Material mat = Material.STONE;
@@ -236,6 +236,15 @@ public class CommonUtils {
         ItemMeta meta = itemStack.getItemMeta();
         if (modelId > 0) {
             meta.setCustomModelData(modelId);
+        }
+
+        if (countable) {
+            if (amount > 64 || amount < -1) {
+                ExceptionHandler.handleError(
+                        "无法在附属" + addon.getAddonId() + "中读取" + section.getCurrentPath() + "的物品: 物品数量不能大于64或小于-1");
+                return null;
+            }
+            itemStack.setAmount(amount);
         }
 
         itemStack.setItemMeta(meta);
