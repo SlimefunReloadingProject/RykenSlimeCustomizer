@@ -18,12 +18,13 @@ public class CustomRainbowBlock extends CustomItem {
             SlimefunItemStack item,
             RecipeType recipeType,
             ItemStack[] recipe,
-            RainbowTickHandler ticker) {
-        super(itemGroup, item, recipeType, recipe);
+            RainbowTickHandler ticker,
+            ItemStack recipeOutput) {
+        super(itemGroup, item, recipeType, recipe, recipeOutput);
 
         addItemHandler(ticker);
 
-        constructorArgs = new Object[] {itemGroup, item, recipeType, recipe, ticker};
+        constructorArgs = new Object[] {itemGroup, item, recipeType, recipe, ticker, recipeOutput};
     }
 
     public CustomRainbowBlock(
@@ -31,8 +32,9 @@ public class CustomRainbowBlock extends CustomItem {
             SlimefunItemStack item,
             RecipeType recipeType,
             ItemStack[] recipe,
-            ColoredMaterial materialType) {
-        this(itemGroup, item, recipeType, recipe, new RainbowTickHandler(materialType));
+            ColoredMaterial materialType,
+            ItemStack recipeOutput) {
+        this(itemGroup, item, recipeType, recipe, new RainbowTickHandler(materialType), recipeOutput);
     }
 
     public CustomRainbowBlock(
@@ -40,8 +42,9 @@ public class CustomRainbowBlock extends CustomItem {
             SlimefunItemStack item,
             RecipeType recipeType,
             ItemStack[] recipe,
-            List<Material> materials) {
-        this(itemGroup, item, recipeType, recipe, new RainbowTickHandler(materials));
+            List<Material> materials,
+            ItemStack recipeOutput) {
+        this(itemGroup, item, recipeType, recipe, new RainbowTickHandler(materials), recipeOutput);
     }
 
     @Override

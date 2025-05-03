@@ -21,8 +21,9 @@ public class CustomUnplaceableItem extends CustomItem implements NotPlaceable {
             SlimefunItemStack item,
             RecipeType recipeType,
             ItemStack[] recipe,
-            @Nullable ScriptEval eval) {
-        super(itemGroup, item, recipeType, recipe);
+            @Nullable ScriptEval eval,
+            ItemStack recipeOutput) {
+        super(itemGroup, item, recipeType, recipe, recipeOutput);
 
         if (eval != null) {
             eval.doInit();
@@ -38,7 +39,7 @@ public class CustomUnplaceableItem extends CustomItem implements NotPlaceable {
             this.addItemHandler((ItemUseHandler) PlayerRightClickEvent::cancel);
         }
 
-        this.constructorArgs = new Object[] {itemGroup, item, recipeType, recipe, eval};
+        this.constructorArgs = new Object[] {itemGroup, item, recipeType, recipe, eval, recipeOutput};
     }
 
     @Override

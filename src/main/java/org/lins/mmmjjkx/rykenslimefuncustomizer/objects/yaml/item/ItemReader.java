@@ -5,6 +5,7 @@ import io.github.thebusybiscuit.slimefun4.api.items.SlimefunItem;
 import io.github.thebusybiscuit.slimefun4.api.items.SlimefunItemStack;
 import io.github.thebusybiscuit.slimefun4.api.recipes.RecipeType;
 import io.github.thebusybiscuit.slimefun4.core.attributes.PiglinBarterDrop;
+import io.github.thebusybiscuit.slimefun4.core.attributes.Radioactive;
 import io.github.thebusybiscuit.slimefun4.core.attributes.Radioactivity;
 import io.github.thebusybiscuit.slimefun4.core.attributes.Soulbound;
 import io.github.thebusybiscuit.slimefun4.libraries.dough.collections.Pair;
@@ -27,7 +28,6 @@ import org.lins.mmmjjkx.rykenslimefuncustomizer.objects.ProjectAddon;
 import org.lins.mmmjjkx.rykenslimefuncustomizer.objects.customs.item.CustomDefaultItem;
 import org.lins.mmmjjkx.rykenslimefuncustomizer.objects.customs.item.CustomUnplaceableItem;
 import org.lins.mmmjjkx.rykenslimefuncustomizer.objects.customs.item.exts.*;
-import org.lins.mmmjjkx.rykenslimefuncustomizer.objects.customs.parent.BaseRadiationItem;
 import org.lins.mmmjjkx.rykenslimefuncustomizer.objects.customs.parent.CustomItem;
 import org.lins.mmmjjkx.rykenslimefuncustomizer.objects.global.DropFromBlock;
 import org.lins.mmmjjkx.rykenslimefuncustomizer.objects.slimefun.WitherProofBlockImpl;
@@ -94,11 +94,6 @@ public class ItemReader extends YamlReader<SlimefunItem> {
         boolean energy = section.contains("energy_capacity");
         boolean hasRadiation = section.contains("radiation");
 
-        // 将在粘液发布下一个正式版后删除
-        if (hasRadiation) {
-            return setupRadiationItem(section, sfis, group.getSecondValue(), s, rt, itemStacks, eval, addon);
-        }
-
         if (energy) {
             double energyCapacity = section.getDouble("energy_capacity");
             if (energyCapacity < 1) {
@@ -110,7 +105,7 @@ public class ItemReader extends YamlReader<SlimefunItem> {
 
             instance = new CustomEnergyItem(group.getSecondValue(), sfis, rt, itemStacks, (float) energyCapacity, eval, sfis);
         } else if (section.getBoolean("placeable", false)) {
-            instance = new CustomDefaultItem(group.getSecondValue(), sfis, rt, itemStacks);
+            instance = new CustomDefaultItem(group.getSecondValue(), sfis, rt, itemStacks, sfis);
         } else if (section.contains("rainbow")) {
             String materialType = section.getString("rainbow", "");
             if (!sfis.getType().isBlock()) {
@@ -137,7 +132,7 @@ public class ItemReader extends YamlReader<SlimefunItem> {
                     colorMaterials.add(material1);
                 }
 
-                instance = new CustomRainbowBlock(group.getSecondValue(), sfis, rt, itemStacks, colorMaterials);
+                instance = new CustomRainbowBlock(group.getSecondValue(), sfis, rt, itemStacks, colorMaterials, sfis);
             } else {
                 Pair<ExceptionHandler.HandleResult, ColoredMaterial> coloredMaterialPair =
                         ExceptionHandler.handleEnumValueOf(
@@ -149,10 +144,10 @@ public class ItemReader extends YamlReader<SlimefunItem> {
                         || coloredMaterial == null) {
                     return null;
                 }
-                instance = new CustomRainbowBlock(group.getSecondValue(), sfis, rt, itemStacks, coloredMaterial);
+                instance = new CustomRainbowBlock(group.getSecondValue(), sfis, rt, itemStacks, coloredMaterial, sfis);
             }
         } else {
-            instance = new CustomUnplaceableItem(group.getSecondValue(), sfis, rt, itemStacks, eval);
+            instance = new CustomUnplaceableItem(group.getSecondValue(), sfis, rt, itemStacks, eval, sfis);
         }
 
         Object[] constructorArgs = instance.constructorArgs();
@@ -192,6 +187,29 @@ public class ItemReader extends YamlReader<SlimefunItem> {
                     new Class[] {PiglinBarterDrop.class},
                     builder -> builder.method(ElementMatchers.isDeclaredBy(PiglinBarterDrop.class))
                             .intercept(FixedValue.value(finalChance)));
+
+            instance = (CustomItem) clazz.getDeclaredConstructors()[0].newInstance(constructorArgs);
+        }
+
+        if (hasRadiation) {
+            String radio = section.getString("radiation");
+            Pair<ExceptionHandler.HandleResult, Radioactivity> radioactivityPair = ExceptionHandler.handleEnumValueOf(
+                    "在附属" + addon.getAddonId() + "中加载物品" + id + "时遇到了问题: " + "错误的辐射等级级别: " + radio,
+                    Radioactivity.class,
+                    radio);
+            Radioactivity radioactivity = radioactivityPair.getSecondValue();
+
+            if (radioactivityPair.getFirstValue() == ExceptionHandler.HandleResult.FAILED || radioactivity == null) {
+                return null;
+            }
+
+            Class<? extends CustomItem> clazz = (Class<? extends CustomItem>) ClassUtils.generateClass(
+                    instance.getClass(),
+                    "Radiation",
+                    "Item",
+                    new Class[] {Radioactive.class},
+                    builder -> builder.method(ElementMatchers.isDeclaredBy(Radioactive.class))
+                            .intercept(FixedValue.value(radioactivity)));
 
             instance = (CustomItem) clazz.getDeclaredConstructors()[0].newInstance(constructorArgs);
         }
@@ -256,133 +274,5 @@ public class ItemReader extends YamlReader<SlimefunItem> {
         }
 
         return List.of(new SlimefunItemStack(addon.getId(key, section.getString("id_alias")), stack));
-    }
-
-    @SneakyThrows
-    @Deprecated(forRemoval = true, since = "RSC 1.4")
-    private SlimefunItem setupRadiationItem(
-            ConfigurationSection section,
-            SlimefunItemStack original,
-            ItemGroup itemGroup,
-            String id,
-            RecipeType recipeType,
-            ItemStack[] recipe,
-            JavaScriptEval eval,
-            ProjectAddon addon) {
-
-        String radio = section.getString("radiation");
-        Pair<ExceptionHandler.HandleResult, Radioactivity> radioactivityPair = ExceptionHandler.handleEnumValueOf(
-                "在附属" + addon.getAddonId() + "中加载物品" + id + "时遇到了问题: " + "错误的辐射等级级别: " + radio,
-                Radioactivity.class,
-                radio);
-        Radioactivity radioactivity = radioactivityPair.getSecondValue();
-
-        if (radioactivityPair.getFirstValue() == ExceptionHandler.HandleResult.FAILED || radioactivity == null) {
-            return null;
-        }
-
-        boolean energy = section.contains("energy_capacity");
-
-        CommonUtils.addLore(original, true, CMIChatColor.translate(radioactivity.getLore()));
-
-        BaseRadiationItem instance;
-
-        if (energy) {
-            double energyCapacity = section.getDouble("energy_capacity");
-            instance = new CustomEnergyRadiationItem(
-                    itemGroup, original, recipeType, recipe, radioactivity, (float) energyCapacity, eval);
-        } else if (section.getBoolean("placeable", false)) {
-            instance = new CustomDefaultRadiationItem(itemGroup, original, recipeType, recipe, radioactivity);
-        } else {
-            instance = new CustomRadiationItem(itemGroup, original, recipeType, recipe, eval, radioactivity);
-        }
-
-        Object[] constructorArgs = instance.constructArgs();
-
-        if (section.getBoolean("anti_wither", false)) {
-            if (!original.getType().isBlock()) {
-                ExceptionHandler.handleError("在附属" + addon.getAddonId() + "中加载物品" + id + "时遇到了问题: " + "非方块无法设置防凋零属性");
-                return null;
-            }
-
-            Class<? extends BaseRadiationItem> clazz = (Class<? extends BaseRadiationItem>) ClassUtils.generateClass(
-                    instance.getClass(), "WitherProof", "Item", new Class[] {WitherProofBlockImpl.class}, null);
-
-            instance = (BaseRadiationItem) clazz.getDeclaredConstructors()[0].newInstance(constructorArgs);
-        }
-
-        if (section.getBoolean("soulbound", false)) {
-            Class<? extends BaseRadiationItem> clazz = (Class<? extends BaseRadiationItem>) ClassUtils.generateClass(
-                    instance.getClass(), "Soulbound", "Item", new Class[] {Soulbound.class}, null);
-
-            instance = (BaseRadiationItem) clazz.getDeclaredConstructors()[0].newInstance(constructorArgs);
-        }
-
-        boolean piglin = section.contains("piglin_trade_chance");
-
-        if (piglin) {
-            int chance = section.getInt("piglin_trade_chance", 100);
-            if (chance < 0 || chance > 100) {
-                ExceptionHandler.handleError(
-                        "在附属" + addon.getAddonId() + "中加载物品" + id + "时遇到了问题: " + "猪灵交易掉落几率必须在0-100之间！已转为100");
-                chance = 100;
-            }
-
-            int finalChance = chance;
-            Class<? extends CustomItem> clazz = (Class<? extends CustomItem>) ClassUtils.generateClass(
-                    instance.getClass(),
-                    "PiglinTradeAble",
-                    "Item",
-                    new Class[] {PiglinBarterDrop.class},
-                    builder -> builder.method(ElementMatchers.isDeclaredBy(PiglinBarterDrop.class))
-                            .intercept(FixedValue.value(finalChance)));
-
-            instance = (BaseRadiationItem) clazz.getDeclaredConstructors()[0].newInstance(constructorArgs);
-        }
-
-        instance.setHidden(section.getBoolean("hidden", false));
-        instance.setUseableInWorkbench(section.getBoolean("vanilla", false));
-
-        if (section.contains("drop_from")) {
-            int chance = section.getInt("drop_chance", 100);
-            int amount = section.isInt("drop_amount") ? section.getInt("drop_amount", 1) : -1;
-
-            if (chance < 0 || chance > 100) {
-                ExceptionHandler.handleError("在附属" + addon.getAddonId() + "中加载物品" + id + "时遇到了问题: " + "掉落几率" + chance
-                        + "不在0-100范围内! 已转为100");
-                chance = 100;
-            }
-
-            String dropMaterial = section.getString("drop_from", "");
-
-            Optional<Material> xm = Optional.ofNullable(Material.matchMaterial(dropMaterial));
-            if (xm.isPresent()) {
-                Material material = xm.get();
-                if (amount == -1) {
-                    String between = section.getString("drop_amount", "1");
-                    if (between.contains("-")) {
-                        String[] split = between.split("-");
-                        if (split.length == 2) {
-                            int min = Integer.parseInt(split[0]);
-                            int max = Integer.parseInt(split[1]);
-                            DropFromBlock.addDrop(material, new DropFromBlock.Drop(original, chance, addon, min, max));
-                        } else {
-                            ExceptionHandler.handleError(
-                                    "无法在附属" + addon.getAddonName() + "中读取掉落数量区间" + between + "，已把掉落数量转为1");
-                            DropFromBlock.addDrop(material, new DropFromBlock.Drop(original, chance, addon));
-                        }
-                    }
-                } else {
-                    DropFromBlock.addDrop(material, new DropFromBlock.Drop(original, chance, addon, amount, amount));
-                }
-            } else {
-                ExceptionHandler.handleError(
-                        "在附属" + addon.getAddonId() + "中加载物品" + id + "时遇到了问题: " + "指定掉落方块材料类型" + dropMaterial + "不存在!");
-            }
-        }
-
-        instance.register(RykenSlimefunCustomizer.INSTANCE);
-
-        return instance;
     }
 }

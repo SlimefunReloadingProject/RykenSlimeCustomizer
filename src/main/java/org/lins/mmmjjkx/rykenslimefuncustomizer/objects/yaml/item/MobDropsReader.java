@@ -83,7 +83,7 @@ public class MobDropsReader extends YamlReader<CustomMobDrop> {
             });
             ItemStack[] recipe = new ItemStack[] {null, null, null, null, itemStack};
 
-            return new CustomMobDrop(group.getSecondValue(), sfis, recipe, chance, entityType);
+            return new CustomMobDrop(group.getSecondValue(), sfis, recipe, chance, entityType, sfis);
         }
         return null;
     }

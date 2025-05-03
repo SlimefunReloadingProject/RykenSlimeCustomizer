@@ -1,7 +1,6 @@
 package org.lins.mmmjjkx.rykenslimefuncustomizer.objects.yaml.item;
 
-import de.tr7zw.nbtapi.NBTCompound;
-import de.tr7zw.nbtapi.NBTItem;
+import de.tr7zw.nbtapi.NBT;
 import io.github.thebusybiscuit.slimefun4.api.items.ItemGroup;
 import io.github.thebusybiscuit.slimefun4.api.items.SlimefunItemStack;
 import io.github.thebusybiscuit.slimefun4.api.recipes.RecipeType;
@@ -69,12 +68,10 @@ public class FoodReader extends YamlReader<CustomFood> {
             }
         }
 
-        return new CustomFood(group.getSecondValue(), sfis, rt.getSecondValue(), itemStacks, eval);
+        return new CustomFood(group.getSecondValue(), sfis, rt.getSecondValue(), itemStacks, eval, sfis);
     }
 
     private SlimefunItemStack nbtApply(String s, ConfigurationSection section, SlimefunItemStack sfis) {
-        NBTItem nbti = new NBTItem(sfis);
-        NBTCompound food = nbti.getOrCreateCompound("food");
         int nutrition = section.getInt("nutrition");
         float saturation = section.getInt("saturation");
         boolean alwaysEatable = section.getBoolean("always_eatable", false);
@@ -94,12 +91,18 @@ public class FoodReader extends YamlReader<CustomFood> {
                     "在附属" + addon.getAddonId() + "中加载食物" + s + "时遇到了问题: " + "食用时间 " + eatseconds + "小于0! 已转为1.6");
             eatseconds = 1.6f;
         }
-        food.setInteger("nutrition", nutrition);
-        food.setFloat("saturation", saturation);
-        food.setBoolean("can_always_eat", alwaysEatable);
-        food.setFloat("eat_seconds", eatseconds);
 
-        return new SlimefunItemStack(sfis.getItemId(), nbti.getItem());
+        int finalNutrition = nutrition;
+        float finalSaturation = saturation;
+        float finalEatSeconds = eatseconds;
+        NBT.modify(sfis, c -> {
+            c.setInteger("nutrition", finalNutrition);
+            c.setFloat("saturation", finalSaturation);
+            c.setBoolean("can_always_eat", alwaysEatable);
+            c.setFloat("eat_seconds", finalEatSeconds);
+        });
+
+        return sfis;
     }
 
     @Override
