@@ -14,6 +14,8 @@ import java.io.File;
 import java.util.ArrayList;
 import java.util.List;
 import java.util.Optional;
+
+import io.github.thebusybiscuit.slimefun4.utils.LoreBuilder;
 import lombok.SneakyThrows;
 import net.bytebuddy.implementation.FixedValue;
 import net.bytebuddy.matcher.ElementMatchers;
@@ -94,6 +96,10 @@ public class ItemReader extends YamlReader<SlimefunItem> {
         boolean energy = section.contains("energy_capacity");
         boolean hasRadiation = section.contains("radiation");
 
+        int outputAmount = section.getInt("item.amount", 1);
+        SlimefunItemStack output = (SlimefunItemStack) sfis.clone();
+        output.setAmount(outputAmount);
+
         if (energy) {
             double energyCapacity = section.getDouble("energy_capacity");
             if (energyCapacity < 1) {
@@ -103,9 +109,9 @@ public class ItemReader extends YamlReader<SlimefunItem> {
 
             CommonUtils.addLore(sfis, true, CMIChatColor.translate("&8⇨ &e⚡ &70 / " + energyCapacity + " J"));
 
-            instance = new CustomEnergyItem(group.getSecondValue(), sfis, rt, itemStacks, (float) energyCapacity, eval, sfis);
+            instance = new CustomEnergyItem(group.getSecondValue(), sfis, rt, itemStacks, (float) energyCapacity, eval, output);
         } else if (section.getBoolean("placeable", false)) {
-            instance = new CustomDefaultItem(group.getSecondValue(), sfis, rt, itemStacks, sfis);
+            instance = new CustomDefaultItem(group.getSecondValue(), sfis, rt, itemStacks, output);
         } else if (section.contains("rainbow")) {
             String materialType = section.getString("rainbow", "");
             if (!sfis.getType().isBlock()) {
@@ -132,7 +138,7 @@ public class ItemReader extends YamlReader<SlimefunItem> {
                     colorMaterials.add(material1);
                 }
 
-                instance = new CustomRainbowBlock(group.getSecondValue(), sfis, rt, itemStacks, colorMaterials, sfis);
+                instance = new CustomRainbowBlock(group.getSecondValue(), sfis, rt, itemStacks, colorMaterials, output);
             } else {
                 Pair<ExceptionHandler.HandleResult, ColoredMaterial> coloredMaterialPair =
                         ExceptionHandler.handleEnumValueOf(
@@ -144,10 +150,10 @@ public class ItemReader extends YamlReader<SlimefunItem> {
                         || coloredMaterial == null) {
                     return null;
                 }
-                instance = new CustomRainbowBlock(group.getSecondValue(), sfis, rt, itemStacks, coloredMaterial, sfis);
+                instance = new CustomRainbowBlock(group.getSecondValue(), sfis, rt, itemStacks, coloredMaterial, output);
             }
         } else {
-            instance = new CustomUnplaceableItem(group.getSecondValue(), sfis, rt, itemStacks, eval, sfis);
+            instance = new CustomUnplaceableItem(group.getSecondValue(), sfis, rt, itemStacks, eval, output);
         }
 
         Object[] constructorArgs = instance.constructorArgs();
@@ -203,6 +209,8 @@ public class ItemReader extends YamlReader<SlimefunItem> {
                 return null;
             }
 
+            CommonUtils.addLore(sfis, true, LoreBuilder.radioactive(radioactivity));
+
             Class<? extends CustomItem> clazz = (Class<? extends CustomItem>) ClassUtils.generateClass(
                     instance.getClass(),
                     "Radiation",
@@ -210,6 +218,8 @@ public class ItemReader extends YamlReader<SlimefunItem> {
                     new Class[] {Radioactive.class},
                     builder -> builder.method(ElementMatchers.isDeclaredBy(Radioactive.class))
                             .intercept(FixedValue.value(radioactivity)));
+
+            constructorArgs[1] = sfis;
 
             instance = (CustomItem) clazz.getDeclaredConstructors()[0].newInstance(constructorArgs);
         }
