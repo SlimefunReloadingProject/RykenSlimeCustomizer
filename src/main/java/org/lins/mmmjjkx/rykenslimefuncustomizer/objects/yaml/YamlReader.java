@@ -1,5 +1,6 @@
 package org.lins.mmmjjkx.rykenslimefuncustomizer.objects.yaml;
 
+import io.github.thebusybiscuit.slimefun4.api.items.SlimefunItem;
 import io.github.thebusybiscuit.slimefun4.api.items.SlimefunItemStack;
 import io.github.thebusybiscuit.slimefun4.libraries.paperlib.PaperLib;
 import java.util.ArrayList;
@@ -129,6 +130,36 @@ public abstract class YamlReader<T> {
                     if (warn) {
                         ExceptionHandler.handleError(key + "需要服务端插件" + splits[1] + "才能被注册");
                     }
+                    return false;
+                }
+            } else if (head.equalsIgnoreCase("itemexist")) {
+                if (splits.length != 2) {
+                    ExceptionHandler.handleError("读取" + key + "的注册条件时发现问题: itemexist仅需要一个参数");
+                    continue;
+                }
+
+                String id = splits[1];
+
+                if (SlimefunItem.getById(id) == null || addon.getPreloadItems().get(id) == null) {
+                    if (warn) {
+                        ExceptionHandler.handleError(key + "需要物品" + splits[1] + "才能被注册");
+                    }
+
+                    return false;
+                }
+            } else if (head.equalsIgnoreCase("!itemexist")) {
+                if (splits.length != 2) {
+                    ExceptionHandler.handleError("读取" + key + "的注册条件时发现问题: !itemexist仅需要一个参数");
+                    continue;
+                }
+
+                String id = splits[1];
+
+                if (SlimefunItem.getById(id) != null || addon.getPreloadItems().get(id) != null) {
+                    if (warn) {
+                        ExceptionHandler.handleError(key + "需要物品" + splits[1] + "不存在才能被注册");
+                    }
+
                     return false;
                 }
             } else if (head.equalsIgnoreCase("!hasplugin")) {

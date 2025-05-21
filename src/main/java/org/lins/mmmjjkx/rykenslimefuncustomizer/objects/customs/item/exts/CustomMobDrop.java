@@ -16,8 +16,8 @@ public class CustomMobDrop extends CustomUnplaceableItem implements RandomMobDro
     @Getter
     private final EntityType entityType;
 
-    public CustomMobDrop(ItemGroup itemGroup, SlimefunItemStack item, ItemStack[] recipe, int chance, EntityType type) {
-        super(itemGroup, item, RecipeType.MOB_DROP, recipe, null);
+    public CustomMobDrop(ItemGroup itemGroup, SlimefunItemStack item, ItemStack[] recipe, int chance, EntityType type, ItemStack recipeOutput) {
+        super(itemGroup, item, RecipeType.MOB_DROP, recipe, null, recipeOutput);
         this.chance = chance;
         this.entityType = type;
 

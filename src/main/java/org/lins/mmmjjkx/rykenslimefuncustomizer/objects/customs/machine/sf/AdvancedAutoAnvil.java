@@ -16,7 +16,13 @@ public class AdvancedAutoAnvil extends AutoAnvil {
     private final int repairFactor;
     private final int speed;
 
-    public AdvancedAutoAnvil(ItemGroup itemGroup, int repairFactor, SlimefunItemStack item, RecipeType recipeType, ItemStack[] recipe, int speed) {
+    public AdvancedAutoAnvil(
+            ItemGroup itemGroup,
+            int repairFactor,
+            SlimefunItemStack item,
+            RecipeType recipeType,
+            ItemStack[] recipe,
+            int speed) {
         super(itemGroup, repairFactor, item, recipeType, recipe);
 
         this.repairFactor = repairFactor;
@@ -24,21 +30,25 @@ public class AdvancedAutoAnvil extends AutoAnvil {
     }
 
     protected MachineRecipe findNextRecipe(BlockMenu menu) {
-        for(int slot : this.getInputSlots()) {
-            ItemStack ductTape = menu.getItemInSlot(slot == this.getInputSlots()[0] ? this.getInputSlots()[1] : this.getInputSlots()[0]);
+        for (int slot : this.getInputSlots()) {
+            ItemStack ductTape = menu.getItemInSlot(
+                    slot == this.getInputSlots()[0] ? this.getInputSlots()[1] : this.getInputSlots()[0]);
             ItemStack item = menu.getItemInSlot(slot);
-            if (item != null && item.getType().getMaxDurability() > 0 && ((Damageable)item.getItemMeta()).getDamage() > 0) {
+            if (item != null
+                    && item.getType().getMaxDurability() > 0
+                    && ((Damageable) item.getItemMeta()).getDamage() > 0) {
                 if (SlimefunUtils.isItemSimilar(ductTape, SlimefunItems.DUCT_TAPE, true, false)) {
                     ItemStack repairedItem = this.repair(item);
                     if (!menu.fits(repairedItem, this.getOutputSlots())) {
                         return null;
                     }
 
-                    for(int inputSlot : this.getInputSlots()) {
+                    for (int inputSlot : this.getInputSlots()) {
                         menu.consumeItem(inputSlot);
                     }
 
-                    return new MachineRecipe(30 / this.speed, new ItemStack[]{ductTape, item}, new ItemStack[]{repairedItem});
+                    return new MachineRecipe(
+                            30 / this.speed, new ItemStack[] {ductTape, item}, new ItemStack[] {repairedItem});
                 }
                 break;
             }
@@ -52,12 +62,12 @@ public class AdvancedAutoAnvil extends AutoAnvil {
         ItemMeta meta = repaired.getItemMeta();
         short maxDurability = item.getType().getMaxDurability();
         int repairPercentage = 100 / this.repairFactor;
-        short durability = (short)(((Damageable)meta).getDamage() - maxDurability / repairPercentage);
+        short durability = (short) (((Damageable) meta).getDamage() - maxDurability / repairPercentage);
         if (durability < 0) {
             durability = 0;
         }
 
-        ((Damageable)meta).setDamage(durability);
+        ((Damageable) meta).setDamage(durability);
         repaired.setItemMeta(meta);
         return repaired;
     }

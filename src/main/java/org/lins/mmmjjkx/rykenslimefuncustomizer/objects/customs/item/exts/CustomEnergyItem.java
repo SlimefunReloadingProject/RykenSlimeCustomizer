@@ -25,8 +25,9 @@ public class CustomEnergyItem extends CustomItem implements Rechargeable, NotPla
             RecipeType recipeType,
             ItemStack[] recipe,
             float capacity,
-            @Nullable ScriptEval eval) {
-        super(itemGroup, item, recipeType, recipe);
+            @Nullable ScriptEval eval,
+            ItemStack recipeOutput) {
+        super(itemGroup, item, recipeType, recipe, recipeOutput);
 
         this.capacity = capacity;
 
@@ -44,7 +45,7 @@ public class CustomEnergyItem extends CustomItem implements Rechargeable, NotPla
             this.addItemHandler((ItemUseHandler) PlayerRightClickEvent::cancel);
         }
 
-        this.constructorArgs = new Object[] {itemGroup, item, recipeType, recipe, capacity, eval};
+        this.constructorArgs = new Object[] {itemGroup, item, recipeType, recipe, capacity, eval, recipeOutput};
     }
 
     public void setItemCharge(ItemStack item, int charge) {

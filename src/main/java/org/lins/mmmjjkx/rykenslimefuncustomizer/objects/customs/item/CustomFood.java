@@ -19,8 +19,9 @@ public class CustomFood extends SimpleSlimefunItem<ItemConsumptionHandler> {
             SlimefunItemStack item,
             RecipeType recipeType,
             ItemStack[] recipe,
-            @Nullable ScriptEval eval) {
-        super(itemGroup, item, recipeType, recipe);
+            @Nullable ScriptEval eval,
+            ItemStack recipeOutput) {
+        super(itemGroup, item, recipeType, recipe, recipeOutput);
 
         this.eval = eval;
 
