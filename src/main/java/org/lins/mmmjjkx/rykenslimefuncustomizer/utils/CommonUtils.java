@@ -86,13 +86,71 @@ public class CommonUtils {
         }
 
         String type = section.getString("material_type", "mc");
-
         if (!type.equalsIgnoreCase("none") && !section.contains("material")) {
             ExceptionHandler.handleError("你设置了材料类型，但没有设置对应的材料！");
             return null;
         }
 
         String material = section.getString("material", "");
+        List<String> lore = CMIChatColor.translate(section.getStringList("lore"));
+        String name = CMIChatColor.translate(section.getString("name", ""));
+        boolean glow = section.getBoolean("glow", false);
+        boolean hasEnchantment = section.contains("enchantments") && section.isList("enchantments");
+        int modelId = section.getInt("modelId");
+        int amount = section.getInt("amount", 1);
+        if (material.contains("|")) {
+            String[] split = material.split("\\|");
+            for (String mat : split) {
+                var item = readItem(
+                        section,
+                        countable,
+                        addon,
+                        type,
+                        mat.trim(),
+                        name,
+                        lore,
+                        glow,
+                        hasEnchantment,
+                        modelId,
+                        amount
+                );
+                if (item != null) {
+                    return item;
+                }
+            }
+
+            return null;
+        } else {
+            return readItem(
+                    section,
+                    countable,
+                    addon,
+                    type,
+                    material.trim(),
+                    name,
+                    lore,
+                    glow,
+                    hasEnchantment,
+                    modelId,
+                    amount
+            );
+        }
+    }
+
+    @SneakyThrows
+    @Nullable @SuppressWarnings("deprecation")
+    public static ItemStack readItem(
+            ConfigurationSection section,
+            boolean countable,
+            ProjectAddon addon,
+            String type,
+            String material,
+            String name,
+            List<String> lore,
+            boolean glow,
+            boolean hasEnchantment,
+            int modelId,
+            int amount) {
 
         if (material.startsWith("ey") || material.startsWith("ew")) {
             type = "skull";
@@ -101,13 +159,6 @@ public class CommonUtils {
         } else if (material.matches("^[0-9A-Fa-f]{64}+$")) {
             type = "skull_hash";
         }
-
-        List<String> lore = CMIChatColor.translate(section.getStringList("lore"));
-        String name = CMIChatColor.translate(section.getString("name", ""));
-        boolean glow = section.getBoolean("glow", false);
-        boolean hasEnchantment = section.contains("enchantments") && section.isList("enchantments");
-        int modelId = section.getInt("modelId");
-        int amount = section.getInt("amount", 1);
 
         ItemStack itemStack;
 
@@ -134,7 +185,7 @@ public class CommonUtils {
                 itemStack = new RSCItemStack(head, name, lore);
             }
             case "slimefun" -> {
-                SlimefunItemStack sfis = addon.getPreloadItems().get(material);
+                SlimefunItemStack sfis = addon.getPreloadItems().get(material.toUpperCase());
                 if (sfis != null) {
                     itemStack = sfis.clone();
                     itemStack.editMeta(m -> {
@@ -148,7 +199,7 @@ public class CommonUtils {
                     });
 
                 } else {
-                    SlimefunItem sfItem = SlimefunItem.getById(material);
+                    SlimefunItem sfItem = SlimefunItem.getById(material.toUpperCase());
                     if (sfItem != null) {
                         itemStack = sfItem.getItem().clone();
                         itemStack.editMeta(m -> {
