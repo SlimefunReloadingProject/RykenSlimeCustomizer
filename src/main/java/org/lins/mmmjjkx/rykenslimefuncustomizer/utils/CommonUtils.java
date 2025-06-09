@@ -112,13 +112,15 @@ public class CommonUtils {
                         glow,
                         hasEnchantment,
                         modelId,
-                        amount
+                        amount,
+                        true
                 );
                 if (item != null) {
                     return item;
                 }
             }
 
+            ExceptionHandler.handleError("无法找到物品 " + material + "，已转为石头");
             return null;
         } else {
             return readItem(
@@ -132,7 +134,8 @@ public class CommonUtils {
                     glow,
                     hasEnchantment,
                     modelId,
-                    amount
+                    amount,
+                    false
             );
         }
     }
@@ -150,7 +153,8 @@ public class CommonUtils {
             boolean glow,
             boolean hasEnchantment,
             int modelId,
-            int amount) {
+            int amount,
+            boolean isBranch) {
 
         if (material.startsWith("ey") || material.startsWith("ew")) {
             type = "skull";
@@ -212,6 +216,9 @@ public class CommonUtils {
                             }
                         });
                     } else {
+                        if (isBranch) {
+                            return null;
+                        }
                         ExceptionHandler.handleError("无法找到粘液物品" + material + "，已转为石头");
                         itemStack = new CustomItemStack(Material.STONE, name, lore);
                     }
@@ -220,6 +227,9 @@ public class CommonUtils {
             case "saveditem" -> {
                 File file = new File(addon.getSavedItemsFolder(), material + ".yml");
                 if (!file.exists()) {
+                    if (isBranch) {
+                        return null;
+                    }
                     ExceptionHandler.handleError("保存物品的文件" + material + "不存在，已转为石头");
                     itemStack = new CustomItemStack(Material.STONE, name, lore);
                     break;
@@ -273,9 +283,15 @@ public class CommonUtils {
                             mat = materialOptional.get();
                             ExceptionHandler.handleWarning("材料" + material + "已自动修复为" + mat);
                         } else {
+                            if (isBranch) {
+                                return null;
+                            }
                             ExceptionHandler.handleError("无法在附属" + addon.getAddonId() + "中读取材料" + material + "，已转为石头");
                         }
                     } else {
+                        if (isBranch) {
+                            return null;
+                        }
                         ExceptionHandler.handleError("无法在附属" + addon.getAddonId() + "中读取材料" + material + "，已转为石头");
                     }
                 }
@@ -290,9 +306,9 @@ public class CommonUtils {
         }
 
         if (countable) {
-            if (amount > 64 || amount < -1) {
+            if (amount > 100 || amount < -1) {
                 ExceptionHandler.handleError(
-                        "无法在附属" + addon.getAddonId() + "中读取" + section.getCurrentPath() + "的物品: 物品数量不能大于64或小于-1");
+                        "无法在附属" + addon.getAddonId() + "中读取" + section.getCurrentPath() + "的物品: 物品数量不能大于100或小于-1");
                 return null;
             }
             itemStack.setAmount(amount);
