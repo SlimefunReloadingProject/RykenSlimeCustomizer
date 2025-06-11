@@ -10,12 +10,11 @@ import io.github.thebusybiscuit.slimefun4.core.attributes.Radioactivity;
 import io.github.thebusybiscuit.slimefun4.core.attributes.Soulbound;
 import io.github.thebusybiscuit.slimefun4.libraries.dough.collections.Pair;
 import io.github.thebusybiscuit.slimefun4.utils.ColoredMaterial;
+import io.github.thebusybiscuit.slimefun4.utils.LoreBuilder;
 import java.io.File;
 import java.util.ArrayList;
 import java.util.List;
 import java.util.Optional;
-
-import io.github.thebusybiscuit.slimefun4.utils.LoreBuilder;
 import lombok.SneakyThrows;
 import net.bytebuddy.implementation.FixedValue;
 import net.bytebuddy.matcher.ElementMatchers;
@@ -109,7 +108,8 @@ public class ItemReader extends YamlReader<SlimefunItem> {
 
             CommonUtils.addLore(sfis, true, CMIChatColor.translate("&8⇨ &e⚡ &70 / " + energyCapacity + " J"));
 
-            instance = new CustomEnergyItem(group.getSecondValue(), sfis, rt, itemStacks, (float) energyCapacity, eval, output);
+            instance = new CustomEnergyItem(
+                    group.getSecondValue(), sfis, rt, itemStacks, (float) energyCapacity, eval, output);
         } else if (section.getBoolean("placeable", false)) {
             instance = new CustomDefaultItem(group.getSecondValue(), sfis, rt, itemStacks, output);
         } else if (section.contains("rainbow")) {
@@ -150,7 +150,8 @@ public class ItemReader extends YamlReader<SlimefunItem> {
                         || coloredMaterial == null) {
                     return null;
                 }
-                instance = new CustomRainbowBlock(group.getSecondValue(), sfis, rt, itemStacks, coloredMaterial, output);
+                instance =
+                        new CustomRainbowBlock(group.getSecondValue(), sfis, rt, itemStacks, coloredMaterial, output);
             }
         } else {
             instance = new CustomUnplaceableItem(group.getSecondValue(), sfis, rt, itemStacks, eval, output);

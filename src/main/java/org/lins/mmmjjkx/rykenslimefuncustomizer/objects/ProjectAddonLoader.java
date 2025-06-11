@@ -23,10 +23,7 @@ import org.lins.mmmjjkx.rykenslimefuncustomizer.listeners.ScriptableEventListene
 import org.lins.mmmjjkx.rykenslimefuncustomizer.objects.customs.CustomAddonConfig;
 import org.lins.mmmjjkx.rykenslimefuncustomizer.objects.global.RecipeTypeMap;
 import org.lins.mmmjjkx.rykenslimefuncustomizer.objects.script.ScriptEval;
-import org.lins.mmmjjkx.rykenslimefuncustomizer.objects.yaml.ItemGroupReader;
-import org.lins.mmmjjkx.rykenslimefuncustomizer.objects.yaml.MenuReader;
-import org.lins.mmmjjkx.rykenslimefuncustomizer.objects.yaml.RecipeTypesReader;
-import org.lins.mmmjjkx.rykenslimefuncustomizer.objects.yaml.ResearchReader;
+import org.lins.mmmjjkx.rykenslimefuncustomizer.objects.yaml.*;
 import org.lins.mmmjjkx.rykenslimefuncustomizer.objects.yaml.item.*;
 import org.lins.mmmjjkx.rykenslimefuncustomizer.objects.yaml.machine.*;
 import org.lins.mmmjjkx.rykenslimefuncustomizer.update.GithubUpdater;
@@ -242,6 +239,7 @@ public class ProjectAddonLoader {
         YamlConfiguration templateMachines = doFileLoad(file, Constants.TEMPLATE_MACHINES_FILE);
         YamlConfiguration linkedRecipeMachines = doFileLoad(file, Constants.LINKED_RECIPE_MACHINES_FILE);
         YamlConfiguration workbenches = doFileLoad(file, Constants.WORKBENCHES_FILE);
+        YamlConfiguration generations = doFileLoad(file, Constants.GENERATIONS_FILE);
 
         MobDropsReader mobDropsReader = new MobDropsReader(mob_drops, addon);
         GeoResourceReader resourceReader = new GeoResourceReader(geo_resources, addon);
@@ -262,6 +260,7 @@ public class ProjectAddonLoader {
         LinkedRecipeMachineReader linkedRecipeMachineReader =
                 new LinkedRecipeMachineReader(linkedRecipeMachines, addon);
         WorkbenchReader workbenchReader = new WorkbenchReader(workbenches, addon);
+        GenerationReader generationReader = new GenerationReader(generations, addon);
 
         ExceptionHandler.debugLog("开始加载 " + file.getName() + " 中的物品内容...");
 
@@ -282,6 +281,7 @@ public class ProjectAddonLoader {
         templateMachineReader.preload();
         linkedRecipeMachineReader.preload();
         workbenchReader.preload();
+        generationReader.preload();
 
         ExceptionHandler.debugLog("开始注册 " + file.getName() + " 存放的内容...");
 
@@ -303,6 +303,7 @@ public class ProjectAddonLoader {
         addon.setTemplateMachines(templateMachineReader.readAll());
         addon.setLinkedRecipeMachines(linkedRecipeMachineReader.readAll());
         addon.setWorkbenches(workbenchReader.readAll());
+        addon.setGenerationInfos(generationReader.readAll());
 
         ExceptionHandler.debugLog("开始加载要求延迟加载的内容...");
 

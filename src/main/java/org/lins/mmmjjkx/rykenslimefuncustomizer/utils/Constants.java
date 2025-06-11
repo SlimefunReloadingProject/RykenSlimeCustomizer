@@ -23,5 +23,6 @@ public class Constants {
     public static final String TEMPLATE_MACHINES_FILE = "template_machines.yml";
     public static final String LINKED_RECIPE_MACHINES_FILE = "linked_recipe_machines.yml";
     public static final String WORKBENCHES_FILE = "workbenches.yml";
+    public static final String GENERATIONS_FILE = "generations.yml";
     public static final String ADDON_CONFIG_FILE = "default_config.yml";
 }

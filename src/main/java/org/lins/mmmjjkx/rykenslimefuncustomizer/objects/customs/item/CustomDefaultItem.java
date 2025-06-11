@@ -9,7 +9,12 @@ import org.lins.mmmjjkx.rykenslimefuncustomizer.objects.customs.parent.CustomIte
 public class CustomDefaultItem extends CustomItem {
     private final Object[] constructorArgs;
 
-    public CustomDefaultItem(ItemGroup itemGroup, SlimefunItemStack item, RecipeType recipeType, ItemStack[] recipe, ItemStack recipeOutput) {
+    public CustomDefaultItem(
+            ItemGroup itemGroup,
+            SlimefunItemStack item,
+            RecipeType recipeType,
+            ItemStack[] recipe,
+            ItemStack recipeOutput) {
         super(itemGroup, item, recipeType, recipe, recipeOutput);
 
         constructorArgs = new Object[] {itemGroup, item, recipeType, recipe, recipeOutput};
