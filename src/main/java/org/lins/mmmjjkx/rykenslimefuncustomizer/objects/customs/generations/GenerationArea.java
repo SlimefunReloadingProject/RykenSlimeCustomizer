@@ -5,39 +5,38 @@ import lombok.Getter;
 import lombok.Setter;
 import org.bukkit.Material;
 import org.bukkit.World;
+import org.lins.mmmjjkx.rykenslimefuncustomizer.objects.Range;
 
 @Getter
 @Setter
 public class GenerationArea {
-    private int maxHeight;
-    private int mixHeight;
+    private Range height;
     private int most;
     private int amount;
-    private double chance;
-    private double mostChance;
+    private Range size;
     private Material replacement;
     private World.Environment environment;
 
     public GenerationArea(
-            int maxHeight,
-            int mixHeight,
+            @Nonnull Range height,
             int most,
             int amount,
-            double chance,
-            double mostChance,
+            @Nonnull Range size,
             @Nonnull Material replacement,
             @Nonnull World.Environment environment) {
-        this.maxHeight = maxHeight;
-        this.mixHeight = mixHeight;
+        this.height = height;
         this.most = most;
         this.amount = amount;
-        this.chance = chance;
-        this.mostChance = mostChance;
+        if (this.amount > 200) {
+            this.amount = 200;
+        }
+
+        this.size = size;
         this.replacement = replacement;
         this.environment = environment;
     }
 
-    public GenerationArea(int maxHeight, int mixHeight, int most, int amount, double chance) {
-        this(maxHeight, mixHeight, most, amount, chance, 0.6d, Material.STONE, World.Environment.NORMAL);
+    public GenerationArea(@Nonnull Range height, int most, int amount, @Nonnull Range size) {
+        this(height, most, amount, size, Material.STONE, World.Environment.NORMAL);
     }
 }

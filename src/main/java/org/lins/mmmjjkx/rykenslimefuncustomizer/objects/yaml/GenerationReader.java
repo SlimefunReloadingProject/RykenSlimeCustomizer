@@ -10,6 +10,7 @@ import org.bukkit.World;
 import org.bukkit.configuration.ConfigurationSection;
 import org.bukkit.configuration.file.YamlConfiguration;
 import org.lins.mmmjjkx.rykenslimefuncustomizer.objects.ProjectAddon;
+import org.lins.mmmjjkx.rykenslimefuncustomizer.objects.Range;
 import org.lins.mmmjjkx.rykenslimefuncustomizer.objects.customs.generations.GenerationArea;
 import org.lins.mmmjjkx.rykenslimefuncustomizer.objects.customs.generations.GenerationInfo;
 
@@ -50,8 +51,8 @@ public class GenerationReader extends YamlReader<GenerationInfo> {
         int mixHeight = section.getInt("mixHeight");
         int most = section.getInt("most");
         int amount = section.getInt("amount");
-        double chance = section.getDouble("chance");
-        double mostChance = section.getDouble("mostChance");
+        int maxSize = section.getInt("maxSize");
+        int minSize = section.getInt("minSize");
         Optional<Material> materialOptional =
                 Optional.ofNullable(Material.matchMaterial(section.getString("replacement")));
         Material replacement = Material.STONE;
@@ -61,6 +62,7 @@ public class GenerationReader extends YamlReader<GenerationInfo> {
         }
         @Nonnull World.Environment environment = World.Environment.valueOf(section.getString("environment"));
 
-        return new GenerationArea(maxHeight, mixHeight, most, amount, chance, mostChance, replacement, environment);
+        return new GenerationArea(
+                new Range(mixHeight, maxHeight), most, amount, new Range(minSize, maxSize), replacement, environment);
     }
 }

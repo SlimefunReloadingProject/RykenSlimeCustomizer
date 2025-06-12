@@ -2,15 +2,19 @@ package org.lins.mmmjjkx.rykenslimefuncustomizer.objects.customs.generations;
 
 import com.xzavier0722.mc.plugin.slimefun4.storage.controller.BlockDataController;
 import io.github.thebusybiscuit.slimefun4.implementation.Slimefun;
+import io.github.thebusybiscuit.slimefun4.libraries.dough.skins.PlayerHead;
+import io.github.thebusybiscuit.slimefun4.libraries.dough.skins.PlayerSkin;
 import java.util.List;
 import java.util.Random;
 import javax.annotation.Nonnull;
 import org.bukkit.Chunk;
 import org.bukkit.Location;
+import org.bukkit.Material;
 import org.bukkit.World;
 import org.bukkit.block.Block;
 import org.lins.mmmjjkx.rykenslimefuncustomizer.RykenSlimefunCustomizer;
 import org.lins.mmmjjkx.rykenslimefuncustomizer.objects.ProjectAddon;
+import org.lins.mmmjjkx.rykenslimefuncustomizer.objects.Range;
 
 public class BlockPopulator extends org.bukkit.generator.BlockPopulator {
 
@@ -41,26 +45,27 @@ public class BlockPopulator extends org.bukkit.generator.BlockPopulator {
             @Nonnull Random random,
             @Nonnull GenerationInfo generationInfo,
             @Nonnull GenerationArea area) {
-        int h = area.getMaxHeight() - area.getMixHeight() + 1;
+        Range height = area.getHeight();
+        int h = height.getDistance() + 1;
         int r;
-        double s = h * area.getMostChance() * 0.5d;
+        double s = h;
         double s2 = random.nextDouble(0, s);
 
-        double sTop = (area.getMaxHeight() - area.getMost() + 1) * area.getMostChance();
+        double sTop = (height.getMax() - area.getMost() + 1);
         if (s2 < sTop) {
-            int h2MaxHeight = (int) ((s2 * 2) / area.getMostChance());
-            r = area.getMaxHeight() - h2MaxHeight;
+            int h2MaxHeight = (int) (s2 * 2);
+            r = height.getMax() - h2MaxHeight;
         } else {
             s2 -= sTop;
-            int h2MinHeight = (int) ((s2 * 2) / area.getMostChance());
-            r = area.getMixHeight() + h2MinHeight;
+            int h2MinHeight = (int) (s2 * 2);
+            r = height.getMin() + h2MinHeight;
         }
 
         int centerX = (chunkX << 4) + random.nextInt(16);
         int centerY = r;
         int centerZ = (chunkZ << 4) + random.nextInt(16);
 
-        while (random.nextDouble(0, 1) <= area.getChance()) {
+        for (int i = 0; i < area.getSize().getRandomBetween(random); i++) {
             Location location = new Location(world, centerX, centerY, centerZ);
             Block block = world.getBlockAt(centerX, centerY, centerZ);
             if (!(centerX >= (chunkX << 4)
@@ -72,6 +77,16 @@ public class BlockPopulator extends org.bukkit.generator.BlockPopulator {
             if (block.getType() != area.getReplacement()) break;
 
             block.setType(generationInfo.getSlimefunItemStack().getType(), false);
+            if (generationInfo.getSlimefunItemStack().getType() == Material.PLAYER_HEAD) {
+                PlayerHead.setSkin(
+                        block,
+                        PlayerSkin.fromBase64(generationInfo
+                                .getSlimefunItemStack()
+                                .getSkullTexture()
+                                .get()),
+                        false);
+            }
+
             BlockDataController controller = Slimefun.getDatabaseManager().getBlockDataController();
             controller.createBlock(
                     location, generationInfo.getSlimefunItemStack().getItemId());
