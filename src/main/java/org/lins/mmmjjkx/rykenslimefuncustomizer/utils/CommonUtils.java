@@ -102,7 +102,18 @@ public class CommonUtils {
             String[] split = material.split("\\|");
             for (String mat : split) {
                 var item = readItem(
-                        section, countable, addon, type, mat.trim(), name, lore, glow, hasEnchantment, modelId, amount);
+                        section,
+                        countable,
+                        addon,
+                        type,
+                        mat.trim(),
+                        name,
+                        lore,
+                        glow,
+                        hasEnchantment,
+                        modelId,
+                        amount
+                );
                 if (item != null) {
                     return item;
                 }
@@ -121,7 +132,8 @@ public class CommonUtils {
                     glow,
                     hasEnchantment,
                     modelId,
-                    amount);
+                    amount
+            );
         }
     }
 
@@ -246,7 +258,7 @@ public class CommonUtils {
 
                 itemStack.setAmount(1);
             }
-                // mc
+            // mc
             default -> {
                 Optional<Material> materialOptional = Optional.ofNullable(Material.matchMaterial(material));
                 Material mat = Material.STONE;
