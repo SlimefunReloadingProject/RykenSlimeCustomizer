@@ -24,6 +24,7 @@ import org.lins.mmmjjkx.rykenslimefuncustomizer.bulit_in.JavaScriptEval;
 import org.lins.mmmjjkx.rykenslimefuncustomizer.listeners.ScriptableEventListener;
 import org.lins.mmmjjkx.rykenslimefuncustomizer.objects.customs.CustomAddonConfig;
 import org.lins.mmmjjkx.rykenslimefuncustomizer.objects.customs.CustomMenu;
+import org.lins.mmmjjkx.rykenslimefuncustomizer.objects.customs.generations.GenerationInfo;
 import org.lins.mmmjjkx.rykenslimefuncustomizer.objects.customs.item.CustomArmorPiece;
 import org.lins.mmmjjkx.rykenslimefuncustomizer.objects.customs.item.CustomFood;
 import org.lins.mmmjjkx.rykenslimefuncustomizer.objects.customs.item.CustomGeoResource;
@@ -103,6 +104,8 @@ public final class ProjectAddon {
     private List<CustomLinkedRecipeMachine> linkedRecipeMachines = new ArrayList<>();
     // workbenches.yml
     private List<CustomWorkbench> workbenches = new ArrayList<>();
+    // generationInfos.yml
+    private List<GenerationInfo> generationInfos = new ArrayList<>();
 
     public File getScriptsFolder() {
         File scripts = new File(folder, "scripts");
@@ -174,6 +177,8 @@ public final class ProjectAddon {
         templateMachines.clear();
         linkedRecipeMachines.clear();
         workbenches.clear();
+        generationInfos.clear();
+
         preloadItems.clear();
 
         DropFromBlock.unregisterAddonDrops(this);
