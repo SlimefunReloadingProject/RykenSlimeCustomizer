@@ -2,10 +2,8 @@ package org.lins.mmmjjkx.rykenslimefuncustomizer;
 
 import io.github.thebusybiscuit.slimefun4.libraries.commons.lang.Validate;
 import java.io.File;
-import java.util.ArrayList;
-import java.util.HashMap;
-import java.util.List;
-import java.util.Map;
+import java.util.*;
+
 import lombok.Getter;
 import org.bukkit.configuration.file.YamlConfiguration;
 import org.bukkit.plugin.Plugin;
@@ -68,10 +66,16 @@ public final class ProjectAddonManager {
 
             File info = new File(folder, Constants.INFO_FILE);
             if (!info.exists()) {
-                ExceptionHandler.handleError("在名称为 " + folder.getName() + "的文件夹中有无效的附属信息，导致此附属无法加载！");
+                File sc = new File(folder, "sc-addon.yml");
+                if (sc.exists()) {
+                    ExceptionHandler.handleError("无法读取到附属信息，看来你错误地将SC配置文件放入了RSC中");
+                } else {
+                    ExceptionHandler.handleError("无法获取附属信息，你是否错误地将SC配置文件放入了RSC中？或者说是错误地删除了info.yml文件？");
+                }
                 skip.add(folder.getName());
                 continue;
             }
+
             YamlConfiguration infoConfig = YamlConfiguration.loadConfiguration(info);
             String id = infoConfig.getString("id");
             if (id == null || id.isBlank()) {
@@ -120,6 +124,23 @@ public final class ProjectAddonManager {
                     continue;
                 }
                 e.printStackTrace();
+            }
+
+            ExceptionHandler.info("已加载的附属列表：");
+            for (ProjectAddon addon : projectAddons.values()) {
+                ExceptionHandler.info(addon.getAddonName() + " (" + addon.getAddonId() + ")" + " 版本号: " + addon.getAddonVersion());
+            }
+            ExceptionHandler.info("共计" + projectAddons.size() + "个附属被加载");
+        }
+    }
+
+    public void checkStupids() {
+        File folder = RykenSlimefunCustomizer.INSTANCE.getDataFolder();
+        if (folder.listFiles() != null) {
+            boolean b = Arrays.stream(Objects.requireNonNull(folder.listFiles()))
+                    .anyMatch(f -> f.isFile() && !f.getName().equalsIgnoreCase("config.yml"));
+            if (b) {
+                ExceptionHandler.handleWarning("你应当在 \"plugin/RykenSlimefunCustomizer/addons/附属文件夹\" 中存入配置文件，而不是在 \"plugin/RykenSlimefunCustomizer\" 中");
             }
         }
     }

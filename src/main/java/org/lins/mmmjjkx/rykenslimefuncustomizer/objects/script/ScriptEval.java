@@ -4,6 +4,7 @@ import com.google.errorprone.annotations.CanIgnoreReturnValue;
 import com.xzavier0722.mc.plugin.slimefun4.storage.controller.SlimefunBlockData;
 import com.xzavier0722.mc.plugin.slimefun4.storage.util.StorageCacheUtils;
 import io.github.thebusybiscuit.slimefun4.api.items.SlimefunItem;
+import io.github.thebusybiscuit.slimefun4.libraries.dough.chat.ChatInput;
 import io.github.thebusybiscuit.slimefun4.utils.SlimefunUtils;
 import java.io.File;
 import java.io.FileNotFoundException;
@@ -130,6 +131,12 @@ public abstract class ScriptEval {
         addThing("isSoulbound", (Function<ItemStack, Boolean>) SlimefunUtils::isSoulbound);
         addThing("canPlayerUseItem", (CiFunction<Player, ItemStack, Boolean, Boolean>) SlimefunUtils::canPlayerUseItem);
 
+        // ChatInput functions
+        addThing("getChatInput", (BiConsumer<Player, Consumer<String>>)
+                (p, s) -> ChatInput.waitForPlayer(RykenSlimefunCustomizer.INSTANCE, p, s));
+        addThing("getChatInputWithCheck", (CiConsumer<Player, Predicate<String>, Consumer<String>>)
+                (p, b, s) -> ChatInput.waitForPlayer(RykenSlimefunCustomizer.INSTANCE, p, b, s));
+
         // randint function
         addThing("randintA", (Function<Integer, Integer>) i -> new Random().nextInt(i));
         addThing("randintB", (BiFunction<Integer, Boolean, Integer>) (i, b) -> new Random().nextInt(b ? (i + 1) : i));
@@ -156,6 +163,7 @@ public abstract class ScriptEval {
         addThing("isBlock", (BiFunction<Location, String, Boolean>) StorageCacheUtils::isBlock);
         addThing("getSfItemByBlock", (Function<Location, SlimefunItem>) StorageCacheUtils::getSfItem);
 
+        // task
         addThing("runLater", (BiFunction<Function<Object[], ?>, Integer, BukkitTask>) (r, l) -> {
             AtomicReference<BukkitTask> task = new AtomicReference<>();
             Bukkit.getScheduler()

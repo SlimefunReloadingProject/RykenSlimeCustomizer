@@ -225,7 +225,11 @@ public class ItemReader extends YamlReader<SlimefunItem> {
             instance = (CustomItem) clazz.getDeclaredConstructors()[0].newInstance(constructorArgs);
         }
 
-        instance.setHidden(section.getBoolean("hidden", false));
+        boolean hidden = section.getBoolean("hidden", false);
+        if (hidden) {
+            instance.setHidden(true);
+        }
+
         instance.setUseableInWorkbench(section.getBoolean("vanilla", false));
 
         if (section.contains("drop_from")) {
