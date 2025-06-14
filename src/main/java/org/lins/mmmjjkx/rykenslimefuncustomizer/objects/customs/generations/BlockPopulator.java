@@ -1,6 +1,7 @@
 package org.lins.mmmjjkx.rykenslimefuncustomizer.objects.customs.generations;
 
 import com.xzavier0722.mc.plugin.slimefun4.storage.controller.BlockDataController;
+import io.github.thebusybiscuit.slimefun4.api.items.SlimefunItemStack;
 import io.github.thebusybiscuit.slimefun4.implementation.Slimefun;
 import io.github.thebusybiscuit.slimefun4.libraries.dough.skins.PlayerHead;
 import io.github.thebusybiscuit.slimefun4.libraries.dough.skins.PlayerSkin;
@@ -48,8 +49,7 @@ public class BlockPopulator extends org.bukkit.generator.BlockPopulator {
         Range height = area.getHeight();
         int h = height.getDistance() + 1;
         int r;
-        double s = h;
-        double s2 = random.nextDouble(0, s);
+        double s2 = random.nextDouble(0, h);
 
         double sTop = (height.getMax() - area.getMost() + 1);
         if (s2 < sTop) {
@@ -76,15 +76,13 @@ public class BlockPopulator extends org.bukkit.generator.BlockPopulator {
             }
             if (block.getType() != area.getReplacement()) break;
 
-            block.setType(generationInfo.getSlimefunItemStack().getType(), false);
-            if (generationInfo.getSlimefunItemStack().getType() == Material.PLAYER_HEAD) {
-                PlayerHead.setSkin(
-                        block,
-                        PlayerSkin.fromBase64(generationInfo
-                                .getSlimefunItemStack()
-                                .getSkullTexture()
-                                .get()),
-                        false);
+            SlimefunItemStack slimefunItemStack = generationInfo.getSlimefunItemStack();
+
+            block.setType(slimefunItemStack.getType(), false);
+            if (slimefunItemStack.getType() == Material.PLAYER_HEAD) {
+                slimefunItemStack.getSkullTexture().ifPresent(
+                        skull -> PlayerHead.setSkin(block, PlayerSkin.fromBase64(skull), false)
+                );
             }
 
             BlockDataController controller = Slimefun.getDatabaseManager().getBlockDataController();
