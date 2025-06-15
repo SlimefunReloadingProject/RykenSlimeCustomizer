@@ -31,6 +31,10 @@ public final class RykenSlimefunCustomizer extends JavaPlugin implements Slimefu
         setupLibraries();
         INSTANCE = this;
         System.setProperty("polyglot.engine.WarnInterpreterOnly", "false");
+
+        File cache = new File(getDataFolder(), "cache");
+        System.setProperty("XDG_CACHE_HOME", cache.getAbsolutePath());
+        System.setProperty("TRUFFLE_CACHE_DIR", cache.getAbsolutePath());
     }
 
     @Override
