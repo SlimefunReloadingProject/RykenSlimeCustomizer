@@ -80,9 +80,9 @@ public class BlockPopulator extends org.bukkit.generator.BlockPopulator {
 
             block.setType(slimefunItemStack.getType(), false);
             if (slimefunItemStack.getType() == Material.PLAYER_HEAD) {
-                slimefunItemStack.getSkullTexture().ifPresent(
-                        skull -> PlayerHead.setSkin(block, PlayerSkin.fromBase64(skull), false)
-                );
+                slimefunItemStack
+                        .getSkullTexture()
+                        .ifPresent(skull -> PlayerHead.setSkin(block, PlayerSkin.fromBase64(skull), false));
             }
 
             BlockDataController controller = Slimefun.getDatabaseManager().getBlockDataController();

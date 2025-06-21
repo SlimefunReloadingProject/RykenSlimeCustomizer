@@ -5,9 +5,6 @@ import com.oracle.truffle.api.TruffleFile;
 import com.oracle.truffle.api.TruffleLanguage;
 import com.oracle.truffle.js.lang.JavaScriptLanguage;
 import com.oracle.truffle.js.runtime.JSRealm;
-import com.oracle.truffle.js.runtime.objects.JSAttributes;
-import com.oracle.truffle.js.runtime.objects.JSObject;
-import com.oracle.truffle.js.runtime.objects.JSObjectUtil;
 import com.xzavier0722.mc.plugin.slimefun4.storage.util.StorageCacheUtils;
 import io.github.thebusybiscuit.slimefun4.api.items.SlimefunItem;
 import io.github.thebusybiscuit.slimefun4.api.player.PlayerProfile;
@@ -16,9 +13,10 @@ import io.github.thebusybiscuit.slimefun4.implementation.SlimefunItems;
 import io.github.thebusybiscuit.slimefun4.utils.SlimefunUtils;
 import java.io.File;
 import java.io.IOException;
-import java.util.HashSet;
+import java.util.Map;
 import java.util.Objects;
 import java.util.Set;
+import java.util.concurrent.ConcurrentHashMap;
 import me.mrCookieSlime.Slimefun.api.inventory.BlockMenu;
 import org.graalvm.polyglot.*;
 import org.graalvm.polyglot.io.IOAccess;
@@ -33,13 +31,27 @@ import org.lins.mmmjjkx.rykenslimefuncustomizer.utils.ExceptionHandler;
 public class JavaScriptEval extends ScriptEval {
     private static final File PLUGINS_FOLDER =
             RykenSlimefunCustomizer.INSTANCE.getDataFolder().getParentFile();
-    private final Set<String> failed_functions = new HashSet<>();
 
-    private Context jsEngine;
+    private final Context jsEngine = Context.newBuilder("js")
+            .hostClassLoader(RykenSlimefunCustomizer.class.getClassLoader())
+            .allowAllAccess(true)
+            .allowHostAccess(UNIVERSAL_HOST_ACCESS)
+            .allowNativeAccess(false)
+            .allowExperimentalOptions(true)
+            .allowPolyglotAccess(PolyglotAccess.ALL)
+            .allowCreateProcess(true)
+            .allowValueSharing(true)
+            .allowIO(IOAccess.NONE)
+            .allowHostClassLookup(s -> true)
+            .allowHostClassLoading(true)
+            .engine(Engine.newBuilder("js").allowExperimentalOptions(true).build())
+            .currentWorkingDirectory(getAddon().getScriptsFolder().toPath().toAbsolutePath())
+            .build();
 
     public JavaScriptEval(@NotNull File js, ProjectAddon addon) {
         super(js, addon);
-        reSetup();
+
+        advancedSetup();
 
         setup();
 
@@ -67,11 +79,6 @@ public class JavaScriptEval extends ScriptEval {
             }
         }
 
-        JSObject java = JSObjectUtil.createOrdinaryPrototypeObject(realm);
-        JSObjectUtil.putToStringTag(java, JSRealm.JAVA_CLASS_NAME);
-
-        JSObjectUtil.putDataProperty(realm.getGlobalObject(), "Java", java, JSAttributes.getDefaultNotEnumerable());
-
         jsEngine.enter();
     }
 
@@ -94,74 +101,72 @@ public class JavaScriptEval extends ScriptEval {
         return "js";
     }
 
-    protected final void contextInit() {
-        super.contextInit();
-        if (jsEngine != null) {
-            try {
-                jsEngine.eval(
-                        Source.newBuilder("js", getFileContext(), "JavaScript").build());
-            } catch (IOException e) {
-                e.printStackTrace();
-            }
-        }
-    }
+    private final Map<String, Value> functionCache = new ConcurrentHashMap<>();
+    private final Set<String> failedFunctions = ConcurrentHashMap.newKeySet();
 
     @Nullable @CanIgnoreReturnValue
     @Override
     public Object evalFunction(String funName, Object... args) {
-        if (getFileContext() == null || getFileContext().isBlank()) {
-            contextInit();
-        }
-
-        // a simple fix for the optimization
-        if (failed_functions.contains(funName)) {
+        if (failedFunctions.contains(funName)) {
             return null;
         }
 
-        Value member = jsEngine.getBindings("js").getMember(funName);
-        if (member == null) {
-            failed_functions.add(funName);
-            return null;
+        Value function = functionCache.get(funName);
+
+        if (function == null) {
+            Value bindings = jsEngine.getBindings("js");
+
+            if (!bindings.hasMember(funName)) {
+                failedFunctions.add(funName);
+                return null;
+            }
+
+            Value member = bindings.getMember(funName);
+            if (!member.canExecute()) {
+                failedFunctions.add(funName);
+                return null;
+            }
+
+            function = member;
+            functionCache.put(funName, function);
         }
 
         try {
-            Object result = member.execute(args);
+            Object result = function.execute(args);
             ExceptionHandler.debugLog(
                     "运行了 " + getAddon().getAddonName() + "的脚本" + getFile().getName() + "中的函数 " + funName);
             return result;
         } catch (IllegalStateException e) {
-            String message = e.getMessage();
-            if (!message.contains("Multi threaded access")) {
-                ExceptionHandler.handleError(
-                        "在运行附属" + getAddon().getAddonName() + "的脚本" + getFile().getName() + "时发生错误");
-                e.printStackTrace();
+            if (!e.getMessage().contains("Multi threaded access")) {
+                handleExecutionError(e, funName);
             }
         } catch (Throwable e) {
-            ExceptionHandler.handleError(
-                    "在运行" + getAddon().getAddonName() + "的脚本" + getFile().getName() + "时发生意外错误");
-            e.printStackTrace();
+            handleExecutionError(e, funName);
         }
-
         return null;
     }
 
-    private void reSetup() {
-        jsEngine = Context.newBuilder("js")
-                .hostClassLoader(RykenSlimefunCustomizer.class.getClassLoader())
-                .allowAllAccess(true)
-                .allowHostAccess(UNIVERSAL_HOST_ACCESS)
-                .allowNativeAccess(false)
-                .allowExperimentalOptions(true)
-                .allowPolyglotAccess(PolyglotAccess.ALL)
-                .allowCreateProcess(true)
-                .allowValueSharing(true)
-                .allowIO(IOAccess.ALL)
-                .allowHostClassLookup(s -> true)
-                .allowHostClassLoading(true)
-                .engine(Engine.newBuilder("js").allowExperimentalOptions(true).build())
-                .currentWorkingDirectory(getAddon().getScriptsFolder().toPath().toAbsolutePath())
-                .build();
+    private void handleExecutionError(Throwable e, String funName) {
+        functionCache.remove(funName);
+        failedFunctions.add(funName);
 
-        advancedSetup();
+        ExceptionHandler.handleError(
+                "在运行" + getAddon().getAddonName() + "的脚本" + getFile().getName() + "时发生错误", e);
+    }
+
+    protected final void contextInit() {
+        super.contextInit();
+        if (jsEngine != null) {
+            try {
+                functionCache.clear();
+                failedFunctions.clear();
+
+                jsEngine.eval(
+                        Source.newBuilder("js", getFileContext(), "JavaScript").build());
+            } catch (IOException e) {
+                ExceptionHandler.handleError(
+                        "在加载" + getAddon().getAddonName() + "的脚本" + getFile().getName() + "时发生错误", e);
+            }
+        }
     }
 }

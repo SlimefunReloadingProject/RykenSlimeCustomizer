@@ -23,6 +23,11 @@ public class CommandSafe {
             "cmi:pardon",
             "cmi:banlist",
             "cmi:unban",
+            "cmi:jail",
+            "cmi:unjail",
+            "cmi:mute",
+            "cmi:unmute",
+            "cmi:sudo",
             "essentials:ban",
             "essentials:pardon",
             "essentials:banlist",
@@ -31,12 +36,8 @@ public class CommandSafe {
             "essentials:unmute",
             "essentials:jail",
             "essentials:unjail",
-            "cmi:jail",
-            "cmi:unjail",
-            "cmi:mute",
-            "cmi:unmute",
-            "essentials:sudo",
-            "cmi:sudo");
+            "essentials:sudo"
+            );
 
     public static boolean isBadCommand(String command) {
         return badCommands.contains(command.toLowerCase());

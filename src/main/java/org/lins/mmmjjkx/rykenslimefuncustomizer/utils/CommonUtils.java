@@ -113,8 +113,7 @@ public class CommonUtils {
                         hasEnchantment,
                         modelId,
                         amount,
-                        true
-                );
+                        true);
                 if (item != null) {
                     return item;
                 }
@@ -135,8 +134,7 @@ public class CommonUtils {
                     hasEnchantment,
                     modelId,
                     amount,
-                    false
-            );
+                    false);
         }
     }
 
@@ -268,7 +266,7 @@ public class CommonUtils {
 
                 itemStack.setAmount(1);
             }
-            // mc
+                // mc
             default -> {
                 Optional<Material> materialOptional = Optional.ofNullable(Material.matchMaterial(material));
                 Material mat = Material.STONE;
