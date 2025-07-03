@@ -20,15 +20,13 @@ import java.util.function.Predicate;
 import java.util.regex.Matcher;
 import java.util.regex.Pattern;
 import lombok.SneakyThrows;
-import org.bukkit.Bukkit;
-import org.bukkit.Material;
-import org.bukkit.NamespacedKey;
+import org.bukkit.*;
 import org.bukkit.configuration.ConfigurationSection;
 import org.bukkit.configuration.file.YamlConfiguration;
 import org.bukkit.enchantments.Enchantment;
 import org.bukkit.inventory.ItemFlag;
 import org.bukkit.inventory.ItemStack;
-import org.bukkit.inventory.meta.ItemMeta;
+import org.bukkit.inventory.meta.*;
 import org.bukkit.plugin.java.JavaPlugin;
 import org.jetbrains.annotations.Contract;
 import org.jetbrains.annotations.NotNull;
@@ -79,7 +77,7 @@ public class CommonUtils {
     }
 
     @SneakyThrows
-    @Nullable @SuppressWarnings("deprecation")
+    @Nullable
     public static ItemStack readItem(ConfigurationSection section, boolean countable, ProjectAddon addon) {
         if (section == null) {
             return null;
@@ -162,29 +160,25 @@ public class CommonUtils {
             type = "skull_hash";
         }
 
-        ItemStack itemStack;
-
-        switch (type.toLowerCase()) {
-            case "none" -> {
-                return new ItemStack(Material.AIR, 1);
-            }
+        ItemStack itemStack = switch (type.toLowerCase()) {
+            case "none" -> new ItemStack(Material.AIR, 1);
             case "skull_hash" -> {
                 PlayerSkin playerSkin = PlayerSkin.fromHashCode(material);
                 ItemStack head = PlayerHead.getItemStack(playerSkin);
 
-                itemStack = new RSCItemStack(head, name, lore);
+                yield new RSCItemStack(head, name, lore);
             }
             case "skull_base64", "skull" -> {
                 PlayerSkin playerSkin = PlayerSkin.fromBase64(material);
                 ItemStack head = PlayerHead.getItemStack(playerSkin);
 
-                itemStack = new RSCItemStack(head, name, lore);
+                yield new RSCItemStack(head, name, lore);
             }
             case "skull_url" -> {
                 PlayerSkin playerSkin = PlayerSkin.fromURL(material);
                 ItemStack head = PlayerHead.getItemStack(playerSkin);
 
-                itemStack = new RSCItemStack(head, name, lore);
+                yield new RSCItemStack(head, name, lore);
             }
             case "slimefun" -> {
                 SlimefunItemStack sfis = addon.getPreloadItems().get(material.toUpperCase());
@@ -200,6 +194,7 @@ public class CommonUtils {
                         }
                     });
 
+                    yield sfis;
                 } else {
                     SlimefunItem sfItem = SlimefunItem.getById(material.toUpperCase());
                     if (sfItem != null) {
@@ -213,12 +208,14 @@ public class CommonUtils {
                                 m.setLore(lore);
                             }
                         });
+
+                        yield itemStack;
                     } else {
                         if (isBranch) {
-                            return null;
+                            yield null;
                         }
                         ExceptionHandler.handleError("无法找到粘液物品" + material + "，已转为石头");
-                        itemStack = new CustomItemStack(Material.STONE, name, lore);
+                        yield new CustomItemStack(Material.STONE, name, lore);
                     }
                 }
             }
@@ -226,11 +223,10 @@ public class CommonUtils {
                 File file = new File(addon.getSavedItemsFolder(), material + ".yml");
                 if (!file.exists()) {
                     if (isBranch) {
-                        return null;
+                        yield null;
                     }
                     ExceptionHandler.handleError("保存物品的文件" + material + "不存在，已转为石头");
-                    itemStack = new CustomItemStack(Material.STONE, name, lore);
-                    break;
+                    yield new CustomItemStack(Material.STONE, name, lore);
                 }
 
                 String fileContext = Files.readString(file.toPath(), StandardCharsets.UTF_8);
@@ -265,14 +261,42 @@ public class CommonUtils {
                         lore);
 
                 itemStack.setAmount(1);
+
+                yield itemStack;
             }
-                // mc
+            // mc
             default -> {
                 Optional<Material> materialOptional = Optional.ofNullable(Material.matchMaterial(material));
                 Material mat = Material.STONE;
 
                 if (materialOptional.isPresent()) {
                     mat = materialOptional.get();
+
+                    ItemStack temp = new ItemStack(mat);
+                    ItemMeta meta = temp.getItemMeta();
+
+                    if (section.contains("color")) {
+                        String color = section.getString("color", "");
+                        String[] parts = color.split(",");
+                        if (parts.length != 3) {
+                            ExceptionHandler.handleError("在附属" + addon.getAddonId() + "中加载物品时遇到了问题: "
+                                    + "无法读取物品颜色" + color + "，已忽略");
+                        }
+
+                        Color bkcolor = Color.fromRGB(Integer.parseInt(parts[0]), Integer.parseInt(parts[1]), Integer.parseInt(parts[2]));
+
+                        if (meta instanceof LeatherArmorMeta lam) {
+                            lam.setColor(bkcolor);
+                        } else if (meta instanceof PotionMeta pm) {
+                            pm.setColor(bkcolor);
+                        } else if (meta instanceof FireworkEffectMeta fem) {
+                            fem.setEffect(FireworkEffect.builder().withColor(bkcolor).build());
+                        }
+                    }
+
+                    ItemStack stack = new CustomItemStack(Material.PLAYER_HEAD, name, lore);
+                    stack.setItemMeta(meta);
+                    yield stack;
                 } else if (SlimefunItem.getById(material) == null
                         && addon.getPreloadItems().get(material) == null) {
                     if (materialMappings.containsKey(material)) {
@@ -282,20 +306,30 @@ public class CommonUtils {
                             ExceptionHandler.handleWarning("材料" + material + "已自动修复为" + mat);
                         } else {
                             if (isBranch) {
-                                return null;
+                                yield null;
                             }
+
                             ExceptionHandler.handleError("无法在附属" + addon.getAddonId() + "中读取材料" + material + "，已转为石头");
                         }
+
+                        yield new CustomItemStack(mat, name, lore);
                     } else {
                         if (isBranch) {
-                            return null;
+                            yield null;
                         }
+
                         ExceptionHandler.handleError("无法在附属" + addon.getAddonId() + "中读取材料" + material + "，已转为石头");
+
+                        yield new CustomItemStack(Material.STONE, name, lore);
                     }
                 }
 
-                itemStack = new CustomItemStack(mat, name, lore);
+                yield new CustomItemStack(mat, name, lore);
             }
+        };
+
+        if (itemStack == null) {
+            return null;
         }
 
         ItemMeta meta = itemStack.getItemMeta();
@@ -404,8 +438,7 @@ public class CommonUtils {
             completeFile0(configuration, configuration2);
             configuration2.save(file);
         } catch (Exception e) {
-            e.printStackTrace();
-            ExceptionHandler.handleError("无法完成文件" + resourceFile + "的同步，请检查插件文件是否损坏！");
+            ExceptionHandler.handleError("无法完成文件" + resourceFile + "的同步，请检查插件文件是否损坏！", e);
         }
     }
 

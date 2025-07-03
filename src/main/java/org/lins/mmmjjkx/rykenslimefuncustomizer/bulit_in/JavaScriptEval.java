@@ -72,13 +72,6 @@ public class JavaScriptEval extends ScriptEval {
         addThing("PlayerProfile", env.asHostSymbol(PlayerProfile.class));
         addThing("Slimefun", env.asHostSymbol(Slimefun.class));
 
-        for (File file : Objects.requireNonNull(PLUGINS_FOLDER.listFiles())) {
-            TruffleFile truffleFile = env.getPublicTruffleFile(file.toURI());
-            if (!truffleFile.isDirectory() && truffleFile.getName().endsWith(".jar")) {
-                env.addToHostClassPath(truffleFile);
-            }
-        }
-
         jsEngine.enter();
     }
 

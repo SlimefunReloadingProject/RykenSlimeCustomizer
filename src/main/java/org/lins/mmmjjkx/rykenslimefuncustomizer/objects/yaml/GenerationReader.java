@@ -54,7 +54,7 @@ public class GenerationReader extends YamlReader<GenerationInfo> {
         int maxSize = section.getInt("maxSize");
         int minSize = section.getInt("minSize");
         Optional<Material> materialOptional =
-                Optional.ofNullable(Material.matchMaterial(section.getString("replacement")));
+                Optional.ofNullable(Material.matchMaterial(section.getString("replacement", "")));
         Material replacement = Material.STONE;
 
         if (materialOptional.isPresent()) {

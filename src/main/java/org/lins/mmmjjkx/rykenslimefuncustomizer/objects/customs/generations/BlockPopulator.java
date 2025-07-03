@@ -1,10 +1,13 @@
 package org.lins.mmmjjkx.rykenslimefuncustomizer.objects.customs.generations;
 
+import com.destroystokyo.paper.profile.PlayerProfile;
 import com.xzavier0722.mc.plugin.slimefun4.storage.controller.BlockDataController;
 import io.github.thebusybiscuit.slimefun4.api.items.SlimefunItemStack;
 import io.github.thebusybiscuit.slimefun4.implementation.Slimefun;
 import io.github.thebusybiscuit.slimefun4.libraries.dough.skins.PlayerHead;
 import io.github.thebusybiscuit.slimefun4.libraries.dough.skins.PlayerSkin;
+
+import java.net.URL;
 import java.util.List;
 import java.util.Random;
 import javax.annotation.Nonnull;
@@ -13,12 +16,14 @@ import org.bukkit.Location;
 import org.bukkit.Material;
 import org.bukkit.World;
 import org.bukkit.block.Block;
+import org.bukkit.inventory.meta.SkullMeta;
+import org.bukkit.profile.PlayerTextures;
 import org.lins.mmmjjkx.rykenslimefuncustomizer.RykenSlimefunCustomizer;
 import org.lins.mmmjjkx.rykenslimefuncustomizer.objects.ProjectAddon;
 import org.lins.mmmjjkx.rykenslimefuncustomizer.objects.Range;
 
+@SuppressWarnings("deprecation")
 public class BlockPopulator extends org.bukkit.generator.BlockPopulator {
-
     @Override
     public void populate(@Nonnull World world, @Nonnull Random random, @Nonnull Chunk source) {
         List<ProjectAddon> addons = RykenSlimefunCustomizer.addonManager.getAllValues();
@@ -80,9 +85,15 @@ public class BlockPopulator extends org.bukkit.generator.BlockPopulator {
 
             block.setType(slimefunItemStack.getType(), false);
             if (slimefunItemStack.getType() == Material.PLAYER_HEAD) {
-                slimefunItemStack
-                        .getSkullTexture()
-                        .ifPresent(skull -> PlayerHead.setSkin(block, PlayerSkin.fromBase64(skull), false));
+                SkullMeta meta = (SkullMeta) slimefunItemStack.getItemMeta();
+                PlayerProfile profile = meta.getPlayerProfile();
+                if (profile != null) {
+                    PlayerTextures textures = profile.getTextures();
+                    URL skin = textures.getSkin();
+                    if (skin != null) {
+                        PlayerHead.setSkin(block, PlayerSkin.fromURL(skin.toString()), false);
+                    }
+                }
             }
 
             BlockDataController controller = Slimefun.getDatabaseManager().getBlockDataController();

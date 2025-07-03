@@ -50,6 +50,7 @@ public final class ProjectAddon {
     private @NotNull final String description;
     private @NotNull final List<String> authors;
     private @NotNull final File folder;
+    private @Nullable final List<String> enabledTexts;
     //
     private @NotNull final Map<String, SlimefunItemStack> preloadItems = new HashMap<>();
     //
@@ -211,6 +212,7 @@ public final class ProjectAddon {
         if (id_alias != null) {
             id = id_alias;
         }
+
         if (id != null) {
             if (idPattern != null) {
                 // 当前使用的 id 可能是正常引用的 id，也可能是 idPattern 格式化后的 id
@@ -224,9 +226,9 @@ public final class ProjectAddon {
             return id.toUpperCase();
         } else {
             ExceptionHandler.handleError("无法获取id");
-            ExceptionHandler.handleError("configuredId: " + configuredId == null ? "null" : configuredId);
-            ExceptionHandler.handleError("id_alias: " + id_alias == null ? "null" : id_alias);
-            ExceptionHandler.handleError("idPattern: " + idPattern == null ? "null" : idPattern);
+            ExceptionHandler.handleError("configuredId: " + (configuredId == null ? "null" : configuredId));
+            ExceptionHandler.handleError("id_alias: " + (id_alias == null ? "null" : id_alias));
+            ExceptionHandler.handleError("idPattern: " + (idPattern == null ? "null" : idPattern));
             String randomId = "RSC_UNKNOWN_ID_" + ((int) (Math.random() * 1_000_000));
             ExceptionHandler.handleError("分配随机id");
             ExceptionHandler.handleError("randomId: " + randomId);

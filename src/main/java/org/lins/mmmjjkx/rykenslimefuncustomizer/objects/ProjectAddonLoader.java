@@ -13,12 +13,14 @@ import java.util.Map;
 import java.util.Objects;
 import java.util.Set;
 import net.bytebuddy.ByteBuddy;
+import net.kyori.adventure.text.serializer.legacy.LegacyComponentSerializer;
 import org.bukkit.Bukkit;
 import org.bukkit.configuration.file.YamlConfiguration;
 import org.jetbrains.annotations.Nullable;
 import org.lins.mmmjjkx.rykenslimefuncustomizer.ProjectAddonManager;
 import org.lins.mmmjjkx.rykenslimefuncustomizer.RykenSlimefunCustomizer;
 import org.lins.mmmjjkx.rykenslimefuncustomizer.bulit_in.JavaScriptEval;
+import org.lins.mmmjjkx.rykenslimefuncustomizer.libraries.colors.CMIChatColor;
 import org.lins.mmmjjkx.rykenslimefuncustomizer.listeners.ScriptableEventListener;
 import org.lins.mmmjjkx.rykenslimefuncustomizer.objects.customs.CustomAddonConfig;
 import org.lins.mmmjjkx.rykenslimefuncustomizer.objects.global.RecipeTypeMap;
@@ -116,7 +118,21 @@ public class ProjectAddonLoader {
                 }
             }
 
-            addon = new ProjectAddon(id, name, version, pluginDepends, depends, description, authors, file);
+            List<String> loadStartTexts = info.getStringList("loadStartTexts");
+            if (loadStartTexts.isEmpty()) {
+                loadStartTexts = null;
+            } else {
+                CMIChatColor.translate(loadStartTexts);
+            }
+
+            List<String> enabledTexts = info.getStringList("enabledTexts");
+            if (enabledTexts.isEmpty()) {
+                enabledTexts = null;
+            } else {
+                CMIChatColor.translate(enabledTexts);
+            }
+
+            addon = new ProjectAddon(id, name, version, pluginDepends, depends, description, authors, file, enabledTexts);
 
             if (!repo.isBlank()) {
                 addon.setGithubRepo("https://github.com/" + repo);
@@ -156,6 +172,12 @@ public class ProjectAddonLoader {
                 } else {
                     ExceptionHandler.handleWarning(
                             "无法找到附属 " + addon.getAddonId() + " 的对应监听脚本文件 " + file.getName() + "！");
+                }
+            }
+
+            if (loadStartTexts != null) {
+                for (String text : loadStartTexts) {
+                    RykenSlimefunCustomizer.INSTANCE.getComponentLogger().info(LegacyComponentSerializer.legacySection().deserialize(text));
                 }
             }
 
@@ -332,6 +354,12 @@ public class ProjectAddonLoader {
         List<Research> researchesList = researchReader.readAll();
         researchesList.addAll(researchReader.loadLateInits());
         addon.setResearches(researchesList);
+
+        if (addon.getEnabledTexts() != null) {
+            for (String text : addon.getEnabledTexts()) {
+                RykenSlimefunCustomizer.INSTANCE.getComponentLogger().info(LegacyComponentSerializer.legacySection().deserialize(text));
+            }
+        }
 
         ExceptionHandler.debugLog("加载附属 " + addon.getAddonId() + " 成功!");
 

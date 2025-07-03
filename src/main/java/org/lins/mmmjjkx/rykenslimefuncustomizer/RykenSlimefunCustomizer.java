@@ -8,7 +8,7 @@ import java.nio.file.Paths;
 import java.util.Objects;
 import net.byteflux.libby.BukkitLibraryManager;
 import net.byteflux.libby.Library;
-import net.guizhanss.guizhanlibplugin.updater.GuizhanUpdater;
+import net.guizhanss.guizhanlib.updater.GuizhanBuildsUpdater;
 import org.bukkit.Bukkit;
 import org.bukkit.World;
 import org.bukkit.plugin.java.JavaPlugin;
@@ -64,7 +64,7 @@ public final class RykenSlimefunCustomizer extends JavaPlugin implements Slimefu
         if (getConfig().getBoolean("pluginUpdate", false)
                 && getDescription().getVersion().startsWith("b")
                 && getServer().getPluginManager().isPluginEnabled("GuizhanLibPlugin")) {
-            GuizhanUpdater.start(this, getFile(), "SlimefunReloadingProject", "RykenSlimeCustomizer", "main");
+            GuizhanBuildsUpdater.start(this, getFile(), "SlimefunReloadingProject", "RykenSlimeCustomizer", "main");
         }
 
         getServer().getScheduler().runTaskLater(this, () -> runtime = true, 1);
@@ -112,7 +112,7 @@ public final class RykenSlimefunCustomizer extends JavaPlugin implements Slimefu
         Library byteBuddy = Library.builder()
                 .groupId("net{}bytebuddy")
                 .artifactId("byte-buddy")
-                .version("1.14.18")
+                .version("1.17.6")
                 .build();
         Library graalJS = Library.builder()
                 .groupId("org{}graalvm{}js")
