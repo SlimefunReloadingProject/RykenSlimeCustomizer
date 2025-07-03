@@ -194,7 +194,7 @@ public class CommonUtils {
                         }
                     });
 
-                    yield sfis;
+                    yield sfis.clone();
                 } else {
                     SlimefunItem sfItem = SlimefunItem.getById(material.toUpperCase());
                     if (sfItem != null) {
@@ -209,7 +209,7 @@ public class CommonUtils {
                             }
                         });
 
-                        yield itemStack;
+                        yield itemStack.clone();
                     } else {
                         if (isBranch) {
                             yield null;
