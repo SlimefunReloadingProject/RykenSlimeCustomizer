@@ -289,12 +289,18 @@ public class CommonUtils {
                             lam.setColor(bkcolor);
                         } else if (meta instanceof PotionMeta pm) {
                             pm.setColor(bkcolor);
+                            pm.addItemFlags(ItemFlag.HIDE_POTION_EFFECTS);
                         } else if (meta instanceof FireworkEffectMeta fem) {
                             fem.setEffect(FireworkEffect.builder().withColor(bkcolor).build());
+                            fem.addItemFlags(ItemFlag.HIDE_ATTRIBUTES);
                         }
                     }
 
-                    ItemStack stack = new CustomItemStack(Material.PLAYER_HEAD, name, lore);
+                    ItemStack stack = new CustomItemStack(mat, name, lore);
+
+                    meta.setDisplayName(name);
+                    meta.setLore(lore);
+
                     stack.setItemMeta(meta);
                     yield stack;
                 } else if (SlimefunItem.getById(material) == null
