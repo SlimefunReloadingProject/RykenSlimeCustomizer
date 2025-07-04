@@ -9,11 +9,16 @@ import io.github.thebusybiscuit.slimefun4.core.handlers.BlockBreakHandler;
 import io.github.thebusybiscuit.slimefun4.core.machines.MachineProcessor;
 import io.github.thebusybiscuit.slimefun4.implementation.handlers.SimpleBlockBreakHandler;
 import io.github.thebusybiscuit.slimefun4.implementation.operations.CraftingOperation;
+import io.github.thebusybiscuit.slimefun4.libraries.dough.inventory.InvUtils;
 import io.github.thebusybiscuit.slimefun4.libraries.dough.items.CustomItemStack;
 import io.github.thebusybiscuit.slimefun4.utils.ChestMenuUtils;
+import io.github.thebusybiscuit.slimefun4.utils.SlimefunUtils;
+import io.github.thebusybiscuit.slimefun4.utils.itemstack.ItemStackWrapper;
 import java.security.SecureRandom;
 import java.util.ArrayList;
+import java.util.HashMap;
 import java.util.List;
+import java.util.Map;
 import lombok.Getter;
 import me.mrCookieSlime.Slimefun.Objects.SlimefunItem.abstractItems.AContainer;
 import me.mrCookieSlime.Slimefun.Objects.SlimefunItem.abstractItems.MachineRecipe;
@@ -257,5 +262,47 @@ public class CustomRecipeMachine extends AContainer implements RecipeDisplayItem
                 }
             }
         }
+    }
+
+    protected MachineRecipe findNextRecipe(BlockMenu inv) {
+        Map<Integer, ItemStack> inventory = new HashMap<>();
+
+        for (int slot : this.getInputSlots()) {
+            ItemStack item = inv.getItemInSlot(slot);
+            if (item != null) {
+                inventory.put(slot, ItemStackWrapper.wrap(item));
+            }
+        }
+
+        Map<Integer, Integer> found = new HashMap<>();
+
+        for (CustomMachineRecipe recipe : this.recipes) {
+            for (ItemStack input : recipe.getInput()) {
+                for (int slot : this.getInputSlots()) {
+                    if (SlimefunUtils.isItemSimilar(inventory.get(slot), input, true)) {
+                        found.put(slot, input.getAmount());
+                        break;
+                    }
+                }
+            }
+
+            if (found.size() == recipe.getInput().length) {
+                if (!InvUtils.fitAll(inv.toInventory(), recipe.getOutput(), this.getOutputSlots())) {
+                    return null;
+                }
+
+                if (!recipe.isNoConsume()) {
+                    for (Map.Entry<Integer, Integer> entry : found.entrySet()) {
+                        inv.consumeItem(entry.getKey(), entry.getValue());
+                    }
+                }
+
+                return recipe;
+            }
+
+            found.clear();
+        }
+
+        return null;
     }
 }

@@ -26,6 +26,7 @@ public class GenerationReader extends YamlReader<GenerationInfo> {
 
         List<GenerationArea> areas = new ArrayList<>();
         ConfigurationSection areaSection = section.getConfigurationSection("areas");
+        if (areaSection == null) return null;
 
         String id = addon.getId(s, section.getString("slimefun_id"));
         SlimefunItemStack slimefunItemStack = getPreloadItem(id);

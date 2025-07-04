@@ -179,15 +179,26 @@ public class RecipeMachineReader extends YamlReader<CustomRecipeMachine> {
                 }
             }
 
-            boolean chooseOne = recipes.getBoolean("chooseOne", false);
-            boolean forDisplay = recipes.getBoolean("forDisplay", false);
-            boolean hide = recipes.getBoolean("hide", false);
-
-            input = CommonUtils.removeNulls(input);
-            output = CommonUtils.removeNulls(output);
-
-            list.add(new CustomMachineRecipe(seconds, input, output, chances, chooseOne, forDisplay, hide));
+            addToList(list, recipes, seconds, input, chances, output);
         }
         return list;
+    }
+
+    static void addToList(
+            List<CustomMachineRecipe> list,
+            ConfigurationSection recipes,
+            int seconds,
+            ItemStack[] input,
+            List<Integer> chances,
+            ItemStack[] output) {
+        boolean chooseOne = recipes.getBoolean("chooseOne", false);
+        boolean forDisplay = recipes.getBoolean("forDisplay", false);
+        boolean hide = recipes.getBoolean("hide", false);
+        boolean noConsume = recipes.getBoolean("noConsume", false);
+
+        input = CommonUtils.removeNulls(input);
+        output = CommonUtils.removeNulls(output);
+
+        list.add(new CustomMachineRecipe(seconds, input, output, chances, chooseOne, forDisplay, hide, noConsume));
     }
 }

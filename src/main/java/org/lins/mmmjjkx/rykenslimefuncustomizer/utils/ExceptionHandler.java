@@ -6,6 +6,7 @@ import io.github.thebusybiscuit.slimefun4.api.recipes.RecipeType;
 import io.github.thebusybiscuit.slimefun4.implementation.Slimefun;
 import io.github.thebusybiscuit.slimefun4.libraries.dough.collections.Pair;
 import java.lang.reflect.Field;
+import net.kyori.adventure.text.serializer.legacy.LegacyComponentSerializer;
 import org.bukkit.Bukkit;
 import org.bukkit.command.ConsoleCommandSender;
 import org.jetbrains.annotations.NotNull;
@@ -42,16 +43,15 @@ public class ExceptionHandler {
                 Slimefun.getRegistry().getAllItemGroups(),
                 i -> i.getKey().getKey().equalsIgnoreCase(id));
         if (ig != null) {
+            String text = "&4ERROR | ID冲突：" + id + "与物品组 " + ig.getKey().getKey() + "发生ID冲突";
             if (ig.getAddon() != null) {
                 if (ig.getAddon().getClass() == RykenSlimefunCustomizer.class) {
-                    console.sendMessage(CMIChatColor.translate(
-                            "&4ERROR | ID冲突：" + id + "与物品组 " + ig.getKey().getKey() + "发生ID冲突"));
+                    console.sendMessage(CMIChatColor.translate(text));
                     return HandleResult.FAILED;
                 }
                 return HandleResult.SUCCESS;
             }
-            console.sendMessage(CMIChatColor.translate(
-                    "&4ERROR | ID冲突：" + id + "与物品组 " + ig.getKey().getKey() + "发生ID冲突"));
+            console.sendMessage(CMIChatColor.translate(text));
             return HandleResult.FAILED;
         }
         return HandleResult.SUCCESS;
@@ -74,7 +74,9 @@ public class ExceptionHandler {
 
         if (e != null) {
             console.sendMessage(CMIChatColor.translate("&4ERROR | " + message));
-            e.printStackTrace();
+            RykenSlimefunCustomizer.INSTANCE
+                    .getComponentLogger()
+                    .error(LegacyComponentSerializer.legacyAmpersand().deserialize("&4ERROR | " + message), e);
         } else {
             handleError(message);
         }

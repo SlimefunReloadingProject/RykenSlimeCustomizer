@@ -10,8 +10,9 @@ import org.jetbrains.annotations.Nullable;
 public class ClassUtils {
     private static final Map<String, Class<?>> cache = new HashMap<>();
 
-    public static Class<?> generateClass(
-            Class<?> extendClass,
+    @SuppressWarnings("unchecked")
+    public static <T> Class<? extends T> generateClass(
+            Class<T> extendClass,
             String centerName,
             String nameReplacement,
             Class<?>[] interfaces,
@@ -19,7 +20,7 @@ public class ClassUtils {
 
         String finalClassName = extendClass.getSimpleName().replace(nameReplacement, "") + centerName + nameReplacement;
         if (cache.containsKey(finalClassName)) {
-            return cache.get(finalClassName);
+            return (Class<? extends T>) cache.get(finalClassName);
         }
 
         DynamicType.Builder<?> builder = new ByteBuddy().subclass(extendClass);
@@ -34,7 +35,8 @@ public class ClassUtils {
         try (DynamicType.Unloaded<?> unloaded = builder.make()) {
             clazz = unloaded.load(extendClass.getClassLoader()).getLoaded();
         }
+
         cache.put(finalClassName, clazz);
-        return clazz;
+        return (Class<? extends T>) clazz;
     }
 }

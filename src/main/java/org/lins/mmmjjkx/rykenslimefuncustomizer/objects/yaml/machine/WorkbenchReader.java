@@ -284,7 +284,8 @@ public class WorkbenchReader extends YamlReader<CustomWorkbench> {
                     new LinkedOutput(freeOutput.toArray(new ItemStack[0]), linkedOutput, array, linkedChances),
                     chooseOne,
                     forDisplay,
-                    hide));
+                    hide,
+                    false));
         }
         return list;
     }

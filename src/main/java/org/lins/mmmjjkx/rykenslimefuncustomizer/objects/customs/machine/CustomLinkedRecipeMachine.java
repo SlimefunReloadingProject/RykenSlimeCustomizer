@@ -319,12 +319,15 @@ public class CustomLinkedRecipeMachine extends AContainer implements RecipeDispl
                 }
             }
         }
+
         if (!matched) {
             return false;
         }
 
-        for (int slot : inputMap.keySet()) {
-            blockMenu.consumeItem(slot, inputMap.get(slot).getAmount());
+        if (!recipe.isNoConsume()) {
+            for (int slot : inputMap.keySet()) {
+                blockMenu.consumeItem(slot, inputMap.get(slot).getAmount());
+            }
         }
 
         return true;

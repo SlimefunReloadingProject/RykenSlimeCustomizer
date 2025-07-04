@@ -216,6 +216,7 @@ public class LinkedRecipeMachineReader extends YamlReader<CustomLinkedRecipeMach
             boolean chooseOne = recipes.getBoolean("chooseOne", false);
             boolean forDisplay = recipes.getBoolean("forDisplay", false);
             boolean hide = recipes.getBoolean("hide", false);
+            boolean noConsume = recipes.getBoolean("noConsume", false);
 
             Map<Integer, ItemStack> finalInput = new HashMap<>();
             for (int i = 0; i < inputSize; i++) {
@@ -249,13 +250,15 @@ public class LinkedRecipeMachineReader extends YamlReader<CustomLinkedRecipeMach
             for (int i = 0; i < array.length; i++) {
                 array[i] = i;
             }
+
             list.add(new CustomLinkedMachineRecipe(
                     seconds,
                     finalInput,
                     new LinkedOutput(freeOutput.toArray(new ItemStack[0]), linkedOutput, array, linkedChances),
                     chooseOne,
                     forDisplay,
-                    hide));
+                    hide,
+                    noConsume));
         }
         return list;
     }

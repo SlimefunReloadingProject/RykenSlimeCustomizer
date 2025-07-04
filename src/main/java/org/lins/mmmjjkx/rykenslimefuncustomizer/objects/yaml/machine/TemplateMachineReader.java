@@ -122,12 +122,13 @@ public class TemplateMachineReader extends YamlReader<CustomTemplateMachine> {
         }
 
         for (String key : section.getKeys(false)) {
-            SlimefunItemStack item = getPreloadItem(key) == null
-                    ? SlimefunItem.getById(key) == null
-                            ? null
-                            : ((SlimefunItemStack)
-                                    SlimefunItem.getById(key).getItem().clone())
-                    : getPreloadItem(key);
+            SlimefunItemStack item = getPreloadItem(key);
+            if (item == null) {
+                SlimefunItem item2 = SlimefunItem.getById(key);
+                if (item2 != null) {
+                    item = ((SlimefunItemStack) item2.getItem().clone());
+                }
+            }
 
             if (item == null) {
                 ExceptionHandler.handleError("在附属" + addon.getAddonId() + "中加载模板机器" + s + "时遇到了问题: 无法找到作为模板的物品" + key);
@@ -188,14 +189,7 @@ public class TemplateMachineReader extends YamlReader<CustomTemplateMachine> {
                 }
             }
 
-            boolean chooseOne = recipes.getBoolean("chooseOne", false);
-            boolean forDisplay = recipes.getBoolean("forDisplay", false);
-            boolean hide = recipes.getBoolean("hide", false);
-
-            input = CommonUtils.removeNulls(input);
-            output = CommonUtils.removeNulls(output);
-
-            list.add(new CustomMachineRecipe(seconds, input, output, chances, chooseOne, forDisplay, hide));
+            RecipeMachineReader.addToList(list, recipes, seconds, input, chances, output);
         }
         return list;
     }

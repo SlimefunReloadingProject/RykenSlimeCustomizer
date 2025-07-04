@@ -36,8 +36,7 @@ public class CommandSafe {
             "essentials:unmute",
             "essentials:jail",
             "essentials:unjail",
-            "essentials:sudo"
-            );
+            "essentials:sudo");
 
     public static boolean isBadCommand(String command) {
         return badCommands.contains(command.toLowerCase());

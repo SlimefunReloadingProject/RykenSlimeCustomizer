@@ -14,6 +14,7 @@ public class CustomMachineRecipe extends MachineRecipe {
     private final boolean chooseOneIfHas;
     private final boolean forDisplay;
     private final boolean hide;
+    private final boolean noConsume;
 
     public CustomMachineRecipe(
             int seconds,
@@ -22,13 +23,15 @@ public class CustomMachineRecipe extends MachineRecipe {
             List<Integer> chances,
             boolean chooseOneIfHas,
             boolean forDisplay,
-            boolean hide) {
+            boolean hide,
+            boolean noConsume) {
         super(seconds, input.clone(), output.clone());
 
         this.chances = chances;
         this.chooseOneIfHas = chooseOneIfHas;
         this.forDisplay = forDisplay;
         this.hide = hide;
+        this.noConsume = noConsume;
     }
 
     public List<ItemStack> getMatchChanceResult() {

@@ -6,7 +6,6 @@ import io.github.thebusybiscuit.slimefun4.api.items.SlimefunItemStack;
 import io.github.thebusybiscuit.slimefun4.implementation.Slimefun;
 import io.github.thebusybiscuit.slimefun4.libraries.dough.skins.PlayerHead;
 import io.github.thebusybiscuit.slimefun4.libraries.dough.skins.PlayerSkin;
-
 import java.net.URL;
 import java.util.List;
 import java.util.Random;
@@ -56,14 +55,14 @@ public class BlockPopulator extends org.bukkit.generator.BlockPopulator {
         int r;
         double s2 = random.nextDouble(0, h);
 
-        double sTop = (height.getMax() - area.getMost() + 1);
+        double sTop = (height.max() - area.getMost() + 1);
         if (s2 < sTop) {
             int h2MaxHeight = (int) (s2 * 2);
-            r = height.getMax() - h2MaxHeight;
+            r = height.max() - h2MaxHeight;
         } else {
             s2 -= sTop;
             int h2MinHeight = (int) (s2 * 2);
-            r = height.getMin() + h2MinHeight;
+            r = height.min() + h2MinHeight;
         }
 
         int centerX = (chunkX << 4) + random.nextInt(16);

@@ -16,7 +16,7 @@ import org.lins.mmmjjkx.rykenslimefuncustomizer.objects.customs.LinkedOutput;
 @UtilityClass
 public class BlockMenuUtil {
     @Nullable public static ItemStack pushItem(@Nonnull BlockMenu blockMenu, @Nonnull ItemStack item, int... slots) {
-        if (item == null || item.getType() == Material.AIR) {
+        if (item == null || item.getType().isAir()) {
             throw new IllegalArgumentException("Cannot push null or AIR");
         }
 
@@ -29,7 +29,7 @@ public class BlockMenuUtil {
 
             ItemStack existing = blockMenu.getItemInSlot(slot);
 
-            if (existing == null || existing.getType() == Material.AIR) {
+            if (existing == null || existing.getType().isAir()) {
                 int received = Math.min(leftAmount, item.getMaxStackSize());
                 ItemStack clone = item.clone();
                 clone.setAmount(received);

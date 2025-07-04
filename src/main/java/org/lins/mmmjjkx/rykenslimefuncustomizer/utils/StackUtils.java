@@ -34,16 +34,6 @@ import org.bukkit.inventory.meta.TropicalFishBucketMeta;
 @UtilityClass
 @SuppressWarnings("deprecation")
 public class StackUtils {
-    @Nonnull
-    public static ItemStack getAsQuantity(@Nullable ItemStack itemStack, int amount) {
-        if (itemStack == null) {
-            return new ItemStack(Material.AIR);
-        }
-        ItemStack clone = itemStack.clone();
-        clone.setAmount(amount);
-        return clone;
-    }
-
     public static boolean itemsMatch(@Nonnull ItemStack cache, @Nullable ItemStack itemStack) {
         return itemsMatch(cache, itemStack, false, false, false);
     }
@@ -182,16 +172,14 @@ public class StackUtils {
         if (optionalStackId1.isPresent() != optionalStackId2.isPresent()) {
             return false;
         }
-        if (optionalStackId1.isPresent()) {
-            return optionalStackId1.get().equals(optionalStackId2.get());
-        }
-
         // Check the display name
-        return !itemMeta.hasDisplayName() || Objects.equals(itemMeta.getDisplayName(), cachedMeta.getDisplayName());
+        return optionalStackId1
+                .map(s -> s.equals(optionalStackId2.get()))
+                .orElseGet(() -> !itemMeta.hasDisplayName()
+                        || Objects.equals(itemMeta.getDisplayName(), cachedMeta.getDisplayName()));
     }
 
     public static boolean canQuickEscapeMetaVariant(@Nonnull ItemMeta metaOne, @Nonnull ItemMeta metaTwo) {
-
         // Damageable (first as everything can be damageable apparently)
         if (metaOne instanceof Damageable instanceOne && metaTwo instanceof Damageable instanceTwo) {
             if (instanceOne.hasDamage() != instanceTwo.hasDamage()) {

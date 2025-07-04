@@ -132,7 +132,8 @@ public class ProjectAddonLoader {
                 CMIChatColor.translate(enabledTexts);
             }
 
-            addon = new ProjectAddon(id, name, version, pluginDepends, depends, description, authors, file, enabledTexts);
+            addon = new ProjectAddon(
+                    id, name, version, pluginDepends, depends, description, authors, file, enabledTexts);
 
             if (!repo.isBlank()) {
                 addon.setGithubRepo("https://github.com/" + repo);
@@ -177,7 +178,9 @@ public class ProjectAddonLoader {
 
             if (loadStartTexts != null) {
                 for (String text : loadStartTexts) {
-                    RykenSlimefunCustomizer.INSTANCE.getComponentLogger().info(LegacyComponentSerializer.legacySection().deserialize(text));
+                    RykenSlimefunCustomizer.INSTANCE
+                            .getComponentLogger()
+                            .info(LegacyComponentSerializer.legacySection().deserialize(text));
                 }
             }
 
@@ -357,7 +360,9 @@ public class ProjectAddonLoader {
 
         if (addon.getEnabledTexts() != null) {
             for (String text : addon.getEnabledTexts()) {
-                RykenSlimefunCustomizer.INSTANCE.getComponentLogger().info(LegacyComponentSerializer.legacySection().deserialize(text));
+                RykenSlimefunCustomizer.INSTANCE
+                        .getComponentLogger()
+                        .info(LegacyComponentSerializer.legacySection().deserialize(text));
             }
         }
 

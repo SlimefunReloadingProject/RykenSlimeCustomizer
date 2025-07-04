@@ -16,7 +16,8 @@ public class CustomLinkedMachineRecipe extends CustomMachineRecipe {
             LinkedOutput linkedOutput,
             boolean chooseOneIfHas,
             boolean forDisplay,
-            boolean hide) {
+            boolean hide,
+            boolean noConsume) {
         super(
                 seconds,
                 input.values().toArray(new ItemStack[0]),
@@ -24,7 +25,8 @@ public class CustomLinkedMachineRecipe extends CustomMachineRecipe {
                 linkedOutput.chancesToArray(),
                 chooseOneIfHas,
                 forDisplay,
-                hide);
+                hide,
+                noConsume);
         this.linkedInput = input;
         this.linkedOutput = linkedOutput;
     }
