@@ -6,8 +6,11 @@ import io.github.thebusybiscuit.slimefun4.api.recipes.RecipeType;
 import io.github.thebusybiscuit.slimefun4.libraries.dough.collections.Pair;
 import java.util.ArrayList;
 import java.util.HashMap;
+import java.util.HashSet;
 import java.util.List;
 import java.util.Map;
+import java.util.Set;
+
 import org.bukkit.configuration.ConfigurationSection;
 import org.bukkit.configuration.file.YamlConfiguration;
 import org.bukkit.inventory.ItemStack;
@@ -218,6 +221,7 @@ public class LinkedRecipeMachineReader extends YamlReader<CustomLinkedRecipeMach
             boolean hide = recipes.getBoolean("hide", false);
             boolean noConsume = recipes.getBoolean("noConsume", false);
 
+            Set<Integer> noConsumes = new HashSet<>();
             Map<Integer, ItemStack> finalInput = new HashMap<>();
             for (int i = 0; i < inputSize; i++) {
                 ConfigurationSection section1 = inputs.getConfigurationSection(String.valueOf(i + 1));
@@ -244,6 +248,11 @@ public class LinkedRecipeMachineReader extends YamlReader<CustomLinkedRecipeMach
                 }
 
                 finalInput.put(slot, itemStack);
+
+                boolean noConsume1 = section1.getBoolean("noConsume", false);
+                if (noConsume1) {
+                    noConsumes.add(slot);
+                }
             }
 
             int[] array = new int[freeChances.size()];
@@ -258,7 +267,8 @@ public class LinkedRecipeMachineReader extends YamlReader<CustomLinkedRecipeMach
                     chooseOne,
                     forDisplay,
                     hide,
-                    noConsume));
+                    noConsume,
+                    noConsumes));
         }
         return list;
     }

@@ -7,8 +7,11 @@ import io.github.thebusybiscuit.slimefun4.libraries.dough.collections.Pair;
 import java.io.File;
 import java.util.ArrayList;
 import java.util.HashMap;
+import java.util.HashSet;
 import java.util.List;
 import java.util.Map;
+import java.util.Set;
+
 import org.bukkit.Material;
 import org.bukkit.configuration.ConfigurationSection;
 import org.bukkit.configuration.file.YamlConfiguration;
@@ -245,6 +248,7 @@ public class WorkbenchReader extends YamlReader<CustomWorkbench> {
             boolean forDisplay = recipes.getBoolean("forDisplay", false);
             boolean hide = recipes.getBoolean("hide", false);
 
+            Set<Integer> noConsumes = new HashSet<>();
             Map<Integer, ItemStack> finalInput = new HashMap<>();
             for (int i = 0; i < inputSize; i++) {
                 ConfigurationSection section1 = inputs.getConfigurationSection(String.valueOf(i + 1));
@@ -271,6 +275,11 @@ public class WorkbenchReader extends YamlReader<CustomWorkbench> {
                 }
 
                 finalInput.put(slot, itemStack);
+
+                boolean noConsume1 = section1.getBoolean("noConsume", false);
+                if (noConsume1) {
+                    noConsumes.add(slot);
+                }
             }
 
             int[] array = new int[freeChances.size()];
@@ -285,7 +294,8 @@ public class WorkbenchReader extends YamlReader<CustomWorkbench> {
                     chooseOne,
                     forDisplay,
                     hide,
-                    false));
+                    false,
+                    noConsumes));
         }
         return list;
     }
