@@ -20,6 +20,8 @@ import java.util.function.Predicate;
 import java.util.regex.Matcher;
 import java.util.regex.Pattern;
 import lombok.SneakyThrows;
+import net.guizhanss.guizhanlib.minecraft.utils.compatibility.EnchantmentX;
+import net.guizhanss.guizhanlib.minecraft.utils.compatibility.ItemFlagX;
 import org.bukkit.*;
 import org.bukkit.configuration.ConfigurationSection;
 import org.bukkit.configuration.file.YamlConfiguration;
@@ -44,7 +46,7 @@ public class CommonUtils {
             "TURTLE_SCUTE", "SCUTE");
 
     public static ItemStack doGlow(ItemStack item) {
-        item.addUnsafeEnchantment(Enchantment.LUCK, 1);
+        item.addUnsafeEnchantment(EnchantmentX.LUCK_OF_THE_SEA, 1);
         item.addItemFlags(ItemFlag.HIDE_ENCHANTS);
 
         return item;
@@ -292,12 +294,12 @@ public class CommonUtils {
                                     lam.setColor(bkcolor);
                                 } else if (meta instanceof PotionMeta pm) {
                                     pm.setColor(bkcolor);
-                                    pm.addItemFlags(ItemFlag.HIDE_POTION_EFFECTS);
+                                    pm.addItemFlags(ItemFlagX.HIDE_ADDITIONAL_TOOLTIP);
                                 } else if (meta instanceof FireworkEffectMeta fem) {
                                     fem.setEffect(FireworkEffect.builder()
                                             .withColor(bkcolor)
                                             .build());
-                                    fem.addItemFlags(ItemFlag.HIDE_ATTRIBUTES);
+                                    fem.addItemFlags(ItemFlagX.HIDE_ADDITIONAL_TOOLTIP);
                                 }
                             }
 

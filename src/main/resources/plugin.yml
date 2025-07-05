@@ -2,9 +2,10 @@ name: RykenSlimefunCustomizer
 version: '${project.version}'
 main: org.lins.mmmjjkx.rykenslimefuncustomizer.RykenSlimefunCustomizer
 api-version: '1.19'
-depend: [Slimefun]
-softdepend:
+depend:
+  - Slimefun
   - GuizhanLibPlugin
+softdepend:
   - SlimeGlue
   - ColoredEnderChests
   - DyedBackpacks
