@@ -292,9 +292,6 @@ public class CustomWorkbench extends AContainer implements EnergyNetComponent, R
             }
 
             for (int slot : inputMap.keySet()) {
-                if (recipe.isNoConsume()) {
-                    break;
-                }
                 if (recipe.getNoConsumes().contains(slot)) {
                     continue;
                 }

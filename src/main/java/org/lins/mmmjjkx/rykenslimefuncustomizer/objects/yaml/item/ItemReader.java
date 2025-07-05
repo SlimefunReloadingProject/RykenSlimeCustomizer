@@ -31,6 +31,7 @@ import org.lins.mmmjjkx.rykenslimefuncustomizer.objects.customs.item.CustomUnpla
 import org.lins.mmmjjkx.rykenslimefuncustomizer.objects.customs.item.exts.*;
 import org.lins.mmmjjkx.rykenslimefuncustomizer.objects.customs.parent.CustomItem;
 import org.lins.mmmjjkx.rykenslimefuncustomizer.objects.global.DropFromBlock;
+import org.lins.mmmjjkx.rykenslimefuncustomizer.objects.global.RecipeTypeMap;
 import org.lins.mmmjjkx.rykenslimefuncustomizer.objects.slimefun.WitherProofBlockImpl;
 import org.lins.mmmjjkx.rykenslimefuncustomizer.objects.yaml.YamlReader;
 import org.lins.mmmjjkx.rykenslimefuncustomizer.utils.ClassUtils;
@@ -61,7 +62,6 @@ public class ItemReader extends YamlReader<SlimefunItem> {
         SlimefunItemStack sfis = getPreloadItem(id);
         if (sfis == null) return null;
 
-        ItemStack[] itemStacks = CommonUtils.readRecipe(section.getConfigurationSection("recipe"), addon);
         String recipeType = section.getString("recipe_type", "NULL");
 
         boolean piglin = section.getBoolean("piglin_trade_chance", false);
@@ -76,6 +76,14 @@ public class ItemReader extends YamlReader<SlimefunItem> {
 
             rt = rt1.getSecondValue();
         }
+
+        int recipeSize = 9;
+        ItemStack[] itemStacks;
+        if (rt == RecipeTypeMap.RecipeTypeExpandIntegration.INFINITY_EXPANSION.get()) {
+             recipeSize = 36;
+        }
+
+        itemStacks = CommonUtils.readRecipe(section.getConfigurationSection("recipe"), addon, recipeSize);
 
         JavaScriptEval eval = null;
         if (section.contains("script")) {

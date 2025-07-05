@@ -217,12 +217,12 @@ public class BlockMenuUtil {
         }
 
         // try push linked output
-        for (int pushToSlot : output.getLinkedOutput().keySet()) {
+        for (int pushToSlot : output.linkedOutput().keySet()) {
             if (pushToSlot < 0 || pushToSlot >= 54) {
                 continue;
             }
 
-            ItemStack PitemToPush = output.getLinkedOutput().get(pushToSlot);
+            ItemStack PitemToPush = output.linkedOutput().get(pushToSlot);
             if (PitemToPush == null || PitemToPush.getType() == Material.AIR) {
                 continue;
             }
@@ -253,7 +253,7 @@ public class BlockMenuUtil {
         }
 
         // try to push free output
-        for (ItemStack PitemToPush : output.getFreeOutput()) {
+        for (ItemStack PitemToPush : output.freeOutput()) {
             if (PitemToPush == null || PitemToPush.getType() == Material.AIR) {
                 continue;
             }
@@ -292,19 +292,19 @@ public class BlockMenuUtil {
         }
 
         // push linked output
-        for (int pushToSlot : output.getLinkedOutput().keySet()) {
+        for (int pushToSlot : output.linkedOutput().keySet()) {
             if (pushToSlot < 0 || pushToSlot >= 54) {
                 continue;
             }
 
-            ItemStack PitemToPush = output.getLinkedOutput().get(pushToSlot);
+            ItemStack PitemToPush = output.linkedOutput().get(pushToSlot);
             if (PitemToPush == null || PitemToPush.getType() == Material.AIR) {
                 continue;
             }
 
             ItemStack itemToPush = PitemToPush.clone();
 
-            int chance = output.getLinkedChances().get(pushToSlot);
+            int chance = output.linkedChances().get(pushToSlot);
             if (chance > 0 && chance < 100 && Math.random() * 100 > chance) {
                 continue;
             }
@@ -318,7 +318,7 @@ public class BlockMenuUtil {
         }
 
         // push free output
-        ItemStack[] freeOutput = output.getFreeOutput();
+        ItemStack[] freeOutput = output.freeOutput();
         for (int i = 0; i < freeOutput.length; i++) {
             ItemStack PitemToPush = freeOutput[i];
             if (PitemToPush == null || PitemToPush.getType() == Material.AIR) {
@@ -327,7 +327,7 @@ public class BlockMenuUtil {
 
             ItemStack itemToPush = PitemToPush.clone();
 
-            int chance = output.getFreeChances()[i];
+            int chance = output.freeChances()[i];
             if (chance > 0 && chance < 100 && Math.random() * 100 > chance) {
                 continue;
             }

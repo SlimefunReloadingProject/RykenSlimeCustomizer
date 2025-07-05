@@ -74,7 +74,7 @@ public class MaterialGeneratorReader extends YamlReader<CustomMaterialGenerator>
             }
         }
 
-        if (out.length > 1) {
+        if (out.length > 1 && outputItems != null) {
             for (String key : outputItems.getKeys(false)) {
                 ConfigurationSection chanceItem = outputItems.getConfigurationSection(key);
                 if (CommonUtils.readItem(chanceItem, true, addon) == null) {

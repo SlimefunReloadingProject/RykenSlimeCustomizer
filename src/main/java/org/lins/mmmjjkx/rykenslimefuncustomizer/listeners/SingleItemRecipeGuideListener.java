@@ -633,8 +633,8 @@ public class SingleItemRecipeGuideListener implements Listener {
                     }
 
                     LinkedOutput linkedOutput = recipe.getLinkedOutput();
-                    Map<Integer, Integer> chanceMap = linkedOutput.getLinkedChances();
-                    Map<Integer, ItemStack> outputMap = linkedOutput.getLinkedOutput();
+                    Map<Integer, Integer> chanceMap = linkedOutput.linkedChances();
+                    Map<Integer, ItemStack> outputMap = linkedOutput.linkedOutput();
                     for (int slot : outputMap.keySet()) {
                         if (chanceMap.containsKey(slot)) {
                             int chance = chanceMap.get(slot);
@@ -657,7 +657,7 @@ public class SingleItemRecipeGuideListener implements Listener {
                         }
                     }
 
-                    for (ItemStack itemStack : linkedOutput.getFreeOutput()) {
+                    for (ItemStack itemStack : linkedOutput.freeOutput()) {
                         for (int slot : outputSlots) {
                             ItemStack existing = getItemInSlot(slot);
                             if (existing == null || existing.getType() == Material.AIR) {

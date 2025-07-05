@@ -67,7 +67,7 @@ public class CommonUtils {
 
     @NotNull @Contract("null,_,_ -> new")
     public static ItemStack[] readRecipe(ConfigurationSection section, @NotNull ProjectAddon addon, int size) {
-        if (section == null) return new ItemStack[] {};
+        if (section == null) return new ItemStack[size];
         ItemStack[] itemStacks = new ItemStack[size];
         for (int i = 0; i < size; i++) {
             ConfigurationSection section1 = section.getConfigurationSection(String.valueOf(i + 1));
