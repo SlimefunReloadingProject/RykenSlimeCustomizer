@@ -23,8 +23,35 @@ import org.lins.mmmjjkx.rykenslimefuncustomizer.objects.Range;
 
 @SuppressWarnings("deprecation")
 public class BlockPopulator extends org.bukkit.generator.BlockPopulator {
+    private static final List<String> blockedWorlds = List.of(
+            "CAsteroidBelt",
+            "CMars",
+            "CMoon",
+            "dimensionalhome",
+            "ft_world",
+            "ne_muspelheim",
+            "ne_niflheim",
+            "SmallSpace",
+            "space",
+            "world_galactifun_earth_orbit",
+            "world_galactifun_enceladus",
+            "world_galactifun_europa",
+            "world_galactifun_io",
+            "world_galactifun_mars",
+            "world_galactifun_the_moon",
+            "world_galactifun_titan",
+            "world_galactifun_venus",
+            "world_void",
+            "corporate_dimension",
+            "logispace"
+    );
+
     @Override
     public void populate(@Nonnull World world, @Nonnull Random random, @Nonnull Chunk source) {
+        if (blockedWorlds.contains(world.getName())) {
+            return;
+        }
+
         List<ProjectAddon> addons = RykenSlimefunCustomizer.addonManager.getAllValues();
 
         for (ProjectAddon addon : addons) {
@@ -53,6 +80,11 @@ public class BlockPopulator extends org.bukkit.generator.BlockPopulator {
         Range height = area.getHeight();
         int h = height.getDistance() + 1;
         int r;
+
+        if (h < 0) {
+            h = 1;
+        }
+
         double s2 = random.nextDouble(0, h);
 
         double sTop = (height.max() - area.getMost() + 1);
