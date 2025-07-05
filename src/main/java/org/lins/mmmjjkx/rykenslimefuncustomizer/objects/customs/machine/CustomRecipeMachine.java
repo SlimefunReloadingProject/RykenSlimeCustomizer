@@ -19,6 +19,8 @@ import java.util.ArrayList;
 import java.util.HashMap;
 import java.util.List;
 import java.util.Map;
+
+import it.unimi.dsi.fastutil.ints.IntList;
 import lombok.Getter;
 import me.mrCookieSlime.Slimefun.Objects.SlimefunItem.abstractItems.AContainer;
 import me.mrCookieSlime.Slimefun.Objects.SlimefunItem.abstractItems.MachineRecipe;
@@ -291,8 +293,12 @@ public class CustomRecipeMachine extends AContainer implements RecipeDisplayItem
                     return null;
                 }
 
-                if (!recipe.isNoConsume()) {
-                    for (Map.Entry<Integer, Integer> entry : found.entrySet()) {
+                List<Map.Entry<Integer, Integer>> entries = new ArrayList<>(found.entrySet());
+                IntList ints = recipe.getNoConsume();
+
+                for (Map.Entry<Integer, Integer> entry : entries) {
+                    int i = entries.indexOf(entry);
+                    if (!ints.contains(i)) {
                         inv.consumeItem(entry.getKey(), entry.getValue());
                     }
                 }

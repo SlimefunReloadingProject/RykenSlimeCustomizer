@@ -324,13 +324,11 @@ public class CustomLinkedRecipeMachine extends AContainer implements RecipeDispl
             return false;
         }
 
-        if (!recipe.isNoConsume()) {
-            for (int slot : inputMap.keySet()) {
-                if (recipe.getNoConsumes().contains(slot)) {
-                    continue;
-                }
-                blockMenu.consumeItem(slot, inputMap.get(slot).getAmount());
+        for (int slot : inputMap.keySet()) {
+            if (recipe.getNoConsumes().contains(slot)) {
+                continue;
             }
+            blockMenu.consumeItem(slot, inputMap.get(slot).getAmount());
         }
 
         return true;

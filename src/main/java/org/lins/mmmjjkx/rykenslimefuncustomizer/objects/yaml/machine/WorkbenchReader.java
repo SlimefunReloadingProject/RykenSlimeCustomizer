@@ -294,7 +294,6 @@ public class WorkbenchReader extends YamlReader<CustomWorkbench> {
                     chooseOne,
                     forDisplay,
                     hide,
-                    false,
                     noConsumes));
         }
         return list;

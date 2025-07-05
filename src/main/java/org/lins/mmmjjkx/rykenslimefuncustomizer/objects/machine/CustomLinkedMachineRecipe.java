@@ -3,6 +3,7 @@ package org.lins.mmmjjkx.rykenslimefuncustomizer.objects.machine;
 import java.util.Map;
 import java.util.Set;
 
+import it.unimi.dsi.fastutil.ints.IntArrayList;
 import lombok.Getter;
 import org.bukkit.inventory.ItemStack;
 import org.lins.mmmjjkx.rykenslimefuncustomizer.objects.customs.LinkedOutput;
@@ -20,7 +21,6 @@ public class CustomLinkedMachineRecipe extends CustomMachineRecipe {
             boolean chooseOneIfHas,
             boolean forDisplay,
             boolean hide,
-            boolean noConsume,
             Set<Integer> noConsumes) {
         super(
                 seconds,
@@ -30,7 +30,7 @@ public class CustomLinkedMachineRecipe extends CustomMachineRecipe {
                 chooseOneIfHas,
                 forDisplay,
                 hide,
-                noConsume);
+                new IntArrayList());
         this.linkedInput = input;
         this.linkedOutput = linkedOutput;
         this.noConsumes = noConsumes;

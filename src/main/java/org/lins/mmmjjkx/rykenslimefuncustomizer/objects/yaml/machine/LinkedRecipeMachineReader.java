@@ -267,7 +267,6 @@ public class LinkedRecipeMachineReader extends YamlReader<CustomLinkedRecipeMach
                     chooseOne,
                     forDisplay,
                     hide,
-                    noConsume,
                     noConsumes));
         }
         return list;

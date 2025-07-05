@@ -3,6 +3,8 @@ package org.lins.mmmjjkx.rykenslimefuncustomizer.objects.machine;
 import java.security.SecureRandom;
 import java.util.ArrayList;
 import java.util.List;
+
+import it.unimi.dsi.fastutil.ints.IntList;
 import lombok.Getter;
 import me.mrCookieSlime.Slimefun.Objects.SlimefunItem.abstractItems.MachineRecipe;
 import org.bukkit.inventory.ItemStack;
@@ -10,11 +12,11 @@ import org.bukkit.inventory.ItemStack;
 @Getter
 public class CustomMachineRecipe extends MachineRecipe {
     private final List<Integer> chances;
+    private final IntList noConsume;
 
     private final boolean chooseOneIfHas;
     private final boolean forDisplay;
     private final boolean hide;
-    private final boolean noConsume;
 
     public CustomMachineRecipe(
             int seconds,
@@ -24,14 +26,14 @@ public class CustomMachineRecipe extends MachineRecipe {
             boolean chooseOneIfHas,
             boolean forDisplay,
             boolean hide,
-            boolean noConsume) {
+            IntList noConsumeIndexes) {
         super(seconds, input.clone(), output.clone());
 
         this.chances = chances;
         this.chooseOneIfHas = chooseOneIfHas;
         this.forDisplay = forDisplay;
         this.hide = hide;
-        this.noConsume = noConsume;
+        this.noConsume = noConsumeIndexes;
     }
 
     public List<ItemStack> getMatchChanceResult() {

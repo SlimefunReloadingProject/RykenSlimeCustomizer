@@ -23,6 +23,8 @@ import java.util.ArrayList;
 import java.util.HashMap;
 import java.util.List;
 import java.util.Map;
+
+import it.unimi.dsi.fastutil.ints.IntList;
 import lombok.Getter;
 import me.mrCookieSlime.Slimefun.Objects.handlers.BlockTicker;
 import me.mrCookieSlime.Slimefun.api.inventory.BlockMenu;
@@ -368,8 +370,12 @@ public class CustomTemplateMachine extends AbstractEmptyMachine<CustomTemplateCr
 
         CustomMachineRecipe recipeKey = recipe.getKey();
 
-        if (!recipeKey.isNoConsume()) {
-            for (Map.Entry<Integer, Integer> entry : recipe.getValue().entrySet()) {
+        List<Map.Entry<Integer, Integer>> entries = new ArrayList<>(recipe.getValue().entrySet());
+        IntList ints = recipeKey.getNoConsume();
+
+        for (Map.Entry<Integer, Integer> entry : entries) {
+            int i = entries.indexOf(entry);
+            if (!ints.contains(i)) {
                 inv.consumeItem(entry.getKey(), entry.getValue());
             }
         }
