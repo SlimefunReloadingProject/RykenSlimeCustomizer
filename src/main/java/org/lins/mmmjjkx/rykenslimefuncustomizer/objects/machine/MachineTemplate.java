@@ -1,8 +1,7 @@
 package org.lins.mmmjjkx.rykenslimefuncustomizer.objects.machine;
 
-import java.util.List;
-
 import io.github.thebusybiscuit.slimefun4.utils.SlimefunUtils;
+import java.util.List;
 import org.bukkit.inventory.ItemStack;
 
 public record MachineTemplate(ItemStack template, List<CustomMachineRecipe> recipes) {

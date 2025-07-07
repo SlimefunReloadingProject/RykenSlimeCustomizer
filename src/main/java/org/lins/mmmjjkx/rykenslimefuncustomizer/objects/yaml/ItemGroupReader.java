@@ -48,18 +48,14 @@ public class ItemGroupReader extends YamlReader<ItemGroup> {
 
         ItemGroup group =
                 switch (type) {
-                    default -> new ItemGroup(key, stack, tier);
                     case "sub" -> {
-                        NamespacedKey parent = new NamespacedKey(
-                                RykenSlimefunCustomizer.INSTANCE,
-                                section.getString("parent", "").toLowerCase());
-                        ItemGroup raw = CommonUtils.getIf(Slimefun.getRegistry().getAllItemGroups(), ig -> ig.getKey()
-                                .equals(parent));
+                        ItemGroup raw = getParent(section);
                         if (raw == null) {
-                            ExceptionHandler.handleError("在附属" + addon.getAddonId() + "中加载物品组" + s + "时遇到了问题: "
-                                    + "无法找到父物品组" + parent.getKey());
                             yield null;
                         }
+
+                        NamespacedKey parent = raw.getKey();
+
                         if (!(raw instanceof NestedItemGroup nig)) {
                             ExceptionHandler.handleError("在附属" + addon.getAddonId() + "中加载物品组" + s + "时遇到了问题: " + "物品组"
                                     + parent.getKey() + "不是一个嵌套物品组");
@@ -88,16 +84,12 @@ public class ItemGroupReader extends YamlReader<ItemGroup> {
                         yield new SeasonalItemGroup(key, month, tier, stack);
                     }
                     case "button" -> {
-                        NamespacedKey parent = new NamespacedKey(
-                                RykenSlimefunCustomizer.INSTANCE,
-                                section.getString("parent", "").toLowerCase());
-                        ItemGroup raw = CommonUtils.getIf(Slimefun.getRegistry().getAllItemGroups(), ig -> ig.getKey()
-                                .equals(parent));
+                        ItemGroup raw = getParent(section);
                         if (raw == null) {
-                            ExceptionHandler.handleError("在附属" + addon.getAddonId() + "中加载物品组" + s + "时遇到了问题: "
-                                    + "无法找到父物品组" + parent.getKey());
                             yield null;
                         }
+
+                        NamespacedKey parent = raw.getKey();
 
                         if (!(raw instanceof AdvancedNestedItemGroup nig)) {
                             ExceptionHandler.handleError("在附属" + addon.getAddonId() + "中加载物品组" + s + "时遇到了问题: " + "物品组"
@@ -109,6 +101,7 @@ public class ItemGroupReader extends YamlReader<ItemGroup> {
 
                         yield new ItemGroupButton(addon, key, nig, stack, tier, actions);
                     }
+                    default -> new ItemGroup(key, stack, tier);
                 };
 
         if (group != null) {
@@ -122,5 +115,20 @@ public class ItemGroupReader extends YamlReader<ItemGroup> {
     @Override
     public List<SlimefunItemStack> preloadItems(String s) {
         return List.of();
+    }
+
+    private ItemGroup getParent(ConfigurationSection section) {
+        NamespacedKey parent = new NamespacedKey(
+                RykenSlimefunCustomizer.INSTANCE,
+                section.getString("parent", "").toLowerCase());
+        ItemGroup raw = CommonUtils.getIf(
+                Slimefun.getRegistry().getAllItemGroups(), ig -> ig.getKey().equals(parent));
+        if (raw == null) {
+            ExceptionHandler.handleError("在附属" + addon.getAddonId() + "中加载物品组" + section.getCurrentPath() + "时遇到了问题: "
+                    + "无法找到父物品组" + parent.getKey());
+            return null;
+        }
+
+        return raw;
     }
 }

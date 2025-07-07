@@ -40,14 +40,10 @@ public class SimpleMachineReader extends YamlReader<SlimefunItem> {
         Pair<ExceptionHandler.HandleResult, ItemGroup> itemGroupPair = ExceptionHandler.handleItemGroupGet(addon, igId);
         if (itemGroupPair.getFirstValue() == ExceptionHandler.HandleResult.FAILED
                 || itemGroupPair.getSecondValue() == null) return null;
-        ItemStack[] recipe = CommonUtils.readRecipe(section.getConfigurationSection("recipe"), addon);
-        String recipeType = section.getString("recipe_type", "NULL");
 
-        Pair<ExceptionHandler.HandleResult, RecipeType> resultRecipeTypePair = ExceptionHandler.getRecipeType(
-                "在附属" + addon.getAddonId() + "中加载简单机器" + s + "时遇到了问题: " + "错误的配方类型" + recipeType + "!", recipeType);
-
-        if (resultRecipeTypePair.getFirstValue() == ExceptionHandler.HandleResult.FAILED
-                || resultRecipeTypePair.getSecondValue() == null) return null;
+        Pair<RecipeType, ItemStack[]> recipePair = getRecipe(section, addon);
+        RecipeType rt = recipePair.getFirstValue();
+        ItemStack[] recipe = recipePair.getSecondValue();
 
         String machineTypeStr = section.getString("type");
 
@@ -120,7 +116,7 @@ public class SimpleMachineReader extends YamlReader<SlimefunItem> {
         SlimefunItem instance = SimpleMachineFactory.create(
                 itemGroupPair.getSecondValue(),
                 slimefunItemStack,
-                resultRecipeTypePair.getSecondValue(),
+                rt,
                 recipe,
                 machineType,
                 capacity,

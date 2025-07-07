@@ -41,13 +41,10 @@ public class GeneratorReader extends YamlReader<CustomGenerator> {
 
         Pair<ExceptionHandler.HandleResult, ItemGroup> group = ExceptionHandler.handleItemGroupGet(addon, igId);
         if (group.getFirstValue() == ExceptionHandler.HandleResult.FAILED) return null;
-        ItemStack[] recipe = CommonUtils.readRecipe(section.getConfigurationSection("recipe"), addon);
-        String recipeType = section.getString("recipe_type", "NULL");
 
-        Pair<ExceptionHandler.HandleResult, RecipeType> rt = ExceptionHandler.getRecipeType(
-                "在附属" + addon.getAddonId() + "中加载发电机" + s + "时遇到了问题: " + "错误的配方类型" + recipeType + "!", recipeType);
-
-        if (rt.getFirstValue() == ExceptionHandler.HandleResult.FAILED) return null;
+        Pair<RecipeType, ItemStack[]> recipePair = getRecipe(section, addon);
+        RecipeType rt = recipePair.getFirstValue();
+        ItemStack[] itemStacks = recipePair.getSecondValue();
 
         CustomMenu menu = CommonUtils.getIf(addon.getMenus(), m -> m.getID().equalsIgnoreCase(id));
 
@@ -65,16 +62,7 @@ public class GeneratorReader extends YamlReader<CustomGenerator> {
         }
 
         return new CustomGenerator(
-                group.getSecondValue(),
-                sfis,
-                rt.getSecondValue(),
-                recipe,
-                menu,
-                capacity,
-                input,
-                output,
-                production,
-                fuels);
+                group.getSecondValue(), sfis, rt, itemStacks, menu, capacity, input, output, production, fuels);
     }
 
     @Override

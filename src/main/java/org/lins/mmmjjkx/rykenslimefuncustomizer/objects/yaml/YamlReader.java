@@ -2,6 +2,8 @@ package org.lins.mmmjjkx.rykenslimefuncustomizer.objects.yaml;
 
 import io.github.thebusybiscuit.slimefun4.api.items.SlimefunItem;
 import io.github.thebusybiscuit.slimefun4.api.items.SlimefunItemStack;
+import io.github.thebusybiscuit.slimefun4.api.recipes.RecipeType;
+import io.github.thebusybiscuit.slimefun4.libraries.dough.collections.Pair;
 import io.github.thebusybiscuit.slimefun4.libraries.paperlib.PaperLib;
 import java.util.ArrayList;
 import java.util.List;
@@ -10,9 +12,11 @@ import java.util.function.Function;
 import org.bukkit.Bukkit;
 import org.bukkit.configuration.ConfigurationSection;
 import org.bukkit.configuration.file.YamlConfiguration;
+import org.bukkit.inventory.ItemStack;
 import org.jetbrains.annotations.Nullable;
 import org.lins.mmmjjkx.rykenslimefuncustomizer.objects.ProjectAddon;
 import org.lins.mmmjjkx.rykenslimefuncustomizer.objects.customs.CustomAddonConfig;
+import org.lins.mmmjjkx.rykenslimefuncustomizer.utils.CommonUtils;
 import org.lins.mmmjjkx.rykenslimefuncustomizer.utils.ExceptionHandler;
 
 public abstract class YamlReader<T> {
@@ -46,6 +50,31 @@ public abstract class YamlReader<T> {
                 ExceptionHandler.debugLog("&a已预加载物品: " + item.getItemId());
             }
         }
+    }
+
+    protected final Pair<RecipeType, ItemStack[]> getRecipe(ConfigurationSection section, ProjectAddon addon) {
+        String recipeTypeStr = section.getString("recipe_type", "NULL");
+
+        RecipeType rt;
+        if (section.getBoolean("piglin_trade_chance")) {
+            rt = RecipeType.BARTER_DROP;
+        } else {
+            Pair<ExceptionHandler.HandleResult, RecipeType> result = ExceptionHandler.getRecipeType(
+                    String.format(
+                            "在附属 %s 中加载物品 %s 时遇到了问题: 错误的配方类型 %s !",
+                            addon.getAddonId(), section.getCurrentPath(), recipeTypeStr),
+                    recipeTypeStr);
+
+            if (result.getFirstValue() == ExceptionHandler.HandleResult.FAILED) {
+                return new Pair<>(RecipeType.NULL, new ItemStack[] {});
+            }
+
+            rt = result.getSecondValue();
+        }
+
+        int recipeSize = rt.getKey().getKey().equalsIgnoreCase("infinity_forge") ? 36 : 9;
+
+        return new Pair<>(rt, CommonUtils.readRecipe(section.getConfigurationSection("recipe"), addon, recipeSize));
     }
 
     @Nullable protected final SlimefunItemStack getPreloadItem(String itemId) {

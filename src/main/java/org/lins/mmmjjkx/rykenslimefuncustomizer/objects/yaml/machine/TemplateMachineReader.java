@@ -41,12 +41,10 @@ public class TemplateMachineReader extends YamlReader<CustomTemplateMachine> {
 
         Pair<ExceptionHandler.HandleResult, ItemGroup> group = ExceptionHandler.handleItemGroupGet(addon, igId);
         if (group.getFirstValue() == ExceptionHandler.HandleResult.FAILED) return null;
-        ItemStack[] recipe = CommonUtils.readRecipe(section.getConfigurationSection("recipe"), addon);
-        String recipeType = section.getString("recipe_type", "NULL");
 
-        Pair<ExceptionHandler.HandleResult, RecipeType> rt = ExceptionHandler.getRecipeType(
-                "在附属" + addon.getAddonId() + "中加载模板机器" + s + "时遇到了问题: " + "错误的配方类型" + recipeType + "!", recipeType);
-        if (rt.getFirstValue() == ExceptionHandler.HandleResult.FAILED) return null;
+        Pair<RecipeType, ItemStack[]> recipePair = getRecipe(section, addon);
+        RecipeType rt = recipePair.getFirstValue();
+        ItemStack[] recipe = recipePair.getSecondValue();
 
         boolean fasterIfMoreTemplates = section.getBoolean("fasterIfMoreTemplates", false);
         boolean moreOutputIfMoreTemplates = section.getBoolean("moreOutputIfMoreTemplates", false);
@@ -100,7 +98,7 @@ public class TemplateMachineReader extends YamlReader<CustomTemplateMachine> {
         return new CustomTemplateMachine(
                 group.getSecondValue(),
                 sfis,
-                rt.getSecondValue(),
+                rt,
                 recipe,
                 menu,
                 input,

@@ -11,7 +11,6 @@ import java.util.HashSet;
 import java.util.List;
 import java.util.Map;
 import java.util.Set;
-
 import org.bukkit.Material;
 import org.bukkit.configuration.ConfigurationSection;
 import org.bukkit.configuration.file.YamlConfiguration;
@@ -83,19 +82,16 @@ public class WorkbenchReader extends YamlReader<CustomWorkbench> {
         if (result == ExceptionHandler.HandleResult.FAILED) return null;
 
         String igId = section.getString("item_group");
+
         Pair<ExceptionHandler.HandleResult, ItemGroup> group = ExceptionHandler.handleItemGroupGet(addon, igId);
         if (group.getFirstValue() == ExceptionHandler.HandleResult.FAILED) return null;
 
         SlimefunItemStack slimefunItemStack = getPreloadItem(id);
         if (slimefunItemStack == null) return null;
 
-        ItemStack[] recipe = CommonUtils.readRecipe(section.getConfigurationSection("recipe"), addon);
-        String recipeType = section.getString("recipe_type", "NULL");
-
-        Pair<ExceptionHandler.HandleResult, RecipeType> rt = ExceptionHandler.getRecipeType(
-                "在附属" + addon.getAddonId() + "中加载工作台" + s + "时遇到了问题: " + "错误的配方类型" + recipeType + "!", recipeType);
-
-        if (rt.getFirstValue() == ExceptionHandler.HandleResult.FAILED) return null;
+        Pair<RecipeType, ItemStack[]> recipePair = getRecipe(section, addon);
+        RecipeType rt = recipePair.getFirstValue();
+        ItemStack[] recipe = recipePair.getSecondValue();
 
         CustomMenu menu = CommonUtils.getIf(addon.getMenus(), m -> m.getID().equalsIgnoreCase(id));
         if (menu == null) {
@@ -162,7 +158,7 @@ public class WorkbenchReader extends YamlReader<CustomWorkbench> {
         return new CustomWorkbench(
                 group.getSecondValue(),
                 slimefunItemStack,
-                rt.getSecondValue(),
+                rt,
                 recipe,
                 input.stream().mapToInt(i -> i).toArray(),
                 output.stream().mapToInt(i -> i).toArray(),

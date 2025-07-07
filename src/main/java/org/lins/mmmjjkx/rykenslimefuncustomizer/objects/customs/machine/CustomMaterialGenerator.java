@@ -90,15 +90,17 @@ public class CustomMaterialGenerator extends SlimefunItem
         if (blockMenu != null) {
             if (getCharge(b.getLocation()) >= per) {
                 if (progress >= tickRate) {
-                    setProgress(b, 1);
+                    setProgress(b, 0);
                     pushItems(blockMenu);
                 } else {
                     addProgress(b);
                 }
             } else {
-                if (statusSlot > -1) {
-                    blockMenu.replaceExistingItem(
-                            statusSlot, new CustomItemStack(Material.RED_STAINED_GLASS_PANE, "&4电力不足"));
+                if (blockMenu.hasViewer()) {
+                    if (statusSlot > -1) {
+                        blockMenu.replaceExistingItem(
+                                statusSlot, new CustomItemStack(Material.RED_STAINED_GLASS_PANE, "&4电力不足"));
+                    }
                 }
             }
         }
@@ -118,7 +120,7 @@ public class CustomMaterialGenerator extends SlimefunItem
             progress = Integer.parseInt(Objects.requireNonNull(StorageCacheUtils.getData(b.getLocation(), "progress")));
         } catch (NumberFormatException | NullPointerException ex) {
             StorageCacheUtils.setData(b.getLocation(), "progress", "1");
-            progress = 0;
+            progress = 1;
         }
         return progress;
     }
@@ -180,6 +182,7 @@ public class CustomMaterialGenerator extends SlimefunItem
         Block b = blockMenu.getBlock();
 
         List<ItemStack> generations = getMatchChanceResult();
+
         if (chooseOne && !generations.isEmpty()) {
             generations = Collections.singletonList(generations.get(RNG.nextInt(generations.size())));
         }
@@ -190,6 +193,7 @@ public class CustomMaterialGenerator extends SlimefunItem
                     blockMenu.replaceExistingItem(
                             statusSlot, new CustomItemStack(Material.LIME_STAINED_GLASS_PANE, "&a生产中"));
                 }
+
                 blockMenu.pushItem(item.clone(), getOutputSlots());
                 removeCharge(b.getLocation(), per);
             } else {

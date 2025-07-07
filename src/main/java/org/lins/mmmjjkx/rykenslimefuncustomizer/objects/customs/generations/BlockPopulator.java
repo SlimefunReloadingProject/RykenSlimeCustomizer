@@ -43,8 +43,7 @@ public class BlockPopulator extends org.bukkit.generator.BlockPopulator {
             "world_galactifun_venus",
             "world_void",
             "corporate_dimension",
-            "logispace"
-    );
+            "logispace");
 
     @Override
     public void populate(@Nonnull World world, @Nonnull Random random, @Nonnull Chunk source) {

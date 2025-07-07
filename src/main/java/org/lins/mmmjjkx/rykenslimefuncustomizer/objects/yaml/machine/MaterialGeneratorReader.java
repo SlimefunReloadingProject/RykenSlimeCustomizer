@@ -40,13 +40,10 @@ public class MaterialGeneratorReader extends YamlReader<CustomMaterialGenerator>
 
         Pair<ExceptionHandler.HandleResult, ItemGroup> group = ExceptionHandler.handleItemGroupGet(addon, igId);
         if (group.getFirstValue() == ExceptionHandler.HandleResult.FAILED) return null;
-        ItemStack[] recipe = CommonUtils.readRecipe(section.getConfigurationSection("recipe"), addon);
-        String recipeType = section.getString("recipe_type", "NULL");
 
-        Pair<ExceptionHandler.HandleResult, RecipeType> rt = ExceptionHandler.getRecipeType(
-                "在附属" + addon.getAddonId() + "中加载材料生成器" + s + "时遇到了问题: " + "错误的配方类型" + recipeType + "!", recipeType);
-
-        if (rt.getFirstValue() == ExceptionHandler.HandleResult.FAILED) return null;
+        Pair<RecipeType, ItemStack[]> recipePair = getRecipe(section, addon);
+        RecipeType rt = recipePair.getFirstValue();
+        ItemStack[] recipe = recipePair.getSecondValue();
 
         CustomMenu menu = CommonUtils.getIf(addon.getMenus(), m -> m.getID().equalsIgnoreCase(id));
         if (menu == null) {
@@ -61,7 +58,9 @@ public class MaterialGeneratorReader extends YamlReader<CustomMaterialGenerator>
         List<Integer> chances = new ArrayList<>();
         boolean chooseOne = section.getBoolean("chooseOne", false);
 
-        if (out.length == 0) {
+        ItemStack[] out2 = CommonUtils.removeNulls(out);
+
+        if (out2.length == 0) {
             ConfigurationSection outputItem = section.getConfigurationSection("outputItem");
             ItemStack outItem = CommonUtils.readItem(outputItem, true, addon);
             if (outItem == null) {
@@ -72,9 +71,7 @@ public class MaterialGeneratorReader extends YamlReader<CustomMaterialGenerator>
                 out = new ItemStack[] {outItem};
                 chances = List.of(outputItem.getInt("chance", 100));
             }
-        }
-
-        if (out.length > 1 && outputItems != null) {
+        } else if (out.length > 1 && outputItems != null) {
             for (String key : outputItems.getKeys(false)) {
                 ConfigurationSection chanceItem = outputItems.getConfigurationSection(key);
                 if (CommonUtils.readItem(chanceItem, true, addon) == null) {
@@ -108,7 +105,7 @@ public class MaterialGeneratorReader extends YamlReader<CustomMaterialGenerator>
         CustomMaterialGenerator cmg = new CustomMaterialGenerator(
                 group.getSecondValue(),
                 slimefunItemStack,
-                rt.getSecondValue(),
+                rt,
                 recipe,
                 capacity,
                 output,

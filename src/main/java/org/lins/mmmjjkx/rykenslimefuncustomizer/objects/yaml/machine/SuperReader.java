@@ -20,6 +20,7 @@ import org.lins.mmmjjkx.rykenslimefuncustomizer.utils.CommonUtils;
 import org.lins.mmmjjkx.rykenslimefuncustomizer.utils.ExceptionHandler;
 import org.lins.mmmjjkx.rykenslimefuncustomizer.utils.ReflectionUtils;
 
+@SuppressWarnings("unchecked")
 public class SuperReader extends YamlReader<SlimefunItem> {
     public SuperReader(YamlConfiguration config, ProjectAddon addon) {
         super(config, addon);
@@ -42,12 +43,10 @@ public class SuperReader extends YamlReader<SlimefunItem> {
 
         Pair<ExceptionHandler.HandleResult, ItemGroup> group = ExceptionHandler.handleItemGroupGet(addon, igId);
         if (group.getFirstValue() == ExceptionHandler.HandleResult.FAILED) return null;
-        ItemStack[] recipe = CommonUtils.readRecipe(section.getConfigurationSection("recipe"), addon);
-        String recipeType = section.getString("recipe_type", "NULL");
 
-        Pair<ExceptionHandler.HandleResult, RecipeType> rt = ExceptionHandler.getRecipeType(
-                "在附属" + addon.getAddonId() + "中加载继承物品" + s + "时遇到了问题: " + "错误的配方类型" + recipeType + "!", recipeType);
-        if (rt.getFirstValue() == ExceptionHandler.HandleResult.FAILED) return null;
+        Pair<RecipeType, ItemStack[]> recipePair = getRecipe(section, addon);
+        RecipeType rt = recipePair.getFirstValue();
+        ItemStack[] recipe = recipePair.getSecondValue();
 
         String className = section.getString("class", "");
         Class<?> clazz;
@@ -101,7 +100,7 @@ public class SuperReader extends YamlReader<SlimefunItem> {
                 .map(x -> {
                     if (x.equals("group")) return group.getSecondValue();
                     if (x.equals("item")) return sfis;
-                    if (x.equals("recipe_type")) return rt.getSecondValue();
+                    if (x.equals("recipe_type")) return rt;
                     if (x.equals("recipe")) return recipe;
                     return x;
                 })

@@ -19,12 +19,11 @@ import io.github.thebusybiscuit.slimefun4.libraries.dough.inventory.InvUtils;
 import io.github.thebusybiscuit.slimefun4.utils.ChestMenuUtils;
 import io.github.thebusybiscuit.slimefun4.utils.SlimefunUtils;
 import io.github.thebusybiscuit.slimefun4.utils.itemstack.ItemStackWrapper;
+import it.unimi.dsi.fastutil.ints.IntList;
 import java.util.ArrayList;
 import java.util.HashMap;
 import java.util.List;
 import java.util.Map;
-
-import it.unimi.dsi.fastutil.ints.IntList;
 import lombok.Getter;
 import me.mrCookieSlime.Slimefun.Objects.handlers.BlockTicker;
 import me.mrCookieSlime.Slimefun.api.inventory.BlockMenu;
@@ -370,7 +369,8 @@ public class CustomTemplateMachine extends AbstractEmptyMachine<CustomTemplateCr
 
         CustomMachineRecipe recipeKey = recipe.getKey();
 
-        List<Map.Entry<Integer, Integer>> entries = new ArrayList<>(recipe.getValue().entrySet());
+        List<Map.Entry<Integer, Integer>> entries =
+                new ArrayList<>(recipe.getValue().entrySet());
         IntList ints = recipeKey.getNoConsume();
 
         for (Map.Entry<Integer, Integer> entry : entries) {

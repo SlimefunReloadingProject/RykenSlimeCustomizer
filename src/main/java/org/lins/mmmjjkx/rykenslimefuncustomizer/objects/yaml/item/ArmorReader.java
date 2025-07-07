@@ -59,18 +59,12 @@ public class ArmorReader extends YamlReader<List<CustomArmorPiece>> {
             ExceptionHandler.HandleResult result = ExceptionHandler.handleIdConflict(pieceId);
             if (result == ExceptionHandler.HandleResult.FAILED) return null;
 
-            String recipeType = pieceSection.getString("recipe_type", "NULL");
-
-            Pair<ExceptionHandler.HandleResult, RecipeType> rt = ExceptionHandler.getRecipeType(
-                    "在附属" + addon.getAddonId() + "中加载盔甲套" + s + "的" + check + "时遇到了问题: " + "错误的配方类型" + recipeType + "!",
-                    recipeType);
-            if (rt.getFirstValue() == ExceptionHandler.HandleResult.FAILED) return null;
+            Pair<RecipeType, ItemStack[]> recipePair = getRecipe(pieceSection, addon);
+            RecipeType rt = recipePair.getFirstValue();
+            ItemStack[] recipe = recipePair.getSecondValue();
 
             SlimefunItemStack sfis = getPreloadItem(pieceId);
             if (sfis == null) return null;
-
-            ConfigurationSection recipeSection = pieceSection.getConfigurationSection("recipe");
-            ItemStack[] recipe = CommonUtils.readRecipe(recipeSection, addon);
 
             List<PotionEffect> potionEffects = new ArrayList<>();
             List<String> effects = pieceSection.getStringList("potion_effects");
@@ -105,7 +99,7 @@ public class ArmorReader extends YamlReader<List<CustomArmorPiece>> {
             pieces.add(new CustomArmorPiece(
                     group.getSecondValue(),
                     sfis,
-                    rt.getSecondValue(),
+                    rt,
                     recipe,
                     potionEffects.toArray(new PotionEffect[] {}),
                     fullSet,

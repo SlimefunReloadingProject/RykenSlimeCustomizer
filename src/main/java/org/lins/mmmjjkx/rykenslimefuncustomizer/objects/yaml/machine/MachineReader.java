@@ -47,13 +47,10 @@ public class MachineReader extends YamlReader<AbstractEmptyMachine<?>> {
 
         Pair<ExceptionHandler.HandleResult, ItemGroup> group = ExceptionHandler.handleItemGroupGet(addon, igId);
         if (group.getFirstValue() == ExceptionHandler.HandleResult.FAILED) return null;
-        ItemStack[] recipe = CommonUtils.readRecipe(section.getConfigurationSection("recipe"), addon);
-        String recipeType = section.getString("recipe_type", "NULL");
 
-        Pair<ExceptionHandler.HandleResult, RecipeType> rt = ExceptionHandler.getRecipeType(
-                "在附属" + addon.getAddonId() + "中加载机器" + s + "时遇到了问题: " + "错误的配方类型" + recipeType + "!", recipeType);
-
-        if (rt.getFirstValue() == ExceptionHandler.HandleResult.FAILED) return null;
+        Pair<RecipeType, ItemStack[]> recipePair = getRecipe(section, addon);
+        RecipeType rt = recipePair.getFirstValue();
+        ItemStack[] recipe = recipePair.getSecondValue();
 
         JavaScriptEval eval = null;
         if (section.contains("script")) {
@@ -73,7 +70,7 @@ public class MachineReader extends YamlReader<AbstractEmptyMachine<?>> {
 
         AbstractEmptyMachine<?> machine;
         CustomNoEnergyMachine defaultNoEnergyMachine = new CustomNoEnergyMachine(
-                group.getSecondValue(), slimefunItemStack, rt.getSecondValue(), recipe, menu, input, output, eval, -1);
+                group.getSecondValue(), slimefunItemStack, rt, recipe, menu, input, output, eval, -1);
 
         if (section.contains("energy")) {
             ConfigurationSection energySettings = section.getConfigurationSection("energy");
@@ -104,7 +101,7 @@ public class MachineReader extends YamlReader<AbstractEmptyMachine<?>> {
                     machine = new CustomMachine(
                             group.getSecondValue(),
                             slimefunItemStack,
-                            rt.getSecondValue(),
+                            rt,
                             recipe,
                             menu,
                             input,
@@ -117,7 +114,7 @@ public class MachineReader extends YamlReader<AbstractEmptyMachine<?>> {
                     machine = new CustomEnergyGenerator(
                             group.getSecondValue(),
                             slimefunItemStack,
-                            rt.getSecondValue(),
+                            rt,
                             recipe,
                             menu,
                             input,
@@ -131,7 +128,7 @@ public class MachineReader extends YamlReader<AbstractEmptyMachine<?>> {
                 machine = new CustomMachine(
                         group.getSecondValue(),
                         slimefunItemStack,
-                        rt.getSecondValue(),
+                        rt,
                         recipe,
                         menu,
                         input,
@@ -149,15 +146,7 @@ public class MachineReader extends YamlReader<AbstractEmptyMachine<?>> {
             }
 
             machine = new CustomNoEnergyMachine(
-                    group.getSecondValue(),
-                    slimefunItemStack,
-                    rt.getSecondValue(),
-                    recipe,
-                    menu,
-                    input,
-                    output,
-                    eval,
-                    workSlots);
+                    group.getSecondValue(), slimefunItemStack, rt, recipe, menu, input, output, eval, workSlots);
         }
 
         machine.register(RykenSlimefunCustomizer.INSTANCE);

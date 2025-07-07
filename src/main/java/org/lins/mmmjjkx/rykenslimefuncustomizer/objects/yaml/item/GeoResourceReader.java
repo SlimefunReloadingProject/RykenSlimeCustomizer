@@ -45,16 +45,13 @@ public class GeoResourceReader extends YamlReader<GEOResource> {
             SlimefunItemStack sfis = getPreloadItem(id);
             if (sfis == null) return null;
 
-            ItemStack[] recipe = CommonUtils.readRecipe(section.getConfigurationSection("recipe"), addon);
-            String recipeType = section.getString("recipe_type", "NULL");
             int maxDeviation = section.getInt("max_deviation", 1);
             boolean obtainableFromGEOMiner = section.getBoolean("obtain_from_geo_miner", true);
             String name = section.getString("geo_name", "");
 
-            Pair<ExceptionHandler.HandleResult, RecipeType> rt = ExceptionHandler.getRecipeType(
-                    "在附属" + addon.getAddonId() + "中加载自然资源" + s + "时遇到了问题: " + "错误的配方类型" + recipeType + "!", recipeType);
-
-            if (rt.getFirstValue() == ExceptionHandler.HandleResult.FAILED) return null;
+            Pair<RecipeType, ItemStack[]> recipePair = getRecipe(section, addon);
+            RecipeType rt = recipePair.getFirstValue();
+            ItemStack[] itemStacks = recipePair.getSecondValue();
 
             ConfigurationSection sup = section.getConfigurationSection("supply");
 
@@ -120,17 +117,8 @@ public class GeoResourceReader extends YamlReader<GEOResource> {
                 }
             }
 
-            if (recipe == null) recipe = new ItemStack[9];
-
             return new CustomGeoResource(
-                    group.getSecondValue(),
-                    sfis,
-                    rt.getSecondValue(),
-                    recipe,
-                    supply,
-                    maxDeviation,
-                    obtainableFromGEOMiner,
-                    name);
+                    group.getSecondValue(), sfis, rt, itemStacks, supply, maxDeviation, obtainableFromGEOMiner, name);
         }
         return null;
     }

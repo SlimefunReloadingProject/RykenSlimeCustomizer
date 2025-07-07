@@ -5,7 +5,6 @@ import io.github.thebusybiscuit.slimefun4.api.items.SlimefunItemStack;
 import io.github.thebusybiscuit.slimefun4.api.recipes.RecipeType;
 import io.github.thebusybiscuit.slimefun4.libraries.dough.collections.Pair;
 import java.util.List;
-import java.util.Objects;
 import org.bukkit.configuration.ConfigurationSection;
 import org.bukkit.configuration.file.YamlConfiguration;
 import org.bukkit.inventory.ItemStack;
@@ -38,13 +37,9 @@ public class SolarGeneratorReader extends YamlReader<CustomSolarGenerator> {
         SlimefunItemStack slimefunItemStack = getPreloadItem(id);
         if (slimefunItemStack == null) return null;
 
-        ItemStack[] recipe = CommonUtils.readRecipe(section.getConfigurationSection("recipe"), addon);
-        String recipeType = section.getString("recipe_type", "NULL");
-
-        Pair<ExceptionHandler.HandleResult, RecipeType> rt = ExceptionHandler.getRecipeType(
-                "在附属" + addon.getAddonId() + "中加载太阳能发电机" + s + "时遇到了问题: " + "错误的配方类型" + recipeType + "!", recipeType);
-
-        if (rt.getFirstValue() == ExceptionHandler.HandleResult.FAILED) return null;
+        Pair<RecipeType, ItemStack[]> recipePair = getRecipe(section, addon);
+        RecipeType rt = recipePair.getFirstValue();
+        ItemStack[] recipe = recipePair.getSecondValue();
 
         int dayEnergy = section.getInt("dayEnergy");
         int nightEnergy = section.getInt("nightEnergy");
@@ -69,14 +64,7 @@ public class SolarGeneratorReader extends YamlReader<CustomSolarGenerator> {
         }
 
         return new CustomSolarGenerator(
-                Objects.requireNonNull(group.getSecondValue()),
-                dayEnergy,
-                nightEnergy,
-                slimefunItemStack,
-                Objects.requireNonNull(rt.getSecondValue()),
-                recipe,
-                capacity,
-                lightLevel);
+                group.getSecondValue(), dayEnergy, nightEnergy, slimefunItemStack, rt, recipe, capacity, lightLevel);
     }
 
     @Override

@@ -31,7 +31,6 @@ import org.lins.mmmjjkx.rykenslimefuncustomizer.objects.customs.item.CustomUnpla
 import org.lins.mmmjjkx.rykenslimefuncustomizer.objects.customs.item.exts.*;
 import org.lins.mmmjjkx.rykenslimefuncustomizer.objects.customs.parent.CustomItem;
 import org.lins.mmmjjkx.rykenslimefuncustomizer.objects.global.DropFromBlock;
-import org.lins.mmmjjkx.rykenslimefuncustomizer.objects.global.RecipeTypeMap;
 import org.lins.mmmjjkx.rykenslimefuncustomizer.objects.slimefun.WitherProofBlockImpl;
 import org.lins.mmmjjkx.rykenslimefuncustomizer.objects.yaml.YamlReader;
 import org.lins.mmmjjkx.rykenslimefuncustomizer.utils.ClassUtils;
@@ -62,28 +61,9 @@ public class ItemReader extends YamlReader<SlimefunItem> {
         SlimefunItemStack sfis = getPreloadItem(id);
         if (sfis == null) return null;
 
-        String recipeType = section.getString("recipe_type", "NULL");
-
-        boolean piglin = section.getBoolean("piglin_trade_chance", false);
-        RecipeType rt;
-        if (piglin) {
-            rt = RecipeType.BARTER_DROP;
-        } else {
-            Pair<ExceptionHandler.HandleResult, RecipeType> rt1 = ExceptionHandler.getRecipeType(
-                    "在附属" + addon.getAddonId() + "中加载物品" + s + "时遇到了问题: " + "错误的配方类型" + recipeType + "!", recipeType);
-
-            if (rt1.getFirstValue() == ExceptionHandler.HandleResult.FAILED) return null;
-
-            rt = rt1.getSecondValue();
-        }
-
-        int recipeSize = 9;
-        ItemStack[] itemStacks;
-        if (rt == RecipeTypeMap.RecipeTypeExpandIntegration.INFINITY_EXPANSION.get()) {
-             recipeSize = 36;
-        }
-
-        itemStacks = CommonUtils.readRecipe(section.getConfigurationSection("recipe"), addon, recipeSize);
+        Pair<RecipeType, ItemStack[]> recipePair = getRecipe(section, addon);
+        RecipeType rt = recipePair.getFirstValue();
+        ItemStack[] itemStacks = recipePair.getSecondValue();
 
         JavaScriptEval eval = null;
         if (section.contains("script")) {

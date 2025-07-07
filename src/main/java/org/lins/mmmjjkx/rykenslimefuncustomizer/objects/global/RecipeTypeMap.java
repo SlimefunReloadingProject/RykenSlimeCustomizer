@@ -1,7 +1,6 @@
 package org.lins.mmmjjkx.rykenslimefuncustomizer.objects.global;
 
 import io.github.thebusybiscuit.slimefun4.api.recipes.RecipeType;
-
 import java.lang.reflect.Field;
 import java.util.HashMap;
 import java.util.List;

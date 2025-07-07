@@ -3,11 +3,13 @@ package org.lins.mmmjjkx.rykenslimefuncustomizer.objects.customs;
 import java.util.ArrayList;
 import java.util.List;
 import java.util.Map;
-
 import org.bukkit.inventory.ItemStack;
 
-public record LinkedOutput(ItemStack[] freeOutput, Map<Integer, ItemStack> linkedOutput, int[] freeChances,
-                           Map<Integer, Integer> linkedChances) {
+public record LinkedOutput(
+        ItemStack[] freeOutput,
+        Map<Integer, ItemStack> linkedOutput,
+        int[] freeChances,
+        Map<Integer, Integer> linkedChances) {
 
     public ItemStack[] toArray() {
         ItemStack[] result = new ItemStack[freeOutput.length + linkedOutput.size()];

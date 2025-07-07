@@ -39,13 +39,9 @@ public class CapacitorsReader extends YamlReader<Capacitor> {
         SlimefunItemStack sfis = getPreloadItem(id);
         if (sfis == null) return null;
 
-        ItemStack[] recipe = CommonUtils.readRecipe(section.getConfigurationSection("recipe"), addon);
-        String recipeType = section.getString("recipe_type", "NULL");
-
-        Pair<ExceptionHandler.HandleResult, RecipeType> rt = ExceptionHandler.getRecipeType(
-                "在附属" + addon.getAddonId() + "中加载电容" + s + "时遇到了问题: " + "错误的配方类型" + recipeType + "!", recipeType);
-
-        if (rt.getFirstValue() == ExceptionHandler.HandleResult.FAILED) return null;
+        Pair<RecipeType, ItemStack[]> recipeType = getRecipe(section, addon);
+        RecipeType rt = recipeType.getFirstValue();
+        ItemStack[] recipe = recipeType.getSecondValue();
 
         int capacity = section.getInt("capacity");
         if (capacity < 1) {
@@ -54,11 +50,7 @@ public class CapacitorsReader extends YamlReader<Capacitor> {
         }
 
         Capacitor instance = new Capacitor(
-                Objects.requireNonNull(group.getSecondValue()),
-                capacity,
-                sfis,
-                Objects.requireNonNull(rt.getSecondValue()),
-                recipe);
+                Objects.requireNonNull(group.getSecondValue()), capacity, sfis, Objects.requireNonNull(rt), recipe);
 
         instance.register(RykenSlimefunCustomizer.INSTANCE);
         return instance;

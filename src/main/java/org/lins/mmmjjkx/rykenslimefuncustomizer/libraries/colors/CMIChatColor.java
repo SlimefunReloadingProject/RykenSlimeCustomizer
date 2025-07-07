@@ -7,7 +7,6 @@ import java.util.regex.Pattern;
 import lombok.Getter;
 import org.bukkit.ChatColor;
 import org.bukkit.Color;
-import org.lins.mmmjjkx.rykenslimefuncustomizer.libraries.version.Version;
 
 public class CMIChatColor {
 
@@ -312,28 +311,13 @@ public class CMIChatColor {
             Matcher match = hexColorRegexPattern.matcher(text);
             while (match.find()) {
                 String string = match.group();
-                if (Version.isCurrentLower(Version.v1_16_R1)) {
-
-                    String copy = string;
-                    copy = copy.substring(2, copy.length() - 1);
-                    if (copy.length() == 3) {
-                        StringBuilder sb = new StringBuilder();
-                        for (int i = 0; i < copy.length(); i++)
-                            sb.append(copy.charAt(i)).append(copy.charAt(i));
-                        copy = sb.toString();
-                    }
-                    copy = getClosestVanilla(copy);
-                    text = text.replace(string, copy);
-
-                } else {
-                    StringBuilder magic = new StringBuilder("§x");
-                    for (char c : string.substring(2, string.length() - 1).toCharArray()) {
+                StringBuilder magic = new StringBuilder("§x");
+                for (char c : string.substring(2, string.length() - 1).toCharArray()) {
+                    magic.append('§').append(c);
+                    if (string.substring(2, string.length() - 1).length() == 3)
                         magic.append('§').append(c);
-                        if (string.substring(2, string.length() - 1).length() == 3)
-                            magic.append('§').append(c);
-                    }
-                    text = text.replace(string, magic.toString());
                 }
+                text = text.replace(string, magic.toString());
             }
 
             Matcher nameMatch = hexColorNamePattern.matcher(text);
@@ -354,26 +338,14 @@ public class CMIChatColor {
             Matcher match = cleanQuirkyHexColorRegexPattern.matcher(text);
             while (match.find()) {
                 String string = match.group();
-                if (Version.isCurrentLower(Version.v1_16_R1)) {
-                    String copy = string;
-                    copy = copy.substring(2);
-                    if (copy.length() == 3) {
-                        StringBuilder sb = new StringBuilder();
-                        for (int i = 0; i < copy.length(); i++)
-                            sb.append(copy.charAt(i)).append(copy.charAt(i));
-                        copy = sb.toString();
-                    }
-                    copy = getClosestVanilla(copy);
-                    text = text.replace(string, copy);
-                } else {
-                    StringBuilder magic = new StringBuilder("§x");
-                    String shorten = string.substring(2);
-                    for (char c : shorten.toCharArray()) {
-                        magic.append('§').append(c);
-                        if (shorten.length() == 3) magic.append('§').append(c);
-                    }
-                    text = text.replace(string, magic.toString());
+
+                StringBuilder magic = new StringBuilder("§x");
+                String shorten = string.substring(2);
+                for (char c : shorten.toCharArray()) {
+                    magic.append('§').append(c);
+                    if (shorten.length() == 3) magic.append('§').append(c);
                 }
+                text = text.replace(string, magic.toString());
             }
         }
 
@@ -381,26 +353,14 @@ public class CMIChatColor {
             Matcher match = cleanOfficialColorRegexPattern.matcher(text);
             while (match.find()) {
                 String string = match.group();
-                if (Version.isCurrentLower(Version.v1_16_R1)) {
-                    String copy = string;
-                    copy = copy.substring(1);
-                    if (copy.length() == 3) {
-                        StringBuilder sb = new StringBuilder();
-                        for (int i = 0; i < copy.length(); i++)
-                            sb.append(copy.charAt(i)).append(copy.charAt(i));
-                        copy = sb.toString();
-                    }
-                    copy = getClosestVanilla(copy);
-                    text = text.replace(string, copy);
-                } else {
-                    StringBuilder magic = new StringBuilder("§x");
-                    String shorten = string.substring(1);
-                    for (char c : shorten.toCharArray()) {
-                        magic.append('§').append(c);
-                        if (shorten.length() == 3) magic.append('§').append(c);
-                    }
-                    text = text.replace(string, magic.toString());
+
+                StringBuilder magic = new StringBuilder("§x");
+                String shorten = string.substring(1);
+                for (char c : shorten.toCharArray()) {
+                    magic.append('§').append(c);
+                    if (shorten.length() == 3) magic.append('§').append(c);
                 }
+                text = text.replace(string, magic.toString());
             }
         }
 

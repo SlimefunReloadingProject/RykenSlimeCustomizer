@@ -515,6 +515,7 @@ public class CommonUtils {
                 count++;
             }
         }
+
         ItemStack[] newArray = new ItemStack[count];
 
         int index = 0;
