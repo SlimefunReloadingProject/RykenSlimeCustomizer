@@ -116,17 +116,7 @@ public final class RykenSlimefunCustomizer extends JavaPlugin implements Slimefu
                 .build();
         Library graalJS = Library.builder()
                 .groupId("org{}graalvm{}js")
-                .artifactId("js-language")
-                .version(graalVersion)
-                .build();
-        Library shadowedIcu4j = Library.builder()
-                .groupId("org{}graalvm{}shadowed")
-                .artifactId("icu4j")
-                .version(graalVersion)
-                .build();
-        Library graalJSEngine = Library.builder()
-                .groupId("org{}graalvm{}js")
-                .artifactId("js-scriptengine")
+                .artifactId("js")
                 .version(graalVersion)
                 .build();
         Library truffleAPI = Library.builder()
@@ -134,49 +124,9 @@ public final class RykenSlimefunCustomizer extends JavaPlugin implements Slimefu
                 .artifactId("truffle-api")
                 .version(graalVersion)
                 .build();
-        Library truffleCompiler = Library.builder()
-                .groupId("org{}graalvm{}truffle")
-                .artifactId("truffle-compiler")
-                .version(graalVersion)
-                .build();
-        Library truffleEnterprise = Library.builder()
-                .groupId("org{}graalvm{}truffle")
-                .artifactId("truffle-enterprise")
-                .version(graalVersion)
-                .build();
-        Library truffleRuntime = Library.builder()
-                .groupId("org{}graalvm{}truffle")
-                .artifactId("truffle-runtime")
-                .version(graalVersion)
-                .build();
-        Library polyglot = Library.builder()
-                .groupId("org.graalvm.polyglot")
-                .artifactId("polyglot")
-                .version(graalVersion)
-                .build();
-        Library graalSdkCollections = Library.builder()
-                .groupId("org{}graalvm{}sdk")
-                .artifactId("collections")
-                .version(graalVersion)
-                .build();
-        Library graalSdkNativeImage = Library.builder()
-                .groupId("org{}graalvm{}sdk")
-                .artifactId("nativeimage")
-                .version(graalVersion)
-                .build();
-        Library graalSdkWord = Library.builder()
-                .groupId("org{}graalvm{}sdk")
-                .artifactId("word")
-                .version(graalVersion)
-                .build();
-        Library graalSdkNativeBridge = Library.builder()
-                .groupId("org{}graalvm{}sdk")
-                .artifactId("nativebridge")
-                .version(graalVersion)
-                .build();
-        Library graalJniUtils = Library.builder()
-                .groupId("org{}graalvm{}sdk")
-                .artifactId("jniutils")
+        Library graalSdk = Library.builder()
+                .groupId("org.graalvm.sdk")
+                .artifactId("graal-sdk")
                 .version(graalVersion)
                 .build();
         Library graalRegex = Library.builder()
@@ -187,19 +137,9 @@ public final class RykenSlimefunCustomizer extends JavaPlugin implements Slimefu
 
         libraryManager.loadLibrary(byteBuddy);
         libraryManager.loadLibrary(graalJS);
-        libraryManager.loadLibrary(graalJSEngine);
         libraryManager.loadLibrary(truffleAPI);
-        libraryManager.loadLibrary(polyglot);
-        libraryManager.loadLibrary(graalSdkCollections);
-        libraryManager.loadLibrary(graalSdkNativeImage);
-        libraryManager.loadLibrary(graalSdkWord);
-        libraryManager.loadLibrary(shadowedIcu4j);
-        libraryManager.loadLibrary(graalSdkNativeBridge);
-        libraryManager.loadLibrary(graalJniUtils);
         libraryManager.loadLibrary(graalRegex);
-        libraryManager.loadLibrary(truffleCompiler);
-        libraryManager.loadLibrary(truffleEnterprise);
-        libraryManager.loadLibrary(truffleRuntime);
+        libraryManager.loadLibrary(graalSdk);
     }
 
     public static boolean allowUpdate(String prjId) {
