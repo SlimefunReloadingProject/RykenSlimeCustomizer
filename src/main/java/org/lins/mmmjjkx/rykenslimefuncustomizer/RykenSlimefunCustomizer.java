@@ -100,7 +100,7 @@ public final class RykenSlimefunCustomizer extends JavaPlugin implements Slimefu
     }
 
     private void setupLibraries() {
-        String graalVersion = "24.1.2";
+        String graalVersion = "23.0.5";
         BukkitLibraryManager libraryManager = new BukkitLibraryManager(this);
 
         for (String repo : getConfig().getStringList("repositories")) {

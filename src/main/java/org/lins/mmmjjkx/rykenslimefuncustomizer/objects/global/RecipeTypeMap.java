@@ -5,8 +5,8 @@ import java.lang.reflect.Field;
 import java.util.HashMap;
 import java.util.List;
 import java.util.Map;
-import org.bukkit.Bukkit;
 import org.jetbrains.annotations.Nullable;
+import org.lins.mmmjjkx.rykenslimefuncustomizer.RykenSlimefunCustomizer;
 
 public class RecipeTypeMap {
     private static final Map<String, RecipeType> recipeTypes;
@@ -59,7 +59,7 @@ public class RecipeTypeMap {
                 Field field = theClazz.getDeclaredField(fieldName);
                 return (RecipeType) field.get(null);
             } catch (ClassNotFoundException | NoSuchFieldException | IllegalAccessException e) {
-                throw new RuntimeException(e);
+                return null;
             }
         }
 
@@ -80,7 +80,7 @@ public class RecipeTypeMap {
                         RecipeTypeMap.pushRecipeType(rt);
                     }
                 } catch (Exception e) {
-                    Bukkit.getLogger()
+                    RykenSlimefunCustomizer.INSTANCE.getLogger()
                             .warning("Failed to get external recipe type from " + className + "#" + fieldName + ": "
                                     + e.getMessage());
                 }

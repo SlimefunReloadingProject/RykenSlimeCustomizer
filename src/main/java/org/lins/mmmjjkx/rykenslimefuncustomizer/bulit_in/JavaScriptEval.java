@@ -27,9 +27,6 @@ import org.lins.mmmjjkx.rykenslimefuncustomizer.utils.BlockMenuUtil;
 import org.lins.mmmjjkx.rykenslimefuncustomizer.utils.ExceptionHandler;
 
 public class JavaScriptEval extends ScriptEval {
-    private static final File PLUGINS_FOLDER =
-            RykenSlimefunCustomizer.INSTANCE.getDataFolder().getParentFile();
-
     private final Context jsEngine = Context.newBuilder("js")
             .hostClassLoader(RykenSlimefunCustomizer.class.getClassLoader())
             .allowAllAccess(true)
@@ -59,7 +56,7 @@ public class JavaScriptEval extends ScriptEval {
     }
 
     private void advancedSetup() {
-        JSRealm realm = JavaScriptLanguage.getJSRealm(jsEngine);
+        JSRealm realm = JavaScriptLanguage.getJSRealm(jsEngine.getPolyglotBindings().getContext());
         TruffleLanguage.Env env = realm.getEnv();
         addThing("SlimefunItems", env.asHostSymbol(SlimefunItems.class));
         addThing("SlimefunItem", env.asHostSymbol(SlimefunItem.class));
