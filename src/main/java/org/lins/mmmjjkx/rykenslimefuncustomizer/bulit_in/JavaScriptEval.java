@@ -56,7 +56,7 @@ public class JavaScriptEval extends ScriptEval {
     }
 
     private void advancedSetup() {
-        JSRealm realm = JavaScriptLanguage.getJSRealm(jsEngine.getPolyglotBindings().getContext());
+        JSRealm realm = JavaScriptLanguage.getJSRealm(jsEngine);
         TruffleLanguage.Env env = realm.getEnv();
         addThing("SlimefunItems", env.asHostSymbol(SlimefunItems.class));
         addThing("SlimefunItem", env.asHostSymbol(SlimefunItem.class));
@@ -66,14 +66,11 @@ public class JavaScriptEval extends ScriptEval {
         addThing("BlockMenuUtil", env.asHostSymbol(BlockMenuUtil.class));
         addThing("PlayerProfile", env.asHostSymbol(PlayerProfile.class));
         addThing("Slimefun", env.asHostSymbol(Slimefun.class));
-
-        jsEngine.enter();
     }
 
     @Override
     public void close() {
         try {
-            jsEngine.leave();
             jsEngine.close();
         } catch (IllegalStateException ignored) {
         }

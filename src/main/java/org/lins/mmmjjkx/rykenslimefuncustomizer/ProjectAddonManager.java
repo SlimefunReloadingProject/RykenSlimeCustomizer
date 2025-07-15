@@ -96,10 +96,9 @@ public final class ProjectAddonManager {
 
                 ExceptionHandler.handleError("在名称为 " + folder.getName() + "的文件夹中有重复的附属ID，导致此附属无法加载！");
                 skip.add(folder.getName());
-                continue;
+            } else {
+                projectIds.put(id, folder);
             }
-
-            projectIds.put(id, folder);
         }
 
         checkStupids();
@@ -126,14 +125,14 @@ public final class ProjectAddonManager {
                 }
                 e.printStackTrace();
             }
-
-            ExceptionHandler.info("已加载的附属列表：");
-            for (ProjectAddon addon : projectAddons.values()) {
-                ExceptionHandler.info(
-                        addon.getAddonName() + " (" + addon.getAddonId() + ")" + " 版本号: " + addon.getAddonVersion());
-            }
-            ExceptionHandler.info("共计" + projectAddons.size() + "个附属被加载");
         }
+
+        ExceptionHandler.info("已加载的附属列表：");
+        for (ProjectAddon addon : projectAddons.values()) {
+            ExceptionHandler.info(
+                    addon.getAddonName() + " (" + addon.getAddonId() + ")" + " 版本号: " + addon.getAddonVersion());
+        }
+        ExceptionHandler.info("共计" + projectAddons.size() + "个附属被加载");
     }
 
     public void checkStupids() {

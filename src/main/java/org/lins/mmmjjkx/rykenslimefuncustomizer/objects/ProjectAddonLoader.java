@@ -380,6 +380,11 @@ public class ProjectAddonLoader {
             if (ids.containsKey(dependency)) {
                 File dependencyFile = ids.get(dependency);
                 ProjectAddonLoader loader = new ProjectAddonLoader(dependencyFile, ids);
+
+                if (RykenSlimefunCustomizer.addonManager.isLoaded(dependency)) {
+                    continue;
+                }
+
                 ProjectAddon addon = loader.load();
                 if (addon != null) {
                     addon.setMarkAsDepend(true);
