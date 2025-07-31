@@ -171,9 +171,27 @@ softdepend:
   # Other plugins
   - PlaceholderAPI
   - NBTAPI
+
+  # Item plugins
+  - ItemsAdder
+  - Oxaren
+  - MMOItems
+  - MythicMobs
+  - Nova
+  - Reforges
+  - StatTrackers
+  - Talismans
+  - ItemEdit
+  - HeadDatabase
+  - ItemBridge
+  - EcoItems
+  - EcoPets
+  - EcoScrolls
+  - EcoCrates
+  - EcoArmor
 loadBefore:
-- SaneCrafting
-- SlimefunAdvancements
+  - SaneCrafting
+  - SlimefunAdvancements
 authors: [mmmjjkx]
 description: An advanced Slimefun customize plugin
 commands:
