@@ -73,14 +73,15 @@ public class RecipeTypeMap {
                     if (integration.isStatic) {
                         instance = clazz.getField(fieldName).get(null);
                     } else {
-                        instance = clazz.newInstance(); // or something sus
+                        instance = clazz.newInstance();
                     }
 
                     if (instance instanceof RecipeType rt) {
                         RecipeTypeMap.pushRecipeType(rt);
                     }
                 } catch (Exception e) {
-                    RykenSlimefunCustomizer.INSTANCE.getLogger()
+                    RykenSlimefunCustomizer.INSTANCE
+                            .getLogger()
                             .warning("Failed to get external recipe type from " + className + "#" + fieldName + ": "
                                     + e.getMessage());
                 }

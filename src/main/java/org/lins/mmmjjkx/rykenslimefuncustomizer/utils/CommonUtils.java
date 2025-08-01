@@ -223,22 +223,19 @@ public class CommonUtils {
                             }
                         }
                     }
-
                     case "uniitem" -> {
-
                         AllItemProvider provider = new AllItemProvider();
-                        ItemStack item = provider.item(new ItemKey(material.split("::")[0],material.split("::")[1]));
-
-                        itemStack = item;
+                        String[] split = material.split("::");
+                        ItemStack item = provider.item(new ItemKey(split[0], split[1]));
                         if (item == null) {
                             ExceptionHandler.handleError(
                                     "无法在附属" + addon.getAddonId() + "中读取 UniItem 材料" + material + "，已转为石头");
                             yield new CustomItemStack(Material.STONE, name, lore);
                         }
 
-                        itemStack.setAmount(1);
+                        item.setAmount(1);
 
-                        yield itemStack;
+                        yield item;
                     }
                     case "saveditem" -> {
                         File file = new File(addon.getSavedItemsFolder(), material + ".yml");
@@ -285,7 +282,6 @@ public class CommonUtils {
 
                         yield itemStack;
                     }
-                    // mc
                     default -> {
                         Optional<Material> materialOptional = Optional.ofNullable(Material.matchMaterial(material));
                         Material mat = Material.STONE;
